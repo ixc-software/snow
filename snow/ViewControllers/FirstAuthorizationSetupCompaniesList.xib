@@ -1,0 +1,1850 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
+	<data>
+		<int key="IBDocument.SystemTarget">1070</int>
+		<string key="IBDocument.SystemVersion">11C74</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
+		<string key="IBDocument.AppKitVersion">1138.23</string>
+		<string key="IBDocument.HIToolboxVersion">567.00</string>
+		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
+			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
+			<string key="NS.object.0">1938</string>
+		</object>
+		<array key="IBDocument.IntegratedClassDependencies">
+			<string>NSTableView</string>
+			<string>NSCustomObject</string>
+			<string>NSScrollView</string>
+			<string>NSTextFieldCell</string>
+			<string>NSArrayController</string>
+			<string>NSCustomView</string>
+			<string>NSTableColumn</string>
+			<string>NSScroller</string>
+			<string>NSBox</string>
+		</array>
+		<array key="IBDocument.PluginDependencies">
+			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+		</array>
+		<object class="NSMutableDictionary" key="IBDocument.Metadata">
+			<string key="NS.key.0">PluginDependencyRecalculationVersion</string>
+			<integer value="1" key="NS.object.0"/>
+		</object>
+		<array class="NSMutableArray" key="IBDocument.RootObjects" id="1000">
+			<object class="NSCustomObject" id="1001">
+				<string key="NSClassName">FirstAuthorizationSetupCompaniesList</string>
+			</object>
+			<object class="NSCustomObject" id="1003">
+				<string key="NSClassName">FirstResponder</string>
+			</object>
+			<object class="NSCustomObject" id="1004">
+				<string key="NSClassName">NSApplication</string>
+			</object>
+			<object class="NSCustomView" id="1005">
+				<reference key="NSNextResponder"/>
+				<int key="NSvFlags">268</int>
+				<array class="NSMutableArray" key="NSSubviews">
+					<object class="NSBox" id="770522906">
+						<reference key="NSNextResponder" ref="1005"/>
+						<int key="NSvFlags">12</int>
+						<array class="NSMutableArray" key="NSSubviews">
+							<object class="NSView" id="698368445">
+								<reference key="NSNextResponder" ref="770522906"/>
+								<int key="NSvFlags">274</int>
+								<array class="NSMutableArray" key="NSSubviews">
+									<object class="NSScrollView" id="782105788">
+										<reference key="NSNextResponder" ref="698368445"/>
+										<int key="NSvFlags">268</int>
+										<array class="NSMutableArray" key="NSSubviews">
+											<object class="NSClipView" id="885076505">
+												<reference key="NSNextResponder" ref="782105788"/>
+												<int key="NSvFlags">2304</int>
+												<array class="NSMutableArray" key="NSSubviews">
+													<object class="NSTableView" id="20179024">
+														<reference key="NSNextResponder" ref="885076505"/>
+														<int key="NSvFlags">256</int>
+														<string key="NSFrameSize">{312, 88}</string>
+														<reference key="NSSuperview" ref="885076505"/>
+														<reference key="NSWindow"/>
+														<reference key="NSNextKeyView" ref="900160245"/>
+														<bool key="NSViewIsLayerTreeHost">YES</bool>
+														<object class="NSShadow" key="NSViewShadow">
+															<double key="NSShadowBlurRadius">9</double>
+															<object class="NSColor" key="NSShadowColor" id="681716121">
+																<int key="NSColorSpace">1</int>
+																<bytes key="NSRGB">MSAxIDEAA</bytes>
+															</object>
+														</object>
+														<int key="NSViewLayerContentsRedrawPolicy">2</int>
+														<string key="NSReuseIdentifierKey">_NS:1828</string>
+														<bool key="NSEnabled">YES</bool>
+														<object class="_NSCornerView" key="NSCornerView">
+															<nil key="NSNextResponder"/>
+															<int key="NSvFlags">-2147483392</int>
+															<string key="NSFrame">{{224, 0}, {16, 17}}</string>
+															<string key="NSReuseIdentifierKey">_NS:1833</string>
+														</object>
+														<array class="NSMutableArray" key="NSTableColumns">
+															<object class="NSTableColumn" id="834494029">
+																<double key="NSWidth">309</double>
+																<double key="NSMinWidth">40</double>
+																<double key="NSMaxWidth">1000</double>
+																<object class="NSTableHeaderCell" key="NSHeaderCell">
+																	<int key="NSCellFlags">75628096</int>
+																	<int key="NSCellFlags2">2048</int>
+																	<string key="NSContents"/>
+																	<object class="NSFont" key="NSSupport" id="26">
+																		<string key="NSName">LucidaGrande</string>
+																		<double key="NSSize">11</double>
+																		<int key="NSfFlags">3100</int>
+																	</object>
+																	<object class="NSColor" key="NSBackgroundColor">
+																		<int key="NSColorSpace">3</int>
+																		<bytes key="NSWhite">MC4zMzMzMzI5ODU2AA</bytes>
+																	</object>
+																	<object class="NSColor" key="NSTextColor">
+																		<int key="NSColorSpace">6</int>
+																		<string key="NSCatalogName">System</string>
+																		<string key="NSColorName">headerTextColor</string>
+																		<object class="NSColor" key="NSColor">
+																			<int key="NSColorSpace">3</int>
+																			<bytes key="NSWhite">MAA</bytes>
+																		</object>
+																	</object>
+																</object>
+																<object class="NSTextFieldCell" key="NSDataCell" id="261330216">
+																	<int key="NSCellFlags">337772096</int>
+																	<int key="NSCellFlags2">2048</int>
+																	<string key="NSContents">Text Cell</string>
+																	<object class="NSFont" key="NSSupport">
+																		<string key="NSName">LucidaGrande</string>
+																		<double key="NSSize">13</double>
+																		<int key="NSfFlags">1044</int>
+																	</object>
+																	<reference key="NSControlView" ref="20179024"/>
+																	<bool key="NSDrawsBackground">YES</bool>
+																	<object class="NSColor" key="NSBackgroundColor">
+																		<int key="NSColorSpace">2</int>
+																		<bytes key="NSRGB">MC41MDE5NjA4MTQgMC41MjE1Njg2NTYgMC42NzQ1MDk4MjMzAA</bytes>
+																	</object>
+																	<object class="NSColor" key="NSTextColor">
+																		<int key="NSColorSpace">6</int>
+																		<string key="NSCatalogName">System</string>
+																		<string key="NSColorName">selectedMenuItemTextColor</string>
+																		<object class="NSColor" key="NSColor" id="154742966">
+																			<int key="NSColorSpace">3</int>
+																			<bytes key="NSWhite">MQA</bytes>
+																		</object>
+																	</object>
+																</object>
+																<int key="NSResizingMask">3</int>
+																<bool key="NSIsResizeable">YES</bool>
+																<reference key="NSTableView" ref="20179024"/>
+															</object>
+														</array>
+														<double key="NSIntercellSpacingWidth">3</double>
+														<double key="NSIntercellSpacingHeight">2</double>
+														<object class="NSColor" key="NSBackgroundColor">
+															<int key="NSColorSpace">2</int>
+															<bytes key="NSRGB">MC41MDE5NjA4MTQgMC41MjE1Njg2NTYgMC42NzQ1MDk4MjMzAA</bytes>
+														</object>
+														<object class="NSColor" key="NSGridColor">
+															<int key="NSColorSpace">6</int>
+															<string key="NSCatalogName">System</string>
+															<string key="NSColorName">gridColor</string>
+															<object class="NSColor" key="NSColor">
+																<int key="NSColorSpace">3</int>
+																<bytes key="NSWhite">MC41AA</bytes>
+															</object>
+														</object>
+														<double key="NSRowHeight">17</double>
+														<int key="NSTvFlags">-700448768</int>
+														<reference key="NSDelegate"/>
+														<reference key="NSDataSource"/>
+														<int key="NSColumnAutoresizingStyle">4</int>
+														<int key="NSDraggingSourceMaskForLocal">15</int>
+														<int key="NSDraggingSourceMaskForNonLocal">0</int>
+														<bool key="NSAllowsTypeSelect">YES</bool>
+														<int key="NSTableViewDraggingDestinationStyle">0</int>
+														<int key="NSTableViewGroupRowStyle">1</int>
+													</object>
+												</array>
+												<string key="NSFrameSize">{312, 88}</string>
+												<reference key="NSSuperview" ref="782105788"/>
+												<reference key="NSWindow"/>
+												<reference key="NSNextKeyView" ref="20179024"/>
+												<int key="NSViewLayerContentsRedrawPolicy">2</int>
+												<string key="NSReuseIdentifierKey">_NS:1826</string>
+												<reference key="NSDocView" ref="20179024"/>
+												<object class="NSColor" key="NSBGColor">
+													<int key="NSColorSpace">6</int>
+													<string key="NSCatalogName">System</string>
+													<string key="NSColorName">controlBackgroundColor</string>
+													<object class="NSColor" key="NSColor">
+														<int key="NSColorSpace">3</int>
+														<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
+													</object>
+												</object>
+												<int key="NScvFlags">4</int>
+											</object>
+											<object class="NSScroller" id="900160245">
+												<reference key="NSNextResponder" ref="782105788"/>
+												<int key="NSvFlags">-2147483392</int>
+												<string key="NSFrame">{{224, 17}, {15, 102}}</string>
+												<reference key="NSSuperview" ref="782105788"/>
+												<reference key="NSWindow"/>
+												<reference key="NSNextKeyView"/>
+												<string key="NSReuseIdentifierKey">_NS:1845</string>
+												<reference key="NSTarget" ref="782105788"/>
+												<string key="NSAction">_doScroller:</string>
+												<double key="NSPercent">0.9885057471264368</double>
+											</object>
+											<object class="NSScroller" id="956354151">
+												<reference key="NSNextResponder" ref="782105788"/>
+												<int key="NSvFlags">-2147483392</int>
+												<string key="NSFrame">{{-100, -100}, {238, 15}}</string>
+												<reference key="NSSuperview" ref="782105788"/>
+												<reference key="NSWindow"/>
+												<reference key="NSNextKeyView" ref="885076505"/>
+												<string key="NSReuseIdentifierKey">_NS:1847</string>
+												<int key="NSsFlags">1</int>
+												<reference key="NSTarget" ref="782105788"/>
+												<string key="NSAction">_doScroller:</string>
+												<double key="NSPercent">0.99782608695652175</double>
+											</object>
+										</array>
+										<string key="NSFrame">{{9, 14}, {312, 88}}</string>
+										<reference key="NSSuperview" ref="698368445"/>
+										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="956354151"/>
+										<int key="NSViewLayerContentsRedrawPolicy">2</int>
+										<string key="NSReuseIdentifierKey">_NS:1824</string>
+										<int key="NSsFlags">133648</int>
+										<reference key="NSVScroller" ref="900160245"/>
+										<reference key="NSHScroller" ref="956354151"/>
+										<reference key="NSContentView" ref="885076505"/>
+										<bytes key="NSScrollAmts">QSAAAEEgAABBmAAAQZgAAA</bytes>
+									</object>
+								</array>
+								<string key="NSFrame">{{1, 1}, {330, 112}}</string>
+								<reference key="NSSuperview" ref="770522906"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="782105788"/>
+								<int key="NSViewLayerContentsRedrawPolicy">2</int>
+								<string key="NSReuseIdentifierKey">_NS:21</string>
+							</object>
+						</array>
+						<string key="NSFrame">{{17, 16}, {332, 128}}</string>
+						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="698368445"/>
+						<double key="NSViewAlphaValue">0.99999999999999989</double>
+						<int key="NSViewLayerContentsRedrawPolicy">2</int>
+						<string key="NSReuseIdentifierKey">_NS:18</string>
+						<string key="NSOffsets">{0, 0}</string>
+						<object class="NSTextFieldCell" key="NSTitleCell">
+							<int key="NSCellFlags">67239424</int>
+							<int key="NSCellFlags2">0</int>
+							<string key="NSContents">Registered companies, please select to join</string>
+							<reference key="NSSupport" ref="26"/>
+							<object class="NSColor" key="NSBackgroundColor">
+								<int key="NSColorSpace">6</int>
+								<string key="NSCatalogName">System</string>
+								<string key="NSColorName">textBackgroundColor</string>
+								<reference key="NSColor" ref="154742966"/>
+							</object>
+							<object class="NSColor" key="NSTextColor">
+								<int key="NSColorSpace">3</int>
+								<bytes key="NSWhite">MCAwLjgwMDAwMDAxMTkAA</bytes>
+							</object>
+						</object>
+						<reference key="NSContentView" ref="698368445"/>
+						<int key="NSBorderType">1</int>
+						<int key="NSBoxType">0</int>
+						<int key="NSTitlePosition">2</int>
+						<bool key="NSTransparent">NO</bool>
+					</object>
+				</array>
+				<string key="NSFrameSize">{366, 164}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="770522906"/>
+				<string key="NSClassName">NSView</string>
+			</object>
+			<object class="NSArrayController" id="163266647">
+				<bool key="NSAutomaticallyPreparesContent">YES</bool>
+				<object class="_NSManagedProxy" key="_NSManagedProxy">
+					<string key="NSEntityName">CurrentCompany</string>
+				</object>
+				<bool key="_NSIsUsingManagedProxy">YES</bool>
+				<bool key="NSAvoidsEmptySelection">YES</bool>
+				<bool key="NSPreservesSelection">YES</bool>
+				<bool key="NSSelectsInsertedObjects">YES</bool>
+				<bool key="NSFilterRestrictsInsertion">YES</bool>
+				<bool key="NSClearsFilterPredicateOnInsertion">YES</bool>
+				<bool key="NSAutomaticallyRearrangesObjects">YES</bool>
+			</object>
+			<object class="NSCustomObject" id="535593278">
+				<string key="NSClassName">AppDelegate</string>
+			</object>
+			<object class="NSCustomObject" id="660263113">
+				<string key="NSClassName">FirstAuthorizationSetup</string>
+			</object>
+		</array>
+		<object class="IBObjectContainer" key="IBDocument.Objects">
+			<array class="NSMutableArray" key="connectionRecords">
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="1005"/>
+					</object>
+					<int key="connectionID">2</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">registeredCompaniesBox</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="770522906"/>
+					</object>
+					<int key="connectionID">43</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">firstAuthorizationSetup</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="660263113"/>
+					</object>
+					<int key="connectionID">44</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">companiesListTableView</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="20179024"/>
+					</object>
+					<int key="connectionID">45</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">currentCompany1</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="163266647"/>
+					</object>
+					<int key="connectionID">46</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: arrangedObjects.name</string>
+						<reference key="source" ref="834494029"/>
+						<reference key="destination" ref="163266647"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="834494029"/>
+							<reference key="NSDestination" ref="163266647"/>
+							<string key="NSLabel">value: arrangedObjects.name</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">arrangedObjects.name</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSConditionallySetsEditable</string>
+								<boolean value="YES" key="NS.object.0"/>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">41</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">managedObjectContext: moc</string>
+						<reference key="source" ref="163266647"/>
+						<reference key="destination" ref="660263113"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="163266647"/>
+							<reference key="NSDestination" ref="660263113"/>
+							<string key="NSLabel">managedObjectContext: moc</string>
+							<string key="NSBinding">managedObjectContext</string>
+							<string key="NSKeyPath">moc</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">36</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">registeredCompaniesBox</string>
+						<reference key="source" ref="660263113"/>
+						<reference key="destination" ref="770522906"/>
+					</object>
+					<int key="connectionID">42</int>
+				</object>
+			</array>
+			<object class="IBMutableOrderedSet" key="objectRecords">
+				<array key="orderedObjects">
+					<object class="IBObjectRecord">
+						<int key="objectID">0</int>
+						<array key="object" id="0"/>
+						<reference key="children" ref="1000"/>
+						<nil key="parent"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">-2</int>
+						<reference key="object" ref="1001"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">File's Owner</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">-1</int>
+						<reference key="object" ref="1003"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">First Responder</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">-3</int>
+						<reference key="object" ref="1004"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Application</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1</int>
+						<reference key="object" ref="1005"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="770522906"/>
+						</array>
+						<reference key="parent" ref="0"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">3</int>
+						<reference key="object" ref="770522906"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="782105788"/>
+						</array>
+						<reference key="parent" ref="1005"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">5</int>
+						<reference key="object" ref="782105788"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="900160245"/>
+							<reference ref="956354151"/>
+							<reference ref="20179024"/>
+						</array>
+						<reference key="parent" ref="770522906"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">8</int>
+						<reference key="object" ref="900160245"/>
+						<reference key="parent" ref="782105788"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">7</int>
+						<reference key="object" ref="956354151"/>
+						<reference key="parent" ref="782105788"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">6</int>
+						<reference key="object" ref="20179024"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="834494029"/>
+						</array>
+						<reference key="parent" ref="782105788"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">9</int>
+						<reference key="object" ref="834494029"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="261330216"/>
+						</array>
+						<reference key="parent" ref="20179024"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">10</int>
+						<reference key="object" ref="261330216"/>
+						<reference key="parent" ref="834494029"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">21</int>
+						<reference key="object" ref="163266647"/>
+						<reference key="parent" ref="0"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">27</int>
+						<reference key="object" ref="535593278"/>
+						<reference key="parent" ref="0"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">34</int>
+						<reference key="object" ref="660263113"/>
+						<reference key="parent" ref="0"/>
+					</object>
+				</array>
+			</object>
+			<dictionary class="NSMutableDictionary" key="flattenedProperties">
+				<string key="-1.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="-2.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="-3.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="1.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="10.CustomClassName">AVCellHightlight</string>
+				<string key="10.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="21.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="27.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="3.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="34.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="6.CustomClassName">AVTableView</string>
+				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<real value="9" key="6.IBViewIntegration.shadowBlurRadius"/>
+				<reference key="6.IBViewIntegration.shadowColor" ref="681716121"/>
+				<string key="7.CustomClassName">AVScroller</string>
+				<string key="7.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="8.CustomClassName">AVScroller</string>
+				<string key="8.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="9.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+			</dictionary>
+			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
+			<nil key="activeLocalization"/>
+			<dictionary class="NSMutableDictionary" key="localizations"/>
+			<nil key="sourceID"/>
+			<int key="maxID">46</int>
+		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<object class="IBPartialClassDescription">
+					<string key="className">AVCellHightlight</string>
+					<string key="superclassName">NSTextFieldCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/AVCellHightlight.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">AVScroller</string>
+					<string key="superclassName">NSScroller</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/AVScroller.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">AVTableView</string>
+					<string key="superclassName">NSTableView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/AVTableView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">AppDelegate</string>
+					<string key="superclassName">NSObject</string>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="addCarrier">NSButton</string>
+						<string key="addDestination">NSButton</string>
+						<string key="addDestinationLinesText">NSTextField</string>
+						<string key="addDestinationNext">NSButton</string>
+						<string key="addDestinationRemoveDestinationFromGroup">NSButton</string>
+						<string key="addDestinationTargetSelected">NSSegmentedControl</string>
+						<string key="addDestinations">NSNumberFormatter</string>
+						<string key="addDestinationsActiveLines">NSNumber</string>
+						<string key="addDestinationsAddGroup">NSButton</string>
+						<string key="addDestinationsAddOutDestinationToGroup">NSButton</string>
+						<string key="addDestinationsChangeLines">NSStepper</string>
+						<string key="addDestinationsChangePercent">NSStepper</string>
+						<string key="addDestinationsLines">NSTextField</string>
+						<string key="addDestinationsOutDestinationsForOutGroups">NSScrollView</string>
+						<string key="addDestinationsOutGroups">NSScrollView</string>
+						<string key="addDestinationsPercent">NSNumber</string>
+						<string key="addDestinationsPercentText">NSTextField</string>
+						<string key="addDestinationsPercentTextName">NSTextField</string>
+						<string key="addDestinationsProgressIndicator">NSProgressIndicator</string>
+						<string key="addDestinationsRateSheetsForCarrier">NSScrollView</string>
+						<string key="addDestinationsStart">NSButton</string>
+						<string key="addNewDestination">NSPanel</string>
+						<string key="callPathUrlField">NSTextField</string>
+						<string key="callPathWebView">WebView</string>
+						<string key="carrierArrayController">NSArrayController</string>
+						<string key="carrierStuff">NSArrayController</string>
+						<string key="carrierTableView">NSTableView</string>
+						<string key="carriersForAddNewDestinationsController">NSArrayController</string>
+						<string key="carriersTableView0">NSTableView</string>
+						<string key="changeLocalCountryCodeList">NSPanel</string>
+						<string key="checkDestinationsForAddByEvent">NSArrayController</string>
+						<string key="checkEvents">NSButton</string>
+						<string key="checkEventsInGetExternalInfoArea">NSButton</string>
+						<string key="checkEventsProgressindicator">NSProgressIndicator</string>
+						<string key="checkOutDestinationsForGroupForAddByEvent">NSArrayController</string>
+						<string key="checkOutGroupsAddDestinationsForEvents">NSTableView</string>
+						<string key="checkOutGroupsDestinations">NSTableView</string>
+						<string key="checkOutGroupsForAddByEvent">NSArrayController</string>
+						<string key="checkRateSheetParsing">NSButton</string>
+						<string key="codesDiscussionStatisticRoutingWebRoutingForSale">NSTabView</string>
+						<string key="codesvsDestinationsForSaleTableView">NSTableView</string>
+						<string key="companyStuff">NSArrayController</string>
+						<string key="companyStuffTableView">NSTableView</string>
+						<string key="companyStuffTableViewDelegate">CompanyStuffTableViewDelegate</string>
+						<string key="connectToMysqlGet">NSSegmentedControl</string>
+						<string key="connectToMysqlPut">NSSegmentedControl</string>
+						<string key="contactsTableView">NSTableView</string>
+						<string key="countryCodeslist">NSArrayController</string>
+						<string key="countryForEvents">NSTextField</string>
+						<string key="countryForaddNewDestination">NSTextField</string>
+						<string key="currentCompany">NSArrayController</string>
+						<string key="currentCompanyTableVew">NSTableView</string>
+						<string key="cycleUpdateDaylyCount">NSButton</string>
+						<string key="cycleUpdatePerHourCount">NSButton</string>
+						<string key="cycleUpdateTwicePerDayCount">NSButton</string>
+						<string key="databaseConnections">NSArrayController</string>
+						<string key="daylySync">NSButton</string>
+						<string key="destinationsAdd">NSProgressIndicator</string>
+						<string key="destinationsForSaleProgressIndicator">NSProgressIndicator</string>
+						<string key="destinationsForSaleSearchField">NSSearchField</string>
+						<string key="destinationsListForSale">NSArrayController</string>
+						<string key="destinationsListForSaleTableView">NSTableView</string>
+						<string key="destinationsListPushList">NSArrayController</string>
+						<string key="destinationsListPushListProgressIndicator">NSProgressIndicator</string>
+						<string key="destinationsListTargets">NSArrayController</string>
+						<string key="destinationsListTargetsProgressIndicator">NSProgressIndicator</string>
+						<string key="destinationsListWeBuy">NSArrayController</string>
+						<string key="destinationsListWeBuyResults">NSArrayController</string>
+						<string key="destinationsListWeBuyTesting">NSArrayController</string>
+						<string key="destinationsPushListSearchField">NSSearchField</string>
+						<string key="destinationsTab">NSTabView</string>
+						<string key="destinationsTargetsSearchField">NSSearchField</string>
+						<string key="destinationsWeBuyForTargets">NSProgressIndicator</string>
+						<string key="destinationsWeBuyProgress">NSProgressIndicator</string>
+						<string key="destinatonsListWeBuyForTargets">NSArrayController</string>
+						<string key="editCarrier">NSPanel</string>
+						<string key="errorPanel">NSPanel</string>
+						<string key="errorText">NSTextField</string>
+						<string key="event">NSTextField</string>
+						<string key="externalDataSalesChatWantedTab">NSTabView</string>
+						<string key="financial">NSPanel</string>
+						<string key="financialViewController">FinancialViewController</string>
+						<string key="getCarriersList">NSButton</string>
+						<string key="getExternalDataBlockProgress">NSProgressIndicator</string>
+						<string key="getWebRouting">NSButton</string>
+						<string key="importCSV">NSPanel</string>
+						<string key="importCSVProgressIndicator">NSProgressIndicator</string>
+						<string key="importCSVUploadPriceLabel">NSTextField</string>
+						<string key="importCSVchangeSheets">NSPopUpButton</string>
+						<string key="importCSVeffectiveDate">NSDate</string>
+						<string key="importCSVeffectiveDatePickuper">NSDatePicker</string>
+						<string key="importCSVprefix">NSTextField</string>
+						<string key="importCSVrateSheetTableView">NSTableView</string>
+						<string key="importCSVratesheetChoice">NSScrollView</string>
+						<string key="importCSVremoveOldPriceCheck">NSNumber</string>
+						<string key="importedCSVPreviousRates">NSButton</string>
+						<string key="importedCSVfile">NSArrayController</string>
+						<string key="importedCSVparsedSource">NSArrayController</string>
+						<string key="importedCSVselections">NSArrayController</string>
+						<string key="indicatorRatesStack">NSImageView</string>
+						<string key="indicatorRatesStackTextField">NSTextField</string>
+						<string key="introductionInfo">NSPanel</string>
+						<string key="introductionText">NSTextView</string>
+						<string key="mainProgressIndicator">NSProgressIndicator</string>
+						<string key="newEvent">NSPanel</string>
+						<string key="operationsProgress">NSArrayController</string>
+						<string key="parsingResultTableView">NSTableView</string>
+						<string key="processRatesStackShowing">NSProgressIndicator</string>
+						<string key="processRatesStackSpinning">NSProgressIndicator</string>
+						<string key="processRecordsPool">NSButton</string>
+						<string key="progressIndicatorTextField">NSTextField</string>
+						<string key="ratesStack">NSArrayController</string>
+						<string key="ratesStackIndicator">NSButton</string>
+						<string key="recoredStackProcessIndicator">NSProgressIndicator</string>
+						<string key="registrationsAvaitingApproveTableViewDelegate">RegistrationsAvaitingApproveTableViewDelegate</string>
+						<string key="remaindDayly">NSTextField</string>
+						<string key="remaindTimePerHour">NSTextField</string>
+						<string key="remaindTimeTwicePerDay">NSTextField</string>
+						<string key="removeCarrier">NSButton</string>
+						<string key="salesChatForSale">NSArrayController</string>
+						<string key="salesChatPushList">NSArrayController</string>
+						<string key="salesChatTargets">NSArrayController</string>
+						<string key="salesChatWeBuy">NSArrayController</string>
+						<string key="searchField">NSSearchField</string>
+						<string key="showRatesStack">NSWindow</string>
+						<string key="startDate">NSTextField</string>
+						<string key="syncAllCarriers">NSButton</string>
+						<string key="syncDestinationsForSale">NSButton</string>
+						<string key="syncSelectedCarriers">NSButton</string>
+						<string key="syncSelectedCarriersStart">NSButton</string>
+						<string key="systemNotifications">NSTextFieldCell</string>
+						<string key="toolBarSearch">NSSearchField</string>
+						<string key="totalProfit">NSButton</string>
+						<string key="twitterAuthButton">NSImageView</string>
+						<string key="twitterAuthPanelMainView">NSView</string>
+						<string key="twitterAuthorization">NSPanel</string>
+						<string key="twitterMainButton">NSButton</string>
+						<string key="twitterPIN">NSTextField</string>
+						<string key="twitterWebViewForPin">WebView</string>
+						<string key="updateFinancialRateCheckBox">NSButton</string>
+						<string key="updateRatesStatisticCheckBox">NSButton</string>
+						<string key="updateResponsibles">NSButton</string>
+						<string key="userAwaitingApproveTableView">NSTableView</string>
+						<string key="window">NSWindow</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="addCarrier">
+							<string key="name">addCarrier</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestination">
+							<string key="name">addDestination</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationLinesText">
+							<string key="name">addDestinationLinesText</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationNext">
+							<string key="name">addDestinationNext</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationRemoveDestinationFromGroup">
+							<string key="name">addDestinationRemoveDestinationFromGroup</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationTargetSelected">
+							<string key="name">addDestinationTargetSelected</string>
+							<string key="candidateClassName">NSSegmentedControl</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinations">
+							<string key="name">addDestinations</string>
+							<string key="candidateClassName">NSNumberFormatter</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationsActiveLines">
+							<string key="name">addDestinationsActiveLines</string>
+							<string key="candidateClassName">NSNumber</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationsAddGroup">
+							<string key="name">addDestinationsAddGroup</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationsAddOutDestinationToGroup">
+							<string key="name">addDestinationsAddOutDestinationToGroup</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationsChangeLines">
+							<string key="name">addDestinationsChangeLines</string>
+							<string key="candidateClassName">NSStepper</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationsChangePercent">
+							<string key="name">addDestinationsChangePercent</string>
+							<string key="candidateClassName">NSStepper</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationsLines">
+							<string key="name">addDestinationsLines</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationsOutDestinationsForOutGroups">
+							<string key="name">addDestinationsOutDestinationsForOutGroups</string>
+							<string key="candidateClassName">NSScrollView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationsOutGroups">
+							<string key="name">addDestinationsOutGroups</string>
+							<string key="candidateClassName">NSScrollView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationsPercent">
+							<string key="name">addDestinationsPercent</string>
+							<string key="candidateClassName">NSNumber</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationsPercentText">
+							<string key="name">addDestinationsPercentText</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationsPercentTextName">
+							<string key="name">addDestinationsPercentTextName</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationsProgressIndicator">
+							<string key="name">addDestinationsProgressIndicator</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationsRateSheetsForCarrier">
+							<string key="name">addDestinationsRateSheetsForCarrier</string>
+							<string key="candidateClassName">NSScrollView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addDestinationsStart">
+							<string key="name">addDestinationsStart</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="addNewDestination">
+							<string key="name">addNewDestination</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="callPathUrlField">
+							<string key="name">callPathUrlField</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="callPathWebView">
+							<string key="name">callPathWebView</string>
+							<string key="candidateClassName">WebView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="carrierArrayController">
+							<string key="name">carrierArrayController</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="carrierStuff">
+							<string key="name">carrierStuff</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="carrierTableView">
+							<string key="name">carrierTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="carriersForAddNewDestinationsController">
+							<string key="name">carriersForAddNewDestinationsController</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="carriersTableView0">
+							<string key="name">carriersTableView0</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="changeLocalCountryCodeList">
+							<string key="name">changeLocalCountryCodeList</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="checkDestinationsForAddByEvent">
+							<string key="name">checkDestinationsForAddByEvent</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="checkEvents">
+							<string key="name">checkEvents</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="checkEventsInGetExternalInfoArea">
+							<string key="name">checkEventsInGetExternalInfoArea</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="checkEventsProgressindicator">
+							<string key="name">checkEventsProgressindicator</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="checkOutDestinationsForGroupForAddByEvent">
+							<string key="name">checkOutDestinationsForGroupForAddByEvent</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="checkOutGroupsAddDestinationsForEvents">
+							<string key="name">checkOutGroupsAddDestinationsForEvents</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="checkOutGroupsDestinations">
+							<string key="name">checkOutGroupsDestinations</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="checkOutGroupsForAddByEvent">
+							<string key="name">checkOutGroupsForAddByEvent</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="checkRateSheetParsing">
+							<string key="name">checkRateSheetParsing</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="codesDiscussionStatisticRoutingWebRoutingForSale">
+							<string key="name">codesDiscussionStatisticRoutingWebRoutingForSale</string>
+							<string key="candidateClassName">NSTabView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="codesvsDestinationsForSaleTableView">
+							<string key="name">codesvsDestinationsForSaleTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companyStuff">
+							<string key="name">companyStuff</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companyStuffTableView">
+							<string key="name">companyStuffTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companyStuffTableViewDelegate">
+							<string key="name">companyStuffTableViewDelegate</string>
+							<string key="candidateClassName">CompanyStuffTableViewDelegate</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="connectToMysqlGet">
+							<string key="name">connectToMysqlGet</string>
+							<string key="candidateClassName">NSSegmentedControl</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="connectToMysqlPut">
+							<string key="name">connectToMysqlPut</string>
+							<string key="candidateClassName">NSSegmentedControl</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="contactsTableView">
+							<string key="name">contactsTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="countryCodeslist">
+							<string key="name">countryCodeslist</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="countryForEvents">
+							<string key="name">countryForEvents</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="countryForaddNewDestination">
+							<string key="name">countryForaddNewDestination</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="currentCompany">
+							<string key="name">currentCompany</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="currentCompanyTableVew">
+							<string key="name">currentCompanyTableVew</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="cycleUpdateDaylyCount">
+							<string key="name">cycleUpdateDaylyCount</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="cycleUpdatePerHourCount">
+							<string key="name">cycleUpdatePerHourCount</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="cycleUpdateTwicePerDayCount">
+							<string key="name">cycleUpdateTwicePerDayCount</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="databaseConnections">
+							<string key="name">databaseConnections</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="daylySync">
+							<string key="name">daylySync</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsAdd">
+							<string key="name">destinationsAdd</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsForSaleProgressIndicator">
+							<string key="name">destinationsForSaleProgressIndicator</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsForSaleSearchField">
+							<string key="name">destinationsForSaleSearchField</string>
+							<string key="candidateClassName">NSSearchField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsListForSale">
+							<string key="name">destinationsListForSale</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsListForSaleTableView">
+							<string key="name">destinationsListForSaleTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsListPushList">
+							<string key="name">destinationsListPushList</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsListPushListProgressIndicator">
+							<string key="name">destinationsListPushListProgressIndicator</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsListTargets">
+							<string key="name">destinationsListTargets</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsListTargetsProgressIndicator">
+							<string key="name">destinationsListTargetsProgressIndicator</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsListWeBuy">
+							<string key="name">destinationsListWeBuy</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsListWeBuyResults">
+							<string key="name">destinationsListWeBuyResults</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsListWeBuyTesting">
+							<string key="name">destinationsListWeBuyTesting</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsPushListSearchField">
+							<string key="name">destinationsPushListSearchField</string>
+							<string key="candidateClassName">NSSearchField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsTab">
+							<string key="name">destinationsTab</string>
+							<string key="candidateClassName">NSTabView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsTargetsSearchField">
+							<string key="name">destinationsTargetsSearchField</string>
+							<string key="candidateClassName">NSSearchField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsWeBuyForTargets">
+							<string key="name">destinationsWeBuyForTargets</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinationsWeBuyProgress">
+							<string key="name">destinationsWeBuyProgress</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="destinatonsListWeBuyForTargets">
+							<string key="name">destinatonsListWeBuyForTargets</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="editCarrier">
+							<string key="name">editCarrier</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="errorPanel">
+							<string key="name">errorPanel</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="errorText">
+							<string key="name">errorText</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="event">
+							<string key="name">event</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="externalDataSalesChatWantedTab">
+							<string key="name">externalDataSalesChatWantedTab</string>
+							<string key="candidateClassName">NSTabView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="financial">
+							<string key="name">financial</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="financialViewController">
+							<string key="name">financialViewController</string>
+							<string key="candidateClassName">FinancialViewController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="getCarriersList">
+							<string key="name">getCarriersList</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="getExternalDataBlockProgress">
+							<string key="name">getExternalDataBlockProgress</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="getWebRouting">
+							<string key="name">getWebRouting</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importCSV">
+							<string key="name">importCSV</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importCSVProgressIndicator">
+							<string key="name">importCSVProgressIndicator</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importCSVUploadPriceLabel">
+							<string key="name">importCSVUploadPriceLabel</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importCSVchangeSheets">
+							<string key="name">importCSVchangeSheets</string>
+							<string key="candidateClassName">NSPopUpButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importCSVeffectiveDate">
+							<string key="name">importCSVeffectiveDate</string>
+							<string key="candidateClassName">NSDate</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importCSVeffectiveDatePickuper">
+							<string key="name">importCSVeffectiveDatePickuper</string>
+							<string key="candidateClassName">NSDatePicker</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importCSVprefix">
+							<string key="name">importCSVprefix</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importCSVrateSheetTableView">
+							<string key="name">importCSVrateSheetTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importCSVratesheetChoice">
+							<string key="name">importCSVratesheetChoice</string>
+							<string key="candidateClassName">NSScrollView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importCSVremoveOldPriceCheck">
+							<string key="name">importCSVremoveOldPriceCheck</string>
+							<string key="candidateClassName">NSNumber</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importedCSVPreviousRates">
+							<string key="name">importedCSVPreviousRates</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importedCSVfile">
+							<string key="name">importedCSVfile</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importedCSVparsedSource">
+							<string key="name">importedCSVparsedSource</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importedCSVselections">
+							<string key="name">importedCSVselections</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="indicatorRatesStack">
+							<string key="name">indicatorRatesStack</string>
+							<string key="candidateClassName">NSImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="indicatorRatesStackTextField">
+							<string key="name">indicatorRatesStackTextField</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="introductionInfo">
+							<string key="name">introductionInfo</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="introductionText">
+							<string key="name">introductionText</string>
+							<string key="candidateClassName">NSTextView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mainProgressIndicator">
+							<string key="name">mainProgressIndicator</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="newEvent">
+							<string key="name">newEvent</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="operationsProgress">
+							<string key="name">operationsProgress</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="parsingResultTableView">
+							<string key="name">parsingResultTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="processRatesStackShowing">
+							<string key="name">processRatesStackShowing</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="processRatesStackSpinning">
+							<string key="name">processRatesStackSpinning</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="processRecordsPool">
+							<string key="name">processRecordsPool</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="progressIndicatorTextField">
+							<string key="name">progressIndicatorTextField</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="ratesStack">
+							<string key="name">ratesStack</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="ratesStackIndicator">
+							<string key="name">ratesStackIndicator</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="recoredStackProcessIndicator">
+							<string key="name">recoredStackProcessIndicator</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="registrationsAvaitingApproveTableViewDelegate">
+							<string key="name">registrationsAvaitingApproveTableViewDelegate</string>
+							<string key="candidateClassName">RegistrationsAvaitingApproveTableViewDelegate</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="remaindDayly">
+							<string key="name">remaindDayly</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="remaindTimePerHour">
+							<string key="name">remaindTimePerHour</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="remaindTimeTwicePerDay">
+							<string key="name">remaindTimeTwicePerDay</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="removeCarrier">
+							<string key="name">removeCarrier</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="salesChatForSale">
+							<string key="name">salesChatForSale</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="salesChatPushList">
+							<string key="name">salesChatPushList</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="salesChatTargets">
+							<string key="name">salesChatTargets</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="salesChatWeBuy">
+							<string key="name">salesChatWeBuy</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="searchField">
+							<string key="name">searchField</string>
+							<string key="candidateClassName">NSSearchField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="showRatesStack">
+							<string key="name">showRatesStack</string>
+							<string key="candidateClassName">NSWindow</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="startDate">
+							<string key="name">startDate</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="syncAllCarriers">
+							<string key="name">syncAllCarriers</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="syncDestinationsForSale">
+							<string key="name">syncDestinationsForSale</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="syncSelectedCarriers">
+							<string key="name">syncSelectedCarriers</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="syncSelectedCarriersStart">
+							<string key="name">syncSelectedCarriersStart</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="systemNotifications">
+							<string key="name">systemNotifications</string>
+							<string key="candidateClassName">NSTextFieldCell</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="toolBarSearch">
+							<string key="name">toolBarSearch</string>
+							<string key="candidateClassName">NSSearchField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="totalProfit">
+							<string key="name">totalProfit</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="twitterAuthButton">
+							<string key="name">twitterAuthButton</string>
+							<string key="candidateClassName">NSImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="twitterAuthPanelMainView">
+							<string key="name">twitterAuthPanelMainView</string>
+							<string key="candidateClassName">NSView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="twitterAuthorization">
+							<string key="name">twitterAuthorization</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="twitterMainButton">
+							<string key="name">twitterMainButton</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="twitterPIN">
+							<string key="name">twitterPIN</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="twitterWebViewForPin">
+							<string key="name">twitterWebViewForPin</string>
+							<string key="candidateClassName">WebView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="updateFinancialRateCheckBox">
+							<string key="name">updateFinancialRateCheckBox</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="updateRatesStatisticCheckBox">
+							<string key="name">updateRatesStatisticCheckBox</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="updateResponsibles">
+							<string key="name">updateResponsibles</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="userAwaitingApproveTableView">
+							<string key="name">userAwaitingApproveTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="window">
+							<string key="name">window</string>
+							<string key="candidateClassName">NSWindow</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/AppDelegate.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">CompanyStuffTableViewDelegate</string>
+					<string key="superclassName">NSObject</string>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="addUser">NSButton</string>
+						<string key="authorization">NSPanel</string>
+						<string key="carrier">NSArrayController</string>
+						<string key="changePassword">NSButton</string>
+						<string key="companyStuff">NSArrayController</string>
+						<string key="companyStuffFirstPlusLastName">NSArrayController</string>
+						<string key="companyStuffTableView">NSTableView</string>
+						<string key="companyStuffVerticalTableView">NSTableView</string>
+						<string key="companyStuffVerticalView">NSArrayController</string>
+						<string key="currentCompany">NSArrayController</string>
+						<string key="currentCompanyStatus">NSButton</string>
+						<string key="currentCompanyTableView">NSTableView</string>
+						<string key="currentUserInfoList">NSButton</string>
+						<string key="errorPanel">NSPanel</string>
+						<string key="errorText">NSTextField</string>
+						<string key="login">NSButton</string>
+						<string key="loginField">NSTextField</string>
+						<string key="loginInfo">NSTextField</string>
+						<string key="loginProgressIndicator">NSProgressIndicator</string>
+						<string key="networkProgress">NSProgressIndicator</string>
+						<string key="passwordField">NSSecureTextField</string>
+						<string key="registrationNotification">NSButton</string>
+						<string key="setPassword">NSSecureTextField</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="addUser">
+							<string key="name">addUser</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="authorization">
+							<string key="name">authorization</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="carrier">
+							<string key="name">carrier</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="changePassword">
+							<string key="name">changePassword</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companyStuff">
+							<string key="name">companyStuff</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companyStuffFirstPlusLastName">
+							<string key="name">companyStuffFirstPlusLastName</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companyStuffTableView">
+							<string key="name">companyStuffTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companyStuffVerticalTableView">
+							<string key="name">companyStuffVerticalTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companyStuffVerticalView">
+							<string key="name">companyStuffVerticalView</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="currentCompany">
+							<string key="name">currentCompany</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="currentCompanyStatus">
+							<string key="name">currentCompanyStatus</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="currentCompanyTableView">
+							<string key="name">currentCompanyTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="currentUserInfoList">
+							<string key="name">currentUserInfoList</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="errorPanel">
+							<string key="name">errorPanel</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="errorText">
+							<string key="name">errorText</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="login">
+							<string key="name">login</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="loginField">
+							<string key="name">loginField</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="loginInfo">
+							<string key="name">loginInfo</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="loginProgressIndicator">
+							<string key="name">loginProgressIndicator</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="networkProgress">
+							<string key="name">networkProgress</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="passwordField">
+							<string key="name">passwordField</string>
+							<string key="candidateClassName">NSSecureTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="registrationNotification">
+							<string key="name">registrationNotification</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="setPassword">
+							<string key="name">setPassword</string>
+							<string key="candidateClassName">NSSecureTextField</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/CompanyStuffTableViewDelegate.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">FinancialViewController</string>
+					<string key="superclassName">NSObject</string>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="addInvoiceFile">NSButton</string>
+						<string key="allInvoices">NSArrayController</string>
+						<string key="allPayments">NSArrayController</string>
+						<string key="apply">NSButton</string>
+						<string key="applyAndCreateDispute">NSButton</string>
+						<string key="carrierBalance">NSButton</string>
+						<string key="carrierFinancialChoice">NSPopUpButton</string>
+						<string key="carrierNameAndAddress">NSTextField</string>
+						<string key="carriers">NSArrayController</string>
+						<string key="changeAccountAlert">NSButton</string>
+						<string key="closeButton">NSButton</string>
+						<string key="companyAccountDetails">NSPanel</string>
+						<string key="companyAccountDetailsTableView">NSTableView</string>
+						<string key="companyAccounts">NSArrayController</string>
+						<string key="companyAccountsVerticalView">NSArrayController</string>
+						<string key="companyBankingDetails">NSTextField</string>
+						<string key="companyNameAddressPhone">NSTextField</string>
+						<string key="disputedSum">NSButton</string>
+						<string key="financial">NSArrayController</string>
+						<string key="financialPanel">NSPanel</string>
+						<string key="invoice">NSPanel</string>
+						<string key="invoiceBox">NSBox</string>
+						<string key="invoiceGenerationFullData">NSArrayController</string>
+						<string key="invoiceGenerationFullDataTableView">NSTableView</string>
+						<string key="invoiceGenerationPerDestinationsData">NSArrayController</string>
+						<string key="invoiceGenerationPerDestinationsDataTableView">NSTableView</string>
+						<string key="invoiceNumber">NSTextField</string>
+						<string key="invoices">NSArrayController</string>
+						<string key="invoicesDifference">NSButton</string>
+						<string key="invoicesReceivedSentChoice">NSSegmentedControl</string>
+						<string key="logo">NSImageView</string>
+						<string key="newInvoice">NSButton</string>
+						<string key="newPayment">NSButton</string>
+						<string key="newReceivedInvoice">NSPanel</string>
+						<string key="newReceivedInvoiceCompanyAccounts">NSPopUpButton</string>
+						<string key="newReceivedInvoiceCurrency">NSPopUpButton</string>
+						<string key="newReceivedInvoiceFrom">NSDatePicker</string>
+						<string key="newReceivedInvoiceInternalAmount">NSButton</string>
+						<string key="newReceivedInvoiceInvoiceAmount">NSTextField</string>
+						<string key="newReceivedInvoiceNumber">NSTextField</string>
+						<string key="newReceivedInvoicePath">NSPathControl</string>
+						<string key="newReceivedInvoiceTo">NSDatePicker</string>
+						<string key="newReceivedInvoiceWhen">NSDatePicker</string>
+						<string key="pathToInvoice">NSPathControl</string>
+						<string key="payments">NSArrayController</string>
+						<string key="paymentsReceiveSentChoice">NSSegmentedControl</string>
+						<string key="progressUpdate">NSProgressIndicator</string>
+						<string key="search">NSSearchField</string>
+						<string key="summTotalSelectedInvoices">NSButton</string>
+						<string key="summTotalSelectedPayments">NSButton</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="addInvoiceFile">
+							<string key="name">addInvoiceFile</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="allInvoices">
+							<string key="name">allInvoices</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="allPayments">
+							<string key="name">allPayments</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="apply">
+							<string key="name">apply</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="applyAndCreateDispute">
+							<string key="name">applyAndCreateDispute</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="carrierBalance">
+							<string key="name">carrierBalance</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="carrierFinancialChoice">
+							<string key="name">carrierFinancialChoice</string>
+							<string key="candidateClassName">NSPopUpButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="carrierNameAndAddress">
+							<string key="name">carrierNameAndAddress</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="carriers">
+							<string key="name">carriers</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="changeAccountAlert">
+							<string key="name">changeAccountAlert</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="closeButton">
+							<string key="name">closeButton</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companyAccountDetails">
+							<string key="name">companyAccountDetails</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companyAccountDetailsTableView">
+							<string key="name">companyAccountDetailsTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companyAccounts">
+							<string key="name">companyAccounts</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companyAccountsVerticalView">
+							<string key="name">companyAccountsVerticalView</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companyBankingDetails">
+							<string key="name">companyBankingDetails</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companyNameAddressPhone">
+							<string key="name">companyNameAddressPhone</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="disputedSum">
+							<string key="name">disputedSum</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="financial">
+							<string key="name">financial</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="financialPanel">
+							<string key="name">financialPanel</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="invoice">
+							<string key="name">invoice</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="invoiceBox">
+							<string key="name">invoiceBox</string>
+							<string key="candidateClassName">NSBox</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="invoiceGenerationFullData">
+							<string key="name">invoiceGenerationFullData</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="invoiceGenerationFullDataTableView">
+							<string key="name">invoiceGenerationFullDataTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="invoiceGenerationPerDestinationsData">
+							<string key="name">invoiceGenerationPerDestinationsData</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="invoiceGenerationPerDestinationsDataTableView">
+							<string key="name">invoiceGenerationPerDestinationsDataTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="invoiceNumber">
+							<string key="name">invoiceNumber</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="invoices">
+							<string key="name">invoices</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="invoicesDifference">
+							<string key="name">invoicesDifference</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="invoicesReceivedSentChoice">
+							<string key="name">invoicesReceivedSentChoice</string>
+							<string key="candidateClassName">NSSegmentedControl</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="logo">
+							<string key="name">logo</string>
+							<string key="candidateClassName">NSImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="newInvoice">
+							<string key="name">newInvoice</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="newPayment">
+							<string key="name">newPayment</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="newReceivedInvoice">
+							<string key="name">newReceivedInvoice</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="newReceivedInvoiceCompanyAccounts">
+							<string key="name">newReceivedInvoiceCompanyAccounts</string>
+							<string key="candidateClassName">NSPopUpButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="newReceivedInvoiceCurrency">
+							<string key="name">newReceivedInvoiceCurrency</string>
+							<string key="candidateClassName">NSPopUpButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="newReceivedInvoiceFrom">
+							<string key="name">newReceivedInvoiceFrom</string>
+							<string key="candidateClassName">NSDatePicker</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="newReceivedInvoiceInternalAmount">
+							<string key="name">newReceivedInvoiceInternalAmount</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="newReceivedInvoiceInvoiceAmount">
+							<string key="name">newReceivedInvoiceInvoiceAmount</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="newReceivedInvoiceNumber">
+							<string key="name">newReceivedInvoiceNumber</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="newReceivedInvoicePath">
+							<string key="name">newReceivedInvoicePath</string>
+							<string key="candidateClassName">NSPathControl</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="newReceivedInvoiceTo">
+							<string key="name">newReceivedInvoiceTo</string>
+							<string key="candidateClassName">NSDatePicker</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="newReceivedInvoiceWhen">
+							<string key="name">newReceivedInvoiceWhen</string>
+							<string key="candidateClassName">NSDatePicker</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="pathToInvoice">
+							<string key="name">pathToInvoice</string>
+							<string key="candidateClassName">NSPathControl</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="payments">
+							<string key="name">payments</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="paymentsReceiveSentChoice">
+							<string key="name">paymentsReceiveSentChoice</string>
+							<string key="candidateClassName">NSSegmentedControl</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="progressUpdate">
+							<string key="name">progressUpdate</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="search">
+							<string key="name">search</string>
+							<string key="candidateClassName">NSSearchField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="summTotalSelectedInvoices">
+							<string key="name">summTotalSelectedInvoices</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="summTotalSelectedPayments">
+							<string key="name">summTotalSelectedPayments</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/FinancialViewController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">FirstAuthorizationSetup</string>
+					<string key="superclassName">NSViewController</string>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="companiesList">NSBox</string>
+						<string key="companiesListScrollView">NSScrollView</string>
+						<string key="companiesListTableView">NSTableView</string>
+						<string key="company">NSTextField</string>
+						<string key="currentCompany">NSArrayController</string>
+						<string key="email">NSTextField</string>
+						<string key="errorMessage">NSTextField</string>
+						<string key="login">NSButton</string>
+						<string key="loginRegistrationErrorView">NSView</string>
+						<string key="logo">NSImageView</string>
+						<string key="logoName">NSTextField</string>
+						<string key="namedLogo">NSTextField</string>
+						<string key="password">NSTextField</string>
+						<string key="popoverView">NSView</string>
+						<string key="progressLogin">NSProgressIndicator</string>
+						<string key="registeredCompaniesBox">NSBox</string>
+						<string key="registration">NSButton</string>
+						<string key="selectorToCompaniesList">NSButton</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="companiesList">
+							<string key="name">companiesList</string>
+							<string key="candidateClassName">NSBox</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companiesListScrollView">
+							<string key="name">companiesListScrollView</string>
+							<string key="candidateClassName">NSScrollView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="companiesListTableView">
+							<string key="name">companiesListTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="company">
+							<string key="name">company</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="currentCompany">
+							<string key="name">currentCompany</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="email">
+							<string key="name">email</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="errorMessage">
+							<string key="name">errorMessage</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="login">
+							<string key="name">login</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="loginRegistrationErrorView">
+							<string key="name">loginRegistrationErrorView</string>
+							<string key="candidateClassName">NSView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="logo">
+							<string key="name">logo</string>
+							<string key="candidateClassName">NSImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="logoName">
+							<string key="name">logoName</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="namedLogo">
+							<string key="name">namedLogo</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="password">
+							<string key="name">password</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="popoverView">
+							<string key="name">popoverView</string>
+							<string key="candidateClassName">NSView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="progressLogin">
+							<string key="name">progressLogin</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="registeredCompaniesBox">
+							<string key="name">registeredCompaniesBox</string>
+							<string key="candidateClassName">NSBox</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="registration">
+							<string key="name">registration</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="selectorToCompaniesList">
+							<string key="name">selectorToCompaniesList</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/FirstAuthorizationSetup.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">FirstAuthorizationSetupCompaniesList</string>
+					<string key="superclassName">NSViewController</string>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="companiesListTableView">NSTableView</string>
+						<string key="currentCompany1">NSArrayController</string>
+						<string key="firstAuthorizationSetup">FirstAuthorizationSetup</string>
+						<string key="registeredCompaniesBox">NSBox</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="companiesListTableView">
+							<string key="name">companiesListTableView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="currentCompany1">
+							<string key="name">currentCompany1</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="firstAuthorizationSetup">
+							<string key="name">firstAuthorizationSetup</string>
+							<string key="candidateClassName">FirstAuthorizationSetup</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="registeredCompaniesBox">
+							<string key="name">registeredCompaniesBox</string>
+							<string key="candidateClassName">NSBox</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/FirstAuthorizationSetupCompaniesList.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">RegistrationsAvaitingApproveTableViewDelegate</string>
+					<string key="superclassName">NSObject</string>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="approveUser">NSButton</string>
+						<string key="declineUser">NSButton</string>
+						<string key="errorPanel">NSPanel</string>
+						<string key="errorText">NSTextField</string>
+						<string key="recordsAvaitingApproveStack">NSArrayController</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="approveUser">
+							<string key="name">approveUser</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="declineUser">
+							<string key="name">declineUser</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="errorPanel">
+							<string key="name">errorPanel</string>
+							<string key="candidateClassName">NSPanel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="errorText">
+							<string key="name">errorText</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="recordsAvaitingApproveStack">
+							<string key="name">recordsAvaitingApproveStack</string>
+							<string key="candidateClassName">NSArrayController</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/RegistrationsAvaitingApproveTableViewDelegate.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">WebView</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">reloadFromOrigin:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">reloadFromOrigin:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">reloadFromOrigin:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/WebView.h</string>
+					</object>
+				</object>
+			</array>
+		</object>
+		<int key="IBDocument.localizationMode">0</int>
+		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
+		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
+		<int key="IBDocument.defaultPropertyAccessControl">3</int>
+	</data>
+</archive>

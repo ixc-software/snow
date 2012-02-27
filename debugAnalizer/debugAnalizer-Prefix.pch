@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'debugAnalizer' target in the 'debugAnalizer' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif
