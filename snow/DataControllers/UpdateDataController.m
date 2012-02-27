@@ -239,14 +239,6 @@
 
 - (void)importerDidSave:(NSNotification *)saveNotification {
     
-    
-//    if (![NSThread isMainThread]) {
-//        [self performSelectorOnMainThread:@selector(importerDidSave:) withObject:saveNotification waitUntilDone:YES];
-//        return;
-//    }
-//    
-//    [delegate.managedObjectContext mergeChangesFromContextDidSaveNotification:saveNotification];
-    //NSLog(@"MERGE in update data");
     NSManagedObjectContext *mainMoc = [delegate managedObjectContext];
     [mainMoc performSelectorOnMainThread:@selector(mergeChangesFromContextDidSaveNotification:)	
                               withObject:saveNotification
