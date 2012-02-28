@@ -7,14 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AddRoutesHeaderView.h"
+#import "AddRoutesCell.h"
 #import <MessageUI/MessageUI.h>
 #import "DestinationsListViewController.h"
 #import "CompanyStuff.h"
-//#import "UserDataController.h"
-
+#import "AddRoutesHeaderView.h"
+#import "AddRoutesCell.h"
 @class DestinationsListViewController;
-@class SpecificCodesCell;
+//@class SpecificCodesCell;
 
 @interface AddRoutesTableViewController : UITableViewController <NSFetchedResultsControllerDelegate, MFMailComposeViewControllerDelegate,UISearchDisplayDelegate,UISearchBarDelegate,SectionHeaderViewDelegate> {
 @private
@@ -38,7 +38,7 @@
 @property (nonatomic, retain) UISegmentedControl *routesList;
 
 
-@property (nonatomic, assign) IBOutlet SpecificCodesCell *quoteCell;
+@property (nonatomic, assign) IBOutlet AddRoutesCell *quoteCell;
 //@property (nonatomic, retain) IBOutlet UISearchDisplayController *mySearchDisplayController;
 @property (nonatomic, retain) IBOutlet UISearchBar *bar;
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;

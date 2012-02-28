@@ -68,4 +68,8 @@
 @property (retain, nonatomic) IBOutlet UIProgressView *operationProgress;
 
 
+@property (readwrite) BOOL isRoutesWeBuyListUpdated;
+@property (readwrite) BOOL isRoutesForSaleListUpdated;
+@property (readwrite) BOOL isRoutesPushlistListUpdated;
+
 @end

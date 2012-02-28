@@ -22,7 +22,6 @@
 #import "ClientController.h"
 #import "mobileAppDelegate.h"
 
-#import "SpecificCodesCell.h"
 #import <QuartzCore/QuartzCore.h>
 
 #import "NormalizedCountryTransformer.h"
@@ -318,11 +317,11 @@
     
     static NSString *SpecificCodesCellIdentifier = @"QuoteCellIdentifier";
 
-    SpecificCodesCell *cell = (SpecificCodesCell*)[tableView dequeueReusableCellWithIdentifier:SpecificCodesCellIdentifier];
+    AddRoutesCell *cell = (AddRoutesCell*)[tableView dequeueReusableCellWithIdentifier:SpecificCodesCellIdentifier];
     
     if (!cell) {
         
-        UINib *quoteCellNib = [UINib nibWithNibName:@"QuoteCell" bundle:nil];
+        UINib *quoteCellNib = [UINib nibWithNibName:@"AddRoutesCell" bundle:nil];
         [quoteCellNib instantiateWithOwner:self options:nil];
         cell = self.quoteCell;
         self.quoteCell = nil;
