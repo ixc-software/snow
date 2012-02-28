@@ -504,7 +504,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
 	HTTPLogTrace();
 	
 	// Create an HTTPS server (all connections will be secured via SSL/TLS)
-	return YES;
+	return NO;
 }
 //
 - (NSArray *)sslIdentityAndCertificates
