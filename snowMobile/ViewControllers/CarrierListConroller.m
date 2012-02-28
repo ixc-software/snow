@@ -10,7 +10,7 @@
 
 #import "ClientController.h"
 #import "mobileAppDelegate.h"
-#import "DestinationsListPushListTableViewController.h"
+#import "DestinationsListViewController.h"
 #import "HelpForInfoView.h"
 
 #import "CompanyStuff.h"
@@ -516,7 +516,7 @@
 //    NSArray *viewControllers = delegate.tabBarController.viewControllers;
 //    UINavigationController *destinations = [viewControllers objectAtIndex:2];
 //    NSArray *viewControllersForNavigation = destinations.viewControllers;
-    DestinationsListPushListTableViewController *routesTableViewController = [[[DestinationsListPushListTableViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
+    DestinationsListViewController *routesTableViewController = [[[DestinationsListViewController alloc] initWithNibName:@"DestinationsListViewController" bundle:nil] autorelease];
     routesTableViewController.isControllerStartedFromOutsideTabbar = YES;
     routesTableViewController.managedObjectContext = [delegate managedObjectContext];
     Carrier *carrier = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:0]];

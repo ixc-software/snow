@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FA0D450F14FCBCDA00CDDCF2 /* ParseCSV.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0D450E14FCBCDA00CDDCF2 /* ParseCSV.m */; };
+		FA0D451014FCBCDA00CDDCF2 /* ParseCSV.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0D450E14FCBCDA00CDDCF2 /* ParseCSV.m */; };
+		FA0D451114FCBCDA00CDDCF2 /* ParseCSV.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0D450E14FCBCDA00CDDCF2 /* ParseCSV.m */; };
+		FA0D451214FCBCDA00CDDCF2 /* ParseCSV.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0D450E14FCBCDA00CDDCF2 /* ParseCSV.m */; };
 		FA10F9EA14F823610014C545 /* CountrySpecificCodeList.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10F9E814F823590014C545 /* CountrySpecificCodeList.m */; };
 		FA10F9EE14F823780014C545 /* CodesList.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10F9EC14F823740014C545 /* CodesList.m */; };
 		FA10F9F214F823D10014C545 /* CodesvsDestinationsList.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10F9F014F823D10014C545 /* CodesvsDestinationsList.m */; };
@@ -127,7 +131,6 @@
 		FA10FB1F14F846510014C545 /* MySQLIXC.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA8D14F834730014C545 /* MySQLIXC.m */; };
 		FA10FB2014F846510014C545 /* UpdateDataController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA9014F834910014C545 /* UpdateDataController.m */; };
 		FA10FB2114F846510014C545 /* ProgressUpdateController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA9314F834B80014C545 /* ProgressUpdateController.m */; };
-		FA10FB2214F846510014C545 /* ParseCSV.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA9614F8356A0014C545 /* ParseCSV.m */; };
 		FA10FB2314F846510014C545 /* GetExternalInfoOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA9914F835A00014C545 /* GetExternalInfoOperation.m */; };
 		FA10FB2414F846510014C545 /* DestinationsClassController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FAA314F83F1D0014C545 /* DestinationsClassController.m */; };
 		FA10FB2514F846510014C545 /* ArrayToDataTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FAA614F83FB00014C545 /* ArrayToDataTransformer.m */; };
@@ -259,7 +262,6 @@
 		FA10FBB314F846780014C545 /* MySQLIXC.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA8D14F834730014C545 /* MySQLIXC.m */; };
 		FA10FBB414F846780014C545 /* UpdateDataController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA9014F834910014C545 /* UpdateDataController.m */; };
 		FA10FBB514F846780014C545 /* ProgressUpdateController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA9314F834B80014C545 /* ProgressUpdateController.m */; };
-		FA10FBB614F846780014C545 /* ParseCSV.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA9614F8356A0014C545 /* ParseCSV.m */; };
 		FA10FBB714F846780014C545 /* GetExternalInfoOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA9914F835A00014C545 /* GetExternalInfoOperation.m */; };
 		FA10FBB814F846780014C545 /* DestinationsClassController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FAA314F83F1D0014C545 /* DestinationsClassController.m */; };
 		FA10FBB914F846780014C545 /* ArrayToDataTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FAA614F83FB00014C545 /* ArrayToDataTransformer.m */; };
@@ -392,7 +394,6 @@
 		FA10FC4714F8468D0014C545 /* MySQLIXC.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA8D14F834730014C545 /* MySQLIXC.m */; };
 		FA10FC4814F8468D0014C545 /* UpdateDataController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA9014F834910014C545 /* UpdateDataController.m */; };
 		FA10FC4914F8468D0014C545 /* ProgressUpdateController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA9314F834B80014C545 /* ProgressUpdateController.m */; };
-		FA10FC4A14F8468D0014C545 /* ParseCSV.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA9614F8356A0014C545 /* ParseCSV.m */; };
 		FA10FC4B14F8468D0014C545 /* GetExternalInfoOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FA9914F835A00014C545 /* GetExternalInfoOperation.m */; };
 		FA10FC4C14F8468D0014C545 /* DestinationsClassController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FAA314F83F1D0014C545 /* DestinationsClassController.m */; };
 		FA10FC4D14F8468D0014C545 /* ArrayToDataTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = FA10FAA614F83FB00014C545 /* ArrayToDataTransformer.m */; };
@@ -472,12 +473,13 @@
 		FA195A8814F8206B002E9A89 /* snow.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FA195A8514F8206B002E9A89 /* snow.xcdatamodeld */; };
 		FA195A8D14F822AC002E9A89 /* MainSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = FA195A8B14F822AC002E9A89 /* MainSystem.m */; };
 		FA195A9114F822F2002E9A89 /* Events.m in Sources */ = {isa = PBXBuildFile; fileRef = FA195A8F14F822F2002E9A89 /* Events.m */; };
+		FA3AB1F814FCBAFB004C46A5 /* codeList.txt in Resources */ = {isa = PBXBuildFile; fileRef = FA3AB1F714FCBAFB004C46A5 /* codeList.txt */; };
+		FA3AB1F914FCBAFB004C46A5 /* codeList.txt in Resources */ = {isa = PBXBuildFile; fileRef = FA3AB1F714FCBAFB004C46A5 /* codeList.txt */; };
+		FA3AB1FA14FCBAFB004C46A5 /* codeList.txt in Resources */ = {isa = PBXBuildFile; fileRef = FA3AB1F714FCBAFB004C46A5 /* codeList.txt */; };
+		FA3AB1FB14FCBAFB004C46A5 /* codeList.txt in Resources */ = {isa = PBXBuildFile; fileRef = FA3AB1F714FCBAFB004C46A5 /* codeList.txt */; };
 		FA3CE34814F7DEAF00E3AF17 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FA3CE34614F7DEAF00E3AF17 /* InfoPlist.strings */; };
 		FA3CE34A14F7DEAF00E3AF17 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FA3CE34914F7DEAF00E3AF17 /* main.m */; };
 		FA3CE34E14F7DEAF00E3AF17 /* mobileAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FA3CE34D14F7DEAF00E3AF17 /* mobileAppDelegate.m */; };
-		FA4A0EAD14F8A370001A2139 /* codeList.txt in Resources */ = {isa = PBXBuildFile; fileRef = FA4A0EAC14F8A370001A2139 /* codeList.txt */; };
-		FA4A0EAE14F8A370001A2139 /* codeList.txt in Resources */ = {isa = PBXBuildFile; fileRef = FA4A0EAC14F8A370001A2139 /* codeList.txt */; };
-		FA4A0EAF14F8A370001A2139 /* codeList.txt in Resources */ = {isa = PBXBuildFile; fileRef = FA4A0EAC14F8A370001A2139 /* codeList.txt */; };
 		FA4A0EB214F8A424001A2139 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA4A0EB114F8A423001A2139 /* WebKit.framework */; };
 		FA4A0EB314F8A42F001A2139 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA4A0EB114F8A423001A2139 /* WebKit.framework */; };
 		FA4A0EB414F8A439001A2139 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA4A0EB114F8A423001A2139 /* WebKit.framework */; };
@@ -527,8 +529,6 @@
 		FA4D902114F8AD9F00C90E2E /* AddRoutesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D900514F8AD9F00C90E2E /* AddRoutesTableViewController.m */; };
 		FA4D902214F8AD9F00C90E2E /* CarrierListConroller.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D900714F8AD9F00C90E2E /* CarrierListConroller.m */; };
 		FA4D902314F8AD9F00C90E2E /* CarrierListConroller.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D900814F8AD9F00C90E2E /* CarrierListConroller.xib */; };
-		FA4D902414F8AD9F00C90E2E /* DestinationsListPushListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D900A14F8AD9F00C90E2E /* DestinationsListPushListTableViewController.m */; };
-		FA4D902514F8AD9F00C90E2E /* DestinationsListPushListTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D900B14F8AD9F00C90E2E /* DestinationsListPushListTableViewController.xib */; };
 		FA4D902614F8AD9F00C90E2E /* EventsDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D900D14F8AD9F00C90E2E /* EventsDetailViewController.m */; };
 		FA4D902714F8AD9F00C90E2E /* EventsDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D900E14F8AD9F00C90E2E /* EventsDetailViewController.xib */; };
 		FA4D902814F8AD9F00C90E2E /* EventsTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D900F14F8AD9F00C90E2E /* EventsTableCell.xib */; };
@@ -570,6 +570,8 @@
 		FA4D906314F8BE4D00C90E2E /* Whirlpool_Sita.png in Resources */ = {isa = PBXBuildFile; fileRef = FA4D906114F8BE4C00C90E2E /* Whirlpool_Sita.png */; };
 		FA4D907414F8C39F00C90E2E /* ServerController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D907314F8C39F00C90E2E /* ServerController.m */; };
 		FA4D907714F8C4BD00C90E2E /* DDKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D907614F8C4BD00C90E2E /* DDKeychain.m */; };
+		FA79EA7214FCCAC8002EDE78 /* DestinationsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA79EA7014FCCAC8002EDE78 /* DestinationsListViewController.m */; };
+		FA79EA7314FCCAC8002EDE78 /* DestinationsListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA79EA7114FCCAC8002EDE78 /* DestinationsListViewController.xib */; };
 		FAA1E00514F8A2E900743E41 /* AVCellHightlight.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA1E00214F8A2E900743E41 /* AVCellHightlight.m */; };
 		FAA1E00614F8A2E900743E41 /* AVCellHightlight.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA1E00214F8A2E900743E41 /* AVCellHightlight.m */; };
 		FAA1E00714F8A2E900743E41 /* AVCellHightlight.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA1E00214F8A2E900743E41 /* AVCellHightlight.m */; };
@@ -719,6 +721,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		FA0D450D14FCBCDA00CDDCF2 /* ParseCSV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseCSV.h; sourceTree = "<group>"; };
+		FA0D450E14FCBCDA00CDDCF2 /* ParseCSV.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParseCSV.m; sourceTree = "<group>"; };
 		FA10F9E714F823590014C545 /* CountrySpecificCodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CountrySpecificCodeList.h; sourceTree = "<group>"; };
 		FA10F9E814F823590014C545 /* CountrySpecificCodeList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CountrySpecificCodeList.m; sourceTree = "<group>"; };
 		FA10F9EB14F823740014C545 /* CodesList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodesList.h; sourceTree = "<group>"; };
@@ -812,8 +816,6 @@
 		FA10FA9014F834910014C545 /* UpdateDataController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UpdateDataController.m; sourceTree = "<group>"; };
 		FA10FA9214F834B80014C545 /* ProgressUpdateController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressUpdateController.h; sourceTree = "<group>"; };
 		FA10FA9314F834B80014C545 /* ProgressUpdateController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressUpdateController.m; sourceTree = "<group>"; };
-		FA10FA9514F8356A0014C545 /* ParseCSV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseCSV.h; sourceTree = "<group>"; };
-		FA10FA9614F8356A0014C545 /* ParseCSV.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParseCSV.m; sourceTree = "<group>"; };
 		FA10FA9814F835A00014C545 /* GetExternalInfoOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetExternalInfoOperation.h; sourceTree = "<group>"; };
 		FA10FA9914F835A00014C545 /* GetExternalInfoOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetExternalInfoOperation.m; sourceTree = "<group>"; };
 		FA10FA9B14F83D450014C545 /* Mail.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = Mail.app; path = ../../../../Applications/Mail.app; sourceTree = "<group>"; };
@@ -930,6 +932,7 @@
 		FA195A8B14F822AC002E9A89 /* MainSystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainSystem.m; sourceTree = "<group>"; };
 		FA195A8E14F822F2002E9A89 /* Events.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Events.h; sourceTree = "<group>"; };
 		FA195A8F14F822F2002E9A89 /* Events.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Events.m; sourceTree = "<group>"; };
+		FA3AB1F714FCBAFB004C46A5 /* codeList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = codeList.txt; sourceTree = "<group>"; };
 		FA3CE31514F7DE3800E3AF17 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		FA3CE31814F7DE3800E3AF17 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		FA3CE31914F7DE3800E3AF17 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -948,7 +951,6 @@
 		FA3CE34B14F7DEAF00E3AF17 /* snowMobile-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "snowMobile-Prefix.pch"; sourceTree = "<group>"; };
 		FA3CE34C14F7DEAF00E3AF17 /* mobileAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mobileAppDelegate.h; sourceTree = "<group>"; };
 		FA3CE34D14F7DEAF00E3AF17 /* mobileAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mobileAppDelegate.m; sourceTree = "<group>"; };
-		FA4A0EAC14F8A370001A2139 /* codeList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = codeList.txt; sourceTree = "<group>"; };
 		FA4A0EB114F8A423001A2139 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		FA4D8FA014F8A4BC00C90E2E /* twitter_icons_256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = twitter_icons_256.png; sourceTree = "<group>"; };
 		FA4D8FA514F8A4CC00C90E2E /* money-making-deas.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "money-making-deas.png"; sourceTree = "<group>"; };
@@ -1055,6 +1057,9 @@
 		FA4D907314F8C39F00C90E2E /* ServerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerController.m; sourceTree = "<group>"; };
 		FA4D907514F8C4BD00C90E2E /* DDKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDKeychain.h; sourceTree = "<group>"; };
 		FA4D907614F8C4BD00C90E2E /* DDKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDKeychain.m; sourceTree = "<group>"; };
+		FA79EA6F14FCCAC8002EDE78 /* DestinationsListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DestinationsListViewController.h; sourceTree = "<group>"; };
+		FA79EA7014FCCAC8002EDE78 /* DestinationsListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DestinationsListViewController.m; sourceTree = "<group>"; };
+		FA79EA7114FCCAC8002EDE78 /* DestinationsListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DestinationsListViewController.xib; sourceTree = "<group>"; };
 		FAA1E00114F8A2E900743E41 /* AVCellHightlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCellHightlight.h; sourceTree = "<group>"; };
 		FAA1E00214F8A2E900743E41 /* AVCellHightlight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCellHightlight.m; sourceTree = "<group>"; };
 		FAA1E00314F8A2E900743E41 /* AVScroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVScroller.h; sourceTree = "<group>"; };
@@ -1300,8 +1305,6 @@
 				FA10FAA314F83F1D0014C545 /* DestinationsClassController.m */,
 				FA10FA9814F835A00014C545 /* GetExternalInfoOperation.h */,
 				FA10FA9914F835A00014C545 /* GetExternalInfoOperation.m */,
-				FA10FA9514F8356A0014C545 /* ParseCSV.h */,
-				FA10FA9614F8356A0014C545 /* ParseCSV.m */,
 				FA10FA9214F834B80014C545 /* ProgressUpdateController.h */,
 				FA10FA9314F834B80014C545 /* ProgressUpdateController.m */,
 				FA10FA8F14F834910014C545 /* UpdateDataController.h */,
@@ -1346,6 +1349,9 @@
 		FA1959E414F81C97002E9A89 /* ClassesForAllPlatforms */ = {
 			isa = PBXGroup;
 			children = (
+				FA0D450D14FCBCDA00CDDCF2 /* ParseCSV.h */,
+				FA0D450E14FCBCDA00CDDCF2 /* ParseCSV.m */,
+				FA3AB1F714FCBAFB004C46A5 /* codeList.txt */,
 				FA195A7714F81E1B002E9A89 /* JSONKit */,
 				FA1959F214F81D87002E9A89 /* OAuthConsumer */,
 				FA1959EB14F81D27002E9A89 /* ClientController.h */,
@@ -1558,7 +1564,6 @@
 				FACE80BB14F8D66B00AD9981 /* snowClientAppstore.icns */,
 				FACE80B914F8D65700AD9981 /* snowClientEnterprise.icns */,
 				FACE80B714F8D63F00AD9981 /* snowServer.icns */,
-				FA4A0EAC14F8A370001A2139 /* codeList.txt */,
 				FA10FA5314F829EE0014C545 /* MediaLibrary */,
 				FA3CE31E14F7DE3800E3AF17 /* InfoPlist.strings */,
 				FA3CE32114F7DE3800E3AF17 /* main.m */,
@@ -1658,6 +1663,9 @@
 				FA4D900614F8AD9F00C90E2E /* CarrierListConroller.h */,
 				FA4D900714F8AD9F00C90E2E /* CarrierListConroller.m */,
 				FA4D900814F8AD9F00C90E2E /* CarrierListConroller.xib */,
+				FA79EA6F14FCCAC8002EDE78 /* DestinationsListViewController.h */,
+				FA79EA7014FCCAC8002EDE78 /* DestinationsListViewController.m */,
+				FA79EA7114FCCAC8002EDE78 /* DestinationsListViewController.xib */,
 				FA4D900914F8AD9F00C90E2E /* DestinationsListPushListTableViewController.h */,
 				FA4D900A14F8AD9F00C90E2E /* DestinationsListPushListTableViewController.m */,
 				FA4D900B14F8AD9F00C90E2E /* DestinationsListPushListTableViewController.xib */,
@@ -2065,11 +2073,11 @@
 				FA10FB4214F846510014C545 /* ImportRatesView.xib in Resources */,
 				FA10FB4314F846510014C545 /* UserCompanyInfo.xib in Resources */,
 				FA10FB4414F846510014C545 /* CarriersView.xib in Resources */,
-				FA4A0EAD14F8A370001A2139 /* codeList.txt in Resources */,
 				FA4D8FA114F8A4BC00C90E2E /* twitter_icons_256.png in Resources */,
 				FA4D8FA614F8A4CC00C90E2E /* money-making-deas.png in Resources */,
 				FACE80BC14F8D66B00AD9981 /* snowClientAppstore.icns in Resources */,
 				FACE80C214F8D93400AD9981 /* Introduction.rtfd in Resources */,
+				FA3AB1F914FCBAFB004C46A5 /* codeList.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2093,11 +2101,11 @@
 				FA10FBD614F846780014C545 /* ImportRatesView.xib in Resources */,
 				FA10FBD714F846780014C545 /* UserCompanyInfo.xib in Resources */,
 				FA10FBD814F846780014C545 /* CarriersView.xib in Resources */,
-				FA4A0EAE14F8A370001A2139 /* codeList.txt in Resources */,
 				FA4D8FA214F8A4BC00C90E2E /* twitter_icons_256.png in Resources */,
 				FA4D8FA714F8A4CC00C90E2E /* money-making-deas.png in Resources */,
 				FACE80BA14F8D65700AD9981 /* snowClientEnterprise.icns in Resources */,
 				FACE80C314F8D93400AD9981 /* Introduction.rtfd in Resources */,
+				FA3AB1FA14FCBAFB004C46A5 /* codeList.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2121,11 +2129,11 @@
 				FA10FC6A14F8468D0014C545 /* ImportRatesView.xib in Resources */,
 				FA10FC6B14F8468D0014C545 /* UserCompanyInfo.xib in Resources */,
 				FA10FC6C14F8468D0014C545 /* CarriersView.xib in Resources */,
-				FA4A0EAF14F8A370001A2139 /* codeList.txt in Resources */,
 				FA4D8FA314F8A4BC00C90E2E /* twitter_icons_256.png in Resources */,
 				FA4D8FA814F8A4CC00C90E2E /* money-making-deas.png in Resources */,
 				FACE80B814F8D63F00AD9981 /* snowServer.icns in Resources */,
 				FACE80C414F8D93400AD9981 /* Introduction.rtfd in Resources */,
+				FA3AB1FB14FCBAFB004C46A5 /* codeList.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2163,7 +2171,6 @@
 				FA4D8FFE14F8AC1600C90E2E /* HelpForInfoView.xib in Resources */,
 				FA4D900314F8ACC800C90E2E /* CompanyAndUserConfiguration.xib in Resources */,
 				FA4D902314F8AD9F00C90E2E /* CarrierListConroller.xib in Resources */,
-				FA4D902514F8AD9F00C90E2E /* DestinationsListPushListTableViewController.xib in Resources */,
 				FA4D902714F8AD9F00C90E2E /* EventsDetailViewController.xib in Resources */,
 				FA4D902814F8AD9F00C90E2E /* EventsTableCell.xib in Resources */,
 				FA4D902A14F8AD9F00C90E2E /* EventsTableViewController.xib in Resources */,
@@ -2191,6 +2198,8 @@
 				FAA9E9E014F8E52A00AB64D6 /* stop-32.png in Resources */,
 				FAA9E9E214F9222500AB64D6 /* WWAN5.png in Resources */,
 				FAA9E9E414F9227400AB64D6 /* Airport.png in Resources */,
+				FA3AB1F814FCBAFB004C46A5 /* codeList.txt in Resources */,
+				FA79EA7314FCCAC8002EDE78 /* DestinationsListViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2340,7 +2349,6 @@
 				FA10FB1F14F846510014C545 /* MySQLIXC.m in Sources */,
 				FA10FB2014F846510014C545 /* UpdateDataController.m in Sources */,
 				FA10FB2114F846510014C545 /* ProgressUpdateController.m in Sources */,
-				FA10FB2214F846510014C545 /* ParseCSV.m in Sources */,
 				FA10FB2314F846510014C545 /* GetExternalInfoOperation.m in Sources */,
 				FA10FB2414F846510014C545 /* DestinationsClassController.m in Sources */,
 				FA10FB2514F846510014C545 /* ArrayToDataTransformer.m in Sources */,
@@ -2353,6 +2361,7 @@
 				FA4D8FAB14F8A67400C90E2E /* AVButtonCell.m in Sources */,
 				FA4D8FB014F8A6B800C90E2E /* DarkView.m in Sources */,
 				FA4D8FB514F8A7EC00C90E2E /* BoolToString.m in Sources */,
+				FA0D451014FCBCDA00CDDCF2 /* ParseCSV.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2457,7 +2466,6 @@
 				FA10FBB314F846780014C545 /* MySQLIXC.m in Sources */,
 				FA10FBB414F846780014C545 /* UpdateDataController.m in Sources */,
 				FA10FBB514F846780014C545 /* ProgressUpdateController.m in Sources */,
-				FA10FBB614F846780014C545 /* ParseCSV.m in Sources */,
 				FA10FBB714F846780014C545 /* GetExternalInfoOperation.m in Sources */,
 				FA10FBB814F846780014C545 /* DestinationsClassController.m in Sources */,
 				FA10FBB914F846780014C545 /* ArrayToDataTransformer.m in Sources */,
@@ -2470,6 +2478,7 @@
 				FA4D8FAC14F8A67400C90E2E /* AVButtonCell.m in Sources */,
 				FA4D8FB114F8A6B800C90E2E /* DarkView.m in Sources */,
 				FA4D8FB614F8A7EC00C90E2E /* BoolToString.m in Sources */,
+				FA0D451114FCBCDA00CDDCF2 /* ParseCSV.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2575,7 +2584,6 @@
 				FA10FC4714F8468D0014C545 /* MySQLIXC.m in Sources */,
 				FA10FC4814F8468D0014C545 /* UpdateDataController.m in Sources */,
 				FA10FC4914F8468D0014C545 /* ProgressUpdateController.m in Sources */,
-				FA10FC4A14F8468D0014C545 /* ParseCSV.m in Sources */,
 				FA10FC4B14F8468D0014C545 /* GetExternalInfoOperation.m in Sources */,
 				FA10FC4C14F8468D0014C545 /* DestinationsClassController.m in Sources */,
 				FA10FC4D14F8468D0014C545 /* ArrayToDataTransformer.m in Sources */,
@@ -2590,6 +2598,7 @@
 				FA4D8FB714F8A7EC00C90E2E /* BoolToString.m in Sources */,
 				FA4D907414F8C39F00C90E2E /* ServerController.m in Sources */,
 				FA4D907714F8C4BD00C90E2E /* DDKeychain.m in Sources */,
+				FA0D451214FCBCDA00CDDCF2 /* ParseCSV.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2703,7 +2712,6 @@
 				FA4D900214F8ACC800C90E2E /* CompanyAndUserConfiguration.m in Sources */,
 				FA4D902114F8AD9F00C90E2E /* AddRoutesTableViewController.m in Sources */,
 				FA4D902214F8AD9F00C90E2E /* CarrierListConroller.m in Sources */,
-				FA4D902414F8AD9F00C90E2E /* DestinationsListPushListTableViewController.m in Sources */,
 				FA4D902614F8AD9F00C90E2E /* EventsDetailViewController.m in Sources */,
 				FA4D902914F8AD9F00C90E2E /* EventsTableViewController.m in Sources */,
 				FA4D902B14F8AD9F00C90E2E /* FirstPageController.m in Sources */,
@@ -2716,6 +2724,8 @@
 				FA4D905814F8BC9A00C90E2E /* NormalizedCountryTransformer.m in Sources */,
 				FA4D905914F8BC9A00C90E2E /* NormalizedSpecificTransformer.m in Sources */,
 				FA4D905D14F8BDA000C90E2E /* ArrayToDataTransformer.m in Sources */,
+				FA0D450F14FCBCDA00CDDCF2 /* ParseCSV.m in Sources */,
+				FA79EA7214FCCAC8002EDE78 /* DestinationsListViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

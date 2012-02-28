@@ -17,6 +17,8 @@
 #import "AuthorizationView.h"
 #import "CarrierListConroller.h"
 
+#import "DestinationsListViewController.h"
+
 #import "ClientController.h"
 #import "Reachability.h"
 #import "TwitterUpdateDataController.h"
@@ -82,7 +84,7 @@
             
             [infoBar release];
             
-            DestinationsListPushListTableViewController *routesTableViewController = [[DestinationsListPushListTableViewController alloc] initWithStyle:UITableViewStylePlain];
+            DestinationsListViewController *routesTableViewController = [[DestinationsListViewController alloc] initWithNibName:@"DestinationsListViewController" bundle:nil];
             
             routesTableViewController.managedObjectContext = self.managedObjectContext;
             
@@ -170,7 +172,6 @@
             [events release];
             [navigationControllerForEvents release];
             [navigationControllerForPromo release];
-            [navigationControllerForDestinations release];
             [navigationControllerForCarriers release];
             
             [tabBar release];
@@ -611,13 +612,19 @@
     //NSLog(@"progess hidden from delegate");
     UINavigationController *routes = [viewControllers objectAtIndex:2];
     
-    DestinationsListPushListTableViewController *destinationsObject = [routes.viewControllers objectAtIndex:0];
+//    DestinationsListPushListTableViewController *destinationsObject = [routes.viewControllers objectAtIndex:0];
+//    if (addRoutesSearchTableView != nil) {
+//        dispatch_async(dispatch_get_main_queue(), ^(void) { [addRoutesSearchTableView reloadData]; });
+//    } //else NSLog(@"UPDATE:addRoutesSearchTableView is nil");
+
+    
+    
+    
     //NSError *error = nil;
     //    NSFetchedResultsController *routesController = destinationsObject.addRoutesView.fetchedResultsController;
     //    //NSFetchedResultsController *routesControllerSearch = destinationsObject.addRoutesView.fetchResultControllerSearch;
     //    NSError *error = nil;
     //    UITableView *addRoutesTableView = destinationsObject.addRoutesView.tableView;
-    UITableView *addRoutesSearchTableView = destinationsObject.addRoutesView.searchDisplayController.searchResultsTableView;
     
     //    if (routesController != nil) {
     //
@@ -644,9 +651,9 @@
     //            [addRoutesTableView reloadData]; });
     //    } //else NSLog(@"UPDATE:addRoutesTableView is nil");
     
-    if (addRoutesSearchTableView != nil) {
-        dispatch_async(dispatch_get_main_queue(), ^(void) { [addRoutesSearchTableView reloadData]; });
-    } //else NSLog(@"UPDATE:addRoutesSearchTableView is nil");
+//    if (addRoutesSearchTableView != nil) {
+//        dispatch_async(dispatch_get_main_queue(), ^(void) { [addRoutesSearchTableView reloadData]; });
+//    } //else NSLog(@"UPDATE:addRoutesSearchTableView is nil");
     //    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
     ////        NSManagedObjectContext *mocForCycle =  [[NSManagedObjectContext alloc] init];
     ////        [mocForCycle setPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]];

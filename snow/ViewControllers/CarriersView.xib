@@ -130,7 +130,6 @@
 						<string key="NSFrame">{{554, 17}, {106, 25}}</string>
 						<reference key="NSSuperview" ref="984142148"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSViewLayerContentsRedrawPolicy">2</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="454469104">
@@ -184,7 +183,7 @@
 										<string key="NSFrameSize">{640, 14}</string>
 										<reference key="NSSuperview" ref="519827024"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView" ref="740525285"/>
+										<reference key="NSNextKeyView" ref="389630046"/>
 										<int key="NSViewLayerContentsRedrawPolicy">2</int>
 										<object class="NSTextContainer" key="NSTextContainer" id="1059355305">
 											<object class="NSLayoutManager" key="NSLayoutManager">
@@ -318,7 +317,7 @@ AAEAAQAAAT0AAwAAAAEAAgAAAVIAAwAAAAEAAQAAAVMAAwAAAAIAAQABAAAAAA</bytes>
 						<string key="NSFrame">{{20, 50}, {640, 357}}</string>
 						<reference key="NSSuperview" ref="984142148"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="389630046"/>
+						<reference key="NSNextKeyView" ref="519827024"/>
 						<int key="NSViewLayerContentsRedrawPolicy">2</int>
 						<int key="NSsFlags">133136</int>
 						<reference key="NSVScroller" ref="740525285"/>
@@ -2342,7 +2341,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 												<string key="NSFrame">{{1, 379}, {352, 15}}</string>
 												<reference key="NSSuperview" ref="947524342"/>
 												<reference key="NSWindow"/>
-												<reference key="NSNextKeyView"/>
 												<int key="NSViewLayerContentsRedrawPolicy">2</int>
 												<int key="NSsFlags">1</int>
 												<reference key="NSTarget" ref="947524342"/>
@@ -2450,7 +2448,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 									<object class="NSButton" id="634841463">
 										<reference key="NSNextResponder" ref="200221865"/>
 										<int key="NSvFlags">281</int>
-										<string key="NSFrame">{{112, 598}, {28, 25}}</string>
+										<string key="NSFrame">{{134, 598}, {28, 25}}</string>
 										<reference key="NSSuperview" ref="200221865"/>
 										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="753061090"/>
@@ -2501,7 +2499,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 									<object class="NSButton" id="753061090">
 										<reference key="NSNextResponder" ref="200221865"/>
 										<int key="NSvFlags">296</int>
-										<string key="NSFrame">{{148, 598}, {29, 27}}</string>
+										<string key="NSFrame">{{103, 598}, {29, 27}}</string>
 										<reference key="NSSuperview" ref="200221865"/>
 										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="951034885"/>
@@ -3662,11 +3660,11 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 							<reference ref="867019376"/>
 							<reference ref="947524342"/>
 							<reference ref="587144608"/>
-							<reference ref="634841463"/>
 							<reference ref="920610559"/>
-							<reference ref="753061090"/>
 							<reference ref="951034885"/>
 							<reference ref="866412536"/>
+							<reference ref="753061090"/>
+							<reference ref="634841463"/>
 						</array>
 						<reference key="parent" ref="1005"/>
 						<string key="objectName">Box - Carriers</string>

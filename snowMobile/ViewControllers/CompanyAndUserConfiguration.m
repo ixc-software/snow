@@ -1285,7 +1285,7 @@
                 // while login pressing, we are checking and authorization and when it not failed, do this as well;
                 //CompanyStuff *admin = [clientController authorization];
                 if ([clientController checkIfCurrentAdminCanLogin]) {
-                    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:YES];
+//                    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:YES];
                     [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[stuff objectID]] mustBeApproved:isMustBeApproved];
                 }
                     

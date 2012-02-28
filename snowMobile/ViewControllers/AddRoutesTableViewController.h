@@ -9,11 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "AddRoutesHeaderView.h"
 #import <MessageUI/MessageUI.h>
-#import "DestinationsListPushListTableViewController.h"
+#import "DestinationsListViewController.h"
 #import "CompanyStuff.h"
 //#import "UserDataController.h"
 
-@class DestinationsListPushListTableViewController;
+@class DestinationsListViewController;
 @class SpecificCodesCell;
 
 @interface AddRoutesTableViewController : UITableViewController <NSFetchedResultsControllerDelegate, MFMailComposeViewControllerDelegate,UISearchDisplayDelegate,UISearchBarDelegate,SectionHeaderViewDelegate> {
@@ -24,7 +24,7 @@
     NSFetchedResultsController *fetchResultControllerSearch;
     //BOOL searchIsActive;
     //BOOL routeAddIsActive;
-    DestinationsListPushListTableViewController *destinationsPushListView;
+    DestinationsListViewController *destinationsPushListView;
     //UIButton *home;
     //CompanyStuff *stuff;
 }
@@ -33,7 +33,7 @@
 //@property (nonatomic, retain) NSMutableString *previousSearchString;
 
 
-@property (nonatomic, retain) DestinationsListPushListTableViewController *destinationsPushListView;
+@property (nonatomic, retain) DestinationsListViewController *destinationsPushListView;
 //@property (nonatomic, retain) UserDataController *userController;
 @property (nonatomic, retain) UISegmentedControl *routesList;
 

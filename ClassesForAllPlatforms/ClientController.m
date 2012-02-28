@@ -32,6 +32,8 @@
 #import "Events.h"
 #import "ClientController.h"
 #import "JSONKit.h"
+#import "ParseCSV.h"
+
 static char encodingTable[64] = {
     'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
     'Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f',
@@ -402,12 +404,61 @@ static char encodingTable[64] = {
     NSUInteger count = [self.moc countForFetchRequest:fetchRequest error:&error];
     
     if (count == 0) {
+        
+        NSString *path = [[NSBundle mainBundle] pathForResource:@"codeList" ofType:@"txt" ];
+        NSAssert(path != nil, @"Unable to find codeList.txt in main bundle"); 
+        ParseCSV *parser = [[ParseCSV alloc] init];
+        [parser openFile:path];
+        NSMutableArray *codesFromFile = [parser parseFile];
+        [parser release], parser = nil;
+        path = nil;
+        NSMutableArray *countrySpecificCodesList = [NSMutableArray array];
+        NSUInteger countForCodes = codesFromFile.count;
+        
+        
+        
+        [codesFromFile enumerateObjectsWithOptions:NSSortStable usingBlock:^(id code, NSUInteger idx, BOOL *stop) {
+            NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:countForCodes] doubleValue]];
+            [self updateUIwithMessage:@"Parse codes list.." andProgressPercent:percentDone withObjectID:nil];
+
+            NSMutableDictionary *codesFromFileListNew = [NSMutableDictionary dictionary];
+            [codesFromFileListNew setValue:[code objectAtIndex:0] forKey:@"country"];
+            [codesFromFileListNew setValue:[code objectAtIndex:1] forKey:@"specific"];
+            NSMutableArray *filteredResult = [NSMutableArray arrayWithArray:countrySpecificCodesList];
+            [filteredResult filterUsingPredicate:[NSPredicate predicateWithFormat:@"(country == %@) and (specific == %@)",[code objectAtIndex:0],[code objectAtIndex:1]]];
+            if ([filteredResult count] != 0)
+            {
+                // NSLog (@"We find a simular country: %@ specific %@ and code %@ Total destinations:%ld",[code objectAtIndex:0],[code objectAtIndex:1], [code objectAtIndex:2], [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList count]);
+                NSMutableDictionary *lastObject = [[NSArray arrayWithArray:countrySpecificCodesList] lastObject];
+                NSMutableArray *codes = [lastObject valueForKey:@"code"];
+                [codes addObject:[code objectAtIndex:2]];
+                [lastObject setValue:codes forKey:@"code"];
+                [countrySpecificCodesList removeLastObject];
+                [countrySpecificCodesList addObject:lastObject];
+                lastObject = nil;
+                codes = nil;
+            } else {
+                NSMutableDictionary *codesFromFileList = [NSMutableDictionary dictionary];
+                NSString *countryBefore = [code objectAtIndex:0];
+                NSString *specificBefore = [code objectAtIndex:1];
+                NSString *country = [countryBefore stringByReplacingOccurrencesOfString:@"'" withString:@"~"];
+                NSString *specific = [specificBefore stringByReplacingOccurrencesOfString:@"'" withString:@"~"];
+                
+                [codesFromFileList setValue:country forKey:@"country"];
+                [codesFromFileList setValue:specific forKey:@"specific"];
+                [codesFromFileList setValue:[NSMutableArray arrayWithObject:[code objectAtIndex:2]] forKey:@"code"];
+                [countrySpecificCodesList addObject:codesFromFileList];
+            }
+        }];
+        
+
         NSManagedObjectID *mainSystemID = [mainSystem objectID];
-        NSString *path = [[NSBundle mainBundle] pathForResource:@"myCountrySpecificCodeList" ofType:@"ary" ];
+        
+//        NSString *path = [[NSBundle mainBundle] pathForResource:@"myCountrySpecificCodeList" ofType:@"ary" ];
         
         //NSAssert(path != nil, @"Unable to find myCountrySpecificCodeList.ary in main bundle"); 
         
-        NSArray *countrySpecificCodesList = [[NSArray alloc] initWithContentsOfFile:path];
+        //NSArray *countrySpecificCodesList = [[NSArray alloc] initWithContentsOfFile:path];
         
         if (countrySpecificCodesList.count == 0) {
             NSLog(@"CLIENT CONTROLLER: warning, countrySpecificCodesList is empty");
@@ -418,7 +469,7 @@ static char encodingTable[64] = {
         for (NSDictionary *countrySpecific in countrySpecificCodesList) {
             NSNumber *percentDone = [NSNumber numberWithDouble:([[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:[countrySpecificCodesList count]] doubleValue])];
 //            if (sender && [sender respondsToSelector:@selector(updateProgessInfoWithPercent:)]) [sender performSelector:@selector(updateProgessInfoWithPercent:) withObject:percentDone];
-            [self updateUIwithMessage:@"Update destinations internal data" andProgressPercent:percentDone withObjectID:nil];
+            [self updateUIwithMessage:@"Update codes database..." andProgressPercent:percentDone withObjectID:nil];
             
             CountrySpecificCodeList *newTest = (CountrySpecificCodeList *)[NSEntityDescription insertNewObjectForEntityForName:@"CountrySpecificCodeList" inManagedObjectContext:self.moc]; 
             newTest.country = [countrySpecific valueForKey:@"country"];
@@ -2106,8 +2157,12 @@ static char encodingTable[64] = {
     [fetchRequest setEntity:entity];
     __block NSArray *fetchedObjects = nil;
     NSMutableArray *allUpdatedIDs = [NSMutableArray array];
+    NSUInteger allObjectsCount = allObjects.count;
     
     [allObjects enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
+        NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:allObjectsCount] doubleValue]];
+        [self updateUIwithMessage:[NSString stringWithFormat:@"progress for update graph:%@",entityFor] andProgressPercent:percentDone withObjectID:nil];
+
         NSString *guid = [obj valueForKey:@"GUID"];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"GUID == %@",guid];
         [fetchRequest setPredicate:predicate];
