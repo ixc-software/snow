@@ -610,7 +610,7 @@
     InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
     [infoObject.operationProgress setHidden:YES]; 
     //NSLog(@"progess hidden from delegate");
-    UINavigationController *routes = [viewControllers objectAtIndex:2];
+//    UINavigationController *routes = [viewControllers objectAtIndex:2];
     
 //    DestinationsListPushListTableViewController *destinationsObject = [routes.viewControllers objectAtIndex:0];
 //    if (addRoutesSearchTableView != nil) {

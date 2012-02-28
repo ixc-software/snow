@@ -473,6 +473,8 @@
 		FA195A8814F8206B002E9A89 /* snow.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FA195A8514F8206B002E9A89 /* snow.xcdatamodeld */; };
 		FA195A8D14F822AC002E9A89 /* MainSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = FA195A8B14F822AC002E9A89 /* MainSystem.m */; };
 		FA195A9114F822F2002E9A89 /* Events.m in Sources */ = {isa = PBXBuildFile; fileRef = FA195A8F14F822F2002E9A89 /* Events.m */; };
+		FA24986D14FCEFF70018C1E6 /* progressBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = FA24986C14FCEFF70018C1E6 /* progressBackground.png */; };
+		FA24987114FD04B90018C1E6 /* AddRoutesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA24986F14FD04B90018C1E6 /* AddRoutesCell.m */; };
 		FA3AB1F814FCBAFB004C46A5 /* codeList.txt in Resources */ = {isa = PBXBuildFile; fileRef = FA3AB1F714FCBAFB004C46A5 /* codeList.txt */; };
 		FA3AB1F914FCBAFB004C46A5 /* codeList.txt in Resources */ = {isa = PBXBuildFile; fileRef = FA3AB1F714FCBAFB004C46A5 /* codeList.txt */; };
 		FA3AB1FA14FCBAFB004C46A5 /* codeList.txt in Resources */ = {isa = PBXBuildFile; fileRef = FA3AB1F714FCBAFB004C46A5 /* codeList.txt */; };
@@ -509,10 +511,8 @@
 		FA4D8FD914F8AA7100C90E2E /* DestinationsPushListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D8FC814F8AA7100C90E2E /* DestinationsPushListCell.m */; };
 		FA4D8FDA14F8AA7100C90E2E /* DestinationsPushListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D8FC914F8AA7100C90E2E /* DestinationsPushListCell.xib */; };
 		FA4D8FDB14F8AA7100C90E2E /* DestinationsPushListCelliPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D8FCA14F8AA7100C90E2E /* DestinationsPushListCelliPad.xib */; };
-		FA4D8FDC14F8AA7100C90E2E /* SpeciticCodesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D8FCB14F8AA7100C90E2E /* SpeciticCodesCell.xib */; };
 		FA4D8FDD14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D8FCD14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.m */; };
 		FA4D8FDE14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D8FCE14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.xib */; };
-		FA4D8FDF14F8AA7100C90E2E /* SpecificCodesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D8FD014F8AA7100C90E2E /* SpecificCodesCell.m */; };
 		FA4D8FE514F8AB9100C90E2E /* DestinationPushListHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D8FE114F8AB9100C90E2E /* DestinationPushListHeaderView.m */; };
 		FA4D8FE614F8AB9100C90E2E /* DestinationPushListHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D8FE214F8AB9100C90E2E /* DestinationPushListHeaderView.xib */; };
 		FA4D8FE714F8AB9100C90E2E /* AddRoutesHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D8FE414F8AB9100C90E2E /* AddRoutesHeaderView.m */; };
@@ -570,6 +570,7 @@
 		FA4D906314F8BE4D00C90E2E /* Whirlpool_Sita.png in Resources */ = {isa = PBXBuildFile; fileRef = FA4D906114F8BE4C00C90E2E /* Whirlpool_Sita.png */; };
 		FA4D907414F8C39F00C90E2E /* ServerController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D907314F8C39F00C90E2E /* ServerController.m */; };
 		FA4D907714F8C4BD00C90E2E /* DDKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D907614F8C4BD00C90E2E /* DDKeychain.m */; };
+		FA798C4914FD07350004E564 /* AddRoutesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA798C4814FD07350004E564 /* AddRoutesCell.xib */; };
 		FA79EA7214FCCAC8002EDE78 /* DestinationsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA79EA7014FCCAC8002EDE78 /* DestinationsListViewController.m */; };
 		FA79EA7314FCCAC8002EDE78 /* DestinationsListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA79EA7114FCCAC8002EDE78 /* DestinationsListViewController.xib */; };
 		FAA1E00514F8A2E900743E41 /* AVCellHightlight.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA1E00214F8A2E900743E41 /* AVCellHightlight.m */; };
@@ -932,6 +933,9 @@
 		FA195A8B14F822AC002E9A89 /* MainSystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainSystem.m; sourceTree = "<group>"; };
 		FA195A8E14F822F2002E9A89 /* Events.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Events.h; sourceTree = "<group>"; };
 		FA195A8F14F822F2002E9A89 /* Events.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Events.m; sourceTree = "<group>"; };
+		FA24986C14FCEFF70018C1E6 /* progressBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressBackground.png; sourceTree = "<group>"; };
+		FA24986E14FD04B90018C1E6 /* AddRoutesCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddRoutesCell.h; sourceTree = "<group>"; };
+		FA24986F14FD04B90018C1E6 /* AddRoutesCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddRoutesCell.m; sourceTree = "<group>"; };
 		FA3AB1F714FCBAFB004C46A5 /* codeList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = codeList.txt; sourceTree = "<group>"; };
 		FA3CE31514F7DE3800E3AF17 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		FA3CE31814F7DE3800E3AF17 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -975,12 +979,9 @@
 		FA4D8FC814F8AA7100C90E2E /* DestinationsPushListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DestinationsPushListCell.m; sourceTree = "<group>"; };
 		FA4D8FC914F8AA7100C90E2E /* DestinationsPushListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DestinationsPushListCell.xib; sourceTree = "<group>"; };
 		FA4D8FCA14F8AA7100C90E2E /* DestinationsPushListCelliPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DestinationsPushListCelliPad.xib; sourceTree = "<group>"; };
-		FA4D8FCB14F8AA7100C90E2E /* SpeciticCodesCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SpeciticCodesCell.xib; sourceTree = "<group>"; };
 		FA4D8FCC14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegistrationsDetailTableViewCell.h; sourceTree = "<group>"; };
 		FA4D8FCD14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegistrationsDetailTableViewCell.m; sourceTree = "<group>"; };
 		FA4D8FCE14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RegistrationsDetailTableViewCell.xib; sourceTree = "<group>"; };
-		FA4D8FCF14F8AA7100C90E2E /* SpecificCodesCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpecificCodesCell.h; sourceTree = "<group>"; };
-		FA4D8FD014F8AA7100C90E2E /* SpecificCodesCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpecificCodesCell.m; sourceTree = "<group>"; };
 		FA4D8FE014F8AB9100C90E2E /* DestinationPushListHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DestinationPushListHeaderView.h; sourceTree = "<group>"; };
 		FA4D8FE114F8AB9100C90E2E /* DestinationPushListHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DestinationPushListHeaderView.m; sourceTree = "<group>"; };
 		FA4D8FE214F8AB9100C90E2E /* DestinationPushListHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DestinationPushListHeaderView.xib; sourceTree = "<group>"; };
@@ -1057,6 +1058,7 @@
 		FA4D907314F8C39F00C90E2E /* ServerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerController.m; sourceTree = "<group>"; };
 		FA4D907514F8C4BD00C90E2E /* DDKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDKeychain.h; sourceTree = "<group>"; };
 		FA4D907614F8C4BD00C90E2E /* DDKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDKeychain.m; sourceTree = "<group>"; };
+		FA798C4814FD07350004E564 /* AddRoutesCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddRoutesCell.xib; sourceTree = "<group>"; };
 		FA79EA6F14FCCAC8002EDE78 /* DestinationsListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DestinationsListViewController.h; sourceTree = "<group>"; };
 		FA79EA7014FCCAC8002EDE78 /* DestinationsListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DestinationsListViewController.m; sourceTree = "<group>"; };
 		FA79EA7114FCCAC8002EDE78 /* DestinationsListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DestinationsListViewController.xib; sourceTree = "<group>"; };
@@ -1620,9 +1622,9 @@
 				FA4D8FC814F8AA7100C90E2E /* DestinationsPushListCell.m */,
 				FA4D8FC914F8AA7100C90E2E /* DestinationsPushListCell.xib */,
 				FA4D8FCA14F8AA7100C90E2E /* DestinationsPushListCelliPad.xib */,
-				FA4D8FCF14F8AA7100C90E2E /* SpecificCodesCell.h */,
-				FA4D8FD014F8AA7100C90E2E /* SpecificCodesCell.m */,
-				FA4D8FCB14F8AA7100C90E2E /* SpeciticCodesCell.xib */,
+				FA24986E14FD04B90018C1E6 /* AddRoutesCell.h */,
+				FA24986F14FD04B90018C1E6 /* AddRoutesCell.m */,
+				FA798C4814FD07350004E564 /* AddRoutesCell.xib */,
 				FA4D8FCC14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.h */,
 				FA4D8FCD14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.m */,
 				FA4D8FCE14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.xib */,
@@ -1709,6 +1711,7 @@
 		FA4D905A14F8BD3000C90E2E /* MediaLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				FA24986C14FCEFF70018C1E6 /* progressBackground.png */,
 				FAA9E9E314F9227400AB64D6 /* Airport.png */,
 				FAA9E9E114F9222500AB64D6 /* WWAN5.png */,
 				FAA9E9DD14F8E52A00AB64D6 /* background.png */,
@@ -2163,7 +2166,6 @@
 				FA4D8FD814F8AA7100C90E2E /* CompanyInfoDetailCelliPad.xib in Resources */,
 				FA4D8FDA14F8AA7100C90E2E /* DestinationsPushListCell.xib in Resources */,
 				FA4D8FDB14F8AA7100C90E2E /* DestinationsPushListCelliPad.xib in Resources */,
-				FA4D8FDC14F8AA7100C90E2E /* SpeciticCodesCell.xib in Resources */,
 				FA4D8FDE14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.xib in Resources */,
 				FA4D8FE614F8AB9100C90E2E /* DestinationPushListHeaderView.xib in Resources */,
 				FA4D8FFA14F8AC1600C90E2E /* AuthorizationView.xib in Resources */,
@@ -2200,6 +2202,8 @@
 				FAA9E9E414F9227400AB64D6 /* Airport.png in Resources */,
 				FA3AB1F814FCBAFB004C46A5 /* codeList.txt in Resources */,
 				FA79EA7314FCCAC8002EDE78 /* DestinationsListViewController.xib in Resources */,
+				FA24986D14FCEFF70018C1E6 /* progressBackground.png in Resources */,
+				FA798C4914FD07350004E564 /* AddRoutesCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2701,7 +2705,6 @@
 				FA4D8FD614F8AA7100C90E2E /* CompanyInfoDetailCell.m in Sources */,
 				FA4D8FD914F8AA7100C90E2E /* DestinationsPushListCell.m in Sources */,
 				FA4D8FDD14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.m in Sources */,
-				FA4D8FDF14F8AA7100C90E2E /* SpecificCodesCell.m in Sources */,
 				FA4D8FE514F8AB9100C90E2E /* DestinationPushListHeaderView.m in Sources */,
 				FA4D8FE714F8AB9100C90E2E /* AddRoutesHeaderView.m in Sources */,
 				FA4D8FEC14F8ABD500C90E2E /* DownloadExternalData.m in Sources */,
@@ -2726,6 +2729,7 @@
 				FA4D905D14F8BDA000C90E2E /* ArrayToDataTransformer.m in Sources */,
 				FA0D450F14FCBCDA00CDDCF2 /* ParseCSV.m in Sources */,
 				FA79EA7214FCCAC8002EDE78 /* DestinationsListViewController.m in Sources */,
+				FA24987114FD04B90018C1E6 /* AddRoutesCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3028,6 +3032,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Oleksii Vynogradov (4Q42MB7BMA)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3044,6 +3049,7 @@
 				INFOPLIST_FILE = "snowMobile/snowMobile-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "F1EBB43C-982F-4341-BF28-02E7047A7814";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7";
@@ -3055,6 +3061,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Oleksii Vynogradov (4Q42MB7BMA)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3072,6 +3079,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "F1EBB43C-982F-4341-BF28-02E7047A7814";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
