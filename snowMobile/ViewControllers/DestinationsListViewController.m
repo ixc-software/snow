@@ -1460,7 +1460,7 @@
 {
     //sleep(5);
     NSString *status = [data objectAtIndex:0];
-    NSLog(@"DESTINATIONS LIST: updated UI: status is:%@",status);
+    //NSLog(@"DESTINATIONS LIST: updated UI: status is:%@",status);
     
     //NSNumber *progress = [data objectAtIndex:1];
     NSNumber *isItLatestMessage = [data objectAtIndex:2];
