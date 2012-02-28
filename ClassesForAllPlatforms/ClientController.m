@@ -2055,7 +2055,7 @@ static char encodingTable[64] = {
                           withMainObjectEntity:(NSString *)mainObjectEntity 
                                      withAdmin:(CompanyStuff *)admin  
                                   withDateFrom:(NSDate *)dateFrom 
-                                    withDateTo:(NSDate *)dateTo
+                                    withDateTo:(NSDate *)dateTo;
 {
     NSMutableDictionary *prepeareForJSONRequest = [[NSMutableDictionary alloc] init];
     [prepeareForJSONRequest setValue:admin.email forKey:@"authorizedUserEmail"];
@@ -2096,7 +2096,7 @@ static char encodingTable[64] = {
 -(NSArray *) updateGraphForObjects:(NSArray *)allObjects 
                         withEntity:(NSString *)entityFor 
                          withAdmin:(CompanyStuff *)admin 
-                    withRootObject:(NSManagedObject *)rootObject
+                    withRootObject:(NSManagedObject *)rootObject;
 {
     //NSArray *allObjects = [self getAllObjectsListWithGUIDs:guids withEntity:entityFor withAdmin:admin];
     // RETURN UPDATED IDs

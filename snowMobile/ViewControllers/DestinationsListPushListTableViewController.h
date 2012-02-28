@@ -74,6 +74,8 @@
 @property (nonatomic, retain) UIBarButtonItem *item;
 @property (nonatomic, retain) UISegmentedControl *alert;
 //@property (retain, nonatomic) IBOutlet UITableView *tableViewMain;
+@property (retain, nonatomic) UIActivityIndicatorView *desinationsUpdateProgress;
+
 
 @end
 

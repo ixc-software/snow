@@ -53,5 +53,17 @@
 -(BOOL) checkIfCurrentAdminCanLogin;
 -(void) updateLocalGraphFromSnowEnterpriseServerWithDateFrom:(NSDate *)dateFrom withDateTo:(NSDate *)dateTo;
 
-
+-(NSArray *)getAllObjectsListWithEntityForList:(NSString *)entityForList 
+                            withMainObjectGUID:(NSString *)mainObjectGUID 
+                          withMainObjectEntity:(NSString *)mainObjectEntity 
+                                     withAdmin:(CompanyStuff *)admin  
+                                  withDateFrom:(NSDate *)dateFrom 
+                                    withDateTo:(NSDate *)dateTo;
+-(NSArray *)getAllObjectsListWithGUIDs:(NSArray *)guids 
+                            withEntity:(NSString *)entity 
+                             withAdmin:(CompanyStuff *)admin;
+-(NSArray *) updateGraphForObjects:(NSArray *)allObjects 
+                        withEntity:(NSString *)entityFor 
+                         withAdmin:(CompanyStuff *)admin 
+                    withRootObject:(NSManagedObject *)rootObject;
 @end

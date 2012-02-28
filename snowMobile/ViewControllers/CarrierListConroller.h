@@ -15,6 +15,6 @@
 }
 @property (retain, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (retain, nonatomic) IBOutlet CarrierListTableViewCell *cell;
-
+@property (retain, nonatomic) UIActivityIndicatorView *carrierUpdateProgress;
 
 @end

@@ -224,7 +224,7 @@
 //    [mocForUpdates setUndoManager:nil];
     
     CompanyStuff *updated = (CompanyStuff *)[self.managedObjectContext objectWithID:self.stuffID];
-    NSString *updatedGUID = [NSString stringWithString:updated.GUID];
+//    NSString *updatedGUID = [NSString stringWithString:updated.GUID];
     CurrentCompany *currentCompany = updated.currentCompany;
     if ([updated.GUID isEqualToString:currentCompany.companyAdminGUID]) {
         NSSet *operations = currentCompany.operationNecessaryToApprove;
@@ -244,14 +244,14 @@
     //self.stuffID = [[userController authorization] objectID];
     //NSLog(@"STUFF is:%@",self.stuff);
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-        //isRoutesListUpdated = YES;
-        ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:self.managedObjectContext];
-        if ([[clientController localStatusForObjectsWithRootGuid:updatedGUID] isEqualToString:@"registered"]) {
-            [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:NO isUserAuthorized:YES];
-        }
-        [clientController release];
-    });
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+//        //isRoutesListUpdated = YES;
+//        ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:self.managedObjectContext];
+//        if ([[clientController localStatusForObjectsWithRootGuid:updatedGUID] isEqualToString:@"registered"]) {
+//            [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:NO isUserAuthorized:YES];
+//        }
+//        [clientController release];
+//    });
 
     [super viewWillAppear:animated];
 //    [self.tableView reloadData];

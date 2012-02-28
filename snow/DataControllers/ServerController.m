@@ -66,7 +66,7 @@ static char encodingTable[64] = {
 
 - (void)dealloc
 {
-    //[[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:moc];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:moc];
     [moc release];
 
     [super dealloc];

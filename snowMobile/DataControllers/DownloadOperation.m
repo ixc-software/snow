@@ -155,7 +155,7 @@
     //NSLog(@"authorizedUserGUID for first setup:%@",[[clientController authorization] valueForKey:@"GUID"]);
 
     [clientController getCompaniesListWithImmediatelyStart:YES];
-    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:NO isUserAuthorized:NO];
+//    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:NO isUserAuthorized:NO];
     
     [clientController getAllObjectsForEntity:@"Events" immediatelyStart:YES isUserAuthorized:NO];
     
