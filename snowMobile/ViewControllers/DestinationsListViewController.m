@@ -45,6 +45,8 @@
 //@property (readwrite) BOOL isRoutesForSaleListUpdated;
 //@property (readwrite) BOOL isRoutesPushlistListUpdated;
 
+@property (readwrite) BOOL cancelAllUpdates;
+
 @property (readwrite) BOOL shouldBeginEditing;
 
 
@@ -76,6 +78,8 @@
 
 
 @implementation DestinationsListViewController
+@synthesize cancelAllUpdates;
+@synthesize cancelAllUpdatesButton;
 
 @synthesize managedObjectContext;
 @synthesize progressView;
@@ -118,6 +122,7 @@
 //@synthesize alert;
 @synthesize sectionsTitles;
 @synthesize desinationsUpdateProgress;
+
 //-(BOOL)canBecomeFirstResponder {
 //    return YES;
 //}
@@ -146,6 +151,7 @@
     [operationProgress release];
     [progressView release];
     [tableView release];
+    [cancelAllUpdatesButton release];
     [super dealloc];
 }
 
@@ -276,7 +282,7 @@
 -(void) updateDestinations;
 {
     //dispatch_async(dispatch_get_main_queue(), ^(void) {
-
+    
     NSUInteger selectedSegmentIndex = selectRoutes.selectedSegmentIndex;
 //    NSLog(@"selected index:%u isRoutesForSaleListUpdated:%@ isRoutesWeBuyListUpdated:%@ isRoutesPushlistListUpdated:%@",selectedSegmentIndex,[NSNumber numberWithBool:isRoutesForSaleListUpdated],[NSNumber numberWithBool:isRoutesWeBuyListUpdated],[NSNumber numberWithBool:isRoutesPushlistListUpdated]); 
     if (selectedSegmentIndex == 2) addRoutes.hidden = NO;
@@ -290,7 +296,7 @@
     if (isRoutesWeBuyListUpdated || isRoutesPushlistListUpdated || isRoutesForSaleListUpdated) return;
     //else isRoutesListUpdated = YES;
     //NSUInteger selectedSegmentIndex = selectRoutes.selectedSegmentIndex;
-
+    
     NSString *lastUpdateTimeKey = nil;
     NSString *entity = nil;
     if (selectedSegmentIndex == 0) { 
@@ -339,6 +345,7 @@
             __block NSUInteger idxCarriers = 0;
             
             [allCarriers enumerateObjectsUsingBlock:^(Carrier *carrier, BOOL *stop) {
+                if (cancelAllUpdates == YES) *stop = YES;
                 NSString *carrierName = [NSString stringWithFormat:@"Sync for:%@",carrier.name];
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
                     
@@ -358,7 +365,7 @@
                 NSArray *allObjectsForGUIDS = [clientController getAllObjectsListWithGUIDs:allGUIDsDestinations withEntity:entity withAdmin:admin];
                 if (allGUIDsDestinations && allObjectsForGUIDS && allGUIDsDestinations.count > 0 && allObjectsForGUIDS > 0) {
                     
-                    NSArray *updatedDestinationsIDs = [clientController updateGraphForObjects:allObjectsForGUIDS withEntity:entity withAdmin:admin withRootObject:carrier];
+                    NSArray *updatedDestinationsIDs = [clientController updateGraphForObjects:allObjectsForGUIDS withEntity:entity withAdmin:admin withRootObject:carrier isEveryTenPercentSave:YES];
                     [clientController finalSave:clientController.moc];
                     // remove objects which was not on server
                     NSSet *allDestinations = nil;
@@ -367,6 +374,8 @@
                     if (selectedSegmentIndex == 2) allDestinations = carrier.destinationsListPushList;
                     
                     [allDestinations enumerateObjectsUsingBlock:^(NSManagedObject *destination, BOOL *stop) {
+                        if (cancelAllUpdates == YES) *stop = YES;
+
                         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",[destination valueForKey:@"GUID"]];
                         NSArray *filteredDestinationsIDs = [updatedDestinationsIDs filteredArrayUsingPredicate:predicate];
                         if (filteredDestinationsIDs.count == 0) {
@@ -388,6 +397,8 @@
 //                [self.navigationController setToolbarHidden:YES animated:YES]; 
                 operationProgress.hidden = YES;
                 progressView.hidden = YES;
+                cancelAllUpdates = NO;
+                cancelAllUpdatesButton.enabled = YES;
             });
             
             
@@ -477,6 +488,7 @@
 - (void)viewDidUnload
 {
     [self setTableView:nil];
+    [self setCancelAllUpdatesButton:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -1590,6 +1602,10 @@
     
     self.addRoutesNavigationView.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [self presentModalViewController:addRoutesNavigationView animated:YES]; 
+}
+- (IBAction)cancelUpdateStart:(id)sender {
+    cancelAllUpdatesButton.enabled = NO;
+    self.cancelAllUpdates = YES;
 }
 
 #pragma mark - external reload methods

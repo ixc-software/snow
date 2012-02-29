@@ -65,5 +65,6 @@
 -(NSArray *) updateGraphForObjects:(NSArray *)allObjects 
                         withEntity:(NSString *)entityFor 
                          withAdmin:(CompanyStuff *)admin 
-                    withRootObject:(NSManagedObject *)rootObject;
+                    withRootObject:(NSManagedObject *)rootObject
+             isEveryTenPercentSave:(BOOL)isEveryTenPercentSave;
 @end

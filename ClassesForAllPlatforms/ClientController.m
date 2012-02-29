@@ -57,8 +57,8 @@ static char encodingTable[64] = {
 
         mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
 #else
-        //mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
-        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
+//        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
 #endif
         
 //
@@ -709,7 +709,7 @@ static char encodingTable[64] = {
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
     downloadSize = [[NSNumber alloc] initWithLongLong:[response expectedContentLength]];
-    NSLog(@"didReceiveResponse:%@ bytes of data",downloadSize);
+    //NSLog(@"didReceiveResponse:%@ bytes of data",downloadSize);
 
 //    if (sender && [sender respondsToSelector:@selector(updateUIWithData:)]) {
 //        [sender performSelector:@selector(updateUIWithData:) withObject:[NSArray arrayWithObject:@"web download is started"]];
@@ -727,7 +727,7 @@ static char encodingTable[64] = {
 //    if (sender && [sender respondsToSelector:@selector(updateUIWithData:)]) {
 //        [sender performSelector:@selector(updateUIWithData:) withObject:[NSArray arrayWithObjects:@"web download progress",percentDone,nil]];
 //    }
-    NSLog(@"Processing! Received %@ percent bytes of data",percentDone);
+    //NSLog(@"Processing! Received %@ percent bytes of data",percentDone);
 
     [self updateUIwithMessage:@"server download progress" andProgressPercent:percentDone withObjectID:nil];
 
@@ -752,7 +752,7 @@ static char encodingTable[64] = {
 }
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    NSLog(@"Succeeded! Received %@ bytes of data",[NSNumber numberWithUnsignedInteger:[receivedData length]]);
+    //NSLog(@"Succeeded! Received %@ bytes of data",[NSNumber numberWithUnsignedInteger:[receivedData length]]);
     // release the connection, and the data object
     downloadCompleted = YES;
 //    if (sender && [sender respondsToSelector:@selector(updateUIWithData:)]) {
@@ -764,14 +764,14 @@ static char encodingTable[64] = {
 }
 // credential area
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace {
-    NSLog(@"can auth");
+    //NSLog(@"can auth");
     //BOOL result = [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
     //NSLog(@"auth:%@",result ? @"YES" : @"NO");
     return YES;
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
-    NSLog(@"challenge");
+    //NSLog(@"challenge");
     //    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
     NSString *user = [NSString stringWithFormat:@"%c%s%@", 'a', "le", @"x"];
     NSString *password = [NSString stringWithFormat:@"%c%s%c%@", 'A', "87AE19C-FEBB", '-', @"4C4C-A534-3CD036ED072A"];
@@ -845,9 +845,9 @@ static char encodingTable[64] = {
         //        [[NSURLCredentialStorage sharedCredentialStorage] setDefaultCredential:credential
         //                                                            forProtectionSpace:protectionSpace];
         //        [protectionSpace release];
+    receivedData = [[NSMutableData alloc] init];
      dispatch_async(dispatch_get_main_queue(), ^(void) {    
-        NSURLConnection *urlConnection = [[NSURLConnection alloc] initWithRequest:requestToServer delegate:self];
-        if (urlConnection) receivedData = [[NSMutableData alloc] init];
+        [[NSURLConnection alloc] initWithRequest:requestToServer delegate:self startImmediately:YES];
      });
 //    });
     
@@ -2153,7 +2153,8 @@ static char encodingTable[64] = {
 -(NSArray *) updateGraphForObjects:(NSArray *)allObjects 
                         withEntity:(NSString *)entityFor 
                          withAdmin:(CompanyStuff *)admin 
-                    withRootObject:(NSManagedObject *)rootObject;
+                    withRootObject:(NSManagedObject *)rootObject
+             isEveryTenPercentSave:(BOOL)isEveryTenPercentSave;
 {
     //NSArray *allObjects = [self getAllObjectsListWithGUIDs:guids withEntity:entityFor withAdmin:admin];
     // RETURN UPDATED IDs
@@ -2213,6 +2214,9 @@ static char encodingTable[64] = {
             //NSLog(@"CLIENT CONTROLLER: object with entity:%@ will CREATE",entityFor);
 
         }
+        
+        if ((allObjectsCount > 100) && (idx % allObjectsCount * 0.1 == 0)) [self finalSave:moc],NSLog(@">>>>>>>updateGraphForObjects SAVED");
+
     }];
     return allUpdatedIDs;
     
@@ -2228,7 +2232,7 @@ static char encodingTable[64] = {
     NSArray *allGUIDs = [self getAllObjectsListWithEntityForList:@"CompanyStuff" withMainObjectGUID:currentCompany.GUID withMainObjectEntity:@"CurrentCompany" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
     NSArray *allObjectsForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDs withEntity:@"CompanyStuff" withAdmin:admin];
     if (allGUIDs && allObjectsForGUIDS) {
-        NSArray *updatedStuffIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"CompanyStuff" withAdmin:admin withRootObject:currentCompany];
+        NSArray *updatedStuffIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"CompanyStuff" withAdmin:admin withRootObject:currentCompany isEveryTenPercentSave:NO];
         [self finalSave:moc]; 
         // update carrier list:
         NSMutableArray *stuffIDsWhichWasUpdated = [NSMutableArray array];
@@ -2253,7 +2257,7 @@ static char encodingTable[64] = {
             NSArray *allObjectsForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsCarrier withEntity:@"Carrier" withAdmin:admin];
             if (allGUIDsCarrier && allObjectsForGUIDS) {
                 
-                NSArray *updatedCarrierIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"Carrier" withAdmin:admin withRootObject:stuff];
+                NSArray *updatedCarrierIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"Carrier" withAdmin:admin withRootObject:stuff  isEveryTenPercentSave:NO];
                 [self finalSave:moc];
                 sleep(1);
                 
@@ -2283,7 +2287,7 @@ static char encodingTable[64] = {
                     NSArray *allObjectsForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsForSale withEntity:@"DestinationsListForSale" withAdmin:admin];
                     if (allGUIDsForSale && allObjectsForGUIDS) {
                         
-                        NSArray *updatedForSaleIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"DestinationsListForSale" withAdmin:admin withRootObject:carrier];
+                        NSArray *updatedForSaleIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"DestinationsListForSale" withAdmin:admin withRootObject:carrier  isEveryTenPercentSave:NO];
                         [self finalSave:moc];
                         
                         NSUInteger forSaleCount = allGUIDsForSale.count;
@@ -2308,7 +2312,7 @@ static char encodingTable[64] = {
                                 NSArray *allGUIDsCodes = [self getAllObjectsListWithEntityForList:@"CodesvsDestinationsList" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListForSale" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
                                 NSArray *allObjectsCodesForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsCodes withEntity:@"CodesvsDestinationsList" withAdmin:admin];
                                 if (allGUIDsCodes && allObjectsCodesForGUIDS) {
-                                    __block NSArray *updatedCodesIDs = [self updateGraphForObjects:allObjectsCodesForGUIDS withEntity:@"CodesvsDestinationsList" withAdmin:admin withRootObject:findedDestination];
+                                    __block NSArray *updatedCodesIDs = [self updateGraphForObjects:allObjectsCodesForGUIDS withEntity:@"CodesvsDestinationsList" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO];
                                     [self finalSave:moc];
                                     NSSet *currentCodes = findedDestination.codesvsDestinationsList;
                                     // remove objects which was not on server
@@ -2326,7 +2330,7 @@ static char encodingTable[64] = {
                                 NSArray *allObjectsPerHourForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsPerHour withEntity:@"DestinationPerHourStat" withAdmin:admin];
                                 if (allGUIDsPerHour && allObjectsPerHourForGUIDS) {
                                     
-                                    NSArray *updatedPerHourIDs = [self updateGraphForObjects:allObjectsPerHourForGUIDS withEntity:@"DestinationPerHourStat" withAdmin:admin withRootObject:findedDestination];
+                                    NSArray *updatedPerHourIDs = [self updateGraphForObjects:allObjectsPerHourForGUIDS withEntity:@"DestinationPerHourStat" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO];
                                     [self finalSave:moc];
                                     // remove objects which was not on server
                                     NSSet *currentPerHourStat = findedDestination.destinationPerHourStat;
@@ -2357,7 +2361,7 @@ static char encodingTable[64] = {
                     allObjectsForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsWeBuy withEntity:@"DestinationsListWeBuy" withAdmin:admin];
                     if (allGUIDsWeBuy && allObjectsForGUIDS) {
                         
-                        NSArray *updatedWeBuyIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"DestinationsListWeBuy" withAdmin:admin withRootObject:carrier];
+                        NSArray *updatedWeBuyIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"DestinationsListWeBuy" withAdmin:admin withRootObject:carrier  isEveryTenPercentSave:NO];
                         [self finalSave:moc];
                         NSUInteger weBuyCount = allGUIDsWeBuy.count;
                         
@@ -2380,7 +2384,7 @@ static char encodingTable[64] = {
                                 NSArray *allGUIDsCodes = [self getAllObjectsListWithEntityForList:@"CodesvsDestinationsList" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListForSale" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
                                 NSArray *allObjectsCodesForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsCodes withEntity:@"CodesvsDestinationsList" withAdmin:admin];
                                 if (allGUIDsCodes && allObjectsCodesForGUIDS) {
-                                    __block NSArray *updatedCodesIDs = [self updateGraphForObjects:allObjectsCodesForGUIDS withEntity:@"CodesvsDestinationsList" withAdmin:admin withRootObject:findedDestination];
+                                    __block NSArray *updatedCodesIDs = [self updateGraphForObjects:allObjectsCodesForGUIDS withEntity:@"CodesvsDestinationsList" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO];
                                     [self finalSave:moc];
                                     NSSet *currentCodes = findedDestination.codesvsDestinationsList;
                                     // remove objects which was not on server
@@ -2398,7 +2402,7 @@ static char encodingTable[64] = {
                                 NSArray *allObjectsPerHourForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsPerHour withEntity:@"DestinationPerHourStat" withAdmin:admin];
                                 if (allGUIDsPerHour && allObjectsPerHourForGUIDS) {
                                     
-                                    NSArray *updatedPerHourIDs = [self updateGraphForObjects:allObjectsPerHourForGUIDS withEntity:@"DestinationPerHourStat" withAdmin:admin withRootObject:findedDestination];
+                                    NSArray *updatedPerHourIDs = [self updateGraphForObjects:allObjectsPerHourForGUIDS withEntity:@"DestinationPerHourStat" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO];
                                     [self finalSave:moc];
                                     // remove objects which was not on server
                                     NSSet *currentPerHourStat = findedDestination.destinationPerHourStat;

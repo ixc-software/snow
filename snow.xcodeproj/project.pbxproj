@@ -599,6 +599,8 @@
 		FACE80C314F8D93400AD9981 /* Introduction.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = FACE80C114F8D93400AD9981 /* Introduction.rtfd */; };
 		FACE80C414F8D93400AD9981 /* Introduction.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = FACE80C114F8D93400AD9981 /* Introduction.rtfd */; };
 		FACE80C614F8D96500AD9981 /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = FACE80C514F8D96500AD9981 /* README.txt */; };
+		FAFB878414FE25A900E22734 /* 1277121629_ko.png in Resources */ = {isa = PBXBuildFile; fileRef = FAFB878314FE25A900E22734 /* 1277121629_ko.png */; };
+		FAFB878714FE262200E22734 /* delete-icon-md.png in Resources */ = {isa = PBXBuildFile; fileRef = FAFB878614FE262200E22734 /* delete-icon-md.png */; };
 		FAFEF9EE14F7E1270096A8A4 /* DDData.m in Sources */ = {isa = PBXBuildFile; fileRef = FAFEF8E614F7E1270096A8A4 /* DDData.m */; };
 		FAFEF9F014F7E1270096A8A4 /* DDNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = FAFEF8E814F7E1270096A8A4 /* DDNumber.m */; };
 		FAFEF9F214F7E1270096A8A4 /* DDRange.m in Sources */ = {isa = PBXBuildFile; fileRef = FAFEF8EA14F7E1270096A8A4 /* DDRange.m */; };
@@ -1084,6 +1086,8 @@
 		FACE80BD14F8D69200AD9981 /* snow_57x57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = snow_57x57.png; sourceTree = "<group>"; };
 		FACE80C114F8D93400AD9981 /* Introduction.rtfd */ = {isa = PBXFileReference; lastKnownFileType = wrapper.rtfd; path = Introduction.rtfd; sourceTree = "<group>"; };
 		FACE80C514F8D96500AD9981 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+		FAFB878314FE25A900E22734 /* 1277121629_ko.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1277121629_ko.png; sourceTree = "<group>"; };
+		FAFB878614FE262200E22734 /* delete-icon-md.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "delete-icon-md.png"; sourceTree = "<group>"; };
 		FAFEF8E514F7E1270096A8A4 /* DDData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDData.h; sourceTree = "<group>"; };
 		FAFEF8E614F7E1270096A8A4 /* DDData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDData.m; sourceTree = "<group>"; };
 		FAFEF8E714F7E1270096A8A4 /* DDNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDNumber.h; sourceTree = "<group>"; };
@@ -1711,6 +1715,8 @@
 		FA4D905A14F8BD3000C90E2E /* MediaLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				FAFB878614FE262200E22734 /* delete-icon-md.png */,
+				FAFB878314FE25A900E22734 /* 1277121629_ko.png */,
 				FA24986C14FCEFF70018C1E6 /* progressBackground.png */,
 				FAA9E9E314F9227400AB64D6 /* Airport.png */,
 				FAA9E9E114F9222500AB64D6 /* WWAN5.png */,
@@ -2204,6 +2210,8 @@
 				FA79EA7314FCCAC8002EDE78 /* DestinationsListViewController.xib in Resources */,
 				FA24986D14FCEFF70018C1E6 /* progressBackground.png in Resources */,
 				FA798C4914FD07350004E564 /* AddRoutesCell.xib in Resources */,
+				FAFB878414FE25A900E22734 /* 1277121629_ko.png in Resources */,
+				FAFB878714FE262200E22734 /* delete-icon-md.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

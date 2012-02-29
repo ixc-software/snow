@@ -71,5 +71,6 @@
 @property (readwrite) BOOL isRoutesWeBuyListUpdated;
 @property (readwrite) BOOL isRoutesForSaleListUpdated;
 @property (readwrite) BOOL isRoutesPushlistListUpdated;
+@property (retain, nonatomic) IBOutlet UIButton *cancelAllUpdatesButton;
 
 @end

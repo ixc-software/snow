@@ -441,7 +441,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
 - (void)prepareForBodyWithSize:(UInt64)contentLength
 {
 	HTTPLogTrace();
-	NSLog(@"prepareForBodyWithSize:%@",[NSNumber numberWithUnsignedLongLong:contentLength]);
+	// NSLog(@"prepareForBodyWithSize:%@",[NSNumber numberWithUnsignedLongLong:contentLength]);
 	// If we supported large uploads,
 	// we might use this method to create/open files, allocate memory, etc.
 }
