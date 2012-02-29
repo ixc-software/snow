@@ -709,6 +709,8 @@ static char encodingTable[64] = {
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
     downloadSize = [[NSNumber alloc] initWithLongLong:[response expectedContentLength]];
+    NSLog(@"didReceiveResponse:%@ bytes of data",downloadSize);
+
 //    if (sender && [sender respondsToSelector:@selector(updateUIWithData:)]) {
 //        [sender performSelector:@selector(updateUIWithData:) withObject:[NSArray arrayWithObject:@"web download is started"]];
 //    }
@@ -725,6 +727,8 @@ static char encodingTable[64] = {
 //    if (sender && [sender respondsToSelector:@selector(updateUIWithData:)]) {
 //        [sender performSelector:@selector(updateUIWithData:) withObject:[NSArray arrayWithObjects:@"web download progress",percentDone,nil]];
 //    }
+    NSLog(@"Processing! Received %@ percent bytes of data",percentDone);
+
     [self updateUIwithMessage:@"server download progress" andProgressPercent:percentDone withObjectID:nil];
 
     [receivedData appendData:data];
@@ -760,14 +764,14 @@ static char encodingTable[64] = {
 }
 // credential area
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace {
-    // NSLog(@"can auth");
+    NSLog(@"can auth");
     //BOOL result = [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
     //NSLog(@"auth:%@",result ? @"YES" : @"NO");
     return YES;
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
-    //NSLog(@"challenge");
+    NSLog(@"challenge");
     //    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
     NSString *user = [NSString stringWithFormat:@"%c%s%@", 'a', "le", @"x"];
     NSString *password = [NSString stringWithFormat:@"%c%s%c%@", 'A', "87AE19C-FEBB", '-', @"4C4C-A534-3CD036ED072A"];
@@ -798,9 +802,9 @@ static char encodingTable[64] = {
     [request setValue:@"hash" forKey:@"hash"];
     downloadCompleted = NO;
 
-    dispatch_async(dispatch_get_main_queue(), ^(void) { 
+//    dispatch_async(dispatch_get_main_queue(), ^(void) { 
         
-        NSError *error = nil;
+//        NSError *error = nil;
         
         NSString *jsonStringForReturn = [request JSONStringWithOptions:JKSerializeOptionNone serializeUnsupportedClassesUsingBlock:nil error:&error];
         if (error) NSLog(@"CLIENT CONTROLLER: json decoding error:%@ in function:%@",[error localizedDescription],function);
@@ -841,10 +845,11 @@ static char encodingTable[64] = {
         //        [[NSURLCredentialStorage sharedCredentialStorage] setDefaultCredential:credential
         //                                                            forProtectionSpace:protectionSpace];
         //        [protectionSpace release];
-        
+     dispatch_async(dispatch_get_main_queue(), ^(void) {    
         NSURLConnection *urlConnection = [[NSURLConnection alloc] initWithRequest:requestToServer delegate:self];
-        if (urlConnection) receivedData = [[NSMutableData data] retain];
-    });
+        if (urlConnection) receivedData = [[NSMutableData alloc] init];
+     });
+//    });
     
     while (!downloadCompleted) { 
         
@@ -856,7 +861,7 @@ static char encodingTable[64] = {
     //NSLog(@"ANSWER:%@",answer);
 
     
-    [receivedData release];
+    //[receivedData release];
     JSONDecoder *jkitDecoder = [JSONDecoder decoder];
 
     NSDictionary *finalResult = [jkitDecoder objectWithUTF8String:(const unsigned char *)[answer UTF8String] length:[answer length] error:&error];
@@ -2117,7 +2122,7 @@ static char encodingTable[64] = {
     [prepeareForJSONRequest setValue:dateFrom.description forKey:@"dateFrom"];
     [prepeareForJSONRequest setValue:dateTo.description forKey:@"dateTo"];
 
-    NSDictionary *receivedObject = [self getJSONAnswerForFunctionVersionTwo:@"GetObjectsList" withJSONRequest:prepeareForJSONRequest];
+    NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"GetObjectsList" withJSONRequest:prepeareForJSONRequest];
     [prepeareForJSONRequest release];
     if (receivedObject) return [receivedObject valueForKey:@"allGUIDs"];
     else return nil;
@@ -2132,9 +2137,10 @@ static char encodingTable[64] = {
     [prepeareForJSONRequest setValue:admin.email forKey:@"authorizedUserEmail"];
     [prepeareForJSONRequest setValue:admin.password forKey:@"authorizedUserPassword"];
     [prepeareForJSONRequest setValue:entity forKey:@"entity"];
+    
     [prepeareForJSONRequest setValue:guids forKey:@"allGUIDs"];
 
-    NSDictionary *receivedObject = [self getJSONAnswerForFunctionVersionTwo:@"GetObjectsWithGUIDs" withJSONRequest:prepeareForJSONRequest];
+    NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"GetObjectsWithGUIDs" withJSONRequest:prepeareForJSONRequest];
     [prepeareForJSONRequest release];
     if (receivedObject) {
         NSString *allObjectsString = [receivedObject valueForKey:@"objects"];
