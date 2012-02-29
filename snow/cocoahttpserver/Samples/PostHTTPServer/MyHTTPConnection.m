@@ -62,7 +62,8 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
 - (NSObject<HTTPResponse> *)httpResponseForMethod:(NSString *)method URI:(NSString *)path
 {
 	HTTPLogTrace();
-	
+//    CFRunLoopRun();
+
 /*	if ([method isEqualToString:@"POST"] && [path isEqualToString:@"/post.html"])
 	{
 		HTTPLogVerbose(@"%@[%p]: postContentLength: %qu", THIS_FILE, self, requestContentLength);
@@ -287,7 +288,6 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
     if([method isEqualToString:@"POST"] && [path isEqualToString:@"/GetObjectsWithGUIDs"] )
 	{
 		//NSLog(@"%@[%p]: postContentLength: %qu", THIS_FILE, self, requestContentLength);
-		
 		NSString *postStr = nil;
 		
 		NSData *postData = [request body];
@@ -432,6 +432,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
         
 	}
     
+ //   CFRunLoopStop(CFRunLoopGetCurrent());
 
 	
 	return [super httpResponseForMethod:method URI:path];
@@ -440,7 +441,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
 - (void)prepareForBodyWithSize:(UInt64)contentLength
 {
 	HTTPLogTrace();
-	
+	NSLog(@"prepareForBodyWithSize:%@",[NSNumber numberWithUnsignedLongLong:contentLength]);
 	// If we supported large uploads,
 	// we might use this method to create/open files, allocate memory, etc.
 }
@@ -469,24 +470,24 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
 	
 	HTTPLogTrace2(@"%@[%p]: isPasswordProtected(%@) - %@", THIS_FILE, self, path, (result ? @"YES" : @"NO"));
 	
-	return NO;
+	return YES;
 }
 //
-//- (BOOL)useDigestAccessAuthentication
-//{
-//	HTTPLogTrace();
-//	
-//	// Digest access authentication is the default setting.
-//	// Notice in Safari that when you're prompted for your password,
-//	// Safari tells you "Your login information will be sent securely."
-//	// 
-//	// If you return NO in this method, the HTTP server will use
-//	// basic authentication. Try it and you'll see that Safari
-//	// will tell you "Your password will be sent unencrypted",
-//	// which is strongly discouraged.
-//	
-//	return YES;
-//}
+- (BOOL)useDigestAccessAuthentication
+{
+	HTTPLogTrace();
+	
+	// Digest access authentication is the default setting.
+	// Notice in Safari that when you're prompted for your password,
+	// Safari tells you "Your login information will be sent securely."
+	// 
+	// If you return NO in this method, the HTTP server will use
+	// basic authentication. Try it and you'll see that Safari
+	// will tell you "Your password will be sent unencrypted",
+	// which is strongly discouraged.
+	
+	return YES;
+}
 //
 - (NSString *)passwordForUser:(NSString *)username
 {
