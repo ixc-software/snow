@@ -356,7 +356,7 @@
                 NSArray *allGUIDsDestinations = [clientController getAllObjectsListWithEntityForList:entity withMainObjectGUID:carrier.GUID withMainObjectEntity:@"Carrier" withAdmin:admin withDateFrom:nil withDateTo:nil];
 
                 NSArray *allObjectsForGUIDS = [clientController getAllObjectsListWithGUIDs:allGUIDsDestinations withEntity:entity withAdmin:admin];
-                if (allGUIDsDestinations && allObjectsForGUIDS) {
+                if (allGUIDsDestinations && allObjectsForGUIDS && allGUIDsDestinations.count > 0 && allObjectsForGUIDS > 0) {
                     
                     NSArray *updatedDestinationsIDs = [clientController updateGraphForObjects:allObjectsForGUIDS withEntity:entity withAdmin:admin withRootObject:carrier];
                     [clientController finalSave:clientController.moc];
@@ -1672,14 +1672,18 @@
                 
                 operationProgress.progress = progress.floatValue;
                 operationProgress.hidden = NO;
-                operationTitle.text = @"we buy";
+                operationTitle.text = @"Update:we buy";
             }
             if ([status isEqualToString:@"progress for update graph:DestinationsListForSale"]) {
                 NSNumber *progress = [data objectAtIndex:1];
                 operationProgress.progress = progress.floatValue;
                 operationProgress.hidden = NO;
-                operationTitle.text = @"for sale";
+                operationTitle.text = @"Update:for sale";
             }
+            if ([status isEqualToString:@"server download progress"]) {
+                NSNumber *progress = [data objectAtIndex:1];
+                operationProgress.progress = progress.floatValue;
+                operationProgress.hidden = NO;            }
         });
         
     }
