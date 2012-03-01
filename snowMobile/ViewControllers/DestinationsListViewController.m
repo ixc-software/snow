@@ -122,6 +122,7 @@
 //@synthesize alert;
 @synthesize sectionsTitles;
 @synthesize desinationsUpdateProgress;
+@synthesize changedDestinationsIDs;
 
 //-(BOOL)canBecomeFirstResponder {
 //    return YES;
@@ -422,6 +423,9 @@
 
 
 #pragma mark - View lifecycle
+- (BOOL)canBecomeFirstResponder {
+    return YES;
+}
 
 - (void)viewDidLoad
 {
@@ -441,12 +445,21 @@
     
     self.searchIsActive = NO;
     // Add a pinch gesture recognizer to the table view.
-    if ([[self.tableView gestureRecognizers] count] == 0) {
-        UIPinchGestureRecognizer* pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
-        
-        [self.tableView addGestureRecognizer:pinchRecognizer];
-        [pinchRecognizer release]; 
-    }
+    UIPinchGestureRecognizer* pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
+    
+    [tableView addGestureRecognizer:pinchRecognizer];
+    [pinchRecognizer release]; 
+
+//    NSLog(@"pinchRecognizer:%@",[tableView gestureRecognizers]);
+
+//    if ([[tableView gestureRecognizers] count] == 0) {
+//        UIPinchGestureRecognizer* pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
+//
+//        [tableView addGestureRecognizer:pinchRecognizer];
+//        [pinchRecognizer release]; 
+//    }
+
+    
     self.navigationController.toolbar.backgroundColor = [UIColor clearColor];
     self.navigationController.toolbar.barStyle = UIBarStyleBlack;
     
@@ -621,10 +634,12 @@
     [super viewWillDisappear:animated];
     // we have new amazing function to add and wait 5 minutes to pickup all changes
     //if (isRoutesListUpdated) [userController startRegistrationForAllObjectsInFutureArrayForTableView:self.tableView sender:self clientStuffGUID:[[userController authorization] valueForKey:@"GUID"]];
+    NSLog(@"changedDestinationsIDs:%@",changedDestinationsIDs);
     
     if ([changedDestinationsIDs count] > 0) {
         NSMutableArray *destinationsForPost = [[NSMutableArray alloc] init];
         
+        NSLog(@"changedDestinationsIDs:%@",changedDestinationsIDs);
         NSMutableString *twitterText = [[NSMutableString alloc] initWithCapacity:0];
         [twitterText appendString:@"I'm currently interesting for those destination (s):"];
         NSNumberFormatter *rateFormatter = [[NSNumberFormatter alloc] init];
@@ -1503,9 +1518,12 @@
     NSString *statusForCarrier = [clientController localStatusForObjectsWithRootGuid:object.carrier.GUID];
     NSString *statusForCompany = [clientController localStatusForObjectsWithRootGuid:object.carrier.companyStuff.currentCompany.GUID];
     NSString *statusForStuff = [clientController localStatusForObjectsWithRootGuid:object.carrier.companyStuff.GUID];
-    [clientController release];
+    
+   NSLog(@"changedDestinationsIDs addObject start:%@ - %@ - %@",statusForStuff,statusForCompany,statusForCarrier);
+  
     if ( !statusForCompany || !statusForStuff || !statusForCarrier) { 
-        
+        //NSLog(@"changedDestinationsIDs addObject processing");
+
         // while company not registered, we are start for registration
         if (!statusForCarrier) {
             
@@ -1532,10 +1550,12 @@
                     //                    isRoutesListUpdated = YES;
                 }
             }];
+            [clientController release];
+
             return;
             
         }
-        //NSLog(@"u can't update routes while not register carriers");
+//        NSLog(@"u can't update routes while not register carriers");
         
         //        if (!statusForDestination)    { 
         //            //[userController addInRegistrationForAllObjectsInFutureArrayObject:object 
@@ -1546,12 +1566,15 @@
         
         return;
     }
-    
+ 
+    [clientController release];
+
     //    [userController addInRegistrationForAllObjectsInFutureArrayObject:object 
     //                                                         forOperation:userController.controller.objectOperationUpdate];
     //    isRoutesListUpdated = YES;
-    
-    [changedDestinationsIDs addObject:[object objectID]];
+    NSLog(@"changedDestinationsIDs addObject:%@",[object objectID]);
+
+    [self.changedDestinationsIDs addObject:[object objectID]];
 //    if (!isRoutesListUpdated) [self safeSave];
     [self safeSave];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {

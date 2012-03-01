@@ -24,6 +24,7 @@
 #import "DestinationsListPushList.h"
 
 #import <QuartzCore/QuartzCore.h>
+#import "CalendarStore/CalendarStore.h"
 
 static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 
@@ -949,6 +950,31 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
             
         }
     }
+    
+}
+- (IBAction)updateEventsList:(id)sender {
+
+    NSDateComponents *components = [[NSDateComponents alloc] init];
+    [components setMonth:1]; // From January 2012
+    [components setYear:2012];
+    NSCalendar *gregorian = [[NSCalendar alloc]
+                             initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDate *startDateDate = [gregorian dateFromComponents:components];
+    
+    //NSDate *startDateDate = [NSDate date];
+    NSDate *endDate = [NSDate dateWithTimeIntervalSinceNow:+6004800];
+    
+    CalCalendarStore *myStore = [CalCalendarStore defaultCalendarStore];
+    NSArray *calendars = [myStore calendars];
+    
+    NSPredicate *eventsForNextTwoWeeks = [CalCalendarStore eventPredicateWithStartDate:startDateDate endDate:endDate calendars:calendars];
+    NSArray *eventsTwoWeeks = [myStore eventsWithPredicate:eventsForNextTwoWeeks];
+    
+    NSPredicate *filterCalendars = [NSPredicate predicateWithFormat:@"calendar.title contains[cd] '_'"];
+    
+    NSArray *filteredEvents = [eventsTwoWeeks filteredArrayUsingPredicate:filterCalendars];
+    [updateForMainThread fillEventsListInternallyAndSaveToDiskForExternalUsing:filteredEvents];
+    if ([self.loggingLevel intValue] == 1) NSLog(@"APP DELEGATE:Calendar events list to udpate:%@",filteredEvents);
     
 }
 

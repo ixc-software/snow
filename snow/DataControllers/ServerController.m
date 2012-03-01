@@ -1290,22 +1290,20 @@ static char encodingTable[64] = {
 
             NSLog(@"SERVER CONTROLLER:new company:%@",newCompany.name);
             return [NSDictionary dictionaryWithObjectsAndKeys:@"new",@"operation",objectGUID,@"objectGUID",nil];
-        }
-        if ([fetchedObjects count] == 1) { 
+        } else if ([fetchedObjects count] == 1) { 
 
             CurrentCompany *findedCompany = [fetchedObjects lastObject];
+            NSLog(@"SERVER CONTROLLER:updated company:%@",findedCompany.name);
 
             if ([stuff.GUID isEqualToString:findedCompany.companyAdminGUID]) {
                 [self setValuesFromDictionary:[object valueForKey:entityName] anObject:findedCompany];
-                NSLog(@"SERVER CONTROLLER:updated company:%@",findedCompany.name);
+//                NSLog(@"SERVER CONTROLLER:updated company:%@",findedCompany.name);
                 return [NSDictionary dictionaryWithObjectsAndKeys:@"updated",@"operation",nil];
             } else return [NSDictionary dictionaryWithObjectsAndKeys:@"you are not admin",@"error",objectGUID,@"objectGUID",nil];
             
             return [NSDictionary dictionaryWithObjectsAndKeys:@"updated",@"operation",nil];
 
-        } 
-
-        return [NSDictionary dictionaryWithObjectsAndKeys:@"company have more than 2 records",@"error",objectGUID,@"objectGUID",nil];;
+        }  else return [NSDictionary dictionaryWithObjectsAndKeys:@"company have more than 2 records",@"error",objectGUID,@"objectGUID",nil];;
     }
     
     if ([entityName isEqualToString:@"CompanyStuff"]) {
@@ -1554,10 +1552,12 @@ static char encodingTable[64] = {
                     if ([fetchedObjects count] == 1) { 
                         Carrier *findedCarrier = [fetchedObjects lastObject];
                         if (findedCarrier) {
-
-                        findedDestination.carrier = findedCarrier;
+                            NSLog(@"SERVER CONTROLLER: destination change root carrier %@ >>>>> %@ ",findedDestination.carrier.name,findedCarrier.name);
+                            findedDestination.carrier = findedCarrier;
+                            
+                            [self finalSave:moc];
                         } else return [NSDictionary dictionaryWithObjectsAndKeys:@"root carrier not found for updated destination",@"result",objectGUID,@"objectGUID",nil];
-
+                        
                     } 
                     
                 }
@@ -1645,6 +1645,7 @@ static char encodingTable[64] = {
                     return [NSDictionary dictionaryWithObjectsAndKeys:@"you can't remove root company",@"error",nil];                    
                 } else {
                     [self.moc deleteObject:findedCompany];
+                    [self finalSave:self.moc];
                     return nil;
                 }
                 
@@ -1695,13 +1696,19 @@ static char encodingTable[64] = {
             Carrier *findedCarrier = [fetchedObjects lastObject];
             
             if ([findedCarrier.companyStuff.GUID isEqualToString:stuff.GUID]) {
+                NSLog(@"SERVER CONTROLLER: removing carrier:%@",findedCarrier.name);
                 [self.moc deleteObject:findedCarrier];
+                [self finalSave:self.moc];
+
                 return nil;
             } else return [NSDictionary dictionaryWithObjectsAndKeys:@"you are not owner of this carrier",@"error",nil];
         } 
         
         [fetchedObjects enumerateObjectsUsingBlock:^(Carrier *findedCarrier, NSUInteger idx, BOOL *stop) {
-            if ([findedCarrier.companyStuff.GUID isEqualToString:stuff.GUID]) [self.moc deleteObject:findedCarrier];
+            if ([findedCarrier.companyStuff.GUID isEqualToString:stuff.GUID]) { 
+                NSLog(@"SERVER CONTROLLER: removing carrier:%@",findedCarrier.name);
+                [self.moc deleteObject:findedCarrier];
+            }
         }];
         
         return [NSDictionary dictionaryWithObjectsAndKeys:@"carrier have more than 1 records",@"error",nil];;
@@ -1726,6 +1733,8 @@ static char encodingTable[64] = {
             
             if ([findedDestination.carrier.companyStuff.GUID isEqualToString:stuff.GUID]) {
                 [self.moc deleteObject:findedDestination];
+                [self finalSave:self.moc];
+
                 return nil;
             } else return [NSDictionary dictionaryWithObjectsAndKeys:@"you are not owner of this destination",@"error",nil];
         } 

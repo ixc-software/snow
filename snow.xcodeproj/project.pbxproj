@@ -2255,7 +2255,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "install_name_tool -change libmysqlclient.16.dylib @executable_path/../Frameworks/libmysqlclient.16.dylib $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\ninstall_name_tool -change LibXL.framework/LibXL @executable_path/../Frameworks/LibXL.framework/LibXL $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\n\ncd $CONFIGURATION_BUILD_DIR\ntar cvzpf $PRODUCT_NAME.tgz $PRODUCT_NAME.app\nrm -r /Users/Shared/$PRODUCT_NAME.app\ncp -R $PRODUCT_NAME.app /Users/Shared/";
+			shellScript = "install_name_tool -change libmysqlclient.16.dylib @executable_path/../Frameworks/libmysqlclient.16.dylib $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\ninstall_name_tool -change LibXL.framework/LibXL @executable_path/../Frameworks/LibXL.framework/LibXL $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\n\ncd $CONFIGURATION_BUILD_DIR\ntar cvzpf $PRODUCT_NAME.tgz $PRODUCT_NAME.app\nrm -r /Users/alex/Downloads/$PRODUCT_NAME.app\ncp -R $PRODUCT_NAME.app /Users/alex/Downloads";
 		};
 /* End PBXShellScriptBuildPhase section */
 

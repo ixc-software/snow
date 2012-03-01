@@ -467,7 +467,15 @@
 //                    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:YES];
                     [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[admin objectID]] mustBeApproved:NO];
                     [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil];
+                } else { 
+                    [self showErrorMessage:@"login failed"];
+                    loginActivity.hidden = YES;
+                    [loginActivity stopAnimating];
+                    [login setEnabled:YES forSegmentAtIndex:0];
+                    [registration setEnabled:YES forSegmentAtIndex:0];
+
                 }
+
             } else {
                 NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
                 NSEntityDescription *entity = [NSEntityDescription entityForName:@"CurrentCompany" inManagedObjectContext:delegate.managedObjectContext];
@@ -611,7 +619,7 @@
            
             [self showErrorMessage:status];
         });
-
+        return;
     }
     
     if ([data count] > 4) objectID = [data objectAtIndex:4];
@@ -621,17 +629,28 @@
         NSManagedObject *updatedObject = [delegate.managedObjectContext objectWithID:objectID];
 
         if ([[[updatedObject entity] name] isEqualToString:@"CompanyStuff"]) {
-            dispatch_async(dispatch_get_main_queue(), ^(void) {
-                if (![isItLatestMessage boolValue])
-                {
+
+            
+            
+            
+            if (![isItLatestMessage boolValue])
+            {
+                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                    
                     loginActivity.hidden = NO;
                     [loginActivity startAnimating];
-                } else {
+                });
+            } else {
+                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                    
                     loginActivity.hidden = YES;
                     [loginActivity stopAnimating];
+                });
+                if ([status isEqualToString:@"put object finish"] && ![isError boolValue] && isJoinStarted) { 
+                    [self showErrorMessage:@"you request was sent to admin"];
                     
-                    if ([status isEqualToString:@"put object finish"] && ![isError boolValue] && isJoinStarted) { 
-                        [self showErrorMessage:@"you request was sent to admin"];
+                    dispatch_async(dispatch_get_main_queue(), ^(void) {
+                        
                         [UIView animateWithDuration:3 
                                               delay:4 
                                             options:UIViewAnimationOptionBeginFromCurrentState
@@ -639,20 +658,26 @@
                                              
                                              self.view.alpha = 0.0;
                                          } completion:nil];
+                    });
+                    
+                } else {
+                    if (![isError boolValue] ) {
                         
-                    } else {
                         
-                       [UIView animateWithDuration:3 
-                                              delay:0 
-                                            options:UIViewAnimationOptionBeginFromCurrentState
-                                         animations:^{
-                                             
-                                             self.view.alpha = 0.0;
-                                         } completion:nil];
+                        dispatch_async(dispatch_get_main_queue(), ^(void) {
+                            
+                            [UIView animateWithDuration:3 
+                                                  delay:0 
+                                                options:UIViewAnimationOptionBeginFromCurrentState
+                                             animations:^{
+                                                 
+                                                 self.view.alpha = 0.0;
+                                             } completion:nil];
+                        });
                     }
-
                 }
-            });
+                
+            }
         }
             
         }

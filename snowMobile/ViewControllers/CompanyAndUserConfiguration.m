@@ -1456,7 +1456,7 @@
         {
             // clear all data
             mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
-            NSString *storePath = [[delegate applicationDocumentsDirectory].path stringByAppendingPathComponent:@"snow_iph.sqlite"];
+            NSString *storePath = [[delegate applicationDocumentsDirectory].path stringByAppendingPathComponent:@"snowMobile.sqlite"];
             NSURL *storeUrl = [NSURL fileURLWithPath:storePath];
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"processingPool"];
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"recordsStack"];

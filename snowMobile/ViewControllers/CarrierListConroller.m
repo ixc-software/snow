@@ -176,55 +176,59 @@
         self.tableView.alpha = 0.7;
         helpView.delegate = self;
         [self.navigationController.view addSubview:helpView.view];
-    } else [helpView release];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-        if (isCarriersUpdating == YES) return;
-        else isCarriersUpdating = YES;
-        NSDate *lastUpdate = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastCarriersUpdatingTime"];
-        if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 60 ) {
-            [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"lastCarriersUpdatingTime"];
-            
-            mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
-            ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];            
-            CompanyStuff *admin = [clientController authorization];
-            dispatch_async(dispatch_get_main_queue(), ^(void) {
-                carrierUpdateProgress.hidden = NO;
-                [carrierUpdateProgress startAnimating];
+    } else { 
+        [helpView release];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+            if (isCarriersUpdating == YES) return;
+            else isCarriersUpdating = YES;
+            NSDate *lastUpdate = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastCarriersUpdatingTime"];
+            if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 60 ) {
+                [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"lastCarriersUpdatingTime"];
+                
+                mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
+                ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];            
+                CompanyStuff *admin = [clientController authorization];
+                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                    carrierUpdateProgress.hidden = NO;
+                    [carrierUpdateProgress startAnimating];
+                    editCarrierslistButton.enabled = NO;
 
-            });
-            NSArray *allGUIDsCarrier = [clientController getAllObjectsListWithEntityForList:@"Carrier" withMainObjectGUID:admin.GUID withMainObjectEntity:@"CompanyStuff" withAdmin:admin withDateFrom:nil withDateTo:nil];
-            NSArray *allObjectsForGUIDS = [clientController getAllObjectsListWithGUIDs:allGUIDsCarrier withEntity:@"Carrier" withAdmin:admin];
-            if (allGUIDsCarrier && allObjectsForGUIDS) {
+                });
+                NSArray *allGUIDsCarrier = [clientController getAllObjectsListWithEntityForList:@"Carrier" withMainObjectGUID:admin.GUID withMainObjectEntity:@"CompanyStuff" withAdmin:admin withDateFrom:nil withDateTo:nil];
+                NSArray *allObjectsForGUIDS = [clientController getAllObjectsListWithGUIDs:allGUIDsCarrier withEntity:@"Carrier" withAdmin:admin];
+                if (allGUIDsCarrier && allObjectsForGUIDS) {
+                    
+                    NSArray *updatedCarrierIDs = [clientController updateGraphForObjects:allObjectsForGUIDS withEntity:@"Carrier" withAdmin:admin withRootObject:admin isEveryTenPercentSave:NO];
+                    [clientController finalSave:clientController.moc];
+                    // remove objects which was not on server
+                    NSSet *allCarriers = admin.carrier;
+                    [allCarriers enumerateObjectsUsingBlock:^(Carrier *carrier, BOOL *stop) {
+                        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",carrier.GUID];
+                        NSArray *filteredCarrierIDs = [updatedCarrierIDs filteredArrayUsingPredicate:predicate];
+                        if (filteredCarrierIDs.count == 0) {
+                            [clientController.moc deleteObject:carrier];
+                            NSLog(@"CLIENT CONTROLLER: object with entity %@ not on server and will removed",carrier.entity.name);
+                        }
+                    }];
+                    [clientController finalSave:clientController.moc];
+                    
+                }
+                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                    carrierUpdateProgress.hidden = YES;
+                    [carrierUpdateProgress stopAnimating];
+                    editCarrierslistButton.enabled = YES;
+
+                });
                 
-                NSArray *updatedCarrierIDs = [clientController updateGraphForObjects:allObjectsForGUIDS withEntity:@"Carrier" withAdmin:admin withRootObject:admin isEveryTenPercentSave:NO];
-                [clientController finalSave:clientController.moc];
-                // remove objects which was not on server
-                NSSet *allCarriers = admin.carrier;
-                [allCarriers enumerateObjectsUsingBlock:^(Carrier *carrier, BOOL *stop) {
-                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",carrier.GUID];
-                    NSArray *filteredCarrierIDs = [updatedCarrierIDs filteredArrayUsingPredicate:predicate];
-                    if (filteredCarrierIDs.count == 0) {
-                        [clientController.moc deleteObject:carrier];
-                        NSLog(@"CLIENT CONTROLLER: object with entity %@ not on server and will removed",carrier.entity.name);
-                    }
-                }];
-                [clientController finalSave:clientController.moc];
                 
+                [clientController release];
+                
+                
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                isCarriersUpdating = NO;
             }
-            dispatch_async(dispatch_get_main_queue(), ^(void) {
-                carrierUpdateProgress.hidden = YES;
-                [carrierUpdateProgress stopAnimating];
-            });
-
-            
-            [clientController release];
-            
-            
-            [[NSUserDefaults standardUserDefaults] synchronize];
-            isCarriersUpdating = NO;
-        }
-    });
-
+        });
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -963,7 +967,7 @@
     [sender resignFirstResponder];
     [sender setHidden:YES];
     [updatedCarriersIDs addObject:carrier.objectID];
-    //[self safeSave];
+    [self safeSave];
 //    dispatch_async(dispatch_get_main_queue(), ^(void) { 
 //        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:selectedLast] withRowAnimation:UITableViewRowAnimationFade];
 //    });
