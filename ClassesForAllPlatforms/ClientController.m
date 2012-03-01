@@ -364,7 +364,7 @@ static char encodingTable[64] = {
 -(void) setUserDefaultsObject:(id)object forKey:(NSString *)key;
 {
     [[NSUserDefaults standardUserDefaults] setObject:object forKey:key];
-    //[[NSUserDefaults standardUserDefaults] synchronize];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 -(id) userDefaultsObjectForKey:(NSString *)key;
@@ -859,13 +859,18 @@ static char encodingTable[64] = {
     NSData *receivedResult = [[NSData alloc] initWithData:receivedData];
     NSString *answer = [[NSString alloc] initWithData:receivedResult encoding:NSUTF8StringEncoding];
     //NSLog(@"ANSWER:%@",answer);
-
     
     //[receivedData release];
     JSONDecoder *jkitDecoder = [JSONDecoder decoder];
 
     NSDictionary *finalResult = [jkitDecoder objectWithUTF8String:(const unsigned char *)[answer UTF8String] length:[answer length] error:&error];
-    if (error) NSLog(@"CLIENT CONTROLLER: failed to decode answer with error:%@",[error localizedDescription]);
+    [receivedData release];
+    //NSLog(@"finalResult:%@",finalResult);
+
+    if (error) { 
+        NSLog(@"CLIENT CONTROLLER: failed to decode answer with error:%@",[error localizedDescription]);
+        return nil;
+    }
     return finalResult;
 }
 #pragma mark -
@@ -2014,56 +2019,58 @@ static char encodingTable[64] = {
         
         NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"GetObjects" withJSONRequest:prepeareForJSONRequest];
         [prepeareForJSONRequest release];
-        
-        [self updateUIwithMessage:@"get all objects processing" withObjectID:nil withLatestMessage:NO error:NO];
-        
-        //NSLog(@"CLIENT CONTROLLER: GetObjects Received:%@",receivedObject);
-        NSString *error = [receivedObject valueForKey:@"error"];
-        if (error) {  
-            [self updateUIwithMessage:error withObjectID:nil withLatestMessage:NO error:YES];
-            return error;
-        } else {
-            // here is update internal graph
-            if ([entityName isEqualToString:@"CurrentCompany"]) { 
-                NSString *allObjectsString = [receivedObject valueForKey:@"objects"];
-                NSData *allObjectsData = [self dataWithBase64EncodedString:allObjectsString];
-                NSDictionary *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
-
-                //NSArray *listObjects = [receivedObject valueForKey:@"objects"];
-                //NSDictionary *objects = [receivedObject valueForKey:@"objects"];//[listObjects lastObject];
-                [self makeUpdatesForCurrentCompany:listObjects];
+        if (receivedObject) {
+            [self updateUIwithMessage:@"get all objects processing" withObjectID:nil withLatestMessage:NO error:NO];
+            
+            //NSLog(@"CLIENT CONTROLLER: GetObjects Received:%@",receivedObject);
+            NSString *error = [receivedObject valueForKey:@"error"];
+            if (error) {  
+                [self updateUIwithMessage:error withObjectID:nil withLatestMessage:NO error:YES];
+                return error;
+            } else {
+                // here is update internal graph
+                if ([entityName isEqualToString:@"CurrentCompany"]) { 
+                    NSString *allObjectsString = [receivedObject valueForKey:@"objects"];
+                    NSData *allObjectsData = [self dataWithBase64EncodedString:allObjectsString];
+                    NSDictionary *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
+                    
+                    //NSArray *listObjects = [receivedObject valueForKey:@"objects"];
+                    //NSDictionary *objects = [receivedObject valueForKey:@"objects"];//[listObjects lastObject];
+                    [self makeUpdatesForCurrentCompany:listObjects];
+                }
+                if ([entityName isEqualToString:@"CompanyStuff"]) {
+                    NSString *allObjectsString = [receivedObject valueForKey:@"objects"];
+                    NSData *allObjectsData = [self dataWithBase64EncodedString:allObjectsString];
+                    NSDictionary *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
+                    
+                    //NSArray *listObjects = [receivedObject valueForKey:@"objects"];
+                    //                NSDictionary *objects = [receivedObject valueForKey:@"objects"];//[listObjects lastObject];
+                    [self makeUpdatesForCompanyStuff:listObjects withCurrentCompany:admin.currentCompany];
+                }
+                if ([entityName isEqualToString:@"Carrier"]) { 
+                    //NSArray *listObjects = [receivedObject valueForKey:@"objects"];
+                    //NSDictionary *objects = [receivedObject valueForKey:@"objects"];//[listObjects lastObject];
+                    NSString *allObjectsString = [receivedObject valueForKey:@"objects"];
+                    NSData *allObjectsData = [self dataWithBase64EncodedString:allObjectsString];
+                    NSDictionary *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
+                    
+                    [self makeUpdatesForCarrier:listObjects withCompanyStuff:admin];
+                }
+                if ([entityName isEqualToString:@"Events"]) {
+                    NSString *allObjectsString = [receivedObject valueForKey:@"objects"];
+                    NSData *allObjectsData = [self dataWithBase64EncodedString:allObjectsString];
+                    NSArray *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
+                    [self makeUpdatesForEvents:listObjects];
+                }
             }
-            if ([entityName isEqualToString:@"CompanyStuff"]) {
-                NSString *allObjectsString = [receivedObject valueForKey:@"objects"];
-                NSData *allObjectsData = [self dataWithBase64EncodedString:allObjectsString];
-                NSDictionary *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
-
-                //NSArray *listObjects = [receivedObject valueForKey:@"objects"];
-//                NSDictionary *objects = [receivedObject valueForKey:@"objects"];//[listObjects lastObject];
-                [self makeUpdatesForCompanyStuff:listObjects withCurrentCompany:admin.currentCompany];
-            }
-            if ([entityName isEqualToString:@"Carrier"]) { 
-                //NSArray *listObjects = [receivedObject valueForKey:@"objects"];
-                //NSDictionary *objects = [receivedObject valueForKey:@"objects"];//[listObjects lastObject];
-                NSString *allObjectsString = [receivedObject valueForKey:@"objects"];
-                NSData *allObjectsData = [self dataWithBase64EncodedString:allObjectsString];
-                NSDictionary *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
-
-                [self makeUpdatesForCarrier:listObjects withCompanyStuff:admin];
-            }
-            if ([entityName isEqualToString:@"Events"]) {
-                NSString *allObjectsString = [receivedObject valueForKey:@"objects"];
-                NSData *allObjectsData = [self dataWithBase64EncodedString:allObjectsString];
-                NSArray *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
-                [self makeUpdatesForEvents:listObjects];
-            }
+            
+            [self finalSave:self.moc];
+            [self updateUIwithMessage:@"get all objects finish" withObjectID:nil withLatestMessage:YES error:NO];
+            
+            [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"lastGraphUpdatingTime"];
+            [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:@"isCurrentUpdateProcessing"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
         }
-        
-        [self finalSave:self.moc];
-        [self updateUIwithMessage:@"get all objects finish" withObjectID:nil withLatestMessage:YES error:NO];
-        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"lastGraphUpdatingTime"];
-        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:@"isCurrentUpdateProcessing"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
     } else { 
         NSLog(@"CLIENT CONTROLLER: i'm sorry, get all objects was not started.. last update time:%@ and processing:%@",lastUpdate,isCurrentUpdateProcessing);
         return @"timeout";
@@ -2521,63 +2528,64 @@ static char encodingTable[64] = {
     }];
 
     [prepeareForJSONRequest setValue:allObjects forKey:@"necessaryData"];
-    //NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",prepeareForJSONRequest);
+    NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",prepeareForJSONRequest);
 
     NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"PutObject" withJSONRequest:prepeareForJSONRequest];
-    //NSLog(@"CLIENT CONTROLLER PutObject Received:%@",receivedObject);
-    [self updateUIwithMessage:@"put object processing"  withObjectID:[objectIDs lastObject] withLatestMessage:NO error:NO];
-
-    
-    NSString *error = [[[receivedObject valueForKey:@"result"] lastObject] valueForKey:@"error"];
-    if (error) [self updateUIwithMessage:error withObjectID:[objectIDs lastObject] withLatestMessage:YES error:YES];
-    else {
+    NSLog(@"CLIENT CONTROLLER PutObject Received:%@",receivedObject);
+    if (receivedObject) {
+        [self updateUIwithMessage:@"put object processing"  withObjectID:[objectIDs lastObject] withLatestMessage:NO error:NO];
         
-        // here is handle result
-        NSArray *results = [receivedObject valueForKey:@"result"];
-        [results enumerateObjectsUsingBlock:^(NSDictionary *result, NSUInteger idx, BOOL *stop) {
-            NSString *error = [result valueForKey:@"error"];
-            if (!error) {
-                NSManagedObject *updatedObject = [self.moc objectWithID:[objectIDs objectAtIndex:idx]];
-                NSDictionary *status = [NSDictionary dictionaryWithObject:@"registered" forKey:@"update"];
-                NSString *guidForStatus = [updatedObject valueForKey:@"GUID"];
-               if (guidForStatus) [self setUserDefaultsObject:status forKey:guidForStatus];
-               else NSLog(@"CLIENT CONTROLLER: warning, result:%@ don't have GUID to update inside system",result);
-                //NSLog(@"CLIENT CONTROLLER:updated object:%@ for guid:%@ with object:%@",[[NSUserDefaults standardUserDefaults] objectForKey:[updatedObject valueForKey:@"GUID"]],[updatedObject valueForKey:@"GUID"],updatedObject);
-
-                
-            } else {
-                [self updateUIwithMessage:error withObjectID:[objectIDs lastObject] withLatestMessage:NO error:YES];
-                return;
-            }
-            NSString *operation = [result valueForKey:@"operation"];
-            if (!error && [operation isEqualToString:@"login"]) {
-                //NSLog(@"stuff before changes:%@",admin);
-                NSString *objectGUID = [result valueForKey:@"objectGUID"];
-
-                // bcs we don't have passwords in companies list, but admin's there is presend, we must using password which was using for auth
-                NSString *localPassword = admin.password;
-                CompanyStuff *newAdmin = [self authorization];
-                newAdmin.password = localPassword;
-                
-                //NSLog(@"stuff after changes:%@",[self authorization]);
-
-                //NSLog(@"CLIENT CONTROLLER: get all objects result:%@",[self getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES]);
-                //[self finalSave:self.moc];
-                NSString *keyAofAuthorized = @"authorizedUserGUID";
-                
+        
+        NSString *error = [[[receivedObject valueForKey:@"result"] lastObject] valueForKey:@"error"];
+        if (error) [self updateUIwithMessage:error withObjectID:[objectIDs lastObject] withLatestMessage:YES error:YES];
+        else {
+            
+            // here is handle result
+            NSArray *results = [receivedObject valueForKey:@"result"];
+            [results enumerateObjectsUsingBlock:^(NSDictionary *result, NSUInteger idx, BOOL *stop) {
+                NSString *error = [result valueForKey:@"error"];
+                if (!error) {
+                    NSManagedObject *updatedObject = [self.moc objectWithID:[objectIDs objectAtIndex:idx]];
+                    NSDictionary *status = [NSDictionary dictionaryWithObject:@"registered" forKey:@"update"];
+                    NSString *guidForStatus = [updatedObject valueForKey:@"GUID"];
+                    if (guidForStatus) [self setUserDefaultsObject:status forKey:guidForStatus];
+                    else NSLog(@"CLIENT CONTROLLER: warning, result:%@ don't have GUID to update inside system",result);
+                    //NSLog(@"CLIENT CONTROLLER:updated object:%@ for guid:%@ with object:%@",[[NSUserDefaults standardUserDefaults] objectForKey:[updatedObject valueForKey:@"GUID"]],[updatedObject valueForKey:@"GUID"],updatedObject);
+                    
+                    
+                } else {
+                    [self updateUIwithMessage:error withObjectID:[objectIDs lastObject] withLatestMessage:NO error:YES];
+                    return;
+                }
+                NSString *operation = [result valueForKey:@"operation"];
+                if (!error && [operation isEqualToString:@"login"]) {
+                    //NSLog(@"stuff before changes:%@",admin);
+                    NSString *objectGUID = [result valueForKey:@"objectGUID"];
+                    
+                    // bcs we don't have passwords in companies list, but admin's there is presend, we must using password which was using for auth
+                    NSString *localPassword = admin.password;
+                    CompanyStuff *newAdmin = [self authorization];
+                    newAdmin.password = localPassword;
+                    
+                    //NSLog(@"stuff after changes:%@",[self authorization]);
+                    
+                    //NSLog(@"CLIENT CONTROLLER: get all objects result:%@",[self getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES]);
+                    //[self finalSave:self.moc];
+                    NSString *keyAofAuthorized = @"authorizedUserGUID";
+                    
 #if defined(SNOW_CLIENT_APPSTORE)
-                keyAofAuthorized = @"authorizedUserGUIDclient";
+                    keyAofAuthorized = @"authorizedUserGUIDclient";
 #endif
-
-                [self setUserDefaultsObject:objectGUID forKey:keyAofAuthorized];
-
-            }
-        }];
-        [self updateUIwithMessage:@"put object finish" withObjectID:[objectIDs lastObject] withLatestMessage:YES error:NO];
-    }
-
-    [self finalSave:self.moc];
-
+                    
+                    [self setUserDefaultsObject:objectGUID forKey:keyAofAuthorized];
+                    
+                }
+            }];
+            [self updateUIwithMessage:@"put object finish" withObjectID:[objectIDs lastObject] withLatestMessage:YES error:NO];
+        }
+        
+        [self finalSave:self.moc];
+    } //else [self updateUIwithMessage:@"put object failed" withObjectID:[objectIDs lastObject] withLatestMessage:YES error:YES];
 }
 
 #pragma mark -
@@ -2598,10 +2606,10 @@ static char encodingTable[64] = {
 //    }
     [prepeareForJSONRequest setValue:[object valueForKey:@"GUID"] forKey:@"objectGUID"];
     [prepeareForJSONRequest setValue:[[object entity] name] forKey:@"objectEntity"];
-    //NSLog(@"CLIENT CONTROLLER RemoveObject Sent:%@",prepeareForJSONRequest);
+    NSLog(@"CLIENT CONTROLLER RemoveObject Sent:%@",prepeareForJSONRequest);
     
     NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"RemoveObject" withJSONRequest:prepeareForJSONRequest];
-    //NSLog(@"CLIENT CONTROLLER RemoveObject Received:%@",receivedObject);
+    NSLog(@"CLIENT CONTROLLER RemoveObject Received:%@",receivedObject);
     [self updateUIwithMessage:@"remove object processing"  withObjectID:objectID withLatestMessage:NO error:NO];
     NSString *error = [receivedObject valueForKey:@"error"];
     if (error) { 

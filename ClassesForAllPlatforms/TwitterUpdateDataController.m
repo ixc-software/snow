@@ -127,7 +127,7 @@
     
 	[accessTokenLocal setVerifier:twitterPIN];
 	
-   // NSLog(@"Using PIN %@", [accessTokenLocal verifier]);
+   NSLog(@"Using PIN %@", [accessTokenLocal verifier]);
 	
 	OAMutableURLRequest *request = [[OAMutableURLRequest alloc] initWithURL:url
 																   consumer:consumer
@@ -139,7 +139,7 @@
 	[request setHTTPMethod:@"POST"];
 	
     
-   // NSLog(@"Getting access token...");
+   NSLog(@"Getting access token...");
 	
 	[fetcher fetchDataWithRequest:request 
 						 delegate:self

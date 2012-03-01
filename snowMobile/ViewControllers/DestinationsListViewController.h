@@ -22,6 +22,8 @@
 
 }
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, retain) NSMutableArray *changedDestinationsIDs;
+
 
 @property (nonatomic, retain) NSManagedObjectID *selectedCarrierID;
 
