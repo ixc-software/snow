@@ -259,7 +259,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         NSDate *dateFrom = [dateFormatter dateFromString:dateFromString];
         NSDate *dateTo = [dateFormatter dateFromString:dateToString];
-        
+        [dateFormatter release];
         
         ServerController *serverController = [[ServerController alloc] init];
         NSString *senderIP = [asyncSocket connectedHost];
@@ -305,7 +305,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
         NSString *authorizedUserEmail = [result valueForKey:@"authorizedUserEmail"];
         NSString *authorizedUserPassword = [result valueForKey:@"authorizedUserPassword"];
         NSString *entityForList = [result valueForKey:@"entity"];
-        NSArray *guids = [result valueForKey:@"allGUIDs"];
+        NSArray *guids = [[NSArray alloc] initWithArray:[result valueForKey:@"allGUIDs"]];
         //        NSNumber *isIncludeAllObjects = [result valueForKey:@"isIncludeAllObjects"];
         //NSLog(@"Class:%@",[[result valueForKey:@"isIncludeAllSubentities"] class]);
         //        NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
@@ -324,6 +324,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
         //NSLog(@"GetObjects: senderIP:%@,receiverIP:%@",senderIP,receiverIP);
         NSString *answer = [serverController getObjectsWithGUIDsForUserEmail:authorizedUserEmail withPassword:authorizedUserPassword withEntity:entityForList withGUIDs:guids withSenderIP:senderIP withReceiverIP:receiverIP];        
         //NSLog(@"%@[%p]: GetObjectsWithGUIDs:answer: %@ ", THIS_FILE, self, answer);
+        [guids release];
 		NSData *response = [answer dataUsingEncoding:NSUTF8StringEncoding];
         //NSLog(@"data:%@",response);        
         HTTPDataResponse *responseFinal = [[[HTTPDataResponse alloc] initWithData:response] autorelease];
@@ -470,24 +471,24 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
 	
 	HTTPLogTrace2(@"%@[%p]: isPasswordProtected(%@) - %@", THIS_FILE, self, path, (result ? @"YES" : @"NO"));
 	
-	return YES;
+	return NO;
 }
 //
-- (BOOL)useDigestAccessAuthentication
-{
-	HTTPLogTrace();
-	
-	// Digest access authentication is the default setting.
-	// Notice in Safari that when you're prompted for your password,
-	// Safari tells you "Your login information will be sent securely."
-	// 
-	// If you return NO in this method, the HTTP server will use
-	// basic authentication. Try it and you'll see that Safari
-	// will tell you "Your password will be sent unencrypted",
-	// which is strongly discouraged.
-	
-	return YES;
-}
+//- (BOOL)useDigestAccessAuthentication
+//{
+//	HTTPLogTrace();
+//	
+//	// Digest access authentication is the default setting.
+//	// Notice in Safari that when you're prompted for your password,
+//	// Safari tells you "Your login information will be sent securely."
+//	// 
+//	// If you return NO in this method, the HTTP server will use
+//	// basic authentication. Try it and you'll see that Safari
+//	// will tell you "Your password will be sent unencrypted",
+//	// which is strongly discouraged.
+//	
+//	return YES;
+//}
 //
 - (NSString *)passwordForUser:(NSString *)username
 {

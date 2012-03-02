@@ -11,7 +11,7 @@
 
 @class desctopDelegate;
 @interface ServerController : NSObject {
-@private
+//@private
   
     NSManagedObjectContext *moc;
     desctopDelegate *delegate;

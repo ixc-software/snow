@@ -47,7 +47,7 @@
         <attribute name="creationDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="enabled" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
         <attribute name="externalChangedDate" optional="YES" attributeType="Date" syncable="YES"/>
-        <attribute name="GUID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="GUID" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="internalChangedDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="modificationDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="originalCode" optional="YES" attributeType="Integer 64" indexed="YES" syncable="YES"/>
@@ -230,10 +230,10 @@
     </entity>
     <entity name="DestinationsListForSale" representedClassName="DestinationsListForSale" syncable="YES">
         <attribute name="changeDate" optional="YES" attributeType="Date" syncable="YES"/>
-        <attribute name="country" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="country" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="creationDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="enabled" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
-        <attribute name="GUID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="GUID" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="ipAddressesList" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lastUsedACD" optional="YES" attributeType="Float" defaultValueString="0" syncable="YES"/>
         <attribute name="lastUsedASR" optional="YES" attributeType="Float" defaultValueString="0" syncable="YES"/>
@@ -248,7 +248,7 @@
         <attribute name="rate" optional="YES" attributeType="Float" defaultValueString="0" syncable="YES"/>
         <attribute name="rateSheet" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="rateSheetID" optional="YES" attributeType="String" defaultValueString="0" syncable="YES"/>
-        <attribute name="specific" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="specific" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
         <relationship name="carrier" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Carrier" inverseName="destinationsListForSale" inverseEntity="Carrier" indexed="YES" syncable="YES"/>
         <relationship name="codesvsDestinationsList" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CodesvsDestinationsList" inverseName="destinationsListForSale" inverseEntity="CodesvsDestinationsList" indexed="YES" syncable="YES"/>
         <relationship name="destinationDiscussion" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DestinationDiscussion" inverseName="destinationsListForSale" inverseEntity="DestinationDiscussion" indexed="YES" syncable="YES"/>
@@ -297,10 +297,10 @@
     </entity>
     <entity name="DestinationsListWeBuy" representedClassName="DestinationsListWeBuy" syncable="YES">
         <attribute name="changeDate" optional="YES" attributeType="Date" syncable="YES"/>
-        <attribute name="country" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="country" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="creationDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="enabled" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
-        <attribute name="GUID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="GUID" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="ipAddressesList" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lastUsedACD" optional="YES" attributeType="Float" defaultValueString="0" syncable="YES"/>
         <attribute name="lastUsedASR" optional="YES" attributeType="Float" defaultValueString="0" syncable="YES"/>
@@ -311,12 +311,12 @@
         <attribute name="lastUsedProfit" optional="YES" attributeType="Double" defaultValueString="0" syncable="YES"/>
         <attribute name="modificationDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="postInSalesChat" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="prefix" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="prefix" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="rate" optional="YES" attributeType="Float" defaultValueString="0" syncable="YES"/>
         <attribute name="rateSheet" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="rateSheetID" optional="YES" attributeType="String" defaultValueString="0" syncable="YES"/>
         <attribute name="selectionTestingResult" optional="YES" attributeType="Integer 16" valueTransformerName="ArrayToDataTransformer" defaultValueString="0" syncable="YES"/>
-        <attribute name="specific" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="specific" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="testingRestultInfo" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="testingResult" optional="YES" attributeType="Transformable" valueTransformerName="ArrayToDataTransformer" syncable="YES"/>
         <relationship name="carrier" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Carrier" inverseName="destinationsListWeBuy" inverseEntity="Carrier" indexed="YES" syncable="YES"/>

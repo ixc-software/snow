@@ -126,7 +126,7 @@
     controlPosAnim.duration = 0.05;
     
     
-    id tremoredObject;
+    NSTextField *tremoredObject;
     NSString *placeholder = [[tremoredText cell] placeholderString];
     BOOL isLeftMoving = NO;
     

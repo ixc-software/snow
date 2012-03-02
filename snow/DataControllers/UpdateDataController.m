@@ -880,6 +880,7 @@
     [expressionDescription setExpression:maxSalaryExpression];
     [expressionDescription setExpressionResultType:NSDecimalAttributeType];
     [requestCodesForSale setPropertiesToFetch:[NSArray arrayWithObject:expressionDescription]];
+    [expressionDescription release];
 //    [maxSalaryExpression release];
     [requestCodesForSale setResultType:NSDictionaryResultType];
     //NSLog(@"UPDATE DATA CONTROLLER: >>>>>>>>>> get max date start");

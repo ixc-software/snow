@@ -34,11 +34,11 @@ static char encodingTable[64] = {
     'w','x','y','z','0','1','2','3','4','5','6','7','8','9','+','/' };
 
 
-@interface ServerController()
-
-
-
-@end
+//@interface ServerController()
+//
+//
+//
+//@end
 
 
 @implementation ServerController
@@ -230,7 +230,7 @@ static char encodingTable[64] = {
         else characters[length++] = '=';    
     }
     
-    return [[NSString alloc] initWithBytesNoCopy:characters length:length encoding:NSASCIIStringEncoding freeWhenDone:YES];
+    return [[[NSString alloc] initWithBytesNoCopy:characters length:length encoding:NSASCIIStringEncoding freeWhenDone:YES] autorelease];
 }
 
 
@@ -833,8 +833,8 @@ static char encodingTable[64] = {
     __block NSError *error = nil;
     NSMutableDictionary *finalJSONResult = [NSMutableDictionary dictionaryWithCapacity:0];
     
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entityFor = [NSEntityDescription entityForName:entity inManagedObjectContext:self.moc];
+//    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+//    NSEntityDescription *entityFor = [NSEntityDescription entityForName:entity inManagedObjectContext:self.moc];
 //    [fetchRequest setResultType:NSDictionaryResultType];
 //    NSArray *attributes = entityFor.attributeKeys;
 //    NSDictionary *allProperties = entityFor.propertiesByName;
@@ -845,12 +845,18 @@ static char encodingTable[64] = {
 //    }];
 //    [fetchRequest setReturnsDistinctResults:YES];
 //    [fetchRequest setPropertiesToFetch:[NSArray arrayWithArray:finalProperties]];
+    NSLog(@"SERVER CONTROLLER: guids:%@",guids);
     NSMutableArray *result = [NSMutableArray array];
-    [fetchRequest setEntity:entityFor];
-    [guids enumerateObjectsUsingBlock:^(NSString *guid, NSUInteger idx, BOOL *stop) {
+    //[guids enumerateObjectsUsingBlock:^(NSString *guid, NSUInteger idx, BOOL *stop) 
+    for (NSString *guid in guids) {
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+        NSEntityDescription *entityFor = [NSEntityDescription entityForName:entity inManagedObjectContext:moc];
+        [fetchRequest setEntity:entityFor];
+
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"GUID == %@",guid];
         [fetchRequest setPredicate:predicate];
-        NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequest error:&error];
+        NSArray *fetchedObjects = [moc executeFetchRequest:fetchRequest error:&error];
+        [fetchRequest release];
         NSManagedObject *resultedObject = fetchedObjects.lastObject;
         //NSDictionary *dictionaryFromObject = [self dictionaryFromObject:resultedObject];
         NSArray *attributes = resultedObject.entity.attributeKeys;
@@ -859,7 +865,7 @@ static char encodingTable[64] = {
             [finalResult setValue:[resultedObject valueForKey:attribute] forKey:attribute];
         }];
         [result addObject:finalResult];
-    }];
+    }//];
      
     NSData *allArchivedObjects = [NSKeyedArchiver archivedDataWithRootObject:result];
     NSString *stringToPass = [self base64EncodingData:allArchivedObjects];
@@ -1164,7 +1170,7 @@ static char encodingTable[64] = {
         
         if (!stringToPass) [finalJSONResult setValue:@"objects not found or can't decode" forKey:@"error"];
         else [finalJSONResult setValue:stringToPass forKey:@"objects"];
-        [stringToPass release];
+        //[stringToPass release];
 
         [finalJSONResult setValue:@"hash" forKey:@"hash"];
         NSError *error = nil;

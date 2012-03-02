@@ -50,7 +50,8 @@ static char encodingTable[64] = {
     if (self) {
         // Initialization code here.
         mainMoc = itMainMoc;
-        
+        receivedData = [[NSMutableData alloc] init];
+
         sender = senderForThisClass;
  
 #if defined(SNOW_SERVER)
@@ -89,6 +90,7 @@ static char encodingTable[64] = {
 //    [mainMoc release];
     [moc release];
     [mainServer release];
+    [receivedData release];
     [super dealloc];
 }
 #pragma mark -
@@ -801,11 +803,13 @@ static char encodingTable[64] = {
     [request setValue:mainSystem.GUID forKey:@"mainSystemGUID"];
     [request setValue:@"hash" forKey:@"hash"];
     downloadCompleted = NO;
+//    receivedData = [[NSMutableData alloc] init];
 
-//    dispatch_async(dispatch_get_main_queue(), ^(void) { 
+    dispatch_async(dispatch_get_main_queue(), ^(void) { 
         
 //        NSError *error = nil;
-        
+        NSError *error = nil;
+
         NSString *jsonStringForReturn = [request JSONStringWithOptions:JKSerializeOptionNone serializeUnsupportedClassesUsingBlock:nil error:&error];
         if (error) NSLog(@"CLIENT CONTROLLER: json decoding error:%@ in function:%@",[error localizedDescription],function);
         
@@ -845,9 +849,11 @@ static char encodingTable[64] = {
         //        [[NSURLCredentialStorage sharedCredentialStorage] setDefaultCredential:credential
         //                                                            forProtectionSpace:protectionSpace];
         //        [protectionSpace release];
-    receivedData = [[NSMutableData alloc] init];
-     dispatch_async(dispatch_get_main_queue(), ^(void) {    
-        [[NSURLConnection alloc] initWithRequest:requestToServer delegate:self startImmediately:YES];
+//     dispatch_async(dispatch_get_main_queue(), ^(void) { 
+//        receivedData = [[NSMutableData alloc] init];
+
+        NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:requestToServer delegate:self startImmediately:YES];
+        if (!connection) NSLog(@"CLIENT CONTROLLER: warning, can't create connection");
      });
 //    });
     
@@ -864,7 +870,7 @@ static char encodingTable[64] = {
     JSONDecoder *jkitDecoder = [JSONDecoder decoder];
 
     NSDictionary *finalResult = [jkitDecoder objectWithUTF8String:(const unsigned char *)[answer UTF8String] length:[answer length] error:&error];
-    [receivedData release];
+    [receivedData setData:[NSData data]];
     //NSLog(@"finalResult:%@",finalResult);
 
     if (error) { 
@@ -1741,7 +1747,7 @@ static char encodingTable[64] = {
 
 //    sleep(2);
     [self finalSave:moc];
-    [currentDestinationsListWeBuy release];
+    [currentDestinationsListWeBuyMutable release];
 }
 
 -(void) makeUpdatesForCompanyStuff:(NSDictionary *)stuffData withCurrentCompany:(CurrentCompany *)currentCompany;
@@ -2222,7 +2228,7 @@ static char encodingTable[64] = {
 
         }
         
-        if ((allObjectsCount > 100) && (idx % allObjectsCount * 0.1 == 0)) [self finalSave:moc],NSLog(@">>>>>>>updateGraphForObjects SAVED");
+        if (isEveryTenPercentSave && (allObjectsCount > 100) && (idx % allObjectsCount * 0.1 == 0)) [self finalSave:moc],NSLog(@">>>>>>>updateGraphForObjects SAVED");
 
     }];
     return allUpdatedIDs;
