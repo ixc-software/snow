@@ -426,9 +426,17 @@
     //    for (NSManagedObjectID *carrierID in carriersToExecute) {
     [carriersToExecute enumerateObjectsUsingBlock:^(NSManagedObjectID *carrierID, NSUInteger idx, BOOL *stop) {
         sleep(1);
+#if defined (SNOW_SERVER)
         while (completedSubblocks.count > 5) {
             sleep(3);
         }
+
+#else 
+        while (completedSubblocks.count > 15) {
+            sleep(3);
+        }
+        
+#endif
         [subblocksLock lock];
         NSNumber *idxNumber = [[NSNumber alloc] initWithUnsignedInteger:idx];
         [completedSubblocks addObject:idxNumber];
@@ -454,8 +462,12 @@
                                                                                            withQueuePosition:idxNumber
                                                                                            withOperationName:operationName withTotalProfit:nil withCarrierGUID:car.GUID withCarrierName:car.name
                                                                                              ];
-                
-                if (operation) [operation main];
+#if defined (SNOW_SERVER)
+
+                if (operation) [operation updateFromExternalDatabase];
+#else
+                if (operation) [operation updateFromEnterpriseServer];
+#endif
                 [operation release];
                 [subblocksLock lock];
                 [completedSubblocks removeObject:idxNumber];
@@ -917,7 +929,10 @@
     
 }
 
-
+-(IBAction) getCarriersListFromEnterpriseServer;
+{
+    
+}
 #pragma mark - action methods
 
 - (IBAction)checkEvents:(id)sender {
@@ -964,7 +979,7 @@
                         
                         NSLog(@"GET EXTERNAL INFO VIEW:ENTERPRISE every DAY sync start");    
                         //                [progressForDaylySync startCycleDaylySync];
-                        [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil];
+                        [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:NO];
                         NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
                         
                         NSLog(@"GET EXTERNAL INFO VIEW:ENTERPRISE every DAY sync time was:%@ min",[NSNumber numberWithDouble:interval/60]);
@@ -984,7 +999,7 @@
                         NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
                         
                         NSLog(@"GET EXTERNAL INFO VIEW:ENTERPRISE every HOUR sync start"); 
-                        [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:[NSDate dateWithTimeIntervalSinceNow:-3600] withDateTo:[NSDate date]];
+                        [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:[NSDate dateWithTimeIntervalSinceNow:-3600] withDateTo:[NSDate date] withIncludeCarrierSubentities:NO];
                         NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
                         
                         [startCheckEveryDay release];

@@ -7,14 +7,15 @@
 //
 
 #import "GetExternalInfoOperation.h"
-#import "ProgressUpdateController.h"
+//#import "ProgressUpdateController.h"
 #import "MySQLIXC.h"
 #import "UpdateDataController.h"
 #import "GetExternalInfoView.h"
+#import "ClientController.h"
 
 @implementation GetExternalInfoOperation
 
-@synthesize totalProfit,index,queuePosition,currentCompanyID,carrierGUID,carrierName;
+@synthesize totalProfit,index,queuePosition,currentCompanyID,carrierGUID,carrierName,progress;
 
 - (id)initAndUpdateCarrier:(NSManagedObjectID *)carrierIDFor
                  withIndex:(NSNumber *)indexFor
@@ -33,21 +34,27 @@
         totalProfit = totalProfitFor;
         carrierGUID = carrierGUIDFor;
         carrierName = carrierNameFor;
+        desctopAppDelegate *delegate = (desctopAppDelegate *)[[NSApplication sharedApplication] delegate];
+        progress = [[ProgressUpdateController alloc]  
+                    initWithDelegate:delegate 
+                    withQueuePosition:queuePosition 
+                    withIndexOfUpdatedObject:index];
+
         return self;
     }
 }
 
--(void)main
+-(void)updateFromExternalDatabase;
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.25]];
      
     desctopAppDelegate *delegate = (desctopAppDelegate *)[[NSApplication sharedApplication] delegate];
 //    Carrier *necessaryCarrier = (Carrier *)[delegate.managedObjectContext objectWithID:carrierID];
-    ProgressUpdateController *progress = [[ProgressUpdateController alloc]  
-                                          initWithDelegate:delegate 
-                                          withQueuePosition:queuePosition 
-                                          withIndexOfUpdatedObject:index];
+//    progress = [[ProgressUpdateController alloc]  
+//                                          initWithDelegate:delegate 
+//                                          withQueuePosition:queuePosition 
+//                                          withIndexOfUpdatedObject:index];
     
     MySQLIXC *databaseForUsing = [[MySQLIXC alloc] initWithQuene:index.unsignedIntegerValue 
                                                       andCarrier:carrierID 
@@ -134,9 +141,9 @@
     [startFinancialRatingAndInvoices release];
     NSLog(@"STAT:Carrier %@ financial and invoices was update time:%@ min ", carrierName,[NSNumber numberWithDouble:intervalForFinancial/60]);
 
-    [progress clearForRecord:index];
-
-    [progress release];
+//    [progress clearForRecord:index];
+//
+//    [progress release];
     [databaseForUsing reset];
     [databaseForUsing release];
     [update release];
@@ -145,8 +152,127 @@
     
 }
 
+-(void)updateFromEnterpriseServer;
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.25]];
+    
+    desctopAppDelegate *delegate = (desctopAppDelegate *)[[NSApplication sharedApplication] delegate];
+    //    Carrier *necessaryCarrier = (Carrier *)[delegate.managedObjectContext objectWithID:carrierID];
+    
+    [progress updateCarrierName:carrierName];
+    progress.operationName = operationName;
+    
+    //0 - dont need update 1 - destinationsListForSale 2 - destinationsListWeBuy 3 - both
+    
+    
+    //    NSString *carrierGUID = [[NSString alloc] initWithString:necessaryCarrier.GUID];
+    //    NSString *carrierName = [[NSString alloc] initWithString:necessaryCarrier.name];
+    ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[[delegate managedObjectContext] persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
+    CompanyStuff *authorizedUser = [clientController authorization];
+    [clientController updateLocalGraphFromSnowEnterpriseServerForCarrierID:carrierID withDateFrom:nil withDateTo:nil withAdmin:authorizedUser];
+    [clientController release];
+    
+    //    [carrierGUID release],[carrierName release];
+    [pool drain],pool = nil;
+    
+}
+
+-(void)updateUIWithData:(NSArray *)data;
+{
+    //sleep(5);
+    //NSManagedObjectContext *mocForChanges = [delegate managedObjectContext];
+    
+    NSString *status = [data objectAtIndex:0];
+    NSNumber *progressReceived = [data objectAtIndex:1];
+    NSNumber *isItLatestMessage = [data objectAtIndex:2];
+    NSNumber *isError = [data objectAtIndex:3];
+    if ([isError boolValue]) {  
+        [progress updateOperationName:status];
+        //NSLog(@"error:%@",status);
+//        [downloadDataProgress setHidden:YES];
+        
+    }
+    if ([isItLatestMessage boolValue]) {
+//        dispatch_async(dispatch_get_main_queue(), ^(void) {
+//            [startSyncForEnterpriseServer setEnabled:YES];
+//            [downloadDataProgress setHidden:YES];
+//        });
+        
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            
+//            [downloadDataProgress setHidden:NO];
+        });
+        
+    }
+    
+    if (status && [status isEqualToString:@"server download is started"]) {
+        [progress updateOperationName:@"server download is started"];
+
+        // NSLog(@"server download is started");
+    }
+    
+    if (status && [status isEqualToString:@"server download progress"]) {
+        //NSLog(@"server download progress");
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            progress.percentDone = progressReceived;
+            [progress updateObjectInCurrentObjectsCount:index];            
+        });
+    }
+    
+    if (status && [status isEqualToString:@"server download is finished"]) {
+        //NSLog(@"server download is finished");
+        
+    }
+    
+    if (status && [status isEqualToString:@"progress for destinations we buy"]) {
+        [progress updateOperationName:@"destinations we buy"];
+
+        //NSLog(@"server download progress");
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            progress.percentDone = progressReceived;
+            [progress updateObjectInCurrentObjectsCount:index];            
+        });
+    }
+    
+    if (status && [status isEqualToString:@"progress for destinations for sale"]) {
+        //NSLog(@"server download progress");
+        [progress updateOperationName:@"destinations for sale"];
+
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            progress.percentDone = progressReceived;
+            [progress updateObjectInCurrentObjectsCount:index];            
+        });
+    }
+    if (status && [status isEqualToString:@"progress for financial"]) {
+        //NSLog(@"server download progress");
+        [progress updateOperationName:@"destinations for financial"];
+
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            progress.percentDone = progressReceived;
+            [progress updateObjectInCurrentObjectsCount:index];            
+        });
+    }
+    
+    
+//    NSManagedObjectID *objectID = nil;
+//    if ([data count] > 4) objectID = [data objectAtIndex:4];
+//    if (objectID) {
+//        //if ([idsWithProgress containsObject:objectID] && ![isItLatestMessage boolValue]) return;
+//        //[idsWithProgress addObject:objectID];
+//    }
+    //NSLog(@"CARRIER:update UI:%@ latest message:%@",status,isItLatestMessage);
+    
+}
+
+
+
 -(void)dealloc
 {
+    
+    [progress clearForRecord:index];
+    [progress release];
     [totalProfit release];
     [index release];
     [queuePosition release];

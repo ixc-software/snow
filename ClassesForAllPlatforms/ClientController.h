@@ -51,7 +51,9 @@
 -(NSString *)localStatusForObjectsWithRootGuid:(NSString *)rootObjectGUID;
 -(void) finalSave:(NSManagedObjectContext *)mocForSave; 
 -(BOOL) checkIfCurrentAdminCanLogin;
--(void) updateLocalGraphFromSnowEnterpriseServerWithDateFrom:(NSDate *)dateFrom withDateTo:(NSDate *)dateTo;
+-(void) updateLocalGraphFromSnowEnterpriseServerWithDateFrom:(NSDate *)dateFrom 
+                                                  withDateTo:(NSDate *)dateTo
+                               withIncludeCarrierSubentities:(BOOL)isIncludeCarrierSubentities;
 
 -(NSArray *)getAllObjectsListWithEntityForList:(NSString *)entityForList 
                             withMainObjectGUID:(NSString *)mainObjectGUID 
@@ -67,4 +69,10 @@
                          withAdmin:(CompanyStuff *)admin 
                     withRootObject:(NSManagedObject *)rootObject
              isEveryTenPercentSave:(BOOL)isEveryTenPercentSave;
+
+-(void) updateLocalGraphFromSnowEnterpriseServerForCarrierID:(NSManagedObjectID *)carrierID
+                                                withDateFrom:(NSDate *)dateFrom 
+                                                  withDateTo:(NSDate *)dateTo
+                                                   withAdmin:(CompanyStuff *)admin;
+
 @end

@@ -481,7 +481,6 @@
     });
 }
 
-
 - (void) updateCurrentObjectsCount;
 {
     //NSLog(@"PROGRESS CONTROLLER:replace present object:updateCarrierName with %@",newCarrierName);

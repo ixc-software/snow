@@ -416,19 +416,22 @@
 //            [destinationsForCheckingLater addObjectsFromArray:destinationsLocal];
 
         }
-        @autoreleasepool {
             
-            [codesForCarrierObjects enumerateObjectsUsingBlock:^(CodesvsDestinationsList *object, NSUInteger idx, BOOL *stop) {
+        [codesForCarrierObjects enumerateObjectsUsingBlock:^(CodesvsDestinationsList *object, NSUInteger idx, BOOL *stop) {
+            @autoreleasepool {
+                
                 NSArray *attributeKeys = object.entity.attributeKeys;
                 NSMutableDictionary *codeRow = [NSMutableDictionary dictionaryWithCapacity:0];
                 [attributeKeys enumerateObjectsUsingBlock:^(NSString *attribute, NSUInteger idx, BOOL *stop) {
-                    [codeRow setValue:[object valueForKey:attribute] forKey:attribute];
+                    id value = [object valueForKey:attribute];
+                    [codeRow setValue:value forKey:attribute];
                     [codeRow setValue:object.objectID forKey:@"objectID"];
                 }];
                 [codesForCarrier addObject:codeRow];
-            }];
+            }
             
-        }
+        }];
+            
         //NSLog(@"DESTINATIONS CLASS: codes for carrier:%@",codesForCarrier);
         [codesForCarrierObjects release];
 //        [fetchRequest setResultType:NSManagedObjectResultType];
@@ -650,8 +653,9 @@
                     
                     NSError *error = nil;
                     
-                    NSArray *codesFilteredFirstStep = [codesForCarrier filteredArrayUsingPredicate:predicateForCurrentCodes];
-                    NSMutableArray *codesFilteredFirstStepMutable = [NSMutableArray arrayWithArray:codesFilteredFirstStep];
+                    NSArray *codesFilteredFirstStep = [[NSArray alloc] initWithArray:[codesForCarrier filteredArrayUsingPredicate:predicateForCurrentCodes]];
+                    NSMutableArray *codesFilteredFirstStepMutable = [[NSMutableArray alloc] initWithArray:codesFilteredFirstStep];
+                    [codesFilteredFirstStep release];
                     
                     if ([codesFilteredFirstStepMutable count] > 1) { 
                         if (!originalCode) originalCode = [NSNumber numberWithInt:0];
@@ -1053,6 +1057,7 @@
                         }
                         
                         NSDictionary *currentCodeDict = [codesFilteredFirstStepMutable lastObject];
+                        [codesFilteredFirstStepMutable release];
                         
 //                        NSFetchRequest *fetchRequestForCodesvsDestinationsList = [[NSFetchRequest alloc] init];
 //
