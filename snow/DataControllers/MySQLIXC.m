@@ -689,7 +689,7 @@
 {
     NSArray *peersList = nil;
     
-    NSMutableArray *priceList = [NSMutableArray array];  
+    NSMutableArray *priceList = [[NSMutableArray alloc] init];  
     
     //NSLog(@"MYSQL: Start peersList for carrier:%@",carrier);
     
@@ -793,48 +793,46 @@
     
     for (NSDictionary *ruleSetAndPrefix in ruleSetAndPrefixes)
     {
-        NSArray *ips = [ruleSetAndPrefix valueForKey:@"ip"];
-        NSString *ipStr = [ips componentsJoinedByString:@","];    
-
-        NSArray *prefixesForThisRule = [ruleSetAndPrefix valueForKey:@"prefixes"];
-        for (NSString *prefixForThisRule in prefixesForThisRule) {
-            NSString *ruleSet = [ruleSetAndPrefix valueForKey:@"ruleSet"];
-            NSString *query = [NSString stringWithFormat:@"select RateSheets.id,RateSheets.name from RuleSets left join Rules on RuleSets.rule = Rules.id left join RateSheets on uid = price where RuleSets.id = '%@'  and date_activate <= now() order by date_activate desc limit 1;",ruleSet];
-            NSArray *rateSheetId = [self fetchNamedAllWith:query];
-            if ([rateSheetId count] == 0) continue;
-            NSString *rateSheetIdString = [[rateSheetId lastObject] valueForKey:@"id"];
-            NSString *rateSheetNameString = [[rateSheetId lastObject] valueForKey:@"name"];
-            // we agreed that we take just one rateSheet, which was activate last
-            //if ([rateSheetId count] > 1) NSLog(@"MYSQL: WARNING! Ruleset and prefixes have more than one rateSheetID  for carrier: %@\n have :%@\n for type of service:%d\n  Hole rateSheetArea:%@ \n",carrier, ruleSetAndPrefixes, type,rateSheetId);
-            query = [NSString stringWithFormat:@"select code,price,enabled,chdate from InDefaultPrice where uid='%@'",rateSheetIdString];
+        @autoreleasepool {
             
-            //NSLog(@"currentPrices for carrier: %@\n with uid = %@\n and prefix:%@\n have :%@\n ",carrier,rateSheetId,prefixForThisRule, currentPrices);
-            //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+            NSArray *ips = [ruleSetAndPrefix valueForKey:@"ip"];
+            NSString *ipStr = [ips componentsJoinedByString:@","];    
             
-            NSArray *queryResult = [self fetchNamedAllWith:query];
-            NSArray *currentPrices = [[NSArray alloc] initWithArray:queryResult];
-
-            for (NSDictionary *currenPrice in currentPrices)
-            {
-                NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-                NSMutableDictionary *newPrice = [NSMutableDictionary dictionaryWithDictionary:currenPrice];
-                [newPrice setValue:prefixForThisRule  forKey:@"prefix"];
-                [newPrice setValue:[ruleSetAndPrefix valueForKey:@"enabled"]  forKey:@"yn"];
-                [newPrice setValue:rateSheetNameString  forKey:@"rateSheetName"];
-                [newPrice setValue:rateSheetIdString  forKey:@"rateSheetID"];
-                [newPrice setValue:[ruleSetAndPrefix valueForKey:@"idStr"]  forKey:@"peerID"];
-                [newPrice setValue:ipStr forKey:@"ip"];
-
-                [priceList addObject:newPrice];
-                newPrice = nil;
-                [pool drain], pool = nil;
-
+            NSArray *prefixesForThisRule = [ruleSetAndPrefix valueForKey:@"prefixes"];
+            for (NSString *prefixForThisRule in prefixesForThisRule) {
+                NSString *ruleSet = [ruleSetAndPrefix valueForKey:@"ruleSet"];
+                NSString *queryRateSheets = [NSString stringWithFormat:@"select RateSheets.id,RateSheets.name from RuleSets left join Rules on RuleSets.rule = Rules.id left join RateSheets on uid = price where RuleSets.id = '%@'  and date_activate <= now() order by date_activate desc limit 1;",ruleSet];
+                NSArray *rateSheetId = [self fetchNamedAllWith:queryRateSheets];
+                if ([rateSheetId count] == 0) continue;
+                NSString *rateSheetIdString = [[rateSheetId lastObject] valueForKey:@"id"];
+                NSString *rateSheetNameString = [[rateSheetId lastObject] valueForKey:@"name"];
+                // we agreed that we take just one rateSheet, which was activate last
+                //if ([rateSheetId count] > 1) NSLog(@"MYSQL: WARNING! Ruleset and prefixes have more than one rateSheetID  for carrier: %@\n have :%@\n for type of service:%d\n  Hole rateSheetArea:%@ \n",carrier, ruleSetAndPrefixes, type,rateSheetId);
+                NSString *queryCode = [NSString stringWithFormat:@"select code,price,enabled,chdate from InDefaultPrice where uid='%@'",rateSheetIdString];
+                
+                //NSLog(@"currentPrices for carrier: %@\n with uid = %@\n and prefix:%@\n have :%@\n ",carrier,rateSheetId,prefixForThisRule, currentPrices);
+                //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+                
+                NSArray *queryResult = [self fetchNamedAllWith:queryCode];
+                NSArray *currentPrices = [[NSArray alloc] initWithArray:queryResult];
+                
+                for (NSDictionary *currenPrice in currentPrices)
+                {
+                    @autoreleasepool {
+                        NSMutableDictionary *newPrice = [NSMutableDictionary dictionaryWithDictionary:currenPrice];
+                        [newPrice setValue:prefixForThisRule  forKey:@"prefix"];
+                        [newPrice setValue:[ruleSetAndPrefix valueForKey:@"enabled"]  forKey:@"yn"];
+                        [newPrice setValue:rateSheetNameString  forKey:@"rateSheetName"];
+                        [newPrice setValue:rateSheetIdString  forKey:@"rateSheetID"];
+                        [newPrice setValue:[ruleSetAndPrefix valueForKey:@"idStr"]  forKey:@"peerID"];
+                        [newPrice setValue:ipStr forKey:@"ip"];
+                        
+                        [priceList addObject:newPrice];
+                    }
+                }
+                
+                [currentPrices release];
             }
-
-            [currentPrices release];
-            currentPrices = nil;
-            rateSheetId = nil;
         }
     }
     //NSLog(@"MYSQL: Start price select for carrier:%@",carrier);
@@ -852,7 +850,7 @@
     ruleSetAndPrefixes = nil;
     localPriceListsOnPeers = nil;
     NSArray *finalResult = [NSArray arrayWithArray:priceList];
-    priceList = nil;
+    [priceList release];
     return finalResult;
     
 }

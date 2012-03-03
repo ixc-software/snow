@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ProgressUpdateController.h"
 
 @interface GetExternalInfoOperation : NSObject
 {
@@ -18,7 +19,7 @@
     NSManagedObjectID *currentCompanyID;
     NSString *carrierGUID;
     NSString *carrierName;
-
+    ProgressUpdateController *progress;
 }
 
 @property (retain) NSNumber *totalProfit;
@@ -27,6 +28,8 @@
 @property (retain) NSManagedObjectID *currentCompanyID;
 @property (retain) NSString *carrierGUID;
 @property (retain) NSString *carrierName;
+
+@property (retain) ProgressUpdateController *progress;
 
 
 - (id)initAndUpdateCarrier:(NSManagedObjectID *)carrierIDFor
@@ -38,5 +41,7 @@
            withCarrierName:(NSString *)carrierNameFor;
 //      withCurrentCompanyID:(NSManagedObjectID *)currentCompanyIDfor;
 
--(void)main;
+-(void)updateFromExternalDatabase;
+-(void)updateFromEnterpriseServer;
+
 @end

@@ -182,10 +182,10 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	[httpServer setConnectionClass:[MyHTTPConnection class]];
 	
 	// Serve files from our embedded Web folder
-	NSString *webPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Web"];
-	DDLogInfo(@"Setting document root: %@", webPath);
-	
-	[httpServer setDocumentRoot:webPath];
+//	NSString *webPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Web"];
+//	DDLogInfo(@"Setting document root: %@", webPath);
+//	
+//	[httpServer setDocumentRoot:webPath];
 	
 	
 	NSError *error = nil;
@@ -195,7 +195,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	}
 #endif
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+//        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         
 #if defined(SNOW_SERVER)
         
@@ -352,7 +352,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
         
         [clientController release];
 #endif
-        [pool drain];
+//        [pool drain];
     });
 
 }
@@ -397,7 +397,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
         NSString *info = NSLocalizedString(@"Quitting now will lose any changes you have made since the last successful save", @"Quit without saves error question info");
         NSString *quitButton = NSLocalizedString(@"Quit anyway", @"Quit anyway button title");
         NSString *cancelButton = NSLocalizedString(@"Cancel", @"Cancel button title");
-        NSAlert *alert = [[NSAlert alloc] init];
+        NSAlert *alert = [[[NSAlert alloc] init] autorelease];
         [alert setMessageText:question];
         [alert setInformativeText:info];
         [alert addButtonWithTitle:quitButton];
@@ -406,6 +406,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
         NSInteger answer = [alert runModal];
         
         if (answer == NSAlertAlternateReturn) {
+            
             return NSTerminateCancel;
         }
     }
@@ -496,6 +497,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
         [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
         if (![coordinator addPersistentStoreWithType:NSXMLStoreType configuration:nil URL:url options:options error:&error]) {
             [[NSApplication sharedApplication] presentError:error];
+            [coordinator release];
             return nil;
         }
     }
@@ -975,7 +977,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
     NSArray *filteredEvents = [eventsTwoWeeks filteredArrayUsingPredicate:filterCalendars];
     [updateForMainThread fillEventsListInternallyAndSaveToDiskForExternalUsing:filteredEvents];
     if ([self.loggingLevel intValue] == 1) NSLog(@"APP DELEGATE:Calendar events list to udpate:%@",filteredEvents);
-    
+    [components release];
 }
 
 

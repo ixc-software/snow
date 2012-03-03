@@ -50,7 +50,8 @@ static char encodingTable[64] = {
     if (self) {
         // Initialization code here.
         mainMoc = itMainMoc;
-        
+        receivedData = [[NSMutableData alloc] init];
+
         sender = senderForThisClass;
  
 #if defined(SNOW_SERVER)
@@ -89,6 +90,7 @@ static char encodingTable[64] = {
 //    [mainMoc release];
     [moc release];
     [mainServer release];
+    [receivedData release];
     [super dealloc];
 }
 #pragma mark -
@@ -801,14 +803,17 @@ static char encodingTable[64] = {
     [request setValue:mainSystem.GUID forKey:@"mainSystemGUID"];
     [request setValue:@"hash" forKey:@"hash"];
     downloadCompleted = NO;
+//    receivedData = [[NSMutableData alloc] init];
 
-//    dispatch_async(dispatch_get_main_queue(), ^(void) { 
+    dispatch_async(dispatch_get_main_queue(), ^(void) { 
         
 //        NSError *error = nil;
-        
+        NSError *error = nil;
+
         NSString *jsonStringForReturn = [request JSONStringWithOptions:JKSerializeOptionNone serializeUnsupportedClassesUsingBlock:nil error:&error];
         if (error) NSLog(@"CLIENT CONTROLLER: json decoding error:%@ in function:%@",[error localizedDescription],function);
-        
+        NSLog(@"CLIENT CONTROLLER: SEND:%@",jsonStringForReturn);
+
         NSData *bodyData = [jsonStringForReturn dataUsingEncoding:NSUTF8StringEncoding];
         NSData *dataForBody = [[[NSData alloc] initWithData:bodyData] autorelease];
         //NSLog(@"CLIENT CONTROLLER: string lenght is:%@ bytes",[NSNumber numberWithUnsignedInteger:[dataForBody length]]);
@@ -845,9 +850,11 @@ static char encodingTable[64] = {
         //        [[NSURLCredentialStorage sharedCredentialStorage] setDefaultCredential:credential
         //                                                            forProtectionSpace:protectionSpace];
         //        [protectionSpace release];
-    receivedData = [[NSMutableData alloc] init];
-     dispatch_async(dispatch_get_main_queue(), ^(void) {    
-        [[NSURLConnection alloc] initWithRequest:requestToServer delegate:self startImmediately:YES];
+//     dispatch_async(dispatch_get_main_queue(), ^(void) { 
+//        receivedData = [[NSMutableData alloc] init];
+
+        NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:requestToServer delegate:self startImmediately:YES];
+        if (!connection) NSLog(@"CLIENT CONTROLLER: warning, can't create connection");
      });
 //    });
     
@@ -858,13 +865,13 @@ static char encodingTable[64] = {
     }
     NSData *receivedResult = [[NSData alloc] initWithData:receivedData];
     NSString *answer = [[NSString alloc] initWithData:receivedResult encoding:NSUTF8StringEncoding];
-    //NSLog(@"ANSWER:%@",answer);
+    NSLog(@"CLIENT CONTROLLER: ANSWER:%@",answer);
     
     //[receivedData release];
     JSONDecoder *jkitDecoder = [JSONDecoder decoder];
 
     NSDictionary *finalResult = [jkitDecoder objectWithUTF8String:(const unsigned char *)[answer UTF8String] length:[answer length] error:&error];
-    [receivedData release];
+    [receivedData setData:[NSData data]];
     //NSLog(@"finalResult:%@",finalResult);
 
     if (error) { 
@@ -1741,7 +1748,7 @@ static char encodingTable[64] = {
 
 //    sleep(2);
     [self finalSave:moc];
-    [currentDestinationsListWeBuy release];
+    [currentDestinationsListWeBuyMutable release];
 }
 
 -(void) makeUpdatesForCompanyStuff:(NSDictionary *)stuffData withCurrentCompany:(CurrentCompany *)currentCompany;
@@ -2222,15 +2229,174 @@ static char encodingTable[64] = {
 
         }
         
-        if ((allObjectsCount > 100) && (idx % allObjectsCount * 0.1 == 0)) [self finalSave:moc],NSLog(@">>>>>>>updateGraphForObjects SAVED");
+        if (isEveryTenPercentSave && (allObjectsCount > 100) && (idx % allObjectsCount * 0.1 == 0)) [self finalSave:moc],NSLog(@">>>>>>>updateGraphForObjects SAVED");
 
     }];
     return allUpdatedIDs;
     
- }
+}
+
+-(void) updateLocalGraphFromSnowEnterpriseServerForCarrierID:(NSManagedObjectID *)carrierID
+                                              withDateFrom:(NSDate *)dateFrom 
+                                                withDateTo:(NSDate *)dateTo
+                                                 withAdmin:(CompanyStuff *)admin;
+{
+    //////////////////////////////// FOR SALE BLOCK 
+    Carrier *carrier = (Carrier *)[self.moc objectWithID:carrierID];
+    
+    NSArray *allGUIDsForSale = [self getAllObjectsListWithEntityForList:@"DestinationsListForSale" withMainObjectGUID:carrier.GUID withMainObjectEntity:@"Carrier" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
+    NSArray *allObjectsForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsForSale withEntity:@"DestinationsListForSale" withAdmin:admin];
+    if (allGUIDsForSale && allObjectsForGUIDS) {
+        
+        NSArray *updatedForSaleIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"DestinationsListForSale" withAdmin:admin withRootObject:carrier  isEveryTenPercentSave:NO];
+        [self finalSave:moc];
+        
+        NSUInteger forSaleCount = allGUIDsForSale.count;
+        
+        [allGUIDsForSale enumerateObjectsUsingBlock:^(NSString *forSaleGUID, NSUInteger idx, BOOL *stop) {
+            // for sale update start
+            NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:forSaleCount] doubleValue]];
+            [self updateUIwithMessage:@"progress for destinations for sale" andProgressPercent:percentDone withObjectID:nil];
+            
+            NSError *error = nil;
+            NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+            NSEntityDescription *entity = [NSEntityDescription entityForName:@"DestinationsListForSale" inManagedObjectContext:self.moc];
+            [fetchRequest setEntity:entity];
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"GUID == %@",forSaleGUID];
+            [fetchRequest setPredicate:predicate];
+            NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequest error:&error];
+            DestinationsListForSale *findedDestination = fetchedObjects.lastObject;
+            [fetchRequest release];
+            
+            if (findedDestination) {
+                //////////////////////////////// CODES BLOCK 
+                NSArray *allGUIDsCodes = [self getAllObjectsListWithEntityForList:@"CodesvsDestinationsList" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListForSale" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
+                NSArray *allObjectsCodesForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsCodes withEntity:@"CodesvsDestinationsList" withAdmin:admin];
+                if (allGUIDsCodes && allObjectsCodesForGUIDS) {
+                    __block NSArray *updatedCodesIDs = [self updateGraphForObjects:allObjectsCodesForGUIDS withEntity:@"CodesvsDestinationsList" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO];
+                    [self finalSave:moc];
+                    NSSet *currentCodes = findedDestination.codesvsDestinationsList;
+                    // remove objects which was not on server
+                    [currentCodes enumerateObjectsUsingBlock:^(CodesvsDestinationsList *code, BOOL *stop) {
+                        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",code.GUID];
+                        NSArray *filteredCodesIDs = [updatedCodesIDs filteredArrayUsingPredicate:predicate];
+                        if (filteredCodesIDs.count == 0) {
+                            [moc deleteObject:code];
+                            NSLog(@"CLIENT CONTROLLER: >>>>>>> code:%@ country:%@ specific:%@ not on server and will removed",code.code,code.country,code.specific);
+                        }
+                    }];
+                }
+                //////////////////////////////// PER HOUR STAT BLOCK 
+                NSArray *allGUIDsPerHour = [self getAllObjectsListWithEntityForList:@"DestinationPerHourStat" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListForSale" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
+                NSArray *allObjectsPerHourForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsPerHour withEntity:@"DestinationPerHourStat" withAdmin:admin];
+                if (allGUIDsPerHour && allObjectsPerHourForGUIDS) {
+                    
+                    NSArray *updatedPerHourIDs = [self updateGraphForObjects:allObjectsPerHourForGUIDS withEntity:@"DestinationPerHourStat" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO];
+                    [self finalSave:moc];
+                    // remove objects which was not on server
+                    NSSet *currentPerHourStat = findedDestination.destinationPerHourStat;
+                    [currentPerHourStat enumerateObjectsUsingBlock:^(DestinationPerHourStat *perHour, BOOL *stop) {
+                        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",perHour.GUID];
+                        NSArray *filteredPerHourIDs = [updatedPerHourIDs filteredArrayUsingPredicate:predicate];
+                        if (filteredPerHourIDs.count == 0) {
+                            [moc deleteObject:perHour];
+                            NSLog(@"CLIENT CONTROLLER: object with entity %@ not on server and will removed",perHour.entity.name);
+                        }
+                    }];
+                }
+            } else NSLog(@"CLIENT CONTROLLER: warning destinations for sale NOT FOUND for guid:%@",forSaleGUID);
+        }];
+        // remove objects which was not on server
+        NSSet *allDestinationsForSale = carrier.destinationsListForSale;
+        [allDestinationsForSale enumerateObjectsUsingBlock:^(DestinationsListForSale *destination, BOOL *stop) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",destination.GUID];
+            NSArray *filteredForSaleIDs = [updatedForSaleIDs filteredArrayUsingPredicate:predicate];
+            if (filteredForSaleIDs.count == 0) {
+                [moc deleteObject:destination];
+                NSLog(@"CLIENT CONTROLLER: object with entity %@ not on server and will removed",destination.entity.name);
+            }
+        }];
+    }
+    /////////////////////////////// WE BUY BLOCK 
+    NSArray *allGUIDsWeBuy = [self getAllObjectsListWithEntityForList:@"DestinationsListWeBuy" withMainObjectGUID:carrier.GUID withMainObjectEntity:@"Carrier" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
+    allObjectsForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsWeBuy withEntity:@"DestinationsListWeBuy" withAdmin:admin];
+    if (allGUIDsWeBuy && allObjectsForGUIDS) {
+        
+        NSArray *updatedWeBuyIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"DestinationsListWeBuy" withAdmin:admin withRootObject:carrier  isEveryTenPercentSave:NO];
+        [self finalSave:moc];
+        NSUInteger weBuyCount = allGUIDsWeBuy.count;
+        
+        [allGUIDsWeBuy enumerateObjectsUsingBlock:^(NSString *weBuyGUID, NSUInteger idx, BOOL *stop) {
+            NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:weBuyCount] doubleValue]];
+            [self updateUIwithMessage:@"progress for destinations we buy" andProgressPercent:percentDone withObjectID:nil];
+            NSError *error = nil;
+            NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+            
+            NSEntityDescription *entity = [NSEntityDescription entityForName:@"DestinationsListWeBuy" inManagedObjectContext:self.moc];
+            [fetchRequest setEntity:entity];
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"GUID == %@",weBuyGUID];
+            [fetchRequest setPredicate:predicate];
+            NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequest error:&error];
+            DestinationsListWeBuy *findedDestination = fetchedObjects.lastObject;
+            [fetchRequest release];
+            
+            if (findedDestination) {
+                //////////////////////////////// CODES BLOCK 
+                NSArray *allGUIDsCodes = [self getAllObjectsListWithEntityForList:@"CodesvsDestinationsList" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListForSale" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
+                NSArray *allObjectsCodesForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsCodes withEntity:@"CodesvsDestinationsList" withAdmin:admin];
+                if (allGUIDsCodes && allObjectsCodesForGUIDS) {
+                    __block NSArray *updatedCodesIDs = [self updateGraphForObjects:allObjectsCodesForGUIDS withEntity:@"CodesvsDestinationsList" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO];
+                    [self finalSave:moc];
+                    NSSet *currentCodes = findedDestination.codesvsDestinationsList;
+                    // remove objects which was not on server
+                    [currentCodes enumerateObjectsUsingBlock:^(CodesvsDestinationsList *code, BOOL *stop) {
+                        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",code.GUID];
+                        NSArray *filteredCodesIDs = [updatedCodesIDs filteredArrayUsingPredicate:predicate];
+                        if (filteredCodesIDs.count == 0) {
+                            [moc deleteObject:code];
+                            NSLog(@"CLIENT CONTROLLER: >>>>>>> code:%@ country:%@ specific:%@ not on server and will removed",code.code,code.country,code.specific);
+                        }
+                    }];
+                }
+                //////////////////////////////// PER HOUR STAT BLOCK 
+                NSArray *allGUIDsPerHour = [self getAllObjectsListWithEntityForList:@"DestinationPerHourStat" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListForSale" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
+                NSArray *allObjectsPerHourForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsPerHour withEntity:@"DestinationPerHourStat" withAdmin:admin];
+                if (allGUIDsPerHour && allObjectsPerHourForGUIDS) {
+                    
+                    NSArray *updatedPerHourIDs = [self updateGraphForObjects:allObjectsPerHourForGUIDS withEntity:@"DestinationPerHourStat" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO];
+                    [self finalSave:moc];
+                    // remove objects which was not on server
+                    NSSet *currentPerHourStat = findedDestination.destinationPerHourStat;
+                    [currentPerHourStat enumerateObjectsUsingBlock:^(DestinationPerHourStat *perHour, BOOL *stop) {
+                        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",perHour.GUID];
+                        NSArray *filteredPerHourIDs = [updatedPerHourIDs filteredArrayUsingPredicate:predicate];
+                        if (filteredPerHourIDs.count == 0) {
+                            [moc deleteObject:perHour];
+                            NSLog(@"CLIENT CONTROLLER: object with entity %@ not on server and will removed",perHour.entity.name);
+                        }
+                    }];
+                }
+                
+            } else NSLog(@"CLIENT CONTROLLER: warning destinations we buy NOT FOUND for guid:%@",weBuyGUID);
+        }];
+        // remove objects which was not on server
+        NSSet *allDestinationsWeBuy = carrier.destinationsListWeBuy;
+        [allDestinationsWeBuy enumerateObjectsUsingBlock:^(DestinationsListWeBuy *destination, BOOL *stop) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",destination.GUID];
+            NSArray *filteredWeBuyIDs = [updatedWeBuyIDs filteredArrayUsingPredicate:predicate];
+            if (filteredWeBuyIDs.count == 0) {
+                [moc deleteObject:destination];
+                NSLog(@"CLIENT CONTROLLER: object with entity %@ not on server and will removed",destination.entity.name);
+            }
+        }];
+    }
+
+}
 
 -(void) updateLocalGraphFromSnowEnterpriseServerWithDateFrom:(NSDate *)dateFrom 
-                                                  withDateTo:(NSDate *)dateTo;
+                                                  withDateTo:(NSDate *)dateTo
+                               withIncludeCarrierSubentities:(BOOL)isIncludeCarrierSubentities;
+
 {
     CompanyStuff *admin = [self authorization];
     CurrentCompany *currentCompany = admin.currentCompany;
@@ -2289,7 +2455,8 @@ static char encodingTable[64] = {
                     NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:carriersCount] doubleValue]];
                     [self updateUIwithMessage:[NSString stringWithFormat:@"carrier data progress:%@",carrier.name] andProgressPercent:percentDone withObjectID:nil];
                     NSLog(@"CLIENT CONTROLLER:>>>>>>> carrier start update:%@",carrier.name);
-                    //////////////////////////////// FOR SALE BLOCK 
+                    if (isIncludeCarrierSubentities) [self updateLocalGraphFromSnowEnterpriseServerForCarrierID:carrier.objectID withDateFrom:dateFrom withDateTo:dateTo withAdmin:admin];
+/*                    //////////////////////////////// FOR SALE BLOCK 
                     NSArray *allGUIDsForSale = [self getAllObjectsListWithEntityForList:@"DestinationsListForSale" withMainObjectGUID:carrier.GUID withMainObjectEntity:@"Carrier" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
                     NSArray *allObjectsForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsForSale withEntity:@"DestinationsListForSale" withAdmin:admin];
                     if (allGUIDsForSale && allObjectsForGUIDS) {
@@ -2436,7 +2603,7 @@ static char encodingTable[64] = {
                             }
                         }];
                     }
-                    
+ */                   
                 }];
                 // remove objects which was not on server
                 NSSet *allCarriers = stuff.carrier;

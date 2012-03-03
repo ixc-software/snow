@@ -383,13 +383,13 @@
     
     
     
-    NSUInteger activeProcessorCount = [[NSProcessInfo processInfo] activeProcessorCount];
-    if (activeProcessorCount > 3) {
-        activeProcessorCount = (activeProcessorCount - 3);
-    } else
-    {
-        activeProcessorCount = 1;
-    }
+//    NSUInteger activeProcessorCount = [[NSProcessInfo processInfo] activeProcessorCount];
+//    if (activeProcessorCount > 3) {
+//        activeProcessorCount = (activeProcessorCount - 3);
+//    } else
+//    {
+//        activeProcessorCount = 1;
+//    }
 //    __block NSUInteger idx = 0;
 //    dispatch_queue_t queue = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate0", 0);
 //    dispatch_queue_t customQueue0 = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate0", 0);
@@ -426,9 +426,17 @@
     //    for (NSManagedObjectID *carrierID in carriersToExecute) {
     [carriersToExecute enumerateObjectsUsingBlock:^(NSManagedObjectID *carrierID, NSUInteger idx, BOOL *stop) {
         sleep(1);
+#if defined (SNOW_SERVER)
         while (completedSubblocks.count > 5) {
             sleep(3);
         }
+
+#else 
+        while (completedSubblocks.count > 15) {
+            sleep(3);
+        }
+        
+#endif
         [subblocksLock lock];
         NSNumber *idxNumber = [[NSNumber alloc] initWithUnsignedInteger:idx];
         [completedSubblocks addObject:idxNumber];
@@ -454,9 +462,13 @@
                                                                                            withQueuePosition:idxNumber
                                                                                            withOperationName:operationName withTotalProfit:nil withCarrierGUID:car.GUID withCarrierName:car.name
                                                                                              ];
-                
-                if (operation) [operation main];
-                
+#if defined (SNOW_SERVER)
+
+                if (operation) [operation updateFromExternalDatabase];
+#else
+                if (operation) [operation updateFromEnterpriseServer];
+#endif
+                [operation release];
                 [subblocksLock lock];
                 [completedSubblocks removeObject:idxNumber];
                 [subblocksLock unlock];  
@@ -646,7 +658,7 @@
     [request setEntity:[NSEntityDescription entityForName:@"Carrier" inManagedObjectContext:self.moc]];
     [request setPredicate:[NSPredicate predicateWithFormat:@"(companyStuff.currentCompany.GUID == %@)",necessaryCompany.GUID]];
     NSArray *carriers = [self.moc executeFetchRequest:request error:&error];
-
+    [request release];
     NSMutableArray *carriersToExecute = [NSMutableArray array];
     //NSLog (@"CYCLE UPDATES: everyHourSync carriers list:");
     for (Carrier *carrier in carriers) { 
@@ -713,6 +725,7 @@
     [requestForCompany setPredicate:[NSPredicate predicateWithFormat:@"name contains [cd] %@",[companyForSync selectedItem].title]];
     NSArray *companies = [self.moc executeFetchRequest:requestForCompany error:&error];
     necessaryCompany = companies.lastObject;
+    [requestForCompany release];
 
 #else 
 
@@ -885,6 +898,7 @@
         [request setEntity:[NSEntityDescription entityForName:@"CurrentCompany" inManagedObjectContext:self.moc]];
         [request setPredicate:[NSPredicate predicateWithFormat:@"name contains [cd] %@",[companyForSync selectedItem].title]];
         NSArray *companies = [self.moc executeFetchRequest:request error:&error];
+        [request release];
         CurrentCompany *selectedCompany = companies.lastObject;
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"currentCompany.GUID == %@",selectedCompany.GUID];
         connections = [connectionsFirstIteration filteredArrayUsingPredicate:predicate];
@@ -915,7 +929,10 @@
     
 }
 
-
+-(IBAction) getCarriersListFromEnterpriseServer;
+{
+    
+}
 #pragma mark - action methods
 
 - (IBAction)checkEvents:(id)sender {
@@ -962,7 +979,7 @@
                         
                         NSLog(@"GET EXTERNAL INFO VIEW:ENTERPRISE every DAY sync start");    
                         //                [progressForDaylySync startCycleDaylySync];
-                        [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil];
+                        [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:NO];
                         NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
                         
                         NSLog(@"GET EXTERNAL INFO VIEW:ENTERPRISE every DAY sync time was:%@ min",[NSNumber numberWithDouble:interval/60]);
@@ -982,7 +999,7 @@
                         NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
                         
                         NSLog(@"GET EXTERNAL INFO VIEW:ENTERPRISE every HOUR sync start"); 
-                        [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:[NSDate dateWithTimeIntervalSinceNow:-3600] withDateTo:[NSDate date]];
+                        [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:[NSDate dateWithTimeIntervalSinceNow:-3600] withDateTo:[NSDate date] withIncludeCarrierSubentities:NO];
                         NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
                         
                         [startCheckEveryDay release];
@@ -1002,7 +1019,8 @@
             NSLog(@"GET EXTERNAL INFO:authorized user is not created.");
             
         }
-        
+        [clientController release];
+        [progressForDaylySync release];
     });
 }
 
@@ -1072,6 +1090,7 @@
     [request setEntity:[NSEntityDescription entityForName:@"CurrentCompany" inManagedObjectContext:self.moc]];
     [request setPredicate:[NSPredicate predicateWithFormat:@"name contains [cd] %@",[companyForSync selectedItem].title]];
     NSArray *companies = [self.moc executeFetchRequest:request error:&error];
+    [request release];
     CurrentCompany *selectedCompany = companies.lastObject;
     getCompaniesList.title = [NSString stringWithFormat:@"get companies list for company: %@",selectedCompany.name];
     [databaseConnections setFilterPredicate:[NSPredicate predicateWithFormat:@"currentCompany.GUID == %@",selectedCompany.GUID]];
@@ -1101,6 +1120,7 @@
     [request setEntity:[NSEntityDescription entityForName:@"CurrentCompany" inManagedObjectContext:self.moc]];
     [request setPredicate:[NSPredicate predicateWithFormat:@"name contains [cd] %@",[companyForSync selectedItem].title]];
     NSArray *companies = [self.moc executeFetchRequest:request error:&error];
+    [request release];
     CurrentCompany *selectedCompany = companies.lastObject;
     getCompaniesList.title = [NSString stringWithFormat:@"get companies list for company: %@",selectedCompany.name];
     NSMutableArray *getOrPutChoice = [NSMutableArray arrayWithObjects:@"get",@"put",nil];
@@ -1193,7 +1213,7 @@
     }
     
     if (status && [status isEqualToString:@"server download is started"]) {
-        NSLog(@"server download is started");
+       // NSLog(@"server download is started");
     }
     
     if (status && [status isEqualToString:@"server download progress"]) {
@@ -1205,7 +1225,7 @@
     }
     
     if (status && [status isEqualToString:@"server download is finished"]) {
-        NSLog(@"server download is finished");
+        //NSLog(@"server download is finished");
         
     }
     

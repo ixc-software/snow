@@ -52,6 +52,7 @@
 - (id)initWithDelegate:(desctopAppDelegate *)delegate ;
  //withProgressIndicator:(BOOL)usingProgressIndicator;
 
+- (void) updateObjectInCurrentObjectsCount:(NSNumber *)index;
 
 - (void) updateCurrentObjectsCount;
 - (void) updateCarrierName:(NSString *)newCarrierName;
