@@ -88,7 +88,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 	// Copy the data out of the temporary readBuffer.
 	data = [[NSData alloc] initWithBytes:readBuffer length:readBufferOffset];
 	
-	// Reset the read buffer.
+	// Reset the read buffer
 	readBufferOffset = 0;
 	
 	// Notify the connection that we have data available for it.

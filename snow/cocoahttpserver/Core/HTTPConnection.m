@@ -131,15 +131,20 @@ static NSMutableArray *recentNonces;
 	{
 		HTTPLogTrace();
 		
-		if (aConfig.queue)
-		{
-			connectionQueue = aConfig.queue;
-			dispatch_retain(connectionQueue);
-		}
-		else
-		{
-			connectionQueue = dispatch_queue_create("HTTPConnection", NULL);
-		}
+//		if (aConfig.queue)
+//		{
+//			connectionQueue = aConfig.queue;
+//			dispatch_retain(connectionQueue);
+//		}
+//		else
+//		{
+            NSUInteger currentConnections = [aConfig.server numberOfHTTPConnections];
+            NSString *queueName = [NSString stringWithFormat:@"com.ixc.ixcEnterprise.httpServer.Queue - %@",[NSNumber numberWithUnsignedInteger:currentConnections]];
+            NSLog(@">>>>>>>>>>>> create new connection:%@",queueName);
+
+            connectionQueue = dispatch_queue_create([queueName cStringUsingEncoding:NSUTF8StringEncoding], NULL);
+			//connectionQueue = dispatch_queue_create("HTTPConnection", NULL);
+//		}
 		
 		// Take over ownership of the socket
 		asyncSocket = [newSocket retain];

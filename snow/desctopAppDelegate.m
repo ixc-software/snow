@@ -117,6 +117,11 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
     //    //NSString *title = [checkEvents title];
     
 }
+-(void)updateServerConnections
+{
+    [totalProfit setHidden:NO];
+    totalProfit.title = [NSString stringWithFormat:@"Conn:%@",[NSNumber numberWithUnsignedInteger:[httpServer numberOfHTTPConnections]]];
+}
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
@@ -170,7 +175,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	
 	// Tell the server to broadcast its presence via Bonjour.
 	// This allows browsers such as Safari to automatically discover our service.
-	[httpServer setType:@"_http._tcp."];
+	//[httpServer setType:@"_http._tcp."];
 	
 	// Normally there's no need to run our server on any specific port.
 	// Technologies like Bonjour allow clients to dynamically discover the server's port at runtime.
@@ -193,6 +198,16 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	{
 		DDLogError(@"Error starting HTTP Server: %@", error);
 	}
+    
+    if (!durationRefreasher) {
+        durationRefreasher = [NSTimer	scheduledTimerWithTimeInterval:1
+                                                              target:self 
+                                                            selector:@selector(updateServerConnections) 
+                                                            userInfo:nil 
+                                                             repeats:YES];
+        
+    }
+
 #endif
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
 //        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];

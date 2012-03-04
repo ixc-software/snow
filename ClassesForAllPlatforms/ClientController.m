@@ -40,6 +40,12 @@ static char encodingTable[64] = {
     'g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v',
     'w','x','y','z','0','1','2','3','4','5','6','7','8','9','+','/' };
 
+@interface NSURLRequest (DummyInterface)
++ (BOOL)allowsAnyHTTPSCertificateForHost:(NSString*)host;
++ (void)setAllowsAnyHTTPSCertificate:(BOOL)allow forHost:(NSString*)host;
+@end
+
+
 @implementation ClientController
 
 @synthesize moc,mainServer,sender,downloadSize,mainMoc;
@@ -50,7 +56,7 @@ static char encodingTable[64] = {
     if (self) {
         // Initialization code here.
         mainMoc = itMainMoc;
-        receivedData = [[NSMutableData alloc] init];
+        //receivedData = [[NSMutableData alloc] init];
 
         sender = senderForThisClass;
  
@@ -90,7 +96,7 @@ static char encodingTable[64] = {
 //    [mainMoc release];
     [moc release];
     [mainServer release];
-    [receivedData release];
+    //[receivedData release];
     [super dealloc];
 }
 #pragma mark -
@@ -741,7 +747,7 @@ static char encodingTable[64] = {
     // release the connection, and the data object
     [connection release];
     // receivedData is declared as a method instance elsewhere
-    //[receivedData release];
+//    [receivedData release];
     downloadCompleted = YES;
 //    if (sender && [sender respondsToSelector:@selector(updateUIWithData:)]) {
 //        [sender performSelector:@selector(updateUIWithData:) withObject:[NSArray arrayWithObject:[NSString stringWithFormat:@"web download failed with error:%@",[error localizedDescription]]]];
@@ -762,7 +768,7 @@ static char encodingTable[64] = {
 //    }
     [self updateUIwithMessage:@"server download is finished" withObjectID:nil withLatestMessage:NO error:NO];
     [connection release];
-    //[receivedData release];
+//    [receivedData release];
 }
 // credential area
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace {
@@ -804,7 +810,7 @@ static char encodingTable[64] = {
     [request setValue:@"hash" forKey:@"hash"];
     downloadCompleted = NO;
 //    receivedData = [[NSMutableData alloc] init];
-
+    receivedData = [[NSMutableData data] retain]; 
     dispatch_async(dispatch_get_main_queue(), ^(void) { 
         
 //        NSError *error = nil;
@@ -812,7 +818,7 @@ static char encodingTable[64] = {
 
         NSString *jsonStringForReturn = [request JSONStringWithOptions:JKSerializeOptionNone serializeUnsupportedClassesUsingBlock:nil error:&error];
         if (error) NSLog(@"CLIENT CONTROLLER: json decoding error:%@ in function:%@",[error localizedDescription],function);
-        NSLog(@"CLIENT CONTROLLER: SEND:%@",jsonStringForReturn);
+        //NSLog(@"CLIENT CONTROLLER: SEND:%@",jsonStringForReturn);
 
         NSData *bodyData = [jsonStringForReturn dataUsingEncoding:NSUTF8StringEncoding];
         NSData *dataForBody = [[[NSData alloc] initWithData:bodyData] autorelease];
@@ -854,8 +860,8 @@ static char encodingTable[64] = {
 //        receivedData = [[NSMutableData alloc] init];
 
         NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:requestToServer delegate:self startImmediately:YES];
-        if (!connection) NSLog(@"CLIENT CONTROLLER: warning, can't create connection");
-     });
+        if (!connection) NSLog(@"failedToCreate");
+    });
 //    });
     
     while (!downloadCompleted) { 
@@ -864,8 +870,10 @@ static char encodingTable[64] = {
         //NSLog(@"waiting for completed"); 
     }
     NSData *receivedResult = [[NSData alloc] initWithData:receivedData];
+    [receivedData release];
+
     NSString *answer = [[NSString alloc] initWithData:receivedResult encoding:NSUTF8StringEncoding];
-    NSLog(@"CLIENT CONTROLLER: ANSWER:%@",answer);
+    //NSLog(@"CLIENT CONTROLLER: ANSWER:%@",answer);
     
     //[receivedData release];
     JSONDecoder *jkitDecoder = [JSONDecoder decoder];
@@ -2091,32 +2099,47 @@ static char encodingTable[64] = {
                                      withJSONRequest:(NSMutableDictionary *)request;
 {
     //    receivedData = [[NSMutableData alloc] init];
-    NSError *error = nil;
-    
-    NSString *jsonStringForReturn = [request JSONStringWithOptions:JKSerializeOptionNone serializeUnsupportedClassesUsingBlock:nil error:&error];
-    if (error) NSLog(@"CLIENT CONTROLLER: json decoding error:%@ in function:%@",[error localizedDescription],function);
-    NSData *bodyData = [jsonStringForReturn dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *dataForBody = [[[NSData alloc] initWithData:bodyData] autorelease];
-    //NSLog(@"CLIENT CONTROLLER: string lenght is:%@ bytes",[NSNumber numberWithUnsignedInteger:[dataForBody length]]);
-    NSString *functionString = [NSString stringWithFormat:@"/%@",function];
-    NSURL *urlForRequest = [NSURL URLWithString:functionString relativeToURL:mainServer];
-    NSMutableURLRequest *requestToServer = [NSMutableURLRequest requestWithURL:urlForRequest];
-    [requestToServer setHTTPMethod:@"POST"];
-    [requestToServer setHTTPBody:dataForBody];
-    NSData *receivedResult = [NSURLConnection sendSynchronousRequest:requestToServer returningResponse:nil error:&error];
-    
-    if (error) {
-        NSLog(@"CLIENT CONTROLLER: getJSON answer error download:%@",[error localizedDescription]);
-        [self updateUIwithMessage:[error localizedDescription] withObjectID:nil withLatestMessage:YES error:NO];
-        return nil;
+    [self updateUIwithMessage:@"server download is started" withObjectID:nil withLatestMessage:NO error:NO];
+    NSDictionary *finalResultAlloc = [[NSMutableDictionary alloc] init];
+    @autoreleasepool {
+        
+        
+        NSError *error = nil;
+        
+        NSString *jsonStringForReturn = [request JSONStringWithOptions:JKSerializeOptionNone serializeUnsupportedClassesUsingBlock:nil error:&error];
+        if (error) NSLog(@"CLIENT CONTROLLER: json decoding error:%@ in function:%@",[error localizedDescription],function);
+        NSData *bodyData = [jsonStringForReturn dataUsingEncoding:NSUTF8StringEncoding];
+        NSData *dataForBody = [[[NSData alloc] initWithData:bodyData] autorelease];
+        //NSLog(@"CLIENT CONTROLLER: string lenght is:%@ bytes",[NSNumber numberWithUnsignedInteger:[dataForBody length]]);
+        NSString *functionString = [NSString stringWithFormat:@"/%@",function];
+        NSURL *urlForRequest = [NSURL URLWithString:functionString relativeToURL:mainServer];
+        NSMutableURLRequest *requestToServer = [NSMutableURLRequest requestWithURL:urlForRequest];
+        [requestToServer setHTTPMethod:@"POST"];
+        [requestToServer setHTTPBody:dataForBody];
+        [requestToServer setTimeoutInterval:600];
+        [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[urlForRequest host]];
+        
+        NSData *receivedResult = [NSURLConnection sendSynchronousRequest:requestToServer returningResponse:nil error:&error];
+        
+        if (error) {
+            NSLog(@"CLIENT CONTROLLER: getJSON answer error download:%@",[error localizedDescription]);
+            [self updateUIwithMessage:[error localizedDescription] withObjectID:nil withLatestMessage:YES error:NO];
+            return nil;
+        }
+        NSString *answer = [[NSString alloc] initWithData:receivedResult encoding:NSUTF8StringEncoding];
+        JSONDecoder *jkitDecoder = [JSONDecoder decoder];
+        NSDictionary *finalResult = [jkitDecoder objectWithUTF8String:(const unsigned char *)[answer UTF8String] length:[answer length] error:&error];
+        [finalResultAlloc setValuesForKeysWithDictionary:finalResult];
+        
+        [answer release];
+        [self updateUIwithMessage:@"server download is finished" withObjectID:nil withLatestMessage:NO error:NO];
+        
+        if (error) NSLog(@"CLIENT CONTROLLER: getJSON answer failed to decode answer with error:%@",[error localizedDescription]);
     }
-    NSString *answer = [[NSString alloc] initWithData:receivedResult encoding:NSUTF8StringEncoding];
-    JSONDecoder *jkitDecoder = [JSONDecoder decoder];
-    NSDictionary *finalResult = [jkitDecoder objectWithUTF8String:(const unsigned char *)[answer UTF8String] length:[answer length] error:&error];
-    [answer release];
+    NSDictionary *finalResultToReturn = [NSDictionary dictionaryWithDictionary:finalResultAlloc];
+    [finalResultAlloc release];
     
-    if (error) NSLog(@"CLIENT CONTROLLER: getJSON answer failed to decode answer with error:%@",[error localizedDescription]);
-    return finalResult;
+    return finalResultToReturn;
 
 }
 
@@ -2136,7 +2159,12 @@ static char encodingTable[64] = {
     [prepeareForJSONRequest setValue:dateFrom.description forKey:@"dateFrom"];
     [prepeareForJSONRequest setValue:dateTo.description forKey:@"dateTo"];
 
-    NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"GetObjectsList" withJSONRequest:prepeareForJSONRequest];
+    NSDictionary *receivedObject = nil;
+    while (receivedObject == nil) {
+        receivedObject = [self getJSONAnswerForFunctionVersionTwo:@"GetObjectsList" withJSONRequest:prepeareForJSONRequest];
+        if (!receivedObject) sleep(5);
+    }
+    
     [prepeareForJSONRequest release];
     if (receivedObject) return [receivedObject valueForKey:@"allGUIDs"];
     else return nil;
@@ -2147,21 +2175,54 @@ static char encodingTable[64] = {
                             withEntity:(NSString *)entity 
                              withAdmin:(CompanyStuff *)admin
 {
-    NSMutableDictionary *prepeareForJSONRequest = [[NSMutableDictionary alloc] init];
-    [prepeareForJSONRequest setValue:admin.email forKey:@"authorizedUserEmail"];
-    [prepeareForJSONRequest setValue:admin.password forKey:@"authorizedUserPassword"];
-    [prepeareForJSONRequest setValue:entity forKey:@"entity"];
-    
-    [prepeareForJSONRequest setValue:guids forKey:@"allGUIDs"];
+    if (guids.count > 0) {
+        //NSMutableDictionary *receivedObject = [[NSMutableDictionary alloc] init];
+        NSMutableArray *finalListObjectsMutable = [[NSMutableArray alloc] init];
 
-    NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"GetObjectsWithGUIDs" withJSONRequest:prepeareForJSONRequest];
-    [prepeareForJSONRequest release];
-    if (receivedObject) {
-        NSString *allObjectsString = [receivedObject valueForKey:@"objects"];
-        NSData *allObjectsData = [self dataWithBase64EncodedString:allObjectsString];
-        NSArray *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
-        return listObjects;
-    } else return nil;
+        @autoreleasepool {
+            NSMutableDictionary *prepeareForJSONRequest = [[NSMutableDictionary alloc] init];
+            [prepeareForJSONRequest setValue:admin.email forKey:@"authorizedUserEmail"];
+            [prepeareForJSONRequest setValue:admin.password forKey:@"authorizedUserPassword"];
+            [prepeareForJSONRequest setValue:entity forKey:@"entity"];
+            [prepeareForJSONRequest setValue:guids forKey:@"allGUIDs"];
+            
+            //    NSDictionary *receivedObject = [self getJSONAnswerForFunctionVersionTwo:@"GetObjectsWithGUIDs" withJSONRequest:prepeareForJSONRequest];
+            //NSDictionary *receivedObject = nil;
+            NSDictionary *receivedResult = nil;
+            while (!receivedResult) {
+                receivedResult = [self getJSONAnswerForFunctionVersionTwo:@"GetObjectsWithGUIDs" withJSONRequest:prepeareForJSONRequest];
+            }
+            //[receivedObject setValuesForKeysWithDictionary:receivedResult];
+
+            //NSLog(@"CLIENT CONTROLLER: receivedObject:%@",receivedResult);
+
+            [prepeareForJSONRequest release];
+            //        }
+            //        if (receivedObject.count > 0) {
+            //            @autoreleasepool {
+            
+            NSString *error;
+            NSString *allObjectsString = [receivedResult valueForKey:@"objects"];
+            NSData *allObjectsData = [self dataWithBase64EncodedString:allObjectsString];
+            //        NSArray *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
+            NSPropertyListFormat format;  
+            NSArray *decodedObjects = [NSPropertyListSerialization propertyListFromData:allObjectsData mutabilityOption:0 format:&format errorDescription:&error];
+            [finalListObjectsMutable addObjectsFromArray:decodedObjects];
+            if (error) NSLog(@"SERVER CONTRORLER: allObjectsSerializationFailed:%@ format:%luu",error,format);
+            //NSLog(@"CLIENT CONTROLLER: guids:%@",guids);
+            
+            //NSLog(@"CLIENT CONTROLLER: decodedObjects:%@",decodedObjects);
+        }
+        NSArray *finalListObjects = [NSArray arrayWithArray:finalListObjectsMutable];
+        [finalListObjectsMutable release];
+        //[receivedObject release];
+
+        return finalListObjects;
+//        } else { 
+//            [receivedObject release];
+//            return nil;
+//        }
+    } else return  nil;
 }
 
 -(NSArray *) updateGraphForObjects:(NSArray *)allObjects 
@@ -2181,9 +2242,10 @@ static char encodingTable[64] = {
     NSUInteger allObjectsCount = allObjects.count;
     
     [allObjects enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
+
         NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:allObjectsCount] doubleValue]];
         [self updateUIwithMessage:[NSString stringWithFormat:@"progress for update graph:%@",entityFor] andProgressPercent:percentDone withObjectID:nil];
-
+        
         NSString *guid = [obj valueForKey:@"GUID"];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"GUID == %@",guid];
         [fetchRequest setPredicate:predicate];

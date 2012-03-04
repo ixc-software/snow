@@ -425,6 +425,7 @@
     //    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     //    for (NSManagedObjectID *carrierID in carriersToExecute) {
     [carriersToExecute enumerateObjectsUsingBlock:^(NSManagedObjectID *carrierID, NSUInteger idx, BOOL *stop) {
+        //if (idx == 0) *stop = YES;
         sleep(1);
 #if defined (SNOW_SERVER)
         while (completedSubblocks.count > 5) {
@@ -432,7 +433,7 @@
         }
 
 #else 
-        while (completedSubblocks.count > 15) {
+        while (completedSubblocks.count > 5) {
             sleep(3);
         }
         
@@ -455,6 +456,9 @@
                 NSManagedObjectID *carrierID = [carriersToExecute objectAtIndex:idx];
                 
                 __block Carrier *car = (Carrier *)[self.moc objectWithID:carrierID];
+                NSString *carrierGUID = [[NSString alloc] initWithString:car.GUID];
+                NSString *carrierName = [[NSString alloc] initWithString:car.name];
+                
                 NSLog(@"carrier:%@ added to queue with index:%@",car.name,idxNumber);
                 
                 GetExternalInfoOperation *operation = [[GetExternalInfoOperation alloc] initAndUpdateCarrier:carrierID
@@ -469,6 +473,9 @@
                 if (operation) [operation updateFromEnterpriseServer];
 #endif
                 [operation release];
+                [carrierName release];
+                [carrierGUID release];
+
                 [subblocksLock lock];
                 [completedSubblocks removeObject:idxNumber];
                 [subblocksLock unlock];  
@@ -481,8 +488,11 @@
         [idxNumber release];
 
     }];
-    
 
+    while (completedSubblocks.count == 0) {
+        sleep(3);
+    }
+    
     
     
 //    for (NSManagedObjectID *carrierID in carriersToExecute) {
@@ -658,7 +668,6 @@
     [request setEntity:[NSEntityDescription entityForName:@"Carrier" inManagedObjectContext:self.moc]];
     [request setPredicate:[NSPredicate predicateWithFormat:@"(companyStuff.currentCompany.GUID == %@)",necessaryCompany.GUID]];
     NSArray *carriers = [self.moc executeFetchRequest:request error:&error];
-    [request release];
     NSMutableArray *carriersToExecute = [NSMutableArray array];
     //NSLog (@"CYCLE UPDATES: everyHourSync carriers list:");
     for (Carrier *carrier in carriers) { 
@@ -668,6 +677,8 @@
         } //else NSLog (@"GET EXTERNAL VIEW: carrier%@ was not add to PER HOUR",carrier.name);
 
     }
+    [request release];
+
     //NSLog(@"GET USER EXTERNAL INFO:for sync%@",[carriers)
     ProgressUpdateController *progress = (ProgressUpdateController *)[[ProgressUpdateController alloc] initWithDelegate:delegate];
     progress.cycleSyncType = @"per hour";
@@ -764,7 +775,7 @@
         isDaylySyncProcessing = NO;
 
     });
-    [progress release];
+   [progress release];
 }
 
 
@@ -782,7 +793,7 @@
         ProgressUpdateController *progressForDaylySync = [[ProgressUpdateController alloc] initWithDelegate:delegate];
         progressForDaylySync.cycleSyncType = @"dayly";
         while (!cancelAllOperations) {
-            for (int i = 86400;i != 0;i--) 
+            for (int i = 86399;i != 0;i--) 
             {
                 
                 //if ([queueForUpdates operationCount] == 0 && !syncWasDone  && !queueForUpdatesBusy) {
@@ -931,7 +942,9 @@
 
 -(IBAction) getCarriersListFromEnterpriseServer;
 {
-    
+//    ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[[delegate managedObjectContext] persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
+//    CompanyStuff *authorizedUser = [clientController authorization];
+
 }
 #pragma mark - action methods
 

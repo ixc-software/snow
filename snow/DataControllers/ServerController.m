@@ -845,29 +845,48 @@ static char encodingTable[64] = {
 //    }];
 //    [fetchRequest setReturnsDistinctResults:YES];
 //    [fetchRequest setPropertiesToFetch:[NSArray arrayWithArray:finalProperties]];
-    NSLog(@"SERVER CONTROLLER: guids:%@",guids);
-    NSMutableArray *result = [NSMutableArray array];
+    //NSLog(@"SERVER CONTROLLER: guids:%@",guids);
+//    NSMutableArray *result = [NSMutableArray array];
     //[guids enumerateObjectsUsingBlock:^(NSString *guid, NSUInteger idx, BOOL *stop) 
-    for (NSString *guid in guids) {
-        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-        NSEntityDescription *entityFor = [NSEntityDescription entityForName:entity inManagedObjectContext:moc];
-        [fetchRequest setEntity:entityFor];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entityFor = [NSEntityDescription entityForName:entity inManagedObjectContext:moc];
+    [fetchRequest setEntity:entityFor];
+    NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
+    NSPredicate *predicate = nil;
+    if (guids.count == 1) predicate = [NSPredicate predicateWithFormat:@"GUID == %@",guids.lastObject];
+    else predicate = [NSPredicate predicateWithFormat:@"GUID IN %@",guids];
+    [fetchRequest setPredicate:predicate];
+    [fetchRequest setResultType:NSDictionaryResultType];
+    NSArray *result = [moc executeFetchRequest:fetchRequest error:&error];
 
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"GUID == %@",guid];
-        [fetchRequest setPredicate:predicate];
-        NSArray *fetchedObjects = [moc executeFetchRequest:fetchRequest error:&error];
-        [fetchRequest release];
-        NSManagedObject *resultedObject = fetchedObjects.lastObject;
-        //NSDictionary *dictionaryFromObject = [self dictionaryFromObject:resultedObject];
-        NSArray *attributes = resultedObject.entity.attributeKeys;
-        NSMutableDictionary *finalResult = [NSMutableDictionary dictionary];
-        [attributes enumerateObjectsUsingBlock:^(NSString *attribute, NSUInteger idx, BOOL *stop) {
-            [finalResult setValue:[resultedObject valueForKey:attribute] forKey:attribute];
-        }];
-        [result addObject:finalResult];
-    }//];
+//    for (NSString *guid in guids) {
+//
+//        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"GUID == %@",guid];
+//        [fetchRequest setPredicate:predicate];
+//        NSArray *fetchedObjects = [moc executeFetchRequest:fetchRequest error:&error];
+//        NSManagedObject *resultedObject = fetchedObjects.lastObject;
+//        //NSDictionary *dictionaryFromObject = [self dictionaryFromObject:resultedObject];
+//        NSArray *attributes = resultedObject.entity.attributeKeys;
+//        NSMutableDictionary *finalResult = [NSMutableDictionary dictionary];
+//        for (NSString *attribute in attributes) {
+//        //[attributes enumerateObjectsUsingBlock:^(NSString *attribute, NSUInteger idx, BOOL *stop) {
+//            [finalResult setValue:[resultedObject valueForKey:attribute] forKey:attribute];
+//        }//];
+//        [result addObject:finalResult];
+//    }//];
+    [fetchRequest release];
+    NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
+    NSLog(@"SERVER CONTRORLER:getAllObjectWithGUIDS  time was:%@ min",[NSNumber numberWithDouble:interval/60]);
+    //NSLog(@"SERVER CONTROLLER: result:%@",result);
+
      
-    NSData *allArchivedObjects = [NSKeyedArchiver archivedDataWithRootObject:result];
+//    NSData *allArchivedObjects = [NSKeyedArchiver archivedDataWithRootObject:result];
+    NSString *errorSerialization;
+    
+    NSData *allArchivedObjects = [NSPropertyListSerialization dataFromPropertyList:result format:NSPropertyListBinaryFormat_v1_0 errorDescription:&errorSerialization];
+    if (error) NSLog(@"SERVER CONTRORLER: allObjectsSerializationFailed:%@",errorSerialization);
+    
+    
     NSString *stringToPass = [self base64EncodingData:allArchivedObjects];
 
     [finalJSONResult setValue:stringToPass forKey:@"objects"];

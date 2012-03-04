@@ -573,6 +573,7 @@
 		FA798C4914FD07350004E564 /* AddRoutesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA798C4814FD07350004E564 /* AddRoutesCell.xib */; };
 		FA79EA7214FCCAC8002EDE78 /* DestinationsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA79EA7014FCCAC8002EDE78 /* DestinationsListViewController.m */; };
 		FA79EA7314FCCAC8002EDE78 /* DestinationsListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA79EA7114FCCAC8002EDE78 /* DestinationsListViewController.xib */; };
+		FA995A8815025248000BF7DD /* HTTPResponseTest.m in Sources */ = {isa = PBXBuildFile; fileRef = FA995A8715025248000BF7DD /* HTTPResponseTest.m */; };
 		FAA1E00514F8A2E900743E41 /* AVCellHightlight.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA1E00214F8A2E900743E41 /* AVCellHightlight.m */; };
 		FAA1E00614F8A2E900743E41 /* AVCellHightlight.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA1E00214F8A2E900743E41 /* AVCellHightlight.m */; };
 		FAA1E00714F8A2E900743E41 /* AVCellHightlight.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA1E00214F8A2E900743E41 /* AVCellHightlight.m */; };
@@ -1064,6 +1065,8 @@
 		FA79EA6F14FCCAC8002EDE78 /* DestinationsListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DestinationsListViewController.h; sourceTree = "<group>"; };
 		FA79EA7014FCCAC8002EDE78 /* DestinationsListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DestinationsListViewController.m; sourceTree = "<group>"; };
 		FA79EA7114FCCAC8002EDE78 /* DestinationsListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DestinationsListViewController.xib; sourceTree = "<group>"; };
+		FA995A8615025248000BF7DD /* HTTPResponseTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPResponseTest.h; sourceTree = "<group>"; };
+		FA995A8715025248000BF7DD /* HTTPResponseTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPResponseTest.m; sourceTree = "<group>"; };
 		FAA1E00114F8A2E900743E41 /* AVCellHightlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCellHightlight.h; sourceTree = "<group>"; };
 		FAA1E00214F8A2E900743E41 /* AVCellHightlight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCellHightlight.m; sourceTree = "<group>"; };
 		FAA1E00314F8A2E900743E41 /* AVScroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVScroller.h; sourceTree = "<group>"; };
@@ -1554,6 +1557,8 @@
 				FA10FA4314F825AE0014C545 /* ViewControllers */,
 				FAFEFADF14F7E19F0096A8A4 /* MyHTTPConnection.h */,
 				FAFEFAE014F7E19F0096A8A4 /* MyHTTPConnection.m */,
+				FA995A8615025248000BF7DD /* HTTPResponseTest.h */,
+				FA995A8715025248000BF7DD /* HTTPResponseTest.m */,
 				FAFEF8E214F7E1270096A8A4 /* cocoahttpserver */,
 				FA3CE32714F7DE3800E3AF17 /* desctopAppDelegate.h */,
 				FA3CE32814F7DE3800E3AF17 /* desctopAppDelegate.m */,
@@ -2611,6 +2616,7 @@
 				FA4D907414F8C39F00C90E2E /* ServerController.m in Sources */,
 				FA4D907714F8C4BD00C90E2E /* DDKeychain.m in Sources */,
 				FA0D451214FCBCDA00CDDCF2 /* ParseCSV.m in Sources */,
+				FA995A8815025248000BF7DD /* HTTPResponseTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

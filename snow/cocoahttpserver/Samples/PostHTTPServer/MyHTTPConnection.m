@@ -3,6 +3,7 @@
 #import "HTTPDataResponse.h"
 #import "DDNumber.h"
 #import "HTTPLogging.h"
+#import "HTTPResponseTest.h"
 
 #import "ServerController.h"
 #import "GCDAsyncSocket.h"
@@ -12,7 +13,7 @@
 
 // Log levels : off, error, warn, info, verbose
 // Other flags: trace
-static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
+static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;// | HTTP_LOG_FLAG_TRACE;
 
 
 /**
@@ -185,7 +186,8 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
 			postStr = [[[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding] autorelease];
 		}
 		NSLog(@"%@[%p]: GetObjects:postStr: %@", THIS_FILE, self, postStr);
-		
+//        return [[[HTTPResponseTest alloc] initWithConnection:self withReceivedData:postData] autorelease];
+
         JSONDecoder *jkitDecoder = [JSONDecoder decoder];
         NSError *error = nil;
         NSDictionary *result = [jkitDecoder objectWithUTF8String:(const unsigned char *)[postStr UTF8String] length:[postStr length] error:&error];
@@ -296,7 +298,8 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
 			postStr = [[[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding] autorelease];
 		}
 		//NSLog(@"%@[%p]: GetObjectsWithGUIDs:postStr: %@", THIS_FILE, self, postStr);
-		
+        //return [[[HTTPResponseTest alloc] initWithConnection:self withReceivedData:postData] autorelease];
+
         JSONDecoder *jkitDecoder = [JSONDecoder decoder];
         NSError *error = nil;
         NSDictionary *result = [jkitDecoder objectWithUTF8String:(const unsigned char *)[postStr UTF8String] length:[postStr length] error:&error];
@@ -306,6 +309,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN | HTTP_LOG_FLAG_TRACE;
         NSString *authorizedUserPassword = [result valueForKey:@"authorizedUserPassword"];
         NSString *entityForList = [result valueForKey:@"entity"];
         NSArray *guids = [[NSArray alloc] initWithArray:[result valueForKey:@"allGUIDs"]];
+        
         //        NSNumber *isIncludeAllObjects = [result valueForKey:@"isIncludeAllObjects"];
         //NSLog(@"Class:%@",[[result valueForKey:@"isIncludeAllSubentities"] class]);
         //        NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];

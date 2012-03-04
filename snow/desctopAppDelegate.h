@@ -46,7 +46,8 @@
 
     NSPopover *userCompanyInfoPopover;
     NSPopover *getExternalCompanyInfoPopover;
-
+    NSTimer *durationRefreasher;
+    
 }
 @property (assign) IBOutlet NSWindow *window;
 
