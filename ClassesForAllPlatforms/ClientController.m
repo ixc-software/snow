@@ -64,8 +64,8 @@ static char encodingTable[64] = {
 
         mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
 #else
-//        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
-        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
+//        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
 #endif
         
 //
@@ -2173,7 +2173,16 @@ static char encodingTable[64] = {
     }
     
     [prepeareForJSONRequest release];
-    if (receivedObject) return [receivedObject valueForKey:@"allGUIDs"];
+    if (receivedObject) { 
+        NSString *error;
+        NSString *allObjectsString = [receivedObject valueForKey:@"allGUIDs"];
+        NSData *allObjectsData = [self dataWithBase64EncodedString:allObjectsString];
+        //        NSArray *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
+        NSPropertyListFormat format;  
+        NSArray *decodedObjects = [NSPropertyListSerialization propertyListFromData:allObjectsData mutabilityOption:0 format:&format errorDescription:&error];
+
+        return decodedObjects;
+    }
     else return nil;
     
 }
@@ -2215,7 +2224,7 @@ static char encodingTable[64] = {
             NSPropertyListFormat format;  
             NSArray *decodedObjects = [NSPropertyListSerialization propertyListFromData:allObjectsData mutabilityOption:0 format:&format errorDescription:&error];
             [finalListObjectsMutable addObjectsFromArray:decodedObjects];
-            if (error) NSLog(@"SERVER CONTRORLER: allObjectsSerializationFailed:%@ format:%uu",error,format);
+            if (error) NSLog(@"SERVER CONTRORLER: allObjectsSerializationFailed:%@ format:%luu",error,format);
             //NSLog(@"CLIENT CONTROLLER: guids:%@",guids);
             
             //NSLog(@"CLIENT CONTROLLER: decodedObjects:%@",decodedObjects);

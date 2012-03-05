@@ -797,7 +797,7 @@
             {
                 
                 //if ([queueForUpdates operationCount] == 0 && !syncWasDone  && !queueForUpdatesBusy) {
-                if (i == 86400) { 
+                if (i == 86399) { 
                     NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
                     
                     NSLog(@"GET EXTERNAL INFO VIEW:every DAY sync start");    
