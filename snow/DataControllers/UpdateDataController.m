@@ -2124,7 +2124,33 @@ forIsUpdateCarriesListOnExternalServer:YES];
     if ([rateSheetIDsMutable count] > 0) {
         for (NSString *rateSheetID in rateSheetIDsMutable) {
             for (NSString *prefix in prefixesMutable) {
-                NSPredicate *rateSheetLook = [NSPredicate predicateWithFormat:@"(rateSheetID == %@) AND (prefix == %@)",rateSheetID,prefix];
+                @autoreleasepool {
+                    
+                    
+                    NSPredicate *rateSheetLook = [NSPredicate predicateWithFormat:@"(rateSheetID == %@) AND (prefix == %@)",rateSheetID,prefix];
+                    NSSet *allCodes = [[destinations lastObject] valueForKey:@"codesvsDestinationsList"];
+                    NSSet *codes = [allCodes filteredSetUsingPredicate:rateSheetLook];
+                    //NSLog(@"Code:%@\n",code);
+                    
+                    if ([codes count] != 0) {
+                        
+                        CodesvsDestinationsList *codeObject = [codes anyObject];
+                        NSString *rateSheetName = codeObject.rateSheetName;
+                        NSDictionary *mix = [NSDictionary dictionaryWithObjectsAndKeys:prefix,@"prefix",rateSheetID,@"rateSheetID", rateSheetName,@"rateSheetName",nil];
+                        //NSLog(@"object%@",mix);
+                        
+                        [rateSheetsAndPrefixes addObject:mix];
+                        // NSLog(@"Add object%@",rateSheetsAndPrefixes);
+                        
+                    }
+                }
+            }
+        }   
+    } else {
+        for (NSString *prefix in prefixesMutable) {
+            @autoreleasepool {
+                
+                NSPredicate *rateSheetLook = [NSPredicate predicateWithFormat:@"(prefix == %@)",prefix];
                 NSSet *allCodes = [[destinations lastObject] valueForKey:@"codesvsDestinationsList"];
                 NSSet *codes = [allCodes filteredSetUsingPredicate:rateSheetLook];
                 //NSLog(@"Code:%@\n",code);
@@ -2133,32 +2159,13 @@ forIsUpdateCarriesListOnExternalServer:YES];
                     
                     CodesvsDestinationsList *codeObject = [codes anyObject];
                     NSString *rateSheetName = codeObject.rateSheetName;
-                    NSDictionary *mix = [NSDictionary dictionaryWithObjectsAndKeys:prefix,@"prefix",rateSheetID,@"rateSheetID", rateSheetName,@"rateSheetName",nil];
+                    NSDictionary *mix = [NSDictionary dictionaryWithObjectsAndKeys:prefix,@"prefix", rateSheetName,@"rateSheetName",nil];
                     //NSLog(@"object%@",mix);
                     
                     [rateSheetsAndPrefixes addObject:mix];
                     // NSLog(@"Add object%@",rateSheetsAndPrefixes);
                     
                 }
-            }
-        }   
-    } else {
-        for (NSString *prefix in prefixesMutable) {
-            NSPredicate *rateSheetLook = [NSPredicate predicateWithFormat:@"(prefix == %@)",prefix];
-            NSSet *allCodes = [[destinations lastObject] valueForKey:@"codesvsDestinationsList"];
-            NSSet *codes = [allCodes filteredSetUsingPredicate:rateSheetLook];
-            //NSLog(@"Code:%@\n",code);
-            
-            if ([codes count] != 0) {
-                
-                CodesvsDestinationsList *codeObject = [codes anyObject];
-                NSString *rateSheetName = codeObject.rateSheetName;
-                NSDictionary *mix = [NSDictionary dictionaryWithObjectsAndKeys:prefix,@"prefix", rateSheetName,@"rateSheetName",nil];
-                //NSLog(@"object%@",mix);
-                
-                [rateSheetsAndPrefixes addObject:mix];
-                // NSLog(@"Add object%@",rateSheetsAndPrefixes);
-                
             }
         }
 
@@ -4276,7 +4283,7 @@ forIsUpdateCarriesListOnExternalServer:YES];
             }
             [self logError:error];
             return NO;
-        }
+        } else [moc reset];
     }
     return YES;
 

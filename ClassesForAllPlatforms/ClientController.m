@@ -77,7 +77,7 @@ static char encodingTable[64] = {
 
         moc = [[NSManagedObjectContext alloc] init];
         [moc setUndoManager:nil];
-        [moc setStalenessInterval:0.0000001213];
+        //[moc setStalenessInterval:0.0000001213];
 //        [moc setMergePolicy:NSOverwriteMergePolicy];
         [moc setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
 
@@ -170,7 +170,7 @@ static char encodingTable[64] = {
                 NSLog(@"  %@", [error userInfo]);
             }
             [self logError:error];
-        }
+        } //else [mocForSave reset];
     }
     
     return;

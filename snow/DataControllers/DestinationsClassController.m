@@ -2232,7 +2232,7 @@
             }
             [self logError:error];
             success = NO;
-        }
+        } else [self.moc reset];
     }
     return success;
 }

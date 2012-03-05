@@ -51,15 +51,15 @@
     [self didChangeValueForKey:@"modificationDate"];
 }
 
--(void)willSave {
-    NSDate *now = [NSDate date];
-    if ([self isUpdated]) {
-        
-        
-        if (self.modificationDate == nil || [now timeIntervalSinceDate:self.modificationDate] > 1.0) {
-            self.modificationDate = now;
-        }
-    }
-}
+//-(void)willSave {
+//    NSDate *now = [NSDate date];
+//    if ([self isUpdated]) {
+//        
+//        
+//        if (self.modificationDate == nil || [now timeIntervalSinceDate:self.modificationDate] > 1.0) {
+//            self.modificationDate = now;
+//        }
+//    }
+//}
 
 @end

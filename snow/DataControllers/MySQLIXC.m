@@ -605,23 +605,27 @@
             //NSLog(@"MYSQL: Query: %@ mysql_fetch_row started",query);
 
             while ((row = mysql_fetch_row(qResult))) {
-                NSAutoreleasePool *poolCycle = [[NSAutoreleasePool alloc] init];
+                //NSAutoreleasePool *poolCycle = [[NSAutoreleasePool alloc] init];
 
                 NSMutableDictionary *rowDict = [[NSMutableDictionary alloc] initWithCapacity:0];
                 
                 for(fieldIndex = 0; fieldIndex < num_fields; fieldIndex++)  {
                     //printf("%s \n", row[fieldIndex] ? row[fieldIndex] : "NULL");
-                    NSUInteger arrayIndex = [[NSNumber numberWithUnsignedInt:fieldIndex] unsignedIntegerValue];
-                    NSString *key = [fields objectAtIndex:arrayIndex];
-                    NSString *result = [NSString stringWithCString:(row[fieldIndex] ? row[fieldIndex] : "NULL") encoding:NSISOLatin1StringEncoding];
-                    [rowDict setValue:result forKey:key];
+                    @autoreleasepool {
+                        
+                        
+                        NSUInteger arrayIndex = [[NSNumber numberWithUnsignedInt:fieldIndex] unsignedIntegerValue];
+                        NSString *key = [fields objectAtIndex:arrayIndex];
+                        NSString *result = [NSString stringWithCString:(row[fieldIndex] ? row[fieldIndex] : "NULL") encoding:NSISOLatin1StringEncoding];
+                        [rowDict setValue:result forKey:key];
+                    }
                     //NSLog(@"Current rowDict:%@",rowDict);
                 }
 
                 NSDictionary *rowDictFinal = [NSDictionary dictionaryWithDictionary:rowDict];
                 [rowDict release],rowDict = nil;
                 [rows addObject:rowDictFinal];
-                [poolCycle drain], poolCycle = nil;
+                //[poolCycle drain], poolCycle = nil;
 
             }
 
@@ -688,168 +692,162 @@
 -(NSArray *) destinationsListFor:(NSString *)carrier type:(int)type;
 {
     NSArray *peersList = nil;
-    
     NSMutableArray *priceList = [[NSMutableArray alloc] init];  
-    
-    //NSLog(@"MYSQL: Start peersList for carrier:%@",carrier);
-    
-    if (type == 0) peersList = [NSArray arrayWithArray:[self fetchNamedAllWith:[NSString stringWithFormat:@"select InPeers.id,InIPAddresses.ip, InPeers.ruleSet,InIPAddresses.prefix,InIPAddresses.realPrefix,InPeers.yn from InPeers left join Users  using (uname)  left join InIPAddresses on InIPAddresses.uid=InPeers.id where company = '%@' group by InPeers.id,InIPAddresses.ip",carrier]]];
-    //else peersList = [NSArray arrayWithArray:[self fetchNamedAllWith:[NSString stringWithFormat:@"select OutPeers.id,ruleSet, prefix, realprefix, yn from OutPeers left join Users  using (uname)  where company = '%@'",carrier]]];
+    @autoreleasepool {
+        
+        
+        //NSLog(@"MYSQL: Start peersList for carrier:%@",carrier);
+        if (type == 0) peersList = [NSArray arrayWithArray:[self fetchNamedAllWith:[NSString stringWithFormat:@"select InPeers.id,InIPAddresses.ip, InPeers.ruleSet,InIPAddresses.prefix,InIPAddresses.realPrefix,InPeers.yn from InPeers left join Users  using (uname)  left join InIPAddresses on InIPAddresses.uid=InPeers.id where company = '%@' group by InPeers.id,InIPAddresses.ip",carrier]]];
+        //else peersList = [NSArray arrayWithArray:[self fetchNamedAllWith:[NSString stringWithFormat:@"select OutPeers.id,ruleSet, prefix, realprefix, yn from OutPeers left join Users  using (uname)  where company = '%@'",carrier]]];
         else peersList = [NSArray arrayWithArray:[self fetchNamedAllWith:[NSString stringWithFormat:@"select distinct OutIPAddresses.ip , OutPeers.id,ruleSet, prefix, realprefix, yn from OutIPAddresses left join OutPeers on OutIPAddresses.uid=OutPeers.id left join Users using(uname)  where company = '%@'",carrier]]];
-
-    //NSLog(@"MYSQL: Finish peersList for carrier:%@\n peer list is %@",carrier,peersList);
-    
-    NSMutableArray *ruleSetAndPrefixes = [NSMutableArray array];
-    // ruleSetAndPrefixes :
-    ///( 
-    //{
-    //    enabled @"enabled", ruleset @"ruleSet", prefixes, @"prefixes",ips, @"ip"
-    //                                                  |                |
-    //                                    (prefix1,prefix2)         (ip1,ip2)
-    //                              
-    // }
-    
-    for (NSDictionary *inPeer in peersList)
-    {
-        //NSLog(@"prefix: %@, realPrefix:%@",[inPeer valueForKey:@"prefix"],[inPeer valueForKey:@"realPrefix"]);
         
-        NSString *prefix = [inPeer valueForKey:@"prefix"];
-        NSString *realPrefix = [inPeer valueForKey:@"realPrefix"];
-        NSString *ip = nil;
-        if ([inPeer valueForKey:@"ip"]) ip = [inPeer valueForKey:@"ip"];
-        else ip=@"undefined";
-
-        NSString *ruleSet = [inPeer valueForKey:@"ruleSet"];
-        NSString *yn = [inPeer valueForKey:@"yn"];
-        NSString *idStr = [inPeer valueForKey:@"id"];
+        //NSLog(@"MYSQL: Finish peersList for carrier:%@\n peer list is %@",carrier,peersList);
+        NSMutableArray *ruleSetAndPrefixes = [NSMutableArray array];
+        // ruleSetAndPrefixes :
+        //    enabled @"enabled", ruleset @"ruleSet", prefixes, @"prefixes",ips, @"ip"
+        //                                                  |                |
+        //                                    (prefix1,prefix2)         (ip1,ip2)
         
-        if (([prefix class] != [NSNull class]) && ([realPrefix class] != [NSNull class]) && ([ip class] != [NSNull class]))  
+        for (NSDictionary *inPeer in peersList)
         {
-            //NSLog(@"MYSQL: replace prefix : %@, with realPrefix:%@",prefix,realPrefix);
-            if (realPrefix) if ([realPrefix length] != 0) prefix = [NSString stringWithString:[prefix stringByReplacingOccurrencesOfString:realPrefix withString:@""]];
-        } else continue;
-        
-        if ([yn isEqualToString:@"n"]) continue;
-        
-        //NSLog(@"prefix:%@",prefix);
-        // check if in colection ruleset and prefixes we have current ruleset
-        NSPredicate *predicateRulesetWithCurrentRuleset = [NSPredicate predicateWithFormat:@"(ruleSet == %@)",ruleSet];
-        NSArray *rulesetWithCurrentRuleset = [ruleSetAndPrefixes filteredArrayUsingPredicate:predicateRulesetWithCurrentRuleset];
-        
-        //NSLog(@"MYSQL:rulesetWithCurrentRuleset:%@",rulesetWithCurrentRuleset);
-        //NSLog(@"MYSQL:rulesetsWithOutCurrentRuleset:%@",rulesetsWithOutCurrentRuleset);
-        //NSLog(@"ruleSetAndPrefixes:%@",ruleSetAndPrefixes);
-        
-        
-        if ([rulesetWithCurrentRuleset count] != 0)
-        {    
-            // if ruleset already in collection, we check for current ruleset for prefix, and if it not there, we add it
-            NSPredicate *predicateFilteredPrefixesInRulesetsList = [NSPredicate predicateWithFormat:@"prefixes contains[cd] %@",prefix];
-            NSArray *filteredPrefixesInRulesetsList = [rulesetWithCurrentRuleset filteredArrayUsingPredicate:predicateFilteredPrefixesInRulesetsList];
-            if ([filteredPrefixesInRulesetsList count] == 0) {
-                // if prefixes there, we have to replace current ruleset and add prefixes.
-                [ruleSetAndPrefixes removeObject:[rulesetWithCurrentRuleset lastObject]];
-                NSArray *oldPrefixesList = [[rulesetWithCurrentRuleset lastObject] valueForKey:@"prefixes"];
-                NSArray *oldIpList = [[rulesetWithCurrentRuleset lastObject] valueForKey:@"ip"];
-                NSMutableArray *newIpList = [NSMutableArray arrayWithArray:oldIpList];
-                if (![oldIpList containsObject:ip]) [newIpList addObject:ip];
-                NSMutableArray *newPrefixesList = [NSMutableArray arrayWithArray:oldPrefixesList];
-                [newPrefixesList addObject:prefix];
-                [ruleSetAndPrefixes addObject:[NSDictionary dictionaryWithObjectsAndKeys:yn,@"enabled",ruleSet,@"ruleSet",newPrefixesList,@"prefixes",idStr,@"idStr",oldIpList,@"ip",nil]];
-                oldPrefixesList = nil;
-                newPrefixesList = nil;
-            } else {
-                // it is second ip for add
-                [ruleSetAndPrefixes removeObject:[rulesetWithCurrentRuleset lastObject]];
-                NSArray *oldIpList = [[rulesetWithCurrentRuleset lastObject] valueForKey:@"ip"];
-                NSArray *oldPrefixesList = [[rulesetWithCurrentRuleset lastObject] valueForKey:@"prefixes"];
-                NSMutableArray *newIpList = [NSMutableArray arrayWithArray:oldIpList];
-                if (![oldIpList containsObject:ip]) [newIpList addObject:ip];
-                [ruleSetAndPrefixes addObject:[NSDictionary dictionaryWithObjectsAndKeys:yn,@"enabled",ruleSet,@"ruleSet",oldPrefixesList,@"prefixes",idStr,@"idStr",newIpList,@"ip",nil]];
-                oldPrefixesList = nil;
-                newIpList = nil;
-            }
-            filteredPrefixesInRulesetsList = nil;
-        } else 
-        {
-            // if we don't have prefixes there, we just insert one prefix
-            NSMutableDictionary *newRuleset = [NSMutableDictionary dictionary];
-            [newRuleset setValue:yn forKey:@"enabled"];
-            [newRuleset setValue:ruleSet forKey:@"ruleSet"];
-            [newRuleset setValue:[NSArray arrayWithObject:prefix] forKey:@"prefixes"];
-            [newRuleset setValue:idStr forKey:@"idStr"];
-            NSArray *ipListForStart = [NSArray arrayWithObjects:ip, nil];
-            [newRuleset setValue:ipListForStart forKey:@"ip"];
-            [ruleSetAndPrefixes addObject:[NSDictionary dictionaryWithDictionary:newRuleset]];
-            newRuleset = nil;
+            //NSLog(@"prefix: %@, realPrefix:%@",[inPeer valueForKey:@"prefix"],[inPeer valueForKey:@"realPrefix"]);
             
-        }
-        rulesetWithCurrentRuleset = nil;
-        prefix = nil;
-    }
-
-    NSLog(@"MYSQL:Ruleset and prefixes list for carrier: %@\n have :%@\n for type of service:%d\n",carrier, ruleSetAndPrefixes, type);
-
-    
-    for (NSDictionary *ruleSetAndPrefix in ruleSetAndPrefixes)
-    {
-        @autoreleasepool {
+            NSString *prefix = [inPeer valueForKey:@"prefix"];
+            NSString *realPrefix = [inPeer valueForKey:@"realPrefix"];
+            NSString *ip = nil;
+            if ([inPeer valueForKey:@"ip"]) ip = [inPeer valueForKey:@"ip"];
+            else ip=@"undefined";
             
-            NSArray *ips = [ruleSetAndPrefix valueForKey:@"ip"];
-            NSString *ipStr = [ips componentsJoinedByString:@","];    
+            NSString *ruleSet = [inPeer valueForKey:@"ruleSet"];
+            NSString *yn = [inPeer valueForKey:@"yn"];
+            NSString *idStr = [inPeer valueForKey:@"id"];
             
-            NSArray *prefixesForThisRule = [ruleSetAndPrefix valueForKey:@"prefixes"];
-            for (NSString *prefixForThisRule in prefixesForThisRule) {
-                NSString *ruleSet = [ruleSetAndPrefix valueForKey:@"ruleSet"];
-                NSString *queryRateSheets = [NSString stringWithFormat:@"select RateSheets.id,RateSheets.name from RuleSets left join Rules on RuleSets.rule = Rules.id left join RateSheets on uid = price where RuleSets.id = '%@'  and date_activate <= now() order by date_activate desc limit 1;",ruleSet];
-                NSArray *rateSheetId = [self fetchNamedAllWith:queryRateSheets];
-                if ([rateSheetId count] == 0) continue;
-                NSString *rateSheetIdString = [[rateSheetId lastObject] valueForKey:@"id"];
-                NSString *rateSheetNameString = [[rateSheetId lastObject] valueForKey:@"name"];
-                // we agreed that we take just one rateSheet, which was activate last
-                //if ([rateSheetId count] > 1) NSLog(@"MYSQL: WARNING! Ruleset and prefixes have more than one rateSheetID  for carrier: %@\n have :%@\n for type of service:%d\n  Hole rateSheetArea:%@ \n",carrier, ruleSetAndPrefixes, type,rateSheetId);
-                NSString *queryCode = [NSString stringWithFormat:@"select code,price,enabled,chdate from InDefaultPrice where uid='%@'",rateSheetIdString];
-                
-                //NSLog(@"currentPrices for carrier: %@\n with uid = %@\n and prefix:%@\n have :%@\n ",carrier,rateSheetId,prefixForThisRule, currentPrices);
-                //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-                
-                NSArray *queryResult = [self fetchNamedAllWith:queryCode];
-                NSArray *currentPrices = [[NSArray alloc] initWithArray:queryResult];
-                
-                for (NSDictionary *currenPrice in currentPrices)
-                {
-                    @autoreleasepool {
-                        NSMutableDictionary *newPrice = [NSMutableDictionary dictionaryWithDictionary:currenPrice];
-                        [newPrice setValue:prefixForThisRule  forKey:@"prefix"];
-                        [newPrice setValue:[ruleSetAndPrefix valueForKey:@"enabled"]  forKey:@"yn"];
-                        [newPrice setValue:rateSheetNameString  forKey:@"rateSheetName"];
-                        [newPrice setValue:rateSheetIdString  forKey:@"rateSheetID"];
-                        [newPrice setValue:[ruleSetAndPrefix valueForKey:@"idStr"]  forKey:@"peerID"];
-                        [newPrice setValue:ipStr forKey:@"ip"];
-                        
-                        [priceList addObject:newPrice];
-                    }
+            if (([prefix class] != [NSNull class]) && ([realPrefix class] != [NSNull class]) && ([ip class] != [NSNull class]))  
+            {
+                //NSLog(@"MYSQL: replace prefix : %@, with realPrefix:%@",prefix,realPrefix);
+                if (realPrefix) if ([realPrefix length] != 0) prefix = [NSString stringWithString:[prefix stringByReplacingOccurrencesOfString:realPrefix withString:@""]];
+            } else continue;
+            
+            if ([yn isEqualToString:@"n"]) continue;
+            
+            //NSLog(@"prefix:%@",prefix);
+            // check if in colection ruleset and prefixes we have current ruleset
+            NSPredicate *predicateRulesetWithCurrentRuleset = [NSPredicate predicateWithFormat:@"(ruleSet == %@)",ruleSet];
+            NSArray *rulesetWithCurrentRuleset = [ruleSetAndPrefixes filteredArrayUsingPredicate:predicateRulesetWithCurrentRuleset];
+            
+            //NSLog(@"MYSQL:rulesetWithCurrentRuleset:%@",rulesetWithCurrentRuleset);
+            //NSLog(@"MYSQL:rulesetsWithOutCurrentRuleset:%@",rulesetsWithOutCurrentRuleset);
+            //NSLog(@"ruleSetAndPrefixes:%@",ruleSetAndPrefixes);
+            
+            
+            if ([rulesetWithCurrentRuleset count] != 0)
+            {    
+                // if ruleset already in collection, we check for current ruleset for prefix, and if it not there, we add it
+                NSPredicate *predicateFilteredPrefixesInRulesetsList = [NSPredicate predicateWithFormat:@"prefixes contains[cd] %@",prefix];
+                NSArray *filteredPrefixesInRulesetsList = [rulesetWithCurrentRuleset filteredArrayUsingPredicate:predicateFilteredPrefixesInRulesetsList];
+                if ([filteredPrefixesInRulesetsList count] == 0) {
+                    // if prefixes there, we have to replace current ruleset and add prefixes.
+                    [ruleSetAndPrefixes removeObject:[rulesetWithCurrentRuleset lastObject]];
+                    NSArray *oldPrefixesList = [[rulesetWithCurrentRuleset lastObject] valueForKey:@"prefixes"];
+                    NSArray *oldIpList = [[rulesetWithCurrentRuleset lastObject] valueForKey:@"ip"];
+                    NSMutableArray *newIpList = [NSMutableArray arrayWithArray:oldIpList];
+                    if (![oldIpList containsObject:ip]) [newIpList addObject:ip];
+                    NSMutableArray *newPrefixesList = [NSMutableArray arrayWithArray:oldPrefixesList];
+                    [newPrefixesList addObject:prefix];
+                    [ruleSetAndPrefixes addObject:[NSDictionary dictionaryWithObjectsAndKeys:yn,@"enabled",ruleSet,@"ruleSet",newPrefixesList,@"prefixes",idStr,@"idStr",oldIpList,@"ip",nil]];
+                    oldPrefixesList = nil;
+                    newPrefixesList = nil;
+                } else {
+                    // it is second ip for add
+                    [ruleSetAndPrefixes removeObject:[rulesetWithCurrentRuleset lastObject]];
+                    NSArray *oldIpList = [[rulesetWithCurrentRuleset lastObject] valueForKey:@"ip"];
+                    NSArray *oldPrefixesList = [[rulesetWithCurrentRuleset lastObject] valueForKey:@"prefixes"];
+                    NSMutableArray *newIpList = [NSMutableArray arrayWithArray:oldIpList];
+                    if (![oldIpList containsObject:ip]) [newIpList addObject:ip];
+                    [ruleSetAndPrefixes addObject:[NSDictionary dictionaryWithObjectsAndKeys:yn,@"enabled",ruleSet,@"ruleSet",oldPrefixesList,@"prefixes",idStr,@"idStr",newIpList,@"ip",nil]];
+                    oldPrefixesList = nil;
+                    newIpList = nil;
                 }
+                filteredPrefixesInRulesetsList = nil;
+            } else 
+            {
+                // if we don't have prefixes there, we just insert one prefix
+                NSMutableDictionary *newRuleset = [NSMutableDictionary dictionary];
+                [newRuleset setValue:yn forKey:@"enabled"];
+                [newRuleset setValue:ruleSet forKey:@"ruleSet"];
+                [newRuleset setValue:[NSArray arrayWithObject:prefix] forKey:@"prefixes"];
+                [newRuleset setValue:idStr forKey:@"idStr"];
+                NSArray *ipListForStart = [NSArray arrayWithObjects:ip, nil];
+                [newRuleset setValue:ipListForStart forKey:@"ip"];
+                [ruleSetAndPrefixes addObject:[NSDictionary dictionaryWithDictionary:newRuleset]];
+                newRuleset = nil;
                 
-                [currentPrices release];
+            }
+            rulesetWithCurrentRuleset = nil;
+            prefix = nil;
+        }
+        
+        NSLog(@"MYSQL:Ruleset and prefixes list for carrier: %@\n have :%@\n for type of service:%d\n",carrier, ruleSetAndPrefixes, type);
+        for (NSDictionary *ruleSetAndPrefix in ruleSetAndPrefixes)
+        {
+            @autoreleasepool {
+                
+                NSArray *ips = [ruleSetAndPrefix valueForKey:@"ip"];
+                NSString *ipStr = [ips componentsJoinedByString:@","];    
+                
+                NSArray *prefixesForThisRule = [ruleSetAndPrefix valueForKey:@"prefixes"];
+                for (NSString *prefixForThisRule in prefixesForThisRule) {
+                    NSString *ruleSet = [ruleSetAndPrefix valueForKey:@"ruleSet"];
+                    NSString *queryRateSheets = [NSString stringWithFormat:@"select RateSheets.id,RateSheets.name from RuleSets left join Rules on RuleSets.rule = Rules.id left join RateSheets on uid = price where RuleSets.id = '%@'  and date_activate <= now() order by date_activate desc limit 1;",ruleSet];
+                    NSArray *rateSheetId = [self fetchNamedAllWith:queryRateSheets];
+                    if ([rateSheetId count] == 0) continue;
+                    NSString *rateSheetIdString = [[rateSheetId lastObject] valueForKey:@"id"];
+                    NSString *rateSheetNameString = [[rateSheetId lastObject] valueForKey:@"name"];
+                    // we agreed that we take just one rateSheet, which was activate last
+                    //if ([rateSheetId count] > 1) NSLog(@"MYSQL: WARNING! Ruleset and prefixes have more than one rateSheetID  for carrier: %@\n have :%@\n for type of service:%d\n  Hole rateSheetArea:%@ \n",carrier, ruleSetAndPrefixes, type,rateSheetId);
+                    NSString *queryCode = [NSString stringWithFormat:@"select code,price,enabled,chdate from InDefaultPrice where uid='%@'",rateSheetIdString];
+                    
+                    //NSLog(@"currentPrices for carrier: %@\n with uid = %@\n and prefix:%@\n have :%@\n ",carrier,rateSheetId,prefixForThisRule, currentPrices);
+                    //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+                    
+                    NSArray *queryResult = [self fetchNamedAllWith:queryCode];
+                    NSArray *currentPrices = [[NSArray alloc] initWithArray:queryResult];
+                    
+                    for (NSDictionary *currenPrice in currentPrices)
+                    {
+                        @autoreleasepool {
+                            NSMutableDictionary *newPrice = [NSMutableDictionary dictionaryWithDictionary:currenPrice];
+                            [newPrice setValue:prefixForThisRule  forKey:@"prefix"];
+                            [newPrice setValue:[ruleSetAndPrefix valueForKey:@"enabled"]  forKey:@"yn"];
+                            [newPrice setValue:rateSheetNameString  forKey:@"rateSheetName"];
+                            [newPrice setValue:rateSheetIdString  forKey:@"rateSheetID"];
+                            [newPrice setValue:[ruleSetAndPrefix valueForKey:@"idStr"]  forKey:@"peerID"];
+                            [newPrice setValue:ipStr forKey:@"ip"];
+                            
+                            [priceList addObject:newPrice];
+                        }
+                    }
+                    
+                    [currentPrices release];
+                }
             }
         }
+        //NSLog(@"MYSQL: Start price select for carrier:%@",carrier);
+        
+        //NSLog(@"priceList:%@",priceList);
+        NSArray *localPriceListsOnPeers = nil;
+        if (type == 0) localPriceListsOnPeers = [NSArray arrayWithArray:[self fetchNamedAllWith:[NSString stringWithFormat:@"select Price.*, InPeers.yn,InIPAddresses.ip, InIPAddresses.prefix from Price left join InPeers on Price.uid = InPeers.id left join Users using (uname) left join InIPAddresses on InIPAddresses.uid=InPeers.id where company = '%@' group by Price.code, Price.uid, InIPAddresses.prefix",carrier]]];
+        else localPriceListsOnPeers = [NSArray arrayWithArray:[self fetchNamedAllWith:[NSString stringWithFormat:@"select OutPeers.yn, OutPeers.prefix, OutPrice.* from OutPrice left join OutPeers on OutPrice.pid = OutPeers.id left join Users using (uname) where company = '%@'",carrier]]];
+        
+        [priceList addObjectsFromArray:localPriceListsOnPeers];
+        //NSLog(@"priceList:%@",priceList);
+        //NSLog(@"MYSQL: Finish price select for carrier:%@",carrier);
+        peersList = nil;
+        ruleSetAndPrefixes = nil;
+        localPriceListsOnPeers = nil;
     }
-    //NSLog(@"MYSQL: Start price select for carrier:%@",carrier);
-    
-    //NSLog(@"priceList:%@",priceList);
-    NSArray *localPriceListsOnPeers = nil;
-    if (type == 0) localPriceListsOnPeers = [NSArray arrayWithArray:[self fetchNamedAllWith:[NSString stringWithFormat:@"select Price.*, InPeers.yn,InIPAddresses.ip, InIPAddresses.prefix from Price left join InPeers on Price.uid = InPeers.id left join Users using (uname) left join InIPAddresses on InIPAddresses.uid=InPeers.id where company = '%@' group by Price.code, Price.uid, InIPAddresses.prefix",carrier]]];
-    else localPriceListsOnPeers = [NSArray arrayWithArray:[self fetchNamedAllWith:[NSString stringWithFormat:@"select OutPeers.yn, OutPeers.prefix, OutPrice.* from OutPrice left join OutPeers on OutPrice.pid = OutPeers.id left join Users using (uname) where company = '%@'",carrier]]];
-    
-    
-    [priceList addObjectsFromArray:localPriceListsOnPeers];
-    //NSLog(@"priceList:%@",priceList);
-    //NSLog(@"MYSQL: Finish price select for carrier:%@",carrier);
-    peersList = nil;
-    ruleSetAndPrefixes = nil;
-    localPriceListsOnPeers = nil;
     NSArray *finalResult = [NSArray arrayWithArray:priceList];
+        
     [priceList release];
     return finalResult;
     
