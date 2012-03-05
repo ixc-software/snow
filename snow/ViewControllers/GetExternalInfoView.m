@@ -455,11 +455,12 @@
                 
                 NSManagedObjectID *carrierID = [carriersToExecute objectAtIndex:idx];
                 
-                __block Carrier *car = (Carrier *)[self.moc objectWithID:carrierID];
+                Carrier *car = (Carrier *)[self.moc objectWithID:carrierID];
+                
                 NSString *carrierGUID = [[NSString alloc] initWithString:car.GUID];
                 NSString *carrierName = [[NSString alloc] initWithString:car.name];
                 
-                NSLog(@"carrier:%@ added to queue with index:%@",car.name,idxNumber);
+                NSLog(@"carrier:%@ added to queue with index:%@",carrierName,idxNumber);
                 
                 GetExternalInfoOperation *operation = [[GetExternalInfoOperation alloc] initAndUpdateCarrier:carrierID
                                                                                                    withIndex:idxNumber 
@@ -797,7 +798,7 @@
             {
                 
                 //if ([queueForUpdates operationCount] == 0 && !syncWasDone  && !queueForUpdatesBusy) {
-                if (i == 86400) { 
+                if (i == 86399) { 
                     NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
                     
                     NSLog(@"GET EXTERNAL INFO VIEW:every DAY sync start");    

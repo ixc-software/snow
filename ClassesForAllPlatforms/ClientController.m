@@ -2173,6 +2173,8 @@ static char encodingTable[64] = {
     }
     
     [prepeareForJSONRequest release];
+    NSString *error = [receivedObject valueForKey:@"error"];
+    if (error) NSLog(@"CLIENT CONTROLLER: getAllObjectsList for Entity:%@ error:%@",mainObjectEntity,error);
     if (receivedObject) return [receivedObject valueForKey:@"allGUIDs"];
     else return nil;
     
@@ -2215,7 +2217,7 @@ static char encodingTable[64] = {
             NSPropertyListFormat format;  
             NSArray *decodedObjects = [NSPropertyListSerialization propertyListFromData:allObjectsData mutabilityOption:0 format:&format errorDescription:&error];
             [finalListObjectsMutable addObjectsFromArray:decodedObjects];
-            if (error) NSLog(@"SERVER CONTRORLER: allObjectsSerializationFailed:%@ format:%uu",error,format);
+            if (error) NSLog(@"SERVER CONTRORLER: allObjectsSerializationFailed:%@ format:%@",error,[NSNumber numberWithUnsignedInteger:format]);
             //NSLog(@"CLIENT CONTROLLER: guids:%@",guids);
             
             //NSLog(@"CLIENT CONTROLLER: decodedObjects:%@",decodedObjects);
