@@ -80,6 +80,8 @@
 @implementation DestinationsListViewController
 @synthesize cancelAllUpdates;
 @synthesize cancelAllUpdatesButton;
+@synthesize toolBarView;
+@synthesize routesChangeFilterWithOrWithoutTraffic;
 
 @synthesize managedObjectContext;
 @synthesize progressView;
@@ -153,6 +155,8 @@
     [progressView release];
     [tableView release];
     [cancelAllUpdatesButton release];
+    [toolBarView release];
+    [routesChangeFilterWithOrWithoutTraffic release];
     [super dealloc];
 }
 
@@ -289,10 +293,53 @@
     if (selectedSegmentIndex == 2) addRoutes.hidden = NO;
     else addRoutes.hidden = YES;
     
-    if (selectedSegmentIndex == 0 && isRoutesForSaleListUpdated == YES) progressView.hidden = NO; 
-    else if (selectedSegmentIndex == 1 && isRoutesWeBuyListUpdated == YES) progressView.hidden = NO;
-    else if (selectedSegmentIndex == 2 && isRoutesPushlistListUpdated == YES) progressView.hidden = NO;
-    else progressView.hidden = YES;
+    if (selectedSegmentIndex == 0 && isRoutesForSaleListUpdated == YES) { 
+        carriersProgress.hidden = NO;
+        carriersProgressTitle.hidden = NO;
+        operationTitle.hidden = NO;
+        operationProgress.hidden = NO;
+        cancelAllUpdatesButton.hidden = NO;
+
+        routesChangeFilterWithOrWithoutTraffic.hidden = YES;
+
+        
+        //[self.navigationController setToolbarHidden:NO animated:YES];//progressView.hidden = NO; 
+    }
+    else if (selectedSegmentIndex == 1 && isRoutesWeBuyListUpdated == YES) {
+        carriersProgress.hidden = NO;
+        carriersProgressTitle.hidden = NO;
+        operationTitle.hidden = NO;
+        operationProgress.hidden = NO;
+        cancelAllUpdatesButton.hidden = NO;
+
+        routesChangeFilterWithOrWithoutTraffic.hidden = YES;
+
+        //[self.navigationController setToolbarHidden:NO animated:YES];//progressView.hidden = NO;
+    }
+    else if (selectedSegmentIndex == 2 && isRoutesPushlistListUpdated == YES) { 
+        carriersProgress.hidden = NO;
+        carriersProgressTitle.hidden = NO;
+        operationTitle.hidden = NO;
+        operationProgress.hidden = NO;
+        cancelAllUpdatesButton.hidden = NO;
+
+        routesChangeFilterWithOrWithoutTraffic.hidden = YES;
+
+        //[self.navigationController setToolbarHidden:NO animated:YES];//progressView.hidden = NO;
+    }
+    else { 
+        carriersProgress.hidden = YES;
+        carriersProgressTitle.hidden = YES;
+        operationTitle.hidden = YES;
+        operationProgress.hidden = YES;
+        cancelAllUpdatesButton.hidden = YES;
+
+        routesChangeFilterWithOrWithoutTraffic.hidden = NO;
+        NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
+
+
+//        [self.navigationController setToolbarHidden:YES animated:YES];progressView.hidden = YES;
+    }
     //});
     if (isRoutesWeBuyListUpdated || isRoutesPushlistListUpdated || isRoutesForSaleListUpdated) return;
     //else isRoutesListUpdated = YES;
@@ -323,8 +370,17 @@
         if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 1 ) {
             [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:lastUpdateTimeKey];
             dispatch_async(dispatch_get_main_queue(), ^(void) {
-                progressView.hidden = NO;
-                progressView.alpha = 1.0;
+                //[self.navigationController setToolbarHidden:NO animated:YES];
+                carriersProgress.hidden = NO;
+                carriersProgressTitle.hidden = NO;
+                operationTitle.hidden = NO;
+                operationProgress.hidden = NO;
+                cancelAllUpdatesButton.hidden = NO;
+                routesChangeFilterWithOrWithoutTraffic.hidden = YES;
+                NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
+
+//                progressView.hidden = NO;
+//                progressView.alpha = 1.0;
 //                operationProgress.progressTintColor = [UIColor colorWithRed:0.34 green:0.34 blue:0.57 alpha:1.0];
 //                carriersProgress.progressTintColor = [UIColor colorWithRed:0.34 green:0.34 blue:0.57 alpha:1.0];
 //                [alert removeAllSegments];
@@ -397,7 +453,16 @@
             dispatch_async(dispatch_get_main_queue(), ^(void) {
 //                [self.navigationController setToolbarHidden:YES animated:YES]; 
                 operationProgress.hidden = YES;
-                progressView.hidden = YES;
+                //progressView.hidden = YES;
+                //[self.navigationController setToolbarHidden:YES animated:YES];
+                carriersProgress.hidden = YES;
+                carriersProgressTitle.hidden = YES;
+                operationTitle.hidden = YES;
+                operationProgress.hidden = YES;
+                cancelAllUpdatesButton.hidden = YES;
+                
+                routesChangeFilterWithOrWithoutTraffic.hidden = NO;
+
                 cancelAllUpdates = NO;
                 cancelAllUpdatesButton.enabled = YES;
             });
@@ -431,13 +496,13 @@
 {
     [super viewDidLoad];
 
-    [self.progressView.layer setCornerRadius:5];
-    [self.progressView.layer setBorderColor:[UIColor blackColor].CGColor];
-    [self.progressView.layer setBorderWidth:1.5f];
-    [self.progressView.layer setShadowColor:[UIColor whiteColor].CGColor];
-    [self.progressView.layer setShadowOpacity:0.8];
-    [self.progressView.layer setShadowRadius:5];
-    [self.progressView.layer setShadowOffset:CGSizeMake(1.0, 1.0)];
+//    [self.progressView.layer setCornerRadius:5];
+//    [self.progressView.layer setBorderColor:[UIColor blackColor].CGColor];
+//    [self.progressView.layer setBorderWidth:1.5f];
+//    [self.progressView.layer setShadowColor:[UIColor whiteColor].CGColor];
+//    [self.progressView.layer setShadowOpacity:0.8];
+//    [self.progressView.layer setShadowRadius:5];
+//    [self.progressView.layer setShadowOffset:CGSizeMake(1.0, 1.0)];
     // Do any additional setup after loading the view from its nib.
     shouldBeginEditing = YES;
     
@@ -462,9 +527,18 @@
     
     self.navigationController.toolbar.backgroundColor = [UIColor clearColor];
     self.navigationController.toolbar.barStyle = UIBarStyleBlack;
+    self.navigationController.toolbar.translucent = YES;
     
     self.navigationController.toolbar.tintColor = [UIColor colorWithRed:0.65 green:0.65 blue:0.78 alpha:0.2];
-    
+//    UIBarButtonItem *withTraffic = [[[UIBarButtonItem alloc] initWithTitle:@"with trattic..." style:UIBarButtonItemStyleDone target:self action:@selector(sortRoutesWithTraffic)] autorelease];
+//    UIBarButtonItem *withOutTraffic = [[[UIBarButtonItem alloc] initWithTitle:@"without trattic..." style:UIBarButtonItemStyleBordered target:self action:@selector(sortRoutesWithTraffic)] autorelease];
+
+    UIBarButtonItem *itemFor = [[[UIBarButtonItem alloc] initWithCustomView:self.toolBarView] autorelease];
+
+    [self setToolbarItems:[NSArray arrayWithObject:itemFor]];
+    [routesChangeFilterWithOrWithoutTraffic setHidden:YES];
+    [self.navigationController setToolbarHidden:NO animated:NO];
+
     
     // Set up default values.
     self.tableView.backgroundColor = [UIColor colorWithRed:0.34 green:0.34 blue:0.57 alpha:1.0];
@@ -502,6 +576,8 @@
 {
     [self setTableView:nil];
     [self setCancelAllUpdatesButton:nil];
+    [self setToolBarView:nil];
+    [self setRoutesChangeFilterWithOrWithoutTraffic:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -1630,6 +1706,8 @@
     cancelAllUpdatesButton.enabled = NO;
     self.cancelAllUpdates = YES;
 }
+- (IBAction)changeRoutesWithOrWithoutTraffic:(id)sender {
+}
 
 #pragma mark - external reload methods
 
@@ -1752,15 +1830,22 @@
             } else {
                 [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 //                isRoutesListUpdated = NO;
-                [self.navigationController setToolbarHidden:YES animated:YES];
+                //[self.navigationController setToolbarHidden:YES animated:YES];
+                carriersProgress.hidden = YES;
+                carriersProgressTitle.hidden = YES;
+                operationTitle.hidden = YES;
+                operationProgress.hidden = YES;
+                routesChangeFilterWithOrWithoutTraffic.hidden = NO;
+                NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
+
                 [cell.activity stopAnimating];
                 cell.activity.hidden = YES;
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-                    sleep(10);
-                    dispatch_async(dispatch_get_main_queue(), ^(void) { 
-                        [self.navigationController setToolbarHidden:YES animated:YES]; 
-                    });
-                });
+//                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+//                    sleep(10);
+//                    dispatch_async(dispatch_get_main_queue(), ^(void) { 
+//                        [self.navigationController setToolbarHidden:YES animated:YES]; 
+//                    });
+//                });
                 
                 if ([status isEqualToString:@"remove object finish"] || [status isEqualToString:@"destination for removing not found"]) { 
                     //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
