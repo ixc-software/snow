@@ -17,8 +17,8 @@
     NSString *operationName;
     NSNumber *totalProfit;
     NSManagedObjectID *currentCompanyID;
-    NSString *carrierGUID;
-    NSString *carrierName;
+//    NSString *carrierGUID;
+//    NSString *carrierName;
     ProgressUpdateController *progress;
 }
 
@@ -26,8 +26,8 @@
 @property (retain) NSNumber *index;
 @property (retain) NSNumber *queuePosition;
 @property (retain) NSManagedObjectID *currentCompanyID;
-@property (retain) NSString *carrierGUID;
-@property (retain) NSString *carrierName;
+//@property (retain) NSString *carrierGUID;
+//@property (retain) NSString *carrierName;
 
 @property (retain) ProgressUpdateController *progress;
 
@@ -36,9 +36,9 @@
                  withIndex:(NSNumber *)indexFor
          withQueuePosition:(NSNumber *)queuePositionFor
          withOperationName:(NSString *)operationNameFor
-           withTotalProfit:(NSNumber *)totalProfitFor
-           withCarrierGUID:(NSString *)carrierGUIDFor
-           withCarrierName:(NSString *)carrierNameFor;
+           withTotalProfit:(NSNumber *)totalProfitFor;
+//           withCarrierGUID:(NSString *)carrierGUIDFor
+//           withCarrierName:(NSString *)carrierNameFor;
 //      withCurrentCompanyID:(NSManagedObjectID *)currentCompanyIDfor;
 
 -(void)updateFromExternalDatabase;

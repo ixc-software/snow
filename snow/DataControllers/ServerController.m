@@ -924,6 +924,7 @@ static char encodingTable[64] = {
     NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequest error:&error];
     if (fetchedObjects == nil)  NSLog(@"Failed to executeFetchRequest:%@ to data store: %@ in function:%@",fetchRequest, [error localizedDescription],NSStringFromSelector(_cmd));
     if (fetchedObjects.count > 0) {
+        NSLog(@"SERVER CONTROLLER: GetObjectsList main object with entity:%@ FINDED with GUID:%@",entityForList,mainObjectGUID);
         NSManagedObject *findedObject = fetchedObjects.lastObject;
         NSEntityDescription *entityDescr = findedObject.entity;
         NSDictionary *relationships = entityDescr.relationshipsByName;
@@ -952,12 +953,25 @@ static char encodingTable[64] = {
             [fetchedObjects enumerateObjectsUsingBlock:^(NSDictionary *row, NSUInteger idx, BOOL *stop) {
                 [allGUIDs addObject:[row valueForKey:@"GUID"]];
             }];
+            NSString *errorSerialization;
+            
+            NSData *allArchived = [NSPropertyListSerialization dataFromPropertyList:allGUIDs format:NSPropertyListBinaryFormat_v1_0 errorDescription:&errorSerialization];
+            if (error) NSLog(@"SERVER CONTRORLER: allObjectsList serialization failed:%@",errorSerialization);
+            
+            NSString *stringToPass = [self base64EncodingData:allArchived];
+            
+            //[finalJSONResult setValue:stringToPass forKey:@"objects"];
+            
+            
              
-            [finalJSONResult setValue:allGUIDs forKey:@"allGUIDs"];
+            [finalJSONResult setValue:stringToPass forKey:@"allGUIDs"];
         } else [finalJSONResult setValue:@"destination entity not found" forKey:@"error"];
         
-    } else [finalJSONResult setValue:@"main object not found" forKey:@"error"];
-    
+    } else { 
+        [finalJSONResult setValue:@"main object not found" forKey:@"error"];
+        NSLog(@"SERVER CONTROLLER: GetObjectsList main object with entity:%@ NOT FINDED with GUID:%@",entityForList,mainObjectGUID);
+
+    }
     
     [fetchRequest release];
 

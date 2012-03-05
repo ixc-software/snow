@@ -2211,10 +2211,10 @@
     BOOL success = YES;
     //NSManagedObjectContext *moc = self.context;
     
-    if ([moc hasChanges]) {
+    if ([self.moc hasChanges]) {
         
         NSError *error = nil;
-        if (![moc save: &error]) {
+        if (![self.moc save: &error]) {
             NSLog(@"Failed to save to data store: %@", [error localizedDescription]);
             NSArray* detailedErrors = [[error userInfo] objectForKey:NSDetailedErrorsKey];
             if(detailedErrors != nil && [detailedErrors count] > 0)

@@ -15,15 +15,15 @@
 
 @implementation GetExternalInfoOperation
 
-@synthesize totalProfit,index,queuePosition,currentCompanyID,carrierGUID,carrierName,progress;
+@synthesize totalProfit,index,queuePosition,currentCompanyID,progress; //carrierGUID,carrierName,progress;
 
 - (id)initAndUpdateCarrier:(NSManagedObjectID *)carrierIDFor
                  withIndex:(NSNumber *)indexFor
          withQueuePosition:(NSNumber *)queuePositionFor
          withOperationName:(NSString *)operationNameFor
-           withTotalProfit:(NSNumber *)totalProfitFor
-           withCarrierGUID:(NSString *)carrierGUIDFor
-           withCarrierName:(NSString *)carrierNameFor;
+           withTotalProfit:(NSNumber *)totalProfitFor;
+//           withCarrierGUID:(NSString *)carrierGUIDFor
+//           withCarrierName:(NSString *)carrierNameFor;
 {
     if (!(self = [super init])) return nil;
     else {
@@ -32,8 +32,8 @@
         index = indexFor;
         operationName = operationNameFor;
         totalProfit = totalProfitFor;
-        carrierGUID = carrierGUIDFor;
-        carrierName = carrierNameFor;
+//        carrierGUID = carrierGUIDFor;
+//        carrierName = carrierNameFor;
         desctopAppDelegate *delegate = (desctopAppDelegate *)[[NSApplication sharedApplication] delegate];
         progress = [[ProgressUpdateController alloc]  
                     initWithDelegate:delegate 
@@ -67,9 +67,9 @@
     
     databaseForUsing.connections = delegate.getExternalInfoView.databaseConnections.arrangedObjects;
     //[databaseForUsing release];
-//    Carrier *necessaryCarrier = (Carrier *)[update.moc objectWithID:carrierID];
-//    NSString *carrierGUID = necessaryCarrier.GUID;
-//    NSString *carrierName = necessaryCarrier.name;
+    Carrier *necessaryCarrier = (Carrier *)[update.moc objectWithID:carrierID];
+    NSString *carrierGUID = necessaryCarrier.GUID;
+    NSString *carrierName = necessaryCarrier.name;
     
     [progress updateCarrierName:carrierName];
     progress.operationName = operationName;
@@ -160,8 +160,6 @@
     desctopAppDelegate *delegate = (desctopAppDelegate *)[[NSApplication sharedApplication] delegate];
     //    Carrier *necessaryCarrier = (Carrier *)[delegate.managedObjectContext objectWithID:carrierID];
     
-    [progress updateCarrierName:carrierName];
-    progress.operationName = operationName;
     
     //0 - dont need update 1 - destinationsListForSale 2 - destinationsListWeBuy 3 - both
     
@@ -169,6 +167,13 @@
     //    NSString *carrierGUID = [[NSString alloc] initWithString:necessaryCarrier.GUID];
     //    NSString *carrierName = [[NSString alloc] initWithString:necessaryCarrier.name];
     ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[[delegate managedObjectContext] persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
+    
+    Carrier *necessaryCarrier = (Carrier *)[clientController.moc objectWithID:carrierID];
+//    NSString *carrierGUID = necessaryCarrier.GUID;
+    NSString *carrierName = necessaryCarrier.name;
+    [progress updateCarrierName:carrierName];
+    progress.operationName = operationName;
+
     CompanyStuff *authorizedUser = [clientController authorization];
     [clientController updateLocalGraphFromSnowEnterpriseServerForCarrierID:carrierID withDateFrom:nil withDateTo:nil withAdmin:authorizedUser];
     [clientController release];
@@ -276,8 +281,8 @@
     [totalProfit release];
     [index release];
     [queuePosition release];
-    [carrierName release];
-    [carrierGUID release];
+//    [carrierName release];
+//    [carrierGUID release];
 //    [currentCompanyID release];
 }
 
