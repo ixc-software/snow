@@ -179,10 +179,11 @@
     } else { 
         [helpView release];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-            if (isCarriersUpdating == YES) return;
-            else isCarriersUpdating = YES;
             NSDate *lastUpdate = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastCarriersUpdatingTime"];
             if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 60 ) {
+                if (isCarriersUpdating == YES) { NSLog(@"CARRIER LIST: carrier updating is still continue, sync not started");return;}
+                else isCarriersUpdating = YES;
+
                 [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"lastCarriersUpdatingTime"];
                 
                 mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -226,7 +227,7 @@
                 
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 isCarriersUpdating = NO;
-            }
+            } else NSLog(@"CARRIER LIST: carrier updating was less than 60 sec ago, sync not started");
         });
     }
 }

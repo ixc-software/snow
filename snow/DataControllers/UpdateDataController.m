@@ -216,6 +216,8 @@
 //        [clientController release];
 
         moc = [[NSManagedObjectContext alloc] init];
+        [moc setStalenessInterval:0.0000001213];
+
         [moc setUndoManager:nil];
         [moc setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
 

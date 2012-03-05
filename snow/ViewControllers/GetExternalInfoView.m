@@ -425,7 +425,6 @@
     //    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     //    for (NSManagedObjectID *carrierID in carriersToExecute) {
     [carriersToExecute enumerateObjectsUsingBlock:^(NSManagedObjectID *carrierID, NSUInteger idx, BOOL *stop) {
-        //if (idx == 0) *stop = YES;
         sleep(1);
 #if defined (SNOW_SERVER)
         while (completedSubblocks.count > 5) {
@@ -487,14 +486,14 @@
             });
         //});
         [idxNumber release];
+        //if (idx == 0) *stop = YES;
 
     }];
 
-    while (completedSubblocks.count == 0) {
+    while (completedSubblocks.count > 0) {
         sleep(3);
     }
-    
-    
+    NSLog(@"GET EXTERNAL INFO: >>>>>>>>>>> operation %@ FINISH, completedSubblocks %lu",operationName, completedSubblocks.count);
     
 //    for (NSManagedObjectID *carrierID in carriersToExecute) {
 //        
@@ -743,6 +742,7 @@
 
     ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
     CompanyStuff *authorizedUser = [clientController authorization];
+    [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:NO];
     [clientController release];
     necessaryCompany = authorizedUser.currentCompany;
 #endif
@@ -755,6 +755,8 @@
     NSMutableArray *carriersToExecute = [NSMutableArray arrayWithCapacity:0];
     for (Carrier *carrier in carriers) {
         [carriersToExecute addObject:[carrier objectID]];
+        NSLog (@"GET EXTERNAL VIEW: carrier:%@ was add to PER DAY",carrier.name);
+
         
     }
     [request release], request = nil;
@@ -768,6 +770,7 @@
     }
     
     //NSLog (@"CYCLE UPDATES: everyDaySyncWithProgress carriers list:\n%@",carriersToExecute);
+    
     [self startUserChoiceSyncForCarriers:carriersToExecute withProgress:progress withOperationName:@"Every day sync"];
     dispatch_async(dispatch_get_main_queue(), ^(void) { 
         
@@ -794,11 +797,11 @@
         ProgressUpdateController *progressForDaylySync = [[ProgressUpdateController alloc] initWithDelegate:delegate];
         progressForDaylySync.cycleSyncType = @"dayly";
         while (!cancelAllOperations) {
-            for (int i = 86399;i != 0;i--) 
+            for (int i = 86395;i != 0;i--) 
             {
                 
                 //if ([queueForUpdates operationCount] == 0 && !syncWasDone  && !queueForUpdatesBusy) {
-                if (i == 86399) { 
+                if (i == 86395) { 
                     NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
                     
                     NSLog(@"GET EXTERNAL INFO VIEW:every DAY sync start");    
@@ -815,22 +818,22 @@
                 //syncWasDone = YES;
                 //}
                 sleep (1);
-                [progressForDaylySync cycleRemaindTime:[NSNumber numberWithInt:i]];
-                if (i % 3600) { 
-                    
-                    //                if (i % 3600) { 
-                    //if (!isDaylySyncProcessing) {
-                        NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
-                        
-                        NSLog(@"GET EXTERNAL INFO VIEW:every HOUR sync start"); 
-                        [self everyHourSync];
-                        NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
-                        
-                        [startCheckEveryDay release];
-                        
-                        NSLog(@"GET EXTERNAL INFO VIEW:every HOUR sync stop. time was:%@ min",[NSNumber numberWithDouble:interval/60]);
-                    //} else NSLog(@"GET EXTERNAL INFO: per hour not started, dayly processing");
-                }
+//                [progressForDaylySync cycleRemaindTime:[NSNumber numberWithInt:i]];
+//                if (i % 3600) { 
+//                    
+//                    //                if (i % 3600) { 
+//                    //if (!isDaylySyncProcessing) {
+//                        NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
+//                        
+//                        NSLog(@"GET EXTERNAL INFO VIEW:every HOUR sync start"); 
+////                        [self everyHourSync];
+//                        NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
+//                        
+//                        [startCheckEveryDay release];
+//                        
+//                        NSLog(@"GET EXTERNAL INFO VIEW:every HOUR sync stop. time was:%@ min",[NSNumber numberWithDouble:interval/60]);
+//                    //} else NSLog(@"GET EXTERNAL INFO: per hour not started, dayly processing");
+//                }
             }
         }
         [progressForDaylySync release];

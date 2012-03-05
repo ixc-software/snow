@@ -20,6 +20,8 @@
 @property (nonatomic, retain) UILabel *country;
 @property (nonatomic, retain) UILabel *specific;
 @property (nonatomic, retain) UILabel *rate;
+@property (nonatomic, retain) UILabel *lastUsedMinutesLenght;
+@property (nonatomic, retain) UILabel *lastUsedACD;
 
 
 
@@ -35,6 +37,8 @@
        withCountry:(NSString *)countryForHeader 
       withSpecific:(NSString *)specificForHeader 
          withPrice:(NSNumber *)price 
+       withMinutes:(NSNumber *)minutes 
+           withACD:(NSNumber *)acd 
       withObjectID:(NSManagedObjectID *)objectIDexternal 
            section:(NSInteger)sectionNumber 
           isOpened:(NSNumber *)isOpenedForHeader 

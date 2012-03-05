@@ -57,6 +57,7 @@ static char encodingTable[64] = {
         //[moc setMergePolicy:NSOverwriteMergePolicy];
         [moc setPersistentStoreCoordinator:[delegate persistentStoreCoordinator]];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(importerDidSave:) name:NSManagedObjectContextDidSaveNotification object:self.moc];
+        [moc setStalenessInterval:0.0000001213];
 
         // Initialization code here.
     }
@@ -969,7 +970,7 @@ static char encodingTable[64] = {
         
     } else { 
         [finalJSONResult setValue:@"main object not found" forKey:@"error"];
-        NSLog(@"SERVER CONTROLLER: GetObjectsList main object with entity:%@ NOT FINDED with GUID:%@",entityForList,mainObjectGUID);
+        NSLog(@"SERVER CONTROLLER: allObjectsList main object with entity:%@ NOT FINDED with GUID:%@",entityForList,mainObjectGUID);
 
     }
     
@@ -977,7 +978,7 @@ static char encodingTable[64] = {
 
     
     NSString *jsonStringForReturn = [finalJSONResult JSONStringWithOptions:JKSerializeOptionNone serializeUnsupportedClassesUsingBlock:nil error:&error];
-    if (error) NSLog(@"SERVER CONTROLLER: GetObjectsList archive error:%@",[error localizedDescription]);
+    if (error) NSLog(@"SERVER CONTROLLER: allObjectsList archive error:%@",[error localizedDescription]);
     return jsonStringForReturn;
     
 }

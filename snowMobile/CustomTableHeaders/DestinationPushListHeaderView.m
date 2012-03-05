@@ -12,7 +12,7 @@
 
 @implementation DestinationPushListHeaderView
 
-@synthesize country,specific,rate,delegate,section,disclosureButton,isOpened,objectID;
+@synthesize country,specific,rate,delegate,section,disclosureButton,isOpened,objectID,lastUsedACD,lastUsedMinutesLenght;
 
 + (Class)layerClass {
     
@@ -24,6 +24,8 @@
        withCountry:(NSString *)countryForHeader 
       withSpecific:(NSString *)specificForHeader 
          withPrice:(NSNumber *)price 
+       withMinutes:(NSNumber *)minutes 
+           withACD:(NSNumber *)acd 
       withObjectID:(NSManagedObjectID *)objectIDexternal 
            section:(NSInteger)sectionNumber 
           isOpened:(NSNumber *)isOpenedForHeader 
@@ -50,8 +52,6 @@
         titleLabelFrame.origin.x += 35.0;
         titleLabelFrame.origin.y -= 10.0;
         
-        
-        
         titleLabelFrame.size.width -= 35.0;
         CGRectInset(titleLabelFrame, 0.0, 5.0);
         country = [[UILabel alloc] initWithFrame:titleLabelFrame];
@@ -62,7 +62,6 @@
         country.shadowColor = [UIColor blackColor];
         country.shadowOffset = CGSizeMake(1, 1);
         
-
         [self addSubview:country];
         
         //titleLabelFrame.origin.x += 35.0;
@@ -79,8 +78,8 @@
 
         [self addSubview:specific];
 
-        titleLabelFrame.origin.x += 180.0;
-        titleLabelFrame.origin.y -= 10.0;
+        titleLabelFrame.origin.x += 170.0;
+        //titleLabelFrame.origin.y -= 10.0;
         
         rate = [[UILabel alloc] initWithFrame:titleLabelFrame];
         NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
@@ -88,21 +87,44 @@
         [formatter setNumberStyle:NSNumberFormatterCurrencyStyle];
         [formatter setCurrencySymbol:@"$"];
         rate.text = [formatter stringFromNumber:price];
-        [formatter release], formatter = nil;
         rate.font = [UIFont systemFontOfSize:20.0];
         rate.textColor = [UIColor whiteColor];
         rate.backgroundColor = [UIColor clearColor];
         rate.shadowColor = [UIColor blackColor];
         rate.shadowOffset = CGSizeMake(2, 2);
-        
-
-        
         [self addSubview:rate];
         
-        
+        titleLabelFrame.origin.x -= 40.0;
+        titleLabelFrame.origin.y -= 20.0;
 
-        self.disclosureButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        lastUsedACD = [[UILabel alloc] initWithFrame:titleLabelFrame];
+        [formatter setMaximumFractionDigits:1];
+        [formatter setNumberStyle:NSNumberFormatterNoStyle];
+        lastUsedACD.text = [NSString stringWithFormat:@"ACD:%@",[formatter stringFromNumber:acd]];
+        lastUsedACD.font = [UIFont systemFontOfSize:13.0];
+        lastUsedACD.textColor = [UIColor whiteColor];
+        lastUsedACD.backgroundColor = [UIColor clearColor];
+        lastUsedACD.shadowColor = [UIColor blackColor];
+        lastUsedACD.shadowOffset = CGSizeMake(2, 2);
+        [self addSubview:lastUsedACD];
+
+        titleLabelFrame.origin.x += 60.0;
+//        titleLabelFrame.origin.y -= 10.0;
+
+        lastUsedMinutesLenght = [[UILabel alloc] initWithFrame:titleLabelFrame];
+        [formatter setMaximumFractionDigits:0];
+        [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+        lastUsedMinutesLenght.text = [NSString stringWithFormat:@"Minutes:%@",[formatter stringFromNumber:minutes]];        
+        lastUsedMinutesLenght.font = [UIFont systemFontOfSize:13.0];
+        lastUsedMinutesLenght.textColor = [UIColor whiteColor];
+        lastUsedMinutesLenght.backgroundColor = [UIColor clearColor];
+        lastUsedMinutesLenght.shadowColor = [UIColor blackColor];
+        lastUsedMinutesLenght.shadowOffset = CGSizeMake(2, 2);
+        [self addSubview:lastUsedMinutesLenght];
+        [formatter release], formatter = nil;
+
         
+        self.disclosureButton = [UIButton buttonWithType:UIButtonTypeCustom];
         disclosureButton.frame = CGRectMake(0.0, 8.0, 45.0, 45.0);
         [disclosureButton setImage:[UIImage imageNamed:@"carat.png"] forState:UIControlStateNormal];
         [disclosureButton setImage:[UIImage imageNamed:@"carat-open.png"] forState:UIControlStateSelected];

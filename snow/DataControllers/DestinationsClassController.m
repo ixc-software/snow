@@ -81,6 +81,8 @@
         delegate = (desctopAppDelegate *)[[NSApplication sharedApplication] delegate];
 
         moc = [[NSManagedObjectContext alloc] init];
+        [moc setStalenessInterval:0.0000001213];
+
         [moc setUndoManager:nil];
         [moc setMergePolicy:NSOverwriteMergePolicy];
         [moc setPersistentStoreCoordinator:[delegate persistentStoreCoordinator]];

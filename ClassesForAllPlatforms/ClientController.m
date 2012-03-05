@@ -64,8 +64,8 @@ static char encodingTable[64] = {
 
         mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
 #else
-//        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
-        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
+//        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
 #endif
         
 //
@@ -77,6 +77,7 @@ static char encodingTable[64] = {
 
         moc = [[NSManagedObjectContext alloc] init];
         [moc setUndoManager:nil];
+        [moc setStalenessInterval:0.0000001213];
 //        [moc setMergePolicy:NSOverwriteMergePolicy];
         [moc setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
 
@@ -2171,11 +2172,24 @@ static char encodingTable[64] = {
         receivedObject = [self getJSONAnswerForFunctionVersionTwo:@"GetObjectsList" withJSONRequest:prepeareForJSONRequest];
         if (!receivedObject) sleep(5);
     }
-    
-    [prepeareForJSONRequest release];
     NSString *error = [receivedObject valueForKey:@"error"];
-    if (error) NSLog(@"CLIENT CONTROLLER: getAllObjectsList for Entity:%@ error:%@",mainObjectEntity,error);
-    if (receivedObject) return [receivedObject valueForKey:@"allGUIDs"];
+    if (error) {
+        NSAssert(error != nil, @""); 
+
+        NSLog(@"CLIENT CONROLLER:>>>>>>>>>>>>> warning! get all objects List withMainEntity:%@ and guid:%@ list error from server:%@",mainObjectEntity,mainObjectGUID,error);
+    }
+    [prepeareForJSONRequest release];
+    if (receivedObject) { 
+        
+        NSString *error;
+        NSString *allObjectsString = [receivedObject valueForKey:@"allGUIDs"];
+        NSData *allObjectsData = [self dataWithBase64EncodedString:allObjectsString];
+        //        NSArray *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
+        NSPropertyListFormat format;  
+        NSArray *decodedObjects = [NSPropertyListSerialization propertyListFromData:allObjectsData mutabilityOption:0 format:&format errorDescription:&error];
+
+        return decodedObjects;
+    }
     else return nil;
     
 }
@@ -2210,7 +2224,8 @@ static char encodingTable[64] = {
             //        if (receivedObject.count > 0) {
             //            @autoreleasepool {
             
-            NSString *error;
+            NSString *error = [receivedResult valueForKey:@"error"];
+            if (error) NSLog(@"CLIENT CONROLLER:>>>>>>>>>>>>> warning! get all objects error from server:%@",error);
             NSString *allObjectsString = [receivedResult valueForKey:@"objects"];
             NSData *allObjectsData = [self dataWithBase64EncodedString:allObjectsString];
             //        NSArray *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
@@ -2300,7 +2315,7 @@ static char encodingTable[64] = {
 
         }
         
-        if (isEveryTenPercentSave && (allObjectsCount > 100) && (idx % allObjectsCount * 0.1 == 0)) [self finalSave:moc],NSLog(@">>>>>>>updateGraphForObjects SAVED");
+        if (isEveryTenPercentSave && (allObjectsCount > 100) && (idx % allObjectsCount * 0.1 == 0)) [self finalSave:moc];//,NSLog(@">>>>>>>updateGraphForObjects SAVED");
 
     }];
     return allUpdatedIDs;
@@ -2413,7 +2428,7 @@ static char encodingTable[64] = {
             
             if (findedDestination) {
                 //////////////////////////////// CODES BLOCK 
-                NSArray *allGUIDsCodes = [self getAllObjectsListWithEntityForList:@"CodesvsDestinationsList" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListForSale" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
+                NSArray *allGUIDsCodes = [self getAllObjectsListWithEntityForList:@"CodesvsDestinationsList" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListWeBuy" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
                 NSArray *allObjectsCodesForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsCodes withEntity:@"CodesvsDestinationsList" withAdmin:admin];
                 if (allGUIDsCodes && allObjectsCodesForGUIDS) {
                     __block NSArray *updatedCodesIDs = [self updateGraphForObjects:allObjectsCodesForGUIDS withEntity:@"CodesvsDestinationsList" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO];
@@ -2430,7 +2445,7 @@ static char encodingTable[64] = {
                     }];
                 }
                 //////////////////////////////// PER HOUR STAT BLOCK 
-                NSArray *allGUIDsPerHour = [self getAllObjectsListWithEntityForList:@"DestinationPerHourStat" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListForSale" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
+                NSArray *allGUIDsPerHour = [self getAllObjectsListWithEntityForList:@"DestinationPerHourStat" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListWeBuy" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
                 NSArray *allObjectsPerHourForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsPerHour withEntity:@"DestinationPerHourStat" withAdmin:admin];
                 if (allGUIDsPerHour && allObjectsPerHourForGUIDS) {
                     
@@ -2470,6 +2485,7 @@ static char encodingTable[64] = {
 
 {
     CompanyStuff *admin = [self authorization];
+    if (!admin) { NSLog(@"CLIENT CONTROLLER: warning, admin stuff not found"); return; }
     CurrentCompany *currentCompany = admin.currentCompany;
     
     // update admin list:

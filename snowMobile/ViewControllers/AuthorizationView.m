@@ -466,6 +466,7 @@
                     admin.isRegistrationDone = [NSNumber numberWithBool:YES];
 //                    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:YES];
                     [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[admin objectID]] mustBeApproved:NO];
+                    sleep(2);
                     [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:NO];
                 } else { 
                     [self showErrorMessage:@"login failed"];

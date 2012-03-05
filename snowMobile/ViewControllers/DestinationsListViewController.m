@@ -334,7 +334,8 @@
         operationProgress.hidden = YES;
         cancelAllUpdatesButton.hidden = YES;
 
-        routesChangeFilterWithOrWithoutTraffic.hidden = NO;
+        if (selectRoutes.selectedSegmentIndex == 2) routesChangeFilterWithOrWithoutTraffic.hidden = YES;
+        else routesChangeFilterWithOrWithoutTraffic.hidden = NO;
         NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
 
 
@@ -403,7 +404,7 @@
             
             [allCarriers enumerateObjectsUsingBlock:^(Carrier *carrier, BOOL *stop) {
                 if (cancelAllUpdates == YES) *stop = YES;
-                NSString *carrierName = [NSString stringWithFormat:@"Sync for:%@",carrier.name];
+                NSString *carrierName = [NSString stringWithFormat:@"%@",carrier.name];
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
                     
                     carriersProgressTitle.text = carrierName;
@@ -461,8 +462,11 @@
                 operationProgress.hidden = YES;
                 cancelAllUpdatesButton.hidden = YES;
                 
-                routesChangeFilterWithOrWithoutTraffic.hidden = NO;
-
+                //routesChangeFilterWithOrWithoutTraffic.hidden = NO;
+                
+                if (selectRoutes.selectedSegmentIndex == 2) [self.navigationController setToolbarHidden:YES animated:YES];
+                    else routesChangeFilterWithOrWithoutTraffic.hidden = NO;
+                
                 cancelAllUpdates = NO;
                 cancelAllUpdatesButton.enabled = YES;
             });
@@ -933,12 +937,21 @@
     
     NSFetchedResultsController *fetchController = [self fetchedResultsController];
     NSIndexPath *new = [NSIndexPath indexPathForRow:section - 1 inSection:0];
-    DestinationsListPushList *managedObject = [fetchController objectAtIndexPath:new];
+    NSManagedObject *managedObject = [fetchController objectAtIndexPath:new];
     
     //    if (openedIndexPath && openedIndexPath.section == section) isOpened = YES;
     
     //if (section < 6) NSLog(@"sections view for country/specific:%@/%@ for section:%@",managedObject.country,managedObject.specific,[NSNumber numberWithInteger:section]); 
-    DestinationPushListHeaderView *sectionView = [[[DestinationPushListHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:managedObject.country withSpecific:managedObject.specific withPrice:managedObject.rate withObjectID:managedObject.objectID section:section - 1 isOpened:[NSNumber numberWithBool:isOpened] delegate:self] autorelease];
+    DestinationPushListHeaderView *sectionView = nil;
+    
+    if ([[managedObject class] isSubclassOfClass:[DestinationsListPushList class]]) {
+        sectionView = [[[DestinationPushListHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:nil withACD:nil withObjectID:managedObject.objectID section:section - 1 isOpened:[NSNumber numberWithBool:isOpened] delegate:self] autorelease];
+    }
+    
+    if ([[managedObject class] isSubclassOfClass:[DestinationsListForSale class]] || [[managedObject class] isSubclassOfClass:[DestinationsListWeBuy class]]) {
+        sectionView = [[[DestinationPushListHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:[managedObject valueForKey:@"lastUsedMinutesLenght"] withACD:[managedObject valueForKey:@"lastUsedACD"] withObjectID:managedObject.objectID section:section - 1 isOpened:[NSNumber numberWithBool:isOpened] delegate:self] autorelease];
+    }
+
     
     //NSLog(@"sections view for country/specific:%@/%@ for section:%@ isOpened:%@",managedObject.country,managedObject.specific,[NSNumber numberWithInteger:section],managedObject.opened); 
     
@@ -1377,8 +1390,8 @@
     //NSLog(@"fetch controller start:%@",[NSDate date]);
     
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"country" ascending:YES];
-    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
-    
+    NSMutableArray *sortDescriptors = [[NSMutableArray alloc] init];//]WithObjects:sortDescriptor, nil];
+                                        
     NSPredicate *filterPredicate = nil;
     
     /*
@@ -1389,18 +1402,44 @@
     
     // Edit the entity name as appropriate.
     NSEntityDescription *entity = nil;
+    NSMutableArray *predicateArray = [NSMutableArray array];
     
-    if (selectRoutes.selectedSegmentIndex == 0) entity = [NSEntityDescription entityForName:@"DestinationsListForSale" inManagedObjectContext:self.managedObjectContext];
-    if (selectRoutes.selectedSegmentIndex == 1) entity = [NSEntityDescription entityForName:@"DestinationsListWeBuy" inManagedObjectContext:self.managedObjectContext];
+    if (selectRoutes.selectedSegmentIndex == 0) { 
+        entity = [NSEntityDescription entityForName:@"DestinationsListForSale" inManagedObjectContext:self.managedObjectContext];
+        if (routesChangeFilterWithOrWithoutTraffic.selectedSegmentIndex == 0) { 
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(lastUsedMinutesLenght > 0)"];
+            [predicateArray addObject:predicate];
+            NSSortDescriptor *lastUsedMinutesLenghtDescriptor = [[NSSortDescriptor alloc] initWithKey:@"lastUsedMinutesLenght" ascending:NO];
+            [sortDescriptors addObject:lastUsedMinutesLenghtDescriptor];
+            [sortDescriptors addObject:sortDescriptor];
+
+            [lastUsedMinutesLenghtDescriptor release];
+        }
+
+    }
+    if (selectRoutes.selectedSegmentIndex == 1) { 
+        entity = [NSEntityDescription entityForName:@"DestinationsListWeBuy" inManagedObjectContext:self.managedObjectContext];
+        if (routesChangeFilterWithOrWithoutTraffic.selectedSegmentIndex == 0) { 
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(lastUsedMinutesLenght > 0)"];
+            [predicateArray addObject:predicate];
+            NSSortDescriptor *lastUsedMinutesLenghtDescriptor = [[NSSortDescriptor alloc] initWithKey:@"lastUsedMinutesLenght" ascending:NO];
+            [sortDescriptors addObject:lastUsedMinutesLenghtDescriptor];
+            [sortDescriptors addObject:sortDescriptor];
+
+            [lastUsedMinutesLenghtDescriptor release];
+
+        }
+
+    }
     if (selectRoutes.selectedSegmentIndex == 2) entity = [NSEntityDescription entityForName:@"DestinationsListPushList" inManagedObjectContext:self.managedObjectContext];
     [fetchRequest setEntity:entity];
     
-    NSMutableArray *predicateArray = [NSMutableArray array];
     
     if(searchString && searchString.length) {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(country CONTAINS[cd] %@) OR (specific CONTAINS[cd] %@)", searchString,searchString,searchString];
-        
         [predicateArray addObject:predicate];
+        
+
 //        if(filterPredicate)
 //        {
 //            filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:filterPredicate, [NSCompoundPredicate orPredicateWithSubpredicates:predicateArray], nil]];
@@ -1453,7 +1492,7 @@
 //    {
         filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:predicateArray];
 //    }
-    NSLog(@"DESTIONATIONS PUSH LIST:final predicate in fetch:%@ entity name:%@",filterPredicate,entity.name);
+    NSLog(@"DESTIONATIONS PUSH LIST:final predicate in fetch:%@ entity name:%@ sort descriptors:%@",filterPredicate,entity.name,sortDescriptors);
     [fetchRequest setPredicate:filterPredicate];
     
     // Set the batch size to a suitable number.
@@ -1677,13 +1716,14 @@
 - (void) selectRoutesStart:(id) sender
 {
 //    dispatch_async(dispatch_get_main_queue(), ^(void) { 
-//        NSUInteger selectedSegmentIndex = [sender selectedSegmentIndex];
+        NSUInteger selectedSegmentIndex = [sender selectedSegmentIndex];
 //
 //        if (selectedSegmentIndex == 0 && self.isRoutesForSaleListUpdated) progressView.hidden = NO; 
 //        else progressView.hidden = YES;
 //        if (selectedSegmentIndex == 1 && self.isRoutesWeBuyListUpdated) progressView.hidden = NO;
 //        else progressView.hidden = YES;
-//        if (selectedSegmentIndex == 2 && self.isRoutesPushlistListUpdated) progressView.hidden = NO;
+    if (selectedSegmentIndex == 2) [self.navigationController setToolbarHidden:YES animated:YES];
+    else [self.navigationController setToolbarHidden:NO animated:YES];
 //        else progressView.hidden = YES;
 //    });
     
@@ -1707,6 +1747,10 @@
     self.cancelAllUpdates = YES;
 }
 - (IBAction)changeRoutesWithOrWithoutTraffic:(id)sender {
+    [fetchedResultsController release],fetchedResultsController = nil;
+    fetchedResultsController = [self newFetchedResultsControllerWithSearch:nil];
+    [self.tableView reloadData];
+
 }
 
 #pragma mark - external reload methods
@@ -1789,18 +1833,19 @@
                 
                 operationProgress.progress = progress.floatValue;
                 operationProgress.hidden = NO;
-                operationTitle.text = @"Update:we buy";
+                operationTitle.text = @"we buy";
             }
             if ([status isEqualToString:@"progress for update graph:DestinationsListForSale"]) {
                 NSNumber *progress = [data objectAtIndex:1];
                 operationProgress.progress = progress.floatValue;
                 operationProgress.hidden = NO;
-                operationTitle.text = @"Update:for sale";
+                operationTitle.text = @"for sale";
             }
             if ([status isEqualToString:@"server download progress"]) {
                 NSNumber *progress = [data objectAtIndex:1];
                 operationProgress.progress = progress.floatValue;
-                operationProgress.hidden = NO;            }
+                operationProgress.hidden = NO;            
+            }
         });
         
     }
