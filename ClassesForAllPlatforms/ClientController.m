@@ -64,8 +64,8 @@ static char encodingTable[64] = {
 
         mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
 #else
-        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
-//        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+//        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
+        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
 #endif
         
 //
@@ -420,42 +420,45 @@ static char encodingTable[64] = {
         NSMutableArray *codesFromFile = [parser parseFile];
         [parser release], parser = nil;
         path = nil;
-        NSMutableArray *countrySpecificCodesList = [NSMutableArray array];
+        NSMutableArray *countrySpecificCodesList = [[NSMutableArray alloc] init];
         NSUInteger countForCodes = codesFromFile.count;
         
         
         
         [codesFromFile enumerateObjectsWithOptions:NSSortStable usingBlock:^(id code, NSUInteger idx, BOOL *stop) {
-            NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:countForCodes] doubleValue]];
-            [self updateUIwithMessage:@"Parse codes list.." andProgressPercent:percentDone withObjectID:nil];
-
-            NSMutableDictionary *codesFromFileListNew = [NSMutableDictionary dictionary];
-            [codesFromFileListNew setValue:[code objectAtIndex:0] forKey:@"country"];
-            [codesFromFileListNew setValue:[code objectAtIndex:1] forKey:@"specific"];
-            NSMutableArray *filteredResult = [NSMutableArray arrayWithArray:countrySpecificCodesList];
-            [filteredResult filterUsingPredicate:[NSPredicate predicateWithFormat:@"(country == %@) and (specific == %@)",[code objectAtIndex:0],[code objectAtIndex:1]]];
-            if ([filteredResult count] != 0)
-            {
-                // NSLog (@"We find a simular country: %@ specific %@ and code %@ Total destinations:%ld",[code objectAtIndex:0],[code objectAtIndex:1], [code objectAtIndex:2], [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList count]);
-                NSMutableDictionary *lastObject = [[NSArray arrayWithArray:countrySpecificCodesList] lastObject];
-                NSMutableArray *codes = [lastObject valueForKey:@"code"];
-                [codes addObject:[code objectAtIndex:2]];
-                [lastObject setValue:codes forKey:@"code"];
-                [countrySpecificCodesList removeLastObject];
-                [countrySpecificCodesList addObject:lastObject];
-                lastObject = nil;
-                codes = nil;
-            } else {
-                NSMutableDictionary *codesFromFileList = [NSMutableDictionary dictionary];
-                NSString *countryBefore = [code objectAtIndex:0];
-                NSString *specificBefore = [code objectAtIndex:1];
-                NSString *country = [countryBefore stringByReplacingOccurrencesOfString:@"'" withString:@"~"];
-                NSString *specific = [specificBefore stringByReplacingOccurrencesOfString:@"'" withString:@"~"];
+            @autoreleasepool {
                 
-                [codesFromFileList setValue:country forKey:@"country"];
-                [codesFromFileList setValue:specific forKey:@"specific"];
-                [codesFromFileList setValue:[NSMutableArray arrayWithObject:[code objectAtIndex:2]] forKey:@"code"];
-                [countrySpecificCodesList addObject:codesFromFileList];
+                NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:countForCodes] doubleValue]];
+                [self updateUIwithMessage:@"Parse codes list.." andProgressPercent:percentDone withObjectID:nil];
+                
+                NSMutableDictionary *codesFromFileListNew = [NSMutableDictionary dictionary];
+                [codesFromFileListNew setValue:[code objectAtIndex:0] forKey:@"country"];
+                [codesFromFileListNew setValue:[code objectAtIndex:1] forKey:@"specific"];
+                NSMutableArray *filteredResult = [NSMutableArray arrayWithArray:countrySpecificCodesList];
+                [filteredResult filterUsingPredicate:[NSPredicate predicateWithFormat:@"(country == %@) and (specific == %@)",[code objectAtIndex:0],[code objectAtIndex:1]]];
+                if ([filteredResult count] != 0)
+                {
+                    // NSLog (@"We find a simular country: %@ specific %@ and code %@ Total destinations:%ld",[code objectAtIndex:0],[code objectAtIndex:1], [code objectAtIndex:2], [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList count]);
+                    NSMutableDictionary *lastObject = [[NSArray arrayWithArray:countrySpecificCodesList] lastObject];
+                    NSMutableArray *codes = [lastObject valueForKey:@"code"];
+                    [codes addObject:[code objectAtIndex:2]];
+                    [lastObject setValue:codes forKey:@"code"];
+                    [countrySpecificCodesList removeLastObject];
+                    [countrySpecificCodesList addObject:lastObject];
+                    lastObject = nil;
+                    codes = nil;
+                } else {
+                    NSMutableDictionary *codesFromFileList = [NSMutableDictionary dictionary];
+                    NSString *countryBefore = [code objectAtIndex:0];
+                    NSString *specificBefore = [code objectAtIndex:1];
+                    NSString *country = [countryBefore stringByReplacingOccurrencesOfString:@"'" withString:@"~"];
+                    NSString *specific = [specificBefore stringByReplacingOccurrencesOfString:@"'" withString:@"~"];
+                    
+                    [codesFromFileList setValue:country forKey:@"country"];
+                    [codesFromFileList setValue:specific forKey:@"specific"];
+                    [codesFromFileList setValue:[NSMutableArray arrayWithObject:[code objectAtIndex:2]] forKey:@"code"];
+                    [countrySpecificCodesList addObject:codesFromFileList];
+                }
             }
         }];
         
@@ -475,38 +478,41 @@ static char encodingTable[64] = {
         //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         NSUInteger idx = 0;
         for (NSDictionary *countrySpecific in countrySpecificCodesList) {
-            NSNumber *percentDone = [NSNumber numberWithDouble:([[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:[countrySpecificCodesList count]] doubleValue])];
-//            if (sender && [sender respondsToSelector:@selector(updateProgessInfoWithPercent:)]) [sender performSelector:@selector(updateProgessInfoWithPercent:) withObject:percentDone];
-            [self updateUIwithMessage:@"Update codes database..." andProgressPercent:percentDone withObjectID:nil];
-            
-            CountrySpecificCodeList *newTest = (CountrySpecificCodeList *)[NSEntityDescription insertNewObjectForEntityForName:@"CountrySpecificCodeList" inManagedObjectContext:self.moc]; 
-            newTest.country = [countrySpecific valueForKey:@"country"];
-            newTest.specific = [countrySpecific valueForKey:@"specific"];
-            //NSLog(@"CLIENT CONTROLLER: createCountrySpecificCodesInCoreDataForMainSystem start for %@ specific:%@",newTest.country,newTest.specific);
-
-            newTest.mainSystem = (MainSystem *)[self.moc objectWithID:mainSystemID];
-            NSMutableString *codes = [NSMutableString string];
-            NSArray *codesListLocal = [countrySpecific valueForKey:@"code"];
-            NSUInteger idxCodes = 0;
-            NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-            
-            for (NSString *codeString in codesListLocal) {
-                CodesList *newList = (CodesList *)[NSEntityDescription insertNewObjectForEntityForName:@"CodesList" inManagedObjectContext:self.moc]; 
-                NSNumber *codeNumber = [formatter numberFromString:codeString];
-                newList.code = codeNumber;
-                newList.countrySpecificCodesList = newTest;
+            @autoreleasepool {
                 
-                if (idxCodes != [codesListLocal count] - 1) [codes appendFormat:@"%@, ",codeString];
-                else [codes appendFormat:@"%@",codeString];
-                idxCodes++;
+                NSNumber *percentDone = [NSNumber numberWithDouble:([[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:[countrySpecificCodesList count]] doubleValue])];
+                //            if (sender && [sender respondsToSelector:@selector(updateProgessInfoWithPercent:)]) [sender performSelector:@selector(updateProgessInfoWithPercent:) withObject:percentDone];
+                [self updateUIwithMessage:@"Update codes database..." andProgressPercent:percentDone withObjectID:nil];
+                
+                CountrySpecificCodeList *newTest = (CountrySpecificCodeList *)[NSEntityDescription insertNewObjectForEntityForName:@"CountrySpecificCodeList" inManagedObjectContext:self.moc]; 
+                newTest.country = [countrySpecific valueForKey:@"country"];
+                newTest.specific = [countrySpecific valueForKey:@"specific"];
+                //NSLog(@"CLIENT CONTROLLER: createCountrySpecificCodesInCoreDataForMainSystem start for %@ specific:%@",newTest.country,newTest.specific);
+                
+                newTest.mainSystem = (MainSystem *)[self.moc objectWithID:mainSystemID];
+                NSMutableString *codes = [NSMutableString string];
+                NSArray *codesListLocal = [countrySpecific valueForKey:@"code"];
+                NSUInteger idxCodes = 0;
+                NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+                
+                for (NSString *codeString in codesListLocal) {
+                    CodesList *newList = (CodesList *)[NSEntityDescription insertNewObjectForEntityForName:@"CodesList" inManagedObjectContext:self.moc]; 
+                    NSNumber *codeNumber = [formatter numberFromString:codeString];
+                    newList.code = codeNumber;
+                    newList.countrySpecificCodesList = newTest;
+                    
+                    if (idxCodes != [codesListLocal count] - 1) [codes appendFormat:@"%@, ",codeString];
+                    else [codes appendFormat:@"%@",codeString];
+                    idxCodes++;
+                }
+                [formatter release],formatter = nil;
+                
+                newTest.codes = [NSString stringWithString:codes];
+                //NSLog(@"New Object = %@/%@",newTest.country,newTest.specific);
+                //[pool drain],pool = nil;
+                //pool = [[NSAutoreleasePool alloc] init];
+                idx++;
             }
-            [formatter release],formatter = nil;
-            
-            newTest.codes = [NSString stringWithString:codes];
-            //NSLog(@"New Object = %@/%@",newTest.country,newTest.specific);
-            //[pool drain],pool = nil;
-            //pool = [[NSAutoreleasePool alloc] init];
-            idx++;
         }
         //[pool drain],pool = nil;
         [countrySpecificCodesList release];
@@ -2124,6 +2130,7 @@ static char encodingTable[64] = {
         if (error) {
             NSLog(@"CLIENT CONTROLLER: getJSON answer error download:%@",[error localizedDescription]);
             [self updateUIwithMessage:[error localizedDescription] withObjectID:nil withLatestMessage:YES error:NO];
+            [finalResultAlloc release];
             return nil;
         }
         NSString *answer = [[NSString alloc] initWithData:receivedResult encoding:NSUTF8StringEncoding];
@@ -2208,7 +2215,7 @@ static char encodingTable[64] = {
             NSPropertyListFormat format;  
             NSArray *decodedObjects = [NSPropertyListSerialization propertyListFromData:allObjectsData mutabilityOption:0 format:&format errorDescription:&error];
             [finalListObjectsMutable addObjectsFromArray:decodedObjects];
-            if (error) NSLog(@"SERVER CONTRORLER: allObjectsSerializationFailed:%@ format:%luu",error,format);
+            if (error) NSLog(@"SERVER CONTRORLER: allObjectsSerializationFailed:%@ format:%uu",error,format);
             //NSLog(@"CLIENT CONTROLLER: guids:%@",guids);
             
             //NSLog(@"CLIENT CONTROLLER: decodedObjects:%@",decodedObjects);

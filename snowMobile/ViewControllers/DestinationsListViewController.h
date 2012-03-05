@@ -74,5 +74,7 @@
 @property (readwrite) BOOL isRoutesForSaleListUpdated;
 @property (readwrite) BOOL isRoutesPushlistListUpdated;
 @property (retain, nonatomic) IBOutlet UIButton *cancelAllUpdatesButton;
+@property (retain, nonatomic) IBOutlet UIView *toolBarView;
+@property (retain, nonatomic) IBOutlet UISegmentedControl *routesChangeFilterWithOrWithoutTraffic;
 
 @end
