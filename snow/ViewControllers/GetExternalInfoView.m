@@ -464,7 +464,7 @@
                 GetExternalInfoOperation *operation = [[GetExternalInfoOperation alloc] initAndUpdateCarrier:carrierID
                                                                                                    withIndex:idxNumber 
                                                                                            withQueuePosition:idxNumber
-                                                                                           withOperationName:operationName withTotalProfit:nil withCarrierGUID:car.GUID withCarrierName:car.name
+                                                                                           withOperationName:operationName withTotalProfit:nil //withCarrierGUID:car.GUID withCarrierName:car.name
                                                                                              ];
 #if defined (SNOW_SERVER)
 
