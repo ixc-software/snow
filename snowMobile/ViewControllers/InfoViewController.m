@@ -161,6 +161,8 @@
     //[self.navigationController.view addSubview:darkView.view];
     //NSLog(@"COLOR:%@",self.view.backgroundColor);
     readme.userInteractionEnabled = YES;
+    
+
 }
 
 -(void)helpShowingDidFinish;
@@ -380,6 +382,9 @@
 //            [self presentModalViewController: controller animated: YES];  
 //        }  
 //    }    
+    
+
+    
     if (!tw) {
         NSRange range = [[[UIDevice currentDevice] model] rangeOfString:@"iPad"];
         NSString *finalNib = nil;
@@ -407,5 +412,7 @@
 	//Twitter Integration Code Goes Here
     //[_engine sendUpdate:@"test"];
 }
+
+
 
 @end

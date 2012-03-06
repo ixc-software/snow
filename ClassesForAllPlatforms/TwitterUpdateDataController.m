@@ -6,7 +6,7 @@
 //  Copyright 2011 IXC-USA Corp. All rights reserved.
 //
 #import "OAuthConsumer.h"
-#import "MGTwitterEngine.h"
+//#import "MGTwitterEngine.h"
 
 
 #import "TwitterUpdateDataController.h"
@@ -47,6 +47,7 @@
 
 - (void)dealloc
 {
+    [delegate release];
     [super dealloc];
 }
 
@@ -180,24 +181,24 @@
 #pragma mark working with data (twitter methods)
 
 
-- (void) refreshTweets {
-    [twitterEngine getHomeTimelineSinceID:0 startingAtPage:0 count:20];
-}
-
--(void) postTwitterMessageWithText:(NSString *)text;
-{
-    dispatch_async(dispatch_get_main_queue(), ^(void) { 
-        if (!twitterEngine) twitterEngine = [[MGTwitterEngine alloc] initWithDelegate:self];
-        [twitterEngine setUsesSecureConnection:NO];
-        [twitterEngine setConsumerKey:kOAuthConsumerKey secret:kOAuthConsumerSecret];
-        
-        [twitterEngine setAccessToken:accessToken];
-        // check if it need:
-        [self refreshTweets];
-        [twitterEngine sendUpdate:text];
-    });
-    
-}
+//- (void) refreshTweets {
+//    [twitterEngine getHomeTimelineSinceID:0 startingAtPage:0 count:20];
+//}
+//
+//-(void) postTwitterMessageWithText:(NSString *)text;
+//{
+//    dispatch_async(dispatch_get_main_queue(), ^(void) { 
+//        if (!twitterEngine) twitterEngine = [[MGTwitterEngine alloc] initWithDelegate:self];
+//        [twitterEngine setUsesSecureConnection:NO];
+//        [twitterEngine setConsumerKey:kOAuthConsumerKey secret:kOAuthConsumerSecret];
+//        
+//        [twitterEngine setAccessToken:accessToken];
+//        // check if it need:
+//        [self refreshTweets];
+//        [twitterEngine sendUpdate:text];
+//    });
+//    
+//}
 
 -(void) postTwitterMessageForDestinations:(NSArray *)destinations;
 {

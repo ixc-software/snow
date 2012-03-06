@@ -9,10 +9,11 @@
 #import "TwitterAuthorizationController.h"
 #import "TwitterUpdateDataController.h"
 #import "InfoViewController.h"
+#import "LinkedinUpdateDataController.h"
 
 @implementation TwitterAuthorizationController
 
-@synthesize authorize,back,pin,webView,infoController,twitterController,activity,isAuthorizationProcessed,countTremorAnimation,infoViewController;
+@synthesize authorize,back,pin,webView,infoController,twitterController,activity,isAuthorizationProcessed,countTremorAnimation,infoViewController,linkedinController;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -77,12 +78,17 @@
     
     if (!twitterController) twitterController = [[TwitterUpdateDataController alloc] init];
     twitterController.delegate = self;
+    
+    if (!linkedinController) linkedinController = [[LinkedinUpdateDataController alloc] init];
+    linkedinController.delegate = self;
+    
     activity.hidden = NO;
     [activity startAnimating];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
 
-        [twitterController startAuthorization:self];
+        //[twitterController startAuthorization:self];
+        [linkedinController startAuthorization:self];
     });
     
     isAuthorizationProcessed = NO;
@@ -93,7 +99,9 @@
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
         
-        [twitterController startAuthorization:self];
+        //[twitterController startAuthorization:self];
+        //[linkedinController startAuthorization:self];
+        //linkedinController
     });
 
 }
@@ -187,6 +195,8 @@
 -(void)startTwitterAuthForURL:(NSURL *)url;
 {
     dispatch_async(dispatch_get_main_queue(), ^(void) { 
+        NSLog(@"START URL:%@",url);
+
         [webView loadRequest:[NSURLRequest requestWithURL:url]];
     });
 
@@ -207,6 +217,37 @@
     });
 
 }
+- (BOOL)webView:(UIWebView*)webView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType 
+{
+	NSURL *url = request.URL;
+	NSString *urlString = url.absoluteString;
+    NSLog(@"CALLBACK URL:%@",urlString);
+
+    
+    BOOL requestForCallbackURL = ([urlString rangeOfString:@"hdlinked://linkedin/oauth"].location != NSNotFound);
+    if ( requestForCallbackURL )
+    {
+        BOOL userAllowedAccess = ([urlString rangeOfString:@"user_refused"].location == NSNotFound);
+        if ( userAllowedAccess )
+        {            
+            //self.linkedinController.accessToken.verifier =  url;
+            [linkedinController finishAuthorization:self withUrl:url];
+            //NSLog(@"VERIFIER URL:%@",self.linkedinController.accessToken.verifier);
+
+        }
+        else
+        {
+            // User refused to allow our app access
+            // Notify parent and close this view
+        }
+    }
+    else
+    {
+        // Case (a) or (b), so ignore it
+    }
+	return YES;
+}
+
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {

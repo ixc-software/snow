@@ -12,6 +12,7 @@
 #import "CompanyAndUserConfiguration.h"
 //#import "PDColoredProgressView.h"
 //#import "SA_OAuthTwitterController.h"
+
 @class TwitterAuthorizationController;
 
 @interface InfoViewController : UIViewController <MFMailComposeViewControllerDelegate>
@@ -24,6 +25,8 @@
     UINavigationController *companyInfoAndConfig;
     //SA_OAuthTwitterEngine *_engine;
     IBOutlet UIButton *imgButton;
+    
+
 }
 
 @property (nonatomic, retain)  IBOutlet UITextView *readme;

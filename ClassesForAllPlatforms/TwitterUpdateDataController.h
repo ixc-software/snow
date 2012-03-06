@@ -8,14 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import "OAuthConsumer.h"
-#import "MGTwitterEngine.h"
+//#import "MGTwitterEngine.h"
 
 
 @interface TwitterUpdateDataController : NSObject {
 @private
     OAToken *accessToken;
-    MGTwitterEngine *twitterEngine;
-    NSString *twitterPIN;
+//    NSString *twitterPIN;
     id delegate;
     BOOL isAuthorized;
 

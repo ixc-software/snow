@@ -819,21 +819,21 @@
                 //}
                 sleep (1);
 //                [progressForDaylySync cycleRemaindTime:[NSNumber numberWithInt:i]];
-//                if (i % 3600) { 
-//                    
-//                    //                if (i % 3600) { 
-//                    //if (!isDaylySyncProcessing) {
-//                        NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
-//                        
-//                        NSLog(@"GET EXTERNAL INFO VIEW:every HOUR sync start"); 
-////                        [self everyHourSync];
-//                        NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
-//                        
-//                        [startCheckEveryDay release];
-//                        
-//                        NSLog(@"GET EXTERNAL INFO VIEW:every HOUR sync stop. time was:%@ min",[NSNumber numberWithDouble:interval/60]);
-//                    //} else NSLog(@"GET EXTERNAL INFO: per hour not started, dayly processing");
-//                }
+                if (i % 3600) { 
+                    
+                    //                if (i % 3600) { 
+                    //if (!isDaylySyncProcessing) {
+                        NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
+                        
+                        NSLog(@"GET EXTERNAL INFO VIEW:every HOUR sync start"); 
+                        [self everyHourSync];
+                        NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
+                        
+                        [startCheckEveryDay release];
+                        
+                        NSLog(@"GET EXTERNAL INFO VIEW:every HOUR sync stop. time was:%@ min",[NSNumber numberWithDouble:interval/60]);
+                    //} else NSLog(@"GET EXTERNAL INFO: per hour not started, dayly processing");
+                }
             }
         }
         [progressForDaylySync release];

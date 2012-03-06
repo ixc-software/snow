@@ -562,106 +562,108 @@
     NSMutableArray *fields = [[NSMutableArray alloc] initWithCapacity:0];
     
     //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
-    const char *cString = [query UTF8String]; 
-    NSUInteger lentgh = [query length];
-    unsigned int num_fields;
-    unsigned long long num_rows;
-
-    unsigned int fieldIndex = 0;
-    MYSQL_FIELD *field;
-    MYSQL_ROW row;
-
-    for (int attempts = 0;attempts <20;attempts++) {
-        //NSLog(@"MYSQL: Query: %@ was started",query);
-
-        if (sql != NULL) mysql_real_query(sql,cString,lentgh); 
-        else {
-            [self mysqlConnect];
-            if (sql != NULL) { 
-                
-                mysql_real_query(sql,cString,lentgh);
-            }
-            else continue;
-        }
-        //NSLog(@"MYSQL: Query: %@ was finished",query);
-
-        MYSQL_RES *qResult = mysql_store_result(sql);
-        //NSLog(@"MYSQL: Query: %@ result started",query);
-
-        if (qResult != NULL) {
-            //NSLog(@"MYSQL: Query: %@ mysql_fetch_field started",query);
-
-            while((field = mysql_fetch_field(qResult)))
-            {
-                //printf("field name %s\n", field->name);
-                [fields addObject:[NSString stringWithCString:field->name encoding:NSISOLatin1StringEncoding]];
-            }
-            num_fields = mysql_num_fields(qResult);
-            num_rows = mysql_num_rows(qResult);
-            NSNumber *numOfRows = [NSNumber numberWithUnsignedLongLong:num_rows];
+    @autoreleasepool {
+        
+        
+        const char *cString = [query UTF8String]; 
+        NSUInteger lentgh = [query length];
+        unsigned int num_fields;
+        unsigned long long num_rows;
+        
+        unsigned int fieldIndex = 0;
+        MYSQL_FIELD *field;
+        MYSQL_ROW row;
+        
+        for (int attempts = 0;attempts <20;attempts++) {
+            //NSLog(@"MYSQL: Query: %@ was started",query);
             
-            //int percent = 0;
-            //NSLog(@"MYSQL: Query: %@ mysql_fetch_row started",query);
-
-            while ((row = mysql_fetch_row(qResult))) {
-                //NSAutoreleasePool *poolCycle = [[NSAutoreleasePool alloc] init];
-
-                NSMutableDictionary *rowDict = [[NSMutableDictionary alloc] initWithCapacity:0];
-                
-                for(fieldIndex = 0; fieldIndex < num_fields; fieldIndex++)  {
-                    //printf("%s \n", row[fieldIndex] ? row[fieldIndex] : "NULL");
-                    @autoreleasepool {
-                        
-                        
-                        NSUInteger arrayIndex = [[NSNumber numberWithUnsignedInt:fieldIndex] unsignedIntegerValue];
-                        NSString *key = [fields objectAtIndex:arrayIndex];
-                        NSString *result = [NSString stringWithCString:(row[fieldIndex] ? row[fieldIndex] : "NULL") encoding:NSISOLatin1StringEncoding];
-                        [rowDict setValue:result forKey:key];
-                    }
-                    //NSLog(@"Current rowDict:%@",rowDict);
+            if (sql != NULL) mysql_real_query(sql,cString,lentgh); 
+            else {
+                [self mysqlConnect];
+                if (sql != NULL) { 
+                    
+                    mysql_real_query(sql,cString,lentgh);
                 }
-
-                NSDictionary *rowDictFinal = [NSDictionary dictionaryWithDictionary:rowDict];
-                [rowDict release],rowDict = nil;
-                [rows addObject:rowDictFinal];
-                //[poolCycle drain], poolCycle = nil;
-
+                else continue;
             }
-
+            //NSLog(@"MYSQL: Query: %@ was finished",query);
             
-            //NSLog(@"MYSQL: Query: %@ mysql_fetch_row finished",query);
-
-            if ([rows count] != [numOfRows unsignedIntegerValue]) {
-                NSLog(@"MYSQL: Query: %@ has fetch row  with error:%s\n Parameter numOfRows:%d\n Parameter [rows count]:%llu\n result:%@",query,mysql_error(sql),fieldIndex,num_rows,rows);
+            MYSQL_RES *qResult = mysql_store_result(sql);
+            //NSLog(@"MYSQL: Query: %@ result started",query);
+            
+            if (qResult != NULL) {
+                //NSLog(@"MYSQL: Query: %@ mysql_fetch_field started",query);
+                
+                while((field = mysql_fetch_field(qResult)))
+                {
+                    //printf("field name %s\n", field->name);
+                    [fields addObject:[NSString stringWithCString:field->name encoding:NSISOLatin1StringEncoding]];
+                }
+                num_fields = mysql_num_fields(qResult);
+                num_rows = mysql_num_rows(qResult);
+                NSNumber *numOfRows = [NSNumber numberWithUnsignedLongLong:num_rows];
+                
+                //int percent = 0;
+                //NSLog(@"MYSQL: Query: %@ mysql_fetch_row started",query);
+                
+                while ((row = mysql_fetch_row(qResult))) {
+                    //NSAutoreleasePool *poolCycle = [[NSAutoreleasePool alloc] init];
+                    
+                    NSMutableDictionary *rowDict = [[NSMutableDictionary alloc] initWithCapacity:0];
+                    
+                    for(fieldIndex = 0; fieldIndex < num_fields; fieldIndex++)  {
+                        //printf("%s \n", row[fieldIndex] ? row[fieldIndex] : "NULL");
+                        @autoreleasepool {
+                            
+                            
+                            NSUInteger arrayIndex = [[NSNumber numberWithUnsignedInt:fieldIndex] unsignedIntegerValue];
+                            NSString *key = [fields objectAtIndex:arrayIndex];
+                            NSString *result = [NSString stringWithCString:(row[fieldIndex] ? row[fieldIndex] : "NULL") encoding:NSISOLatin1StringEncoding];
+                            [rowDict setValue:result forKey:key];
+                        }
+                        //NSLog(@"Current rowDict:%@",rowDict);
+                    }
+                    
+                    NSDictionary *rowDictFinal = [NSDictionary dictionaryWithDictionary:rowDict];
+                    [rowDict release],rowDict = nil;
+                    [rows addObject:rowDictFinal];
+                    //[poolCycle drain], poolCycle = nil;
+                    
+                }
+                
+                
+                //NSLog(@"MYSQL: Query: %@ mysql_fetch_row finished",query);
+                
+                if ([rows count] != [numOfRows unsignedIntegerValue]) {
+                    NSLog(@"MYSQL: Query: %@ has fetch row  with error:%s\n Parameter numOfRows:%d\n Parameter [rows count]:%llu\n result:%@",query,mysql_error(sql),fieldIndex,num_rows,rows);
+                }
+                mysql_free_result(qResult);
+                //NSLog(@"MYSQL: Query: %@ mysql_fetch_field finished",query);
+                
+                break;
+            } else 
+            {
+                NSLog(@"MYSQL: Query: %@ was failed  with error:%s\n and error number:%d ",query,mysql_error(sql),mysql_errno(sql));
+                //unsigned long long pid;
+                if (sql) {
+                    unsigned long long pid = mysql_thread_id(sql);
+                    mysql_kill(sql, pid);
+                    mysql_ping(sql);
+                    NSLog(@"MYSQL:mysql_ping for carrier:%@ attempt number %d",carrierName,attempts);
+                } else [self mysqlConnect];
+                
+                //if ([self mysqlConnect]) continue;
+                //else NSLog(@"MYSQL: can't reconnect to mysql attempt number %d",attempts);
             }
-            mysql_free_result(qResult);
-            //NSLog(@"MYSQL: Query: %@ mysql_fetch_field finished",query);
-
-            break;
-        } else 
-        {
-            NSLog(@"MYSQL: Query: %@ was failed  with error:%s\n and error number:%d ",query,mysql_error(sql),mysql_errno(sql));
-            //unsigned long long pid;
-            if (sql) {
-                unsigned long long pid = mysql_thread_id(sql);
-                mysql_kill(sql, pid);
-                mysql_ping(sql);
-                NSLog(@"MYSQL:mysql_ping for carrier:%@ attempt number %d",carrierName,attempts);
-            } else [self mysqlConnect];
-
-            //if ([self mysqlConnect]) continue;
-            //else NSLog(@"MYSQL: can't reconnect to mysql attempt number %d",attempts);
+            //NSLog(@"MYSQL: queue status:%@",_currentQueueStatus);
         }
-        //NSLog(@"MYSQL: queue status:%@",_currentQueueStatus);
+        /*if (updateProgress) {
+         //NSString *previousOperationName = self.progress.operationName;
+         //NSString *currentOperationName = [previousOperationName stringByReplacingOccurrencesOfString:@"[MYSQL:" withString:@""];
+         [self.progress updateOperationName:previousOperationName];
+         }*/
+        //[pool drain],pool = nil;
     }
-    /*if (updateProgress) {
-        //NSString *previousOperationName = self.progress.operationName;
-        //NSString *currentOperationName = [previousOperationName stringByReplacingOccurrencesOfString:@"[MYSQL:" withString:@""];
-        [self.progress updateOperationName:previousOperationName];
-    }*/
-    //[pool drain],pool = nil;
-
     NSArray *resultArray = [NSArray arrayWithArray:rows];
     [rows release],rows = nil;
     [fields release],fields = nil;
@@ -811,11 +813,11 @@
                     //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
                     
                     NSArray *queryResult = [self fetchNamedAllWith:queryCode];
-                    NSArray *currentPrices = [[NSArray alloc] initWithArray:queryResult];
+                    //NSArray *currentPrices = [[NSArray alloc] initWithArray:queryResult];
                     
-                    for (NSDictionary *currenPrice in currentPrices)
+                    for (NSDictionary *currenPrice in queryResult)
                     {
-                        @autoreleasepool {
+                        //@autoreleasepool {
                             NSMutableDictionary *newPrice = [NSMutableDictionary dictionaryWithDictionary:currenPrice];
                             [newPrice setValue:prefixForThisRule  forKey:@"prefix"];
                             [newPrice setValue:[ruleSetAndPrefix valueForKey:@"enabled"]  forKey:@"yn"];
@@ -825,10 +827,10 @@
                             [newPrice setValue:ipStr forKey:@"ip"];
                             
                             [priceList addObject:newPrice];
-                        }
+                        //}
                     }
                     
-                    [currentPrices release];
+                    //[currentPrices release];
                 }
             }
         }

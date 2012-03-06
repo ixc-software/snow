@@ -255,7 +255,7 @@
         
         // get full codes list
         NSMutableArray *codesForCarrierObjects = [[NSMutableArray alloc] init];
-        NSMutableArray *codesForCarrier = [[NSMutableArray alloc] init];
+        NSMutableSet *codesForCarrier = [[NSMutableSet alloc] init];
 
         //NSMutableArray *codesCountryList = [[NSMutableArray alloc] init];
 
@@ -654,11 +654,16 @@
                     }
                     
                     NSError *error = nil;
+                    NSMutableSet *codesFilteredFirstStepMutable = [[NSMutableSet alloc] init];
                     
-                    NSArray *codesFilteredFirstStep = [[NSArray alloc] initWithArray:[codesForCarrier filteredArrayUsingPredicate:predicateForCurrentCodes]];
-                    NSMutableArray *codesFilteredFirstStepMutable = [[NSMutableArray alloc] initWithArray:codesFilteredFirstStep];
-                    [codesFilteredFirstStep release];
-                    
+                    //NSArray *codesFilteredFirstStep = [[NSArray alloc] init];
+                    //@autoreleasepool {
+                    NSSet *filteredCodesForCarrier = [codesForCarrier filteredSetUsingPredicate:predicateForCurrentCodes];
+                    //NSArray *codesFilteredFirstStep = [[NSArray alloc] initWithArray:filteredCodesForCarrier];
+                    [codesFilteredFirstStepMutable unionSet:filteredCodesForCarrier];
+                        //[codesFilteredFirstStep release];
+                    //}
+
                     if ([codesFilteredFirstStepMutable count] > 1) { 
                         if (!originalCode) originalCode = [NSNumber numberWithInt:0];
                         NSPredicate *predicateForOriginalCode = [NSPredicate predicateWithFormat:@"originalCode == %@",originalCode];
@@ -1051,15 +1056,14 @@
                         if ([codesFilteredFirstStepMutable count] != 1) { 
                             NSLog(@"UPDATE DESTINATION LIST WARNING: find more than one code for predicateForCurrentCodes:%@",predicateForCurrentCodes);
                             
-                            [codesFilteredFirstStepMutable enumerateObjectsWithOptions:NSSortStable usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                            [codesFilteredFirstStepMutable enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
                                 NSLog(@"UPDATE DESTINATION LIST:duplicate object:%@",obj);
                             }];
                             //abort();
                             
                         }
                         
-                        NSDictionary *currentCodeDict = [codesFilteredFirstStepMutable lastObject];
-                        [codesFilteredFirstStepMutable release];
+                        NSDictionary *currentCodeDict = [codesFilteredFirstStepMutable anyObject];
                         
 //                        NSFetchRequest *fetchRequestForCodesvsDestinationsList = [[NSFetchRequest alloc] init];
 //
@@ -1332,7 +1336,8 @@
                         }
                         
                     } 
-                    
+                    [codesFilteredFirstStepMutable release];
+
                 }
                 
                 idx++;

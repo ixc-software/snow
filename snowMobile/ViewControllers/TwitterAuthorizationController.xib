@@ -54,9 +54,8 @@
 							<int key="NSColorSpace">1</int>
 							<bytes key="NSRGB">MSAxIDEAA</bytes>
 						</object>
+						<int key="IBUIContentMode">1</int>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<int key="IBUIDataDetectorTypes">1</int>
-						<bool key="IBUIDetectsPhoneNumbers">YES</bool>
 					</object>
 					<object class="IBUISegmentedControl" id="331142165">
 						<reference key="NSNextResponder" ref="191373211"/>
@@ -177,6 +176,7 @@
 						<string key="NSFrame">{{151, 241}, {20, 20}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<object class="NSColor" key="IBUIBackgroundColor" id="222911036">
 							<int key="NSColorSpace">3</int>
 							<bytes key="NSWhite">MQA</bytes>

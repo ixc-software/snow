@@ -2080,101 +2080,89 @@ forIsUpdateCarriesListOnExternalServer:YES];
 
 - (NSArray *)getRateSheetsAndPrefixListToChoiceByUserForCarrierID:(NSManagedObjectID *)carrierID withRelationShipName:(NSString *)relationShipName;
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
+    //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    if ([relationShipName isEqualToString:@"destinationsListPushList"] || [relationShipName isEqualToString:@"destinationsListTargets"])  return nil;   
+    
     NSMutableArray *rateSheetsAndPrefixes = [[NSMutableArray alloc] init];
-    NSFetchRequest *requestDestinationsForSale = [[NSFetchRequest alloc] init];
- 
-    Carrier *necessaryCarrier = (Carrier *)[self.moc objectWithID:carrierID];
-    
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(carrier.GUID == %@)",necessaryCarrier.GUID];
-
-    //NSManagedObjectContext *moc = self.managedObjectContext;
-    if ([relationShipName isEqualToString:@"destinationsListForSale"]) {
-        [requestDestinationsForSale setEntity:[NSEntityDescription entityForName:@"DestinationsListForSale"
-                                                          inManagedObjectContext:self.moc]];
-    }
-    if ([relationShipName isEqualToString:@"destinationsListWeBuy"]) {
-        [requestDestinationsForSale setEntity:[NSEntityDescription entityForName:@"DestinationsListWeBuy"
-                                                          inManagedObjectContext:self.moc]];
-    }
-    if ([relationShipName isEqualToString:@"destinationsListPushList"] || [relationShipName isEqualToString:@"destinationsListTargets"]) {
-        [rateSheetsAndPrefixes release];
+    @autoreleasepool {
         
-        [requestDestinationsForSale release],requestDestinationsForSale = nil;
-
-        return nil;
-    }
-
-    [requestDestinationsForSale setPredicate:predicate];    
-    NSError *error = nil; 
-    NSArray *destinations = [moc executeFetchRequest:requestDestinationsForSale error:&error];
-    if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));     
-    
-    NSArray *rateSheetIDsMutable = [destinations valueForKeyPath:@"@distinctUnionOfObjects.rateSheetID"];
-    if (rateSheetIDsMutable.count == 0) {
-        NSManagedObject *lastDestination = destinations.lastObject;
-        CodesvsDestinationsList *anyCode = [[lastDestination valueForKey:@"codesvsDestinationsList"] anyObject];
-        if (anyCode && anyCode.rateSheetID) rateSheetIDsMutable = [NSArray arrayWithObject:anyCode.rateSheetID];
-    }
-    
-    NSArray *prefixesMutable = [destinations valueForKeyPath:@"@distinctUnionOfObjects.prefix"];
-    //NSLog(@"rateSheetIDsMutable:%@/nprefixesMutable:%@",rateSheetIDsMutable,prefixesMutable);
-
-    if ([rateSheetIDsMutable count] > 0) {
-        for (NSString *rateSheetID in rateSheetIDsMutable) {
-            for (NSString *prefix in prefixesMutable) {
-                @autoreleasepool {
-                    
-                    
+        
+        NSFetchRequest *requestDestinationsForSale = [[NSFetchRequest alloc] init];
+        Carrier *necessaryCarrier = (Carrier *)[self.moc objectWithID:carrierID];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(carrier.GUID == %@)",necessaryCarrier.GUID];
+        //NSManagedObjectContext *moc = self.managedObjectContext;
+        if ([relationShipName isEqualToString:@"destinationsListForSale"]) {
+            [requestDestinationsForSale setEntity:[NSEntityDescription entityForName:@"DestinationsListForSale"
+                                                              inManagedObjectContext:self.moc]];
+        }
+        if ([relationShipName isEqualToString:@"destinationsListWeBuy"]) {
+            [requestDestinationsForSale setEntity:[NSEntityDescription entityForName:@"DestinationsListWeBuy"
+                                                              inManagedObjectContext:self.moc]];
+        }
+//        if ([relationShipName isEqualToString:@"destinationsListPushList"] || [relationShipName isEqualToString:@"destinationsListTargets"]) {
+//            [rateSheetsAndPrefixes release];
+//            [requestDestinationsForSale release],requestDestinationsForSale = nil;
+//            return nil;
+//        }
+        
+        [requestDestinationsForSale setPredicate:predicate];    
+        NSError *error = nil; 
+        NSArray *destinations = [moc executeFetchRequest:requestDestinationsForSale error:&error];
+        if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));     
+        
+        NSArray *rateSheetIDsMutable = [destinations valueForKeyPath:@"@distinctUnionOfObjects.rateSheetID"];
+        if (rateSheetIDsMutable.count == 0) {
+            NSManagedObject *lastDestination = destinations.lastObject;
+            CodesvsDestinationsList *anyCode = [[lastDestination valueForKey:@"codesvsDestinationsList"] anyObject];
+            if (anyCode && anyCode.rateSheetID) rateSheetIDsMutable = [NSArray arrayWithObject:anyCode.rateSheetID];
+        }
+        
+        NSArray *prefixesMutable = [destinations valueForKeyPath:@"@distinctUnionOfObjects.prefix"];
+        //NSLog(@"rateSheetIDsMutable:%@/nprefixesMutable:%@",rateSheetIDsMutable,prefixesMutable);
+        
+        if ([rateSheetIDsMutable count] > 0) {
+            for (NSString *rateSheetID in rateSheetIDsMutable) {
+                for (NSString *prefix in prefixesMutable) {
                     NSPredicate *rateSheetLook = [NSPredicate predicateWithFormat:@"(rateSheetID == %@) AND (prefix == %@)",rateSheetID,prefix];
-                    NSSet *allCodes = [[destinations lastObject] valueForKey:@"codesvsDestinationsList"];
-                    NSSet *codes = [allCodes filteredSetUsingPredicate:rateSheetLook];
-                    //NSLog(@"Code:%@\n",code);
+                    NSManagedObject *lastDestinationObject = [destinations lastObject] ;
                     
+                    NSSet *allCodes = [lastDestinationObject valueForKey:@"codesvsDestinationsList"];
+                    NSSet *codes = [allCodes filteredSetUsingPredicate:rateSheetLook];
+                    //NSLog(@"Code:%@\n",code);                    
                     if ([codes count] != 0) {
-                        
                         CodesvsDestinationsList *codeObject = [codes anyObject];
                         NSString *rateSheetName = codeObject.rateSheetName;
                         NSDictionary *mix = [NSDictionary dictionaryWithObjectsAndKeys:prefix,@"prefix",rateSheetID,@"rateSheetID", rateSheetName,@"rateSheetName",nil];
                         //NSLog(@"object%@",mix);
-                        
                         [rateSheetsAndPrefixes addObject:mix];
                         // NSLog(@"Add object%@",rateSheetsAndPrefixes);
-                        
                     }
                 }
-            }
-        }   
-    } else {
-        for (NSString *prefix in prefixesMutable) {
-            @autoreleasepool {
-                
+            }   
+        } else {
+            for (NSString *prefix in prefixesMutable) {
                 NSPredicate *rateSheetLook = [NSPredicate predicateWithFormat:@"(prefix == %@)",prefix];
-                NSSet *allCodes = [[destinations lastObject] valueForKey:@"codesvsDestinationsList"];
+                NSManagedObject *lastDestinationObject = [destinations lastObject] ;
+
+                NSSet *allCodes = [lastDestinationObject valueForKey:@"codesvsDestinationsList"];
                 NSSet *codes = [allCodes filteredSetUsingPredicate:rateSheetLook];
                 //NSLog(@"Code:%@\n",code);
-                
                 if ([codes count] != 0) {
-                    
                     CodesvsDestinationsList *codeObject = [codes anyObject];
                     NSString *rateSheetName = codeObject.rateSheetName;
                     NSDictionary *mix = [NSDictionary dictionaryWithObjectsAndKeys:prefix,@"prefix", rateSheetName,@"rateSheetName",nil];
                     //NSLog(@"object%@",mix);
-                    
                     [rateSheetsAndPrefixes addObject:mix];
                     // NSLog(@"Add object%@",rateSheetsAndPrefixes);
-                    
                 }
             }
         }
-
+        
+        //NSLog(@"%@",rateSheetsAndPrefixes);
+        //[pool drain], pool = nil;
+        
+        [requestDestinationsForSale release],requestDestinationsForSale = nil;
     }
-    
-    //NSLog(@"%@",rateSheetsAndPrefixes);
-    [pool drain], pool = nil;
-
-    [requestDestinationsForSale release],requestDestinationsForSale = nil;
     NSArray *result = [NSArray arrayWithArray:rateSheetsAndPrefixes];
     [rateSheetsAndPrefixes release];
 

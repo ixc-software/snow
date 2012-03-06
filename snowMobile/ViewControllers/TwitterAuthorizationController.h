@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 //#import "InfoViewController.h"
 #import "TwitterUpdateDataController.h"
+#import "LinkedinUpdateDataController.h"
 
 @class InfoViewController;
 @interface TwitterAuthorizationController : UIViewController <UIWebViewDelegate,UITextFieldDelegate> {
@@ -26,6 +27,7 @@
 @property (nonatomic,retain) UINavigationController *infoController;
 
 @property (nonatomic,retain) TwitterUpdateDataController *twitterController;
+@property (nonatomic,retain) LinkedinUpdateDataController *linkedinController;
 @property (nonatomic,retain) InfoViewController *infoViewController;
 
 
