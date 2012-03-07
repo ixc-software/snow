@@ -14,5 +14,6 @@
 @property (retain, nonatomic) IBOutlet UITextView *bodyForEdit;
 @property (retain, nonatomic) IBOutlet UITextView *signature;
 @property (retain, nonatomic) IBOutlet UILabel *routesList;
+@property (retain, nonatomic) IBOutlet UITextField *postingTitle;
 
 @end

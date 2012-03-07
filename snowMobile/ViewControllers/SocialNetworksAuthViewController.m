@@ -10,6 +10,8 @@
 #import "TwitterUpdateDataController.h"
 #import "InfoViewController.h"
 #import "LinkedinUpdateDataController.h"
+#import "mobileAppDelegate.h"
+#import "DestinationsListPushList.h"
 
 @implementation SocialNetworksAuthViewController
 @synthesize groupsToMessage;
@@ -190,6 +192,29 @@
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
+#pragma mark - internal methods
+
+-(NSString *)stringFromObjectIDs:(NSArray *)objecIDs;
+{
+    mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext *context = delegate.managedObjectContext;
+    NSMutableString *finalString = [NSMutableString string];
+    NSNumberFormatter *rateFormatter = [[NSNumberFormatter alloc] init];
+    [rateFormatter setMaximumFractionDigits:5];
+    [rateFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+
+    [objecIDs enumerateObjectsUsingBlock:^(NSManagedObjectID *objectID, NSUInteger idx, BOOL *stop) {
+        DestinationsListPushList *object = (DestinationsListPushList *)[context objectWithID:objectID];
+        NSString *country = [object valueForKey:@"country"];
+        NSString *specific = [object valueForKey:@"specific"];
+        NSNumber *rate = [object valueForKey:@"rate"];
+        NSNumber *minutesLenght = [object valueForKey:@"minutesLenght"];
+
+        [finalString appendString:[NSString stringWithFormat:@"%@/%@ with price %@ volume %@",country,specific,[rateFormatter stringFromNumber:rate],minutesLenght]];
+        if (objecIDs.count > 1 && idx != objecIDs.count -1) [finalString appendString:@"/n"]; 
+    }];
+    return finalString;
+}
 
 #pragma mark - action methods
 
@@ -310,8 +335,11 @@
     LinkedinGroupsTableViewCell *cell = (LinkedinGroupsTableViewCell *)[groupsList cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     [cell.signature resignFirstResponder];
     [cell.bodyForEdit resignFirstResponder];
+    [cell.postingTitle resignFirstResponder];
+    
     [[NSUserDefaults standardUserDefaults] setValue:cell.bodyForEdit.text forKey:@"bodyForEdit"];
     [[NSUserDefaults standardUserDefaults] setValue:cell.signature.text forKey:@"signature"];
+    [[NSUserDefaults standardUserDefaults] setValue:cell.postingTitle.text forKey:@"postingTitle"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [sender setHidden:YES];
 }
@@ -369,9 +397,21 @@
     else return NO;
 }
 
--(void) sendTwitterUpdate:(NSString *)text;
+-(void) sendTwitterUpdate:(NSArray *)managedObjectIDs;
 {
-    if (twitterController) [twitterController postTwitterMessageWithText:text];
+//    mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+//    NSManagedObjectContext *moc = delegate.managedObjectContext;
+
+    [managedObjectIDs enumerateObjectsUsingBlock:^(NSManagedObjectID *objectID, NSUInteger idx, BOOL *stop) {
+        NSString *finalDestinationsListString = [self stringFromObjectIDs:managedObjectIDs];
+        NSMutableString *twitterText = [[NSMutableString alloc] initWithCapacity:0];
+        [twitterText appendString:@"I'm currently interesting for those destination (s):"];
+        [twitterText appendString:finalDestinationsListString];
+        [twitterText appendString:@"(posted from snow ixc)"];
+        NSLog(@"SOCIAL NETWORK CONTROLLER: twitter message to post:%@",twitterText);
+    }];
+    
+    //if (twitterController) [twitterController postTwitterMessageWithText:text];
 }
 
 #pragma mark - Linkedin controller delegates
@@ -458,19 +498,57 @@
     if (linkedinController) return linkedinController.isAuthorized;
     else return NO;
 }
+-(void) postToLinkedinGroups:(NSArray *)managedObjectIDs;
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"enabled = %@",[NSNumber numberWithBool:YES]];
+    NSArray *enabledGroups = [groupListObjects filteredArrayUsingPredicate:predicate];
+    NSString *postingTitle = [[NSUserDefaults standardUserDefaults] valueForKey:@"postingTitle"];
+    NSString *bodyForEdit = [[NSUserDefaults standardUserDefaults] valueForKey:@"bodyForEdit"];
+    NSString *signature = [[NSUserDefaults standardUserDefaults] valueForKey:@"signature"];
 
+    [enabledGroups enumerateObjectsUsingBlock:^(NSMutableDictionary *group, NSUInteger idx, BOOL *stop) {
+        NSString *groupID = [group valueForKey:@"id"];
+        NSString *name = [group valueForKey:@"name"];
+
+        NSMutableString *linkedinText = [[NSMutableString alloc] initWithCapacity:0];
+        [linkedinText appendString:bodyForEdit];
+        
+        NSString *finalDestinationsListString = [self stringFromObjectIDs:managedObjectIDs];
+        [linkedinText appendString:finalDestinationsListString];
+        [linkedinText appendString:signature];
+        [linkedinText appendString:@"(posted from snow ixc)"];
+
+        NSLog(@"SOCIAL NETWORK CONTROLLER: linkedin message for group:%@ to post:%@",linkedinText,name);
+
+        //[linkedinController postToGroupID:groupID withTitle:postingTitle withSummary:text];        
+    }];
+}
 
 #pragma mark - WebKit delegate
 
-- (void)webViewDidFinishLoad:(UIWebView *)webView
+- (void)webViewDidFinishLoad:(UIWebView *)webViewCheck
 {
+    //NSLog(@"finished:%@",webViewCheck.request.URL);
+    if ([webViewCheck.request.URL.absoluteString rangeOfString:@"https://api.twitter.com/oauth/authorize?oauth_token="].location != NSNotFound){
+        //NSLog(@"SCROLL:%@",webViewCheck.request.URL);
+
+        [webViewCheck.scrollView scrollRectToVisible:CGRectMake(0, 500, 100, 100) animated:YES];
+    }
+    if ([webViewCheck.request.URL.absoluteString rangeOfString:@"https://api.twitter.com/oauth/authorize"].location != NSNotFound){
+        //NSLog(@"SCROLL:%@",webViewCheck.request.URL);
+        
+        [webViewCheck.scrollView scrollRectToVisible:CGRectMake(0, 350, 100, 100) animated:YES];
+    }
+
     dispatch_async(dispatch_get_main_queue(), ^(void) { 
         activity.hidden = YES;
         [activity stopAnimating];
     });
 }
-- (void)webViewDidStartLoad:(UIWebView *)webView
+- (void)webViewDidStartLoad:(UIWebView *)webViewCheck
 {
+    NSLog(@"started:%@",webViewCheck.request.URL);
+
     dispatch_async(dispatch_get_main_queue(), ^(void) { 
         activity.hidden = NO;
         [activity startAnimating];
@@ -575,6 +653,7 @@
         cell.groupSwitch.hidden = NO;
         cell.bodyForEdit.hidden = YES;
         cell.signature.hidden = YES;
+        cell.postingTitle.hidden = YES;
         cell.routesList.hidden = YES;
 
     } else {
@@ -582,9 +661,11 @@
         cell.groupSwitch.hidden = YES;
         cell.bodyForEdit.hidden = NO;
         cell.signature.hidden = NO;
+        cell.postingTitle.hidden = NO;
         cell.routesList.hidden = NO;
         cell.bodyForEdit.text = [[NSUserDefaults standardUserDefaults] valueForKey:@"bodyForEdit"];
         cell.signature.text = [[NSUserDefaults standardUserDefaults] valueForKey:@"signature"];
+        cell.postingTitle.text = [[NSUserDefaults standardUserDefaults] valueForKey:@"postingTitle"];
     }
     return cell;
 }

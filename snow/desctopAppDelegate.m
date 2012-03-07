@@ -505,6 +505,9 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
     NSMutableDictionary *pragmaOptions = [NSMutableDictionary dictionary];
     [pragmaOptions setObject:[NSNumber numberWithBool:YES] forKey:NSMigratePersistentStoresAutomaticallyOption];
     [pragmaOptions setObject:[NSNumber numberWithBool:YES] forKey:NSInferMappingModelAutomaticallyOption];
+    [pragmaOptions setObject:@"NORMAL" forKey:@"synchronous"];
+    [pragmaOptions setObject:@"1" forKey:@"fullfsync"];
+
     NSDictionary *options = [NSDictionary dictionaryWithDictionary:pragmaOptions];
 
     NSPersistentStoreCoordinator *coordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];

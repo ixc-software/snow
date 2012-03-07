@@ -41,7 +41,7 @@
 
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, retain) UINavigationController *companyInfoAndConfig;
-@property (nonatomic, retain) SocialNetworksAuthViewController *tw;
+@property (nonatomic, retain) SocialNetworksAuthViewController *socialNetworksViewController;
 
 -(IBAction)updateTwitter:(id)sender; 
 

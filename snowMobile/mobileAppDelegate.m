@@ -580,17 +580,30 @@
     
 }
 
--(void) updateTwitterMessagesForText:(NSString *)text;
+-(void) updateTwitterMessagesForText:(NSArray *)managedObjectIDs;
 {
     NSArray *viewControllers = self.tabBarController.viewControllers;
     UINavigationController *info = [viewControllers objectAtIndex:0];
     
     InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
     
-    if ([infoObject.tw isTwitterAuthorized]) [infoObject.tw sendTwitterUpdate:text];
+    if ([infoObject.socialNetworksViewController isTwitterAuthorized]) [infoObject.socialNetworksViewController sendTwitterUpdate:managedObjectIDs];
     
     
 }
+
+-(void) postToLinkedinGroupsText:(NSArray *)managedObjectIDs;
+{
+    NSArray *viewControllers = self.tabBarController.viewControllers;
+    UINavigationController *info = [viewControllers objectAtIndex:0];
+    
+    InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
+    
+    if ([infoObject.socialNetworksViewController isLinkedinAuthorized]) [infoObject.socialNetworksViewController postToLinkedinGroups:managedObjectIDs];
+    
+    
+}
+
 
 -(void) updateTwitterMessagesForDestinations:(NSArray *)destinations;
 {
@@ -600,10 +613,10 @@
     InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
     NSLog(@"updateTwitterMessagesForDestinations");
 
-    if ([infoObject.tw isTwitterAuthorized]) {
+    if ([infoObject.socialNetworksViewController isTwitterAuthorized]) {
         NSLog(@"postTwitterMessageForDestinations:%@",destinations);
 
-        [infoObject.tw.twitterController postTwitterMessageForDestinations:destinations];
+        [infoObject.socialNetworksViewController.twitterController postTwitterMessageForDestinations:destinations];
     }
 }
 

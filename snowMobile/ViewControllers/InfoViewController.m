@@ -30,7 +30,7 @@
 
 @implementation InfoViewController
 
-@synthesize readme,operation,managedObjectContext,companyInfoAndConfig,operationProgress,tw,imgButton;
+@synthesize readme,operation,managedObjectContext,companyInfoAndConfig,operationProgress,socialNetworksViewController,imgButton;
 
 
 
@@ -385,13 +385,13 @@
     
 
     
-    if (!tw) {
+    if (!socialNetworksViewController) {
         NSRange range = [[[UIDevice currentDevice] model] rangeOfString:@"iPad"];
         NSString *finalNib = nil;
         if(range.location==NSNotFound) finalNib = @"SocialNetworksAuthViewController";
         else finalNib = @"SocialNetworksAuthViewControlleriPad";
-        tw = [[SocialNetworksAuthViewController alloc] initWithNibName:finalNib bundle:[NSBundle mainBundle]];
-        tw.infoViewController = self;
+        socialNetworksViewController = [[SocialNetworksAuthViewController alloc] initWithNibName:finalNib bundle:[NSBundle mainBundle]];
+        socialNetworksViewController.infoViewController = self;
         //UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:tw];
         //tw.infoController = nav;
         //[nav release];
@@ -399,8 +399,8 @@
     }
 //    if (![tw isTwitterAuthorized]) {
         //[self dismissModalViewControllerAnimated:YES];
-        tw.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-        [self presentModalViewController:tw animated:YES];
+        socialNetworksViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+        [self presentModalViewController:socialNetworksViewController animated:YES];
 //    }
 }
 

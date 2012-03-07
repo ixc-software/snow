@@ -40,7 +40,10 @@
 @property (retain, nonatomic) IBOutlet UIButton *reloadButton;
 
 -(BOOL)isTwitterAuthorized;
--(void) sendTwitterUpdate:(NSString *)text;
+-(void) sendTwitterUpdate:(NSArray *)managedObjectIDs;
+-(BOOL)isLinkedinAuthorized;
+-(void) postToLinkedinGroups:(NSArray *)managedObjectIDs;
+
 @property (retain, nonatomic) IBOutlet UISegmentedControl *changeAuthorizationType;
 
 // linkedin groups view

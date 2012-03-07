@@ -40,5 +40,6 @@
 
 - (id)initWithDelegate:(id)delegateForInit;
 -(void) getGroupsStart:(NSUInteger)startPosition count:(NSUInteger)count;
+-(void) postToGroupID:(NSString *)groupID withTitle:(NSString *)title withSummary:(NSString *)summary;
 
 @end

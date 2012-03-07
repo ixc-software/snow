@@ -654,13 +654,14 @@
                     }
                     
                     NSError *error = nil;
-                    NSMutableSet *codesFilteredFirstStepMutable = [[NSMutableSet alloc] init];
                     
                     //NSArray *codesFilteredFirstStep = [[NSArray alloc] init];
                     //@autoreleasepool {
                     NSSet *filteredCodesForCarrier = [codesForCarrier filteredSetUsingPredicate:predicateForCurrentCodes];
                     //NSArray *codesFilteredFirstStep = [[NSArray alloc] initWithArray:filteredCodesForCarrier];
-                    [codesFilteredFirstStepMutable unionSet:filteredCodesForCarrier];
+                    NSMutableSet *codesFilteredFirstStepMutable = [[NSMutableSet alloc] initWithSet:filteredCodesForCarrier];
+
+                    //[codesFilteredFirstStepMutable unionSet:filteredCodesForCarrier];
                         //[codesFilteredFirstStep release];
                     //}
 

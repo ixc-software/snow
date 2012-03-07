@@ -13,6 +13,7 @@
 @synthesize bodyForEdit;
 @synthesize signature;
 @synthesize routesList;
+@synthesize postingTitle;
 @synthesize groupSwitch;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -38,6 +39,7 @@
     [bodyForEdit release];
     [signature release];
     [routesList release];
+    [postingTitle release];
     [super dealloc];
 }
 

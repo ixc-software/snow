@@ -33,7 +33,7 @@ enum {
 - (BOOL)isEqualToProblem:(OAProblem *)aProblem;
 - (BOOL)isEqualToString:(const NSString *)aProblem;
 - (BOOL)isEqualTo:(id)aProblem;
-- (int)code;
+- (NSUInteger)code;
 
 + (OAProblem *)problemWithResponseBody:(const NSString *)response;
 

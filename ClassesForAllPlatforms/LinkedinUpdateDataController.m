@@ -289,7 +289,7 @@
     BOOL success = YES;
 
     rdXML = [data retain];
-    rdReader = xmlReaderForMemory([rdXML bytes], [rdXML length], [[url absoluteString] UTF8String], nil, XML_PARSE_NOBLANKS | XML_PARSE_NOCDATA | XML_PARSE_NOERROR | XML_PARSE_NOWARNING);
+    //rdReader = xmlReaderForMemory([rdXML bytes], [rdXML length], [[url absoluteString] UTF8String], nil, XML_PARSE_NOBLANKS | XML_PARSE_NOCDATA | XML_PARSE_NOERROR | XML_PARSE_NOWARNING);
     if( ! rdReader ) {
         NSLog(@"LINKEDIN CONTROLLER: reader not started");
         return nil;
@@ -388,6 +388,55 @@
     
     //NSDictionary *result = [responseBody objectFromJSONString];
     NSLog(@"LINKEDIN GET GROUPS:get  FAILED result:%@",responseBody);
+    
+}
+
+-(void) postToGroupID:(NSString *)groupID withTitle:(NSString *)title withSummary:(NSString *)summary;
+{
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.linkedin.com/v1/groups/%@/posts",groupID]];
+        NSLog(@"LINKEDIN GET GROUPS:get  URL:%@",url);
+        
+        OAMutableURLRequest *request = 
+        [[OAMutableURLRequest alloc] initWithURL:url
+                                        consumer:consumer
+                                           token:accessToken
+                                        callback:nil
+                               signatureProvider:nil];
+        
+        [request setHTTPMethod:@"POST"];
+        [request setHTTPShouldHandleCookies:NO];
+        [request setValue:@"text/xml;charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
+        NSString *finalBody = [NSString stringWithFormat:@"<post> <title>%@</title> <summary>%@</summary></post>",title,summary];
+        NSData* body = [finalBody dataUsingEncoding:NSUTF8StringEncoding];
+        [request setHTTPBody:body];
+        
+        OADataFetcher *fetcher = [[OADataFetcher alloc] init];
+        [fetcher fetchDataWithRequest:request
+                             delegate:self
+                    didFinishSelector:@selector(postToGroupResult:didFinish:)
+                      didFailSelector:@selector(postToGroupResult:didFail:)];    
+        [request release];
+    });
+
+}
+- (void)postToGroupResult:(OAServiceTicket *)ticket didFinish:(NSData *)data;
+{
+    NSString *responseBody = [[NSString alloc] initWithData:data
+                                                   encoding:NSUTF8StringEncoding];
+    
+    //NSDictionary *result = [responseBody objectFromJSONString];
+    NSLog(@"LINKEDIN POST TO GROUPS:get result:%@",responseBody);
+}
+
+- (void)postToGroupResult:(OAServiceTicket *)ticket didFail:(NSData *)data 
+{
+    NSString *responseBody = [[NSString alloc] initWithData:data
+                                                   encoding:NSUTF8StringEncoding];
+    
+    //NSDictionary *result = [responseBody objectFromJSONString];
+    NSLog(@"LINKEDIN GET GROUPS:get FAILED result:%@",responseBody);
     
 }
 

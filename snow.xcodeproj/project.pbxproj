@@ -365,6 +365,7 @@
 		FA4A0EB214F8A424001A2139 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA4A0EB114F8A423001A2139 /* WebKit.framework */; };
 		FA4A0EB314F8A42F001A2139 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA4A0EB114F8A423001A2139 /* WebKit.framework */; };
 		FA4A0EB414F8A439001A2139 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA4A0EB114F8A423001A2139 /* WebKit.framework */; };
+		FA4A2E36150764C9007A7E33 /* routesConfig.png in Resources */ = {isa = PBXBuildFile; fileRef = FA4A2E35150764C9007A7E33 /* routesConfig.png */; };
 		FA4D8FA114F8A4BC00C90E2E /* twitter_icons_256.png in Resources */ = {isa = PBXBuildFile; fileRef = FA4D8FA014F8A4BC00C90E2E /* twitter_icons_256.png */; };
 		FA4D8FA214F8A4BC00C90E2E /* twitter_icons_256.png in Resources */ = {isa = PBXBuildFile; fileRef = FA4D8FA014F8A4BC00C90E2E /* twitter_icons_256.png */; };
 		FA4D8FA314F8A4BC00C90E2E /* twitter_icons_256.png in Resources */ = {isa = PBXBuildFile; fileRef = FA4D8FA014F8A4BC00C90E2E /* twitter_icons_256.png */; };
@@ -856,6 +857,7 @@
 		FA3CE34C14F7DEAF00E3AF17 /* mobileAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mobileAppDelegate.h; sourceTree = "<group>"; };
 		FA3CE34D14F7DEAF00E3AF17 /* mobileAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mobileAppDelegate.m; sourceTree = "<group>"; };
 		FA4A0EB114F8A423001A2139 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		FA4A2E35150764C9007A7E33 /* routesConfig.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = routesConfig.png; sourceTree = "<group>"; };
 		FA4D8FA014F8A4BC00C90E2E /* twitter_icons_256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = twitter_icons_256.png; sourceTree = "<group>"; };
 		FA4D8FA514F8A4CC00C90E2E /* money-making-deas.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "money-making-deas.png"; sourceTree = "<group>"; };
 		FA4D8FA914F8A67400C90E2E /* AVButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVButtonCell.h; sourceTree = "<group>"; };
@@ -1583,6 +1585,7 @@
 		FA4D905A14F8BD3000C90E2E /* MediaLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				FA4A2E35150764C9007A7E33 /* routesConfig.png */,
 				FAC22D4B15067A550010D3C0 /* socialNetworks.png */,
 				FAC22D45150673840010D3C0 /* enabledPoint.png */,
 				FAC22D46150673840010D3C0 /* disabledPoint.png */,
@@ -2152,6 +2155,7 @@
 				FAC22D47150673840010D3C0 /* enabledPoint.png in Resources */,
 				FAC22D48150673840010D3C0 /* disabledPoint.png in Resources */,
 				FAC22D4C15067A550010D3C0 /* socialNetworks.png in Resources */,
+				FA4A2E36150764C9007A7E33 /* routesConfig.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -47,7 +47,7 @@
 @property (nonatomic, retain) UIButton *home;
 @property (nonatomic, retain) UISegmentedControl *addRoutes;
 @property (nonatomic, retain) UISegmentedControl *selectRoutes;
-
+@property (nonatomic, retain) UIButton *configureRoutesButton;
 @property (nonatomic, retain) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, retain) NSFetchedResultsController *fetchResultControllerSearch;
 @property (readwrite) BOOL searchIsActive;

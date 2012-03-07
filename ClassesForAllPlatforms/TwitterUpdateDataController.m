@@ -99,7 +99,7 @@
 		NSLog(@"Got request token:%@. Redirecting to twitter auth page...",accessToken);
 		
 		NSString *address = [NSString stringWithFormat:
-							 @"https://api.twitter.com/oauth/authenticate?oauth_token=%@",
+							 @"https://api.twitter.com/oauth/authorize?oauth_token=%@",
 							 accessToken.key];
 		
 		NSURL *url = [NSURL URLWithString:address];

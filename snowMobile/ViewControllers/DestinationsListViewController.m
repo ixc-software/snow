@@ -125,10 +125,8 @@
 @synthesize sectionsTitles;
 @synthesize desinationsUpdateProgress;
 @synthesize changedDestinationsIDs;
+@synthesize configureRoutesButton;
 
-//-(BOOL)canBecomeFirstResponder {
-//    return YES;
-//}
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -223,60 +221,76 @@
         addRoutesNavigationView = [[UINavigationController alloc] initWithRootViewController:addRoutesView];
         
     }
+
     NSUInteger width = 0;
     if (isControllerStartedFromOutsideTabbar) width = 800;
     else width = 310;
     
-    
-    if (!addRoutes) {
+    UIView *segmentedBlock = [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 44)];
+
+//    if (!addRoutes) {
+    CGFloat moveSearchAndAddRoutesTo = 0;
+    if (isControllerStartedFromOutsideTabbar) moveSearchAndAddRoutesTo = 195;
+    else moveSearchAndAddRoutesTo = 270;
+
+    if (!configureRoutesButton) { 
+        configureRoutesButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
+        configureRoutesButton.frame = CGRectMake(configureRoutesButton.frame.origin.x + moveSearchAndAddRoutesTo, configureRoutesButton.frame.origin.y + 7, configureRoutesButton.frame.size.width, configureRoutesButton.frame.size.height);
         
-        CGFloat moveSearchAndAddRoutesTo = 0;
-        if (isControllerStartedFromOutsideTabbar) moveSearchAndAddRoutesTo = 130;
-        else moveSearchAndAddRoutesTo = 250;
-        
-        if (isControllerStartedFromOutsideTabbar) moveSearchAndAddRoutesTo = 200;
-        addRoutes =  [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@" + ", nil]];
-        addRoutes.tintColor = [UIColor colorWithRed:0.20 green:0.20 blue:0.52 alpha:1.0];
-        addRoutes.segmentedControlStyle = UISegmentedControlStyleBar;
-        addRoutes.frame = CGRectMake(addRoutes.frame.origin.x + moveSearchAndAddRoutesTo, addRoutes.frame.origin.y + 7, addRoutes.frame.size.width, addRoutes.frame.size.height);
-        [addRoutes addTarget:self action:@selector(addNewRoute:) forControlEvents:UIControlEventAllEvents];
-        
+        [configureRoutesButton setImage:[UIImage imageNamed:@"routesConfig.png"] forState:UIControlStateNormal];
+        [configureRoutesButton addTarget:self action:@selector(didClickConfig:) forControlEvents:UIControlEventTouchUpInside];
     }
-//    if (!isControllerStartedFromOutsideTabbar) {
-        UIView *segmentedBlock = [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 44)];
+    [segmentedBlock addSubview:configureRoutesButton];
         
-        if (!selectRoutes) {
-            
-            selectRoutes = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"For sale",@"We buy",@"Pushlist", nil]];
-            [selectRoutes setSelectedSegmentIndex:2];
-            selectRoutes.tintColor = [UIColor colorWithRed:0.20 green:0.20 blue:0.52 alpha:1.0];
-            selectRoutes.segmentedControlStyle = UISegmentedControlStyleBar;
-            selectRoutes.frame = CGRectMake(selectRoutes.frame.origin.x , selectRoutes.frame.origin.y + 7, selectRoutes.frame.size.width, selectRoutes.frame.size.height);
-            [selectRoutes addTarget:self action:@selector(selectRoutesStart:) forControlEvents:UIControlEventAllEvents];
-            //            [selectRoutes setEnabled:NO forSegmentAtIndex:0];
-            //            [selectRoutes setEnabled:NO forSegmentAtIndex:1];
-        }
-        [segmentedBlock addSubview:selectRoutes];
-        if (!selectRoutes) [selectRoutes release];
-        //        desinationsUpdateProgress = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-        //        desinationsUpdateProgress.frame = CGRectMake(desinationsUpdateProgress.frame.origin.x + 150 , desinationsUpdateProgress.frame.origin.y, desinationsUpdateProgress.frame.size.width, desinationsUpdateProgress.frame.size.height);
-        //
-        //        [segmentedBlock addSubview:desinationsUpdateProgress];
-        
-        [segmentedBlock addSubview:addRoutes];
-        
-        
-        self.navigationItem.titleView = segmentedBlock;
-        [segmentedBlock release];
-        if (!addRoutes) [addRoutes release];
-        if (!selectRoutes) [selectRoutes release];
-        
-        
-//    } else {
-        
-//        self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:addRoutes] autorelease];
-//        if (!addRoutes) [addRoutes release];
+
+//        CGFloat moveSearchAndAddRoutesTo = 0;
+//        if (isControllerStartedFromOutsideTabbar) moveSearchAndAddRoutesTo = 130;
+//        else moveSearchAndAddRoutesTo = 250;
 //        
+//        if (isControllerStartedFromOutsideTabbar) moveSearchAndAddRoutesTo = 200;
+//    
+//        addRoutes =  [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:[UIImage imageNamed:@"settings_30x30.png"]]];
+//        addRoutes.tintColor = [UIColor colorWithRed:0.20 green:0.20 blue:0.52 alpha:1.0];
+//        addRoutes.segmentedControlStyle = UISegmentedControlStyleBar;
+//        addRoutes.frame = CGRectMake(addRoutes.frame.origin.x + moveSearchAndAddRoutesTo, addRoutes.frame.origin.y + 7, addRoutes.frame.size.width, addRoutes.frame.size.height);
+//        [addRoutes addTarget:self action:@selector(addNewRoute:) forControlEvents:UIControlEventAllEvents];
+        
+//    }
+    //    if (!isControllerStartedFromOutsideTabbar) {
+    
+    if (!selectRoutes) {
+        
+        selectRoutes = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"For sale",@"We buy",@"Pushlist", nil]];
+        [selectRoutes setSelectedSegmentIndex:2];
+        selectRoutes.tintColor = [UIColor colorWithRed:0.20 green:0.20 blue:0.52 alpha:1.0];
+        selectRoutes.segmentedControlStyle = UISegmentedControlStyleBar;
+        selectRoutes.frame = CGRectMake(selectRoutes.frame.origin.x , selectRoutes.frame.origin.y + 7, selectRoutes.frame.size.width, selectRoutes.frame.size.height);
+        [selectRoutes addTarget:self action:@selector(selectRoutesStart:) forControlEvents:UIControlEventAllEvents];
+        //            [selectRoutes setEnabled:NO forSegmentAtIndex:0];
+        //            [selectRoutes setEnabled:NO forSegmentAtIndex:1];
+    }
+
+    [segmentedBlock addSubview:selectRoutes];
+
+//    if (!selectRoutes) [selectRoutes release];
+    //        desinationsUpdateProgress = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    //        desinationsUpdateProgress.frame = CGRectMake(desinationsUpdateProgress.frame.origin.x + 150 , desinationsUpdateProgress.frame.origin.y, desinationsUpdateProgress.frame.size.width, desinationsUpdateProgress.frame.size.height);
+    //
+    //        [segmentedBlock addSubview:desinationsUpdateProgress];
+    
+    
+    
+    self.navigationItem.titleView = segmentedBlock;
+    [segmentedBlock release];
+//    if (!addRoutes) [addRoutes release];
+//    if (!selectRoutes) [selectRoutes release];
+    
+    
+    //    } else {
+    
+    //        self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:addRoutes] autorelease];
+    //        if (!addRoutes) [addRoutes release];
+    //        
 //    }
     
     
@@ -714,12 +728,12 @@
     [super viewWillDisappear:animated];
     // we have new amazing function to add and wait 5 minutes to pickup all changes
     //if (isRoutesListUpdated) [userController startRegistrationForAllObjectsInFutureArrayForTableView:self.tableView sender:self clientStuffGUID:[[userController authorization] valueForKey:@"GUID"]];
-    NSLog(@"changedDestinationsIDs:%@",changedDestinationsIDs);
+    //NSLog(@"changedDestinationsIDs:%@",changedDestinationsIDs);
     
     if ([changedDestinationsIDs count] > 0) {
         NSMutableArray *destinationsForPost = [[NSMutableArray alloc] init];
         
-        NSLog(@"changedDestinationsIDs:%@",changedDestinationsIDs);
+        //NSLog(@"changedDestinationsIDs:%@",changedDestinationsIDs);
         NSMutableString *twitterText = [[NSMutableString alloc] initWithCapacity:0];
         [twitterText appendString:@"I'm currently interesting for those destination (s):"];
         NSNumberFormatter *rateFormatter = [[NSNumberFormatter alloc] init];
@@ -1752,7 +1766,34 @@
     [self.tableView reloadData];
 
 }
+- (IBAction)sendAllToTwitter:(id)sender {
+    
+}
 
+- (IBAction)sendAllToLinkedin:(id)sender {
+    
+    
+}
+- (IBAction)didClickConfig:(id)sender {
+    [self becomeFirstResponder];
+
+    UIMenuController *menuController = [UIMenuController sharedMenuController];
+    NSMutableArray *menuItems = [NSMutableArray array];
+    UIMenuItem *menuItemAdd = [[UIMenuItem alloc] initWithTitle:@"Add" action:@selector(addNewRoute:)];
+    [menuItems addObject:menuItemAdd];
+    UIMenuItem *menuItemTwitter = [[UIMenuItem alloc] initWithTitle:@"Twit all" action:@selector(sendAllToTwitter:)];
+    [menuItems addObject:menuItemTwitter];
+    UIMenuItem *menuItemLinkedin = [[UIMenuItem alloc] initWithTitle:@"Linkedin all" action:@selector(sendAllToLinkedin:)];
+    [menuItems addObject:menuItemLinkedin];
+    
+    
+    menuController.menuItems = [NSArray arrayWithArray:menuItems];
+    [menuItemAdd release],[menuItemLinkedin release],[menuItemTwitter release];
+//    menuController.arrowDirection = UIMenuControllerArrowLeft;
+    [menuController setTargetRect:CGRectMake(320, 50, 0, 0) inView:self.navigationController.view];
+    [menuController setMenuVisible:YES animated:YES];
+
+}
 #pragma mark - external reload methods
 
 -(void) reloadLocalDataFromUserDataControllerForObject:(id)object;
