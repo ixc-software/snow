@@ -1543,6 +1543,9 @@
             [helpMutable setValue:[NSNumber numberWithBool:YES] forKey:@"isAddRoutesSheet"];
             [helpMutable setValue:[NSNumber numberWithBool:YES] forKey:@"isRoutesListSheet"];
             [helpMutable setValue:[NSNumber numberWithBool:YES] forKey:@"isCarriersListSheet"];
+            [helpMutable setValue:[NSNumber numberWithBool:YES] forKey:@"isSocialNetworkAuthViewTwitterSheet"];
+            [helpMutable setValue:[NSNumber numberWithBool:YES] forKey:@"isSocialNetworkAuthViewLinkedinSheet"];
+            [helpMutable setValue:[NSNumber numberWithBool:YES] forKey:@"isSocialNetworkAuthViewLinkedinMessageSheet"];
             [[NSUserDefaults standardUserDefaults] setObject:helpMutable forKey:@"help"];
             [[NSUserDefaults standardUserDefaults] synchronize];
         }           

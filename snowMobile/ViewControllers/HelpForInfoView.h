@@ -26,6 +26,9 @@
 @property (readwrite) BOOL isRoutesListSheet; 
 @property (readwrite) BOOL isCarriersList; 
 @property (readwrite) BOOL isCarriersListFromDestinationsList; 
+@property (readwrite) BOOL isSocialNetworkAuthViewTwitter; 
+@property (readwrite) BOOL isSocialNetworkAuthViewLinkedin; 
+@property (readwrite) BOOL isSocialNetworkAuthViewLinkedinMessage; 
 
 
 @property (retain) NSNumber *currentTipNumber;

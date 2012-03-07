@@ -12,6 +12,7 @@
 #import "LinkedinUpdateDataController.h"
 #import "mobileAppDelegate.h"
 #import "DestinationsListPushList.h"
+#import "HelpForInfoView.h"
 
 @implementation SocialNetworksAuthViewController
 @synthesize groupsToMessage;
@@ -67,6 +68,9 @@
     
     // Release any cached data, images, etc that aren't in use.
 }
+
+#pragma mark - own View methods
+
 -(void) performWebKitTremorIsMovingLeft:(BOOL)isMovingLeft isFirstStep:(BOOL)isFirstStep;
 {
     if (isFirstStep) { 
@@ -105,6 +109,10 @@
 
                      }];
     
+}
+-(void)helpShowingDidFinish;
+{
+    self.navigationController.view.alpha = 1.0;
 }
 
 
@@ -157,7 +165,20 @@
     groupListObjectsForCollectAllGroups = [[NSMutableArray alloc] init];
     // Do any additional setup after loading the view from its nib.
 }
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
 
+    HelpForInfoView *helpView = [[HelpForInfoView alloc] init];
+    helpView.isSocialNetworkAuthViewTwitter = YES;
+    if ([helpView isHelpNecessary]) {
+        self.view.alpha = 0.8;
+        helpView.delegate = self;
+        [self.view addSubview:helpView.view];
+        helpView.view.alpha = 1.0;
+    } else [helpView release];
+
+}
 -(void)viewDidAppear:(BOOL)animated
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
@@ -324,6 +345,7 @@
             reloadButton.hidden = NO;
             [linkedinController startAuthorization:self];
         }
+
     }
 
 }
@@ -342,6 +364,13 @@
         groupsList.rowHeight = 200;
 
         [groupsList reloadData];
+        HelpForInfoView *helpView = [[HelpForInfoView alloc] init];
+        helpView.isSocialNetworkAuthViewLinkedinMessage = YES;
+        if ([helpView isHelpNecessary]) {
+            self.view.alpha = 0.8;
+            helpView.delegate = self;
+            [self.view addSubview:helpView.view];
+        } else [helpView release];
 
     }
 }
@@ -482,6 +511,14 @@
                          } 
                          completion:^(BOOL finished){
                              groupsBack.hidden = NO;
+                             HelpForInfoView *helpView = [[HelpForInfoView alloc] init];
+                             helpView.isSocialNetworkAuthViewLinkedin = YES;
+                             if ([helpView isHelpNecessary]) {
+                                 //NSLog(@"HELP DONE");
+                                 self.view.alpha = 0.8;
+                                 helpView.delegate = self;
+                                 [self.view addSubview:helpView.view];
+                             } else [helpView release];
 
                          }];
         
