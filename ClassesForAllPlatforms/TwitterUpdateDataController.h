@@ -14,6 +14,7 @@
 @interface TwitterUpdateDataController : NSObject {
 @private
     OAToken *accessToken;
+    OAConsumer *consumer;
 //    NSString *twitterPIN;
     id delegate;
     BOOL isAuthorized;
@@ -24,6 +25,8 @@
 @property (nonatomic,retain) id delegate;
 @property (readwrite) BOOL isAuthorized;
 
+//@property (nonatomic,retain) OAToken *accessToken;
+//@property (nonatomic,retain) OAConsumer *consumer;
 - (IBAction)startAuthorization:(id)sender;
 - (IBAction)finishAuthorization:(id)sender; 
 - (void) postTwitterMessageWithText:(NSString *)text;

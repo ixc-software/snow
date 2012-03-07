@@ -421,9 +421,9 @@
 		FA4D902F14F8AD9F00C90E2E /* InfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D901914F8AD9F00C90E2E /* InfoViewController.xib */; };
 		FA4D903014F8AD9F00C90E2E /* InfoViewControllerIpad.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D901A14F8AD9F00C90E2E /* InfoViewControllerIpad.xib */; };
 		FA4D903114F8AD9F00C90E2E /* RegistrationsAvaitingApproveDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D901C14F8AD9F00C90E2E /* RegistrationsAvaitingApproveDetailViewController.m */; };
-		FA4D903214F8AD9F00C90E2E /* TwitterAuthorizationController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D901E14F8AD9F00C90E2E /* TwitterAuthorizationController.m */; };
-		FA4D903314F8AD9F00C90E2E /* TwitterAuthorizationController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D901F14F8AD9F00C90E2E /* TwitterAuthorizationController.xib */; };
-		FA4D903414F8AD9F00C90E2E /* TwitterAuthorizationControlleriPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D902014F8AD9F00C90E2E /* TwitterAuthorizationControlleriPad.xib */; };
+		FA4D903214F8AD9F00C90E2E /* SocialNetworksAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D901E14F8AD9F00C90E2E /* SocialNetworksAuthViewController.m */; };
+		FA4D903314F8AD9F00C90E2E /* SocialNetworksAuthViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D901F14F8AD9F00C90E2E /* SocialNetworksAuthViewController.xib */; };
+		FA4D903414F8AD9F00C90E2E /* SocialNetworksAuthViewControlleriPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4D902014F8AD9F00C90E2E /* SocialNetworksAuthViewControlleriPad.xib */; };
 		FA4D903714F8ADD700C90E2E /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D903614F8ADD700C90E2E /* Reachability.m */; };
 		FA4D903914F8AF9A00C90E2E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FA4D903814F8AF9A00C90E2E /* libxml2.dylib */; };
 		FA4D903C14F8B96700C90E2E /* AddRoutesCodesCellTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D903B14F8B96700C90E2E /* AddRoutesCodesCellTextView.m */; };
@@ -450,6 +450,8 @@
 		FA4D906314F8BE4D00C90E2E /* Whirlpool_Sita.png in Resources */ = {isa = PBXBuildFile; fileRef = FA4D906114F8BE4C00C90E2E /* Whirlpool_Sita.png */; };
 		FA4D907414F8C39F00C90E2E /* ServerController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D907314F8C39F00C90E2E /* ServerController.m */; };
 		FA4D907714F8C4BD00C90E2E /* DDKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4D907614F8C4BD00C90E2E /* DDKeychain.m */; };
+		FA4E4D7215065CAF009F12F7 /* linkedin_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = FA4E4D7115065CAF009F12F7 /* linkedin_logo.png */; };
+		FA4E4D7B150661A0009F12F7 /* LinkedinGroupsTableViewCelliPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA4E4D7A150661A0009F12F7 /* LinkedinGroupsTableViewCelliPad.xib */; };
 		FA714AF8150621FE0025123B /* NSMutableURLRequest+Parameters.m in Sources */ = {isa = PBXBuildFile; fileRef = FA714AEC150621FE0025123B /* NSMutableURLRequest+Parameters.m */; };
 		FA714AF9150621FE0025123B /* NSMutableURLRequest+Parameters.m in Sources */ = {isa = PBXBuildFile; fileRef = FA714AEC150621FE0025123B /* NSMutableURLRequest+Parameters.m */; };
 		FA714AFA150621FE0025123B /* NSMutableURLRequest+Parameters.m in Sources */ = {isa = PBXBuildFile; fileRef = FA714AEC150621FE0025123B /* NSMutableURLRequest+Parameters.m */; };
@@ -544,6 +546,11 @@
 		FAA9E9E014F8E52A00AB64D6 /* stop-32.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA9E9DE14F8E52A00AB64D6 /* stop-32.png */; };
 		FAA9E9E214F9222500AB64D6 /* WWAN5.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA9E9E114F9222500AB64D6 /* WWAN5.png */; };
 		FAA9E9E414F9227400AB64D6 /* Airport.png in Resources */ = {isa = PBXBuildFile; fileRef = FAA9E9E314F9227400AB64D6 /* Airport.png */; };
+		FAC22D34150662CF0010D3C0 /* LinkedinGroupsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FAC22D32150662CF0010D3C0 /* LinkedinGroupsTableViewCell.m */; };
+		FAC22D35150662CF0010D3C0 /* LinkedinGroupsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAC22D33150662CF0010D3C0 /* LinkedinGroupsTableViewCell.xib */; };
+		FAC22D47150673840010D3C0 /* enabledPoint.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC22D45150673840010D3C0 /* enabledPoint.png */; };
+		FAC22D48150673840010D3C0 /* disabledPoint.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC22D46150673840010D3C0 /* disabledPoint.png */; };
+		FAC22D4C15067A550010D3C0 /* socialNetworks.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC22D4B15067A550010D3C0 /* socialNetworks.png */; };
 		FACE80B814F8D63F00AD9981 /* snowServer.icns in Resources */ = {isa = PBXBuildFile; fileRef = FACE80B714F8D63F00AD9981 /* snowServer.icns */; };
 		FACE80BA14F8D65700AD9981 /* snowClientEnterprise.icns in Resources */ = {isa = PBXBuildFile; fileRef = FACE80B914F8D65700AD9981 /* snowClientEnterprise.icns */; };
 		FACE80BC14F8D66B00AD9981 /* snowClientAppstore.icns in Resources */ = {isa = PBXBuildFile; fileRef = FACE80BB14F8D66B00AD9981 /* snowClientAppstore.icns */; };
@@ -921,10 +928,10 @@
 		FA4D901A14F8AD9F00C90E2E /* InfoViewControllerIpad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InfoViewControllerIpad.xib; sourceTree = "<group>"; };
 		FA4D901B14F8AD9F00C90E2E /* RegistrationsAvaitingApproveDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegistrationsAvaitingApproveDetailViewController.h; sourceTree = "<group>"; };
 		FA4D901C14F8AD9F00C90E2E /* RegistrationsAvaitingApproveDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegistrationsAvaitingApproveDetailViewController.m; sourceTree = "<group>"; };
-		FA4D901D14F8AD9F00C90E2E /* TwitterAuthorizationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterAuthorizationController.h; sourceTree = "<group>"; };
-		FA4D901E14F8AD9F00C90E2E /* TwitterAuthorizationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterAuthorizationController.m; sourceTree = "<group>"; };
-		FA4D901F14F8AD9F00C90E2E /* TwitterAuthorizationController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TwitterAuthorizationController.xib; sourceTree = "<group>"; };
-		FA4D902014F8AD9F00C90E2E /* TwitterAuthorizationControlleriPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TwitterAuthorizationControlleriPad.xib; sourceTree = "<group>"; };
+		FA4D901D14F8AD9F00C90E2E /* SocialNetworksAuthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocialNetworksAuthViewController.h; sourceTree = "<group>"; };
+		FA4D901E14F8AD9F00C90E2E /* SocialNetworksAuthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocialNetworksAuthViewController.m; sourceTree = "<group>"; };
+		FA4D901F14F8AD9F00C90E2E /* SocialNetworksAuthViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SocialNetworksAuthViewController.xib; sourceTree = "<group>"; };
+		FA4D902014F8AD9F00C90E2E /* SocialNetworksAuthViewControlleriPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SocialNetworksAuthViewControlleriPad.xib; sourceTree = "<group>"; };
 		FA4D903514F8ADD700C90E2E /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		FA4D903614F8ADD700C90E2E /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		FA4D903814F8AF9A00C90E2E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/usr/lib/libxml2.dylib; sourceTree = DEVELOPER_DIR; };
@@ -951,6 +958,8 @@
 		FA4D907314F8C39F00C90E2E /* ServerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerController.m; sourceTree = "<group>"; };
 		FA4D907514F8C4BD00C90E2E /* DDKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDKeychain.h; sourceTree = "<group>"; };
 		FA4D907614F8C4BD00C90E2E /* DDKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDKeychain.m; sourceTree = "<group>"; };
+		FA4E4D7115065CAF009F12F7 /* linkedin_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = linkedin_logo.png; sourceTree = "<group>"; };
+		FA4E4D7A150661A0009F12F7 /* LinkedinGroupsTableViewCelliPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LinkedinGroupsTableViewCelliPad.xib; sourceTree = "<group>"; };
 		FA714AEB150621FE0025123B /* NSMutableURLRequest+Parameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableURLRequest+Parameters.h"; sourceTree = "<group>"; };
 		FA714AEC150621FE0025123B /* NSMutableURLRequest+Parameters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableURLRequest+Parameters.m"; sourceTree = "<group>"; };
 		FA714AED150621FE0025123B /* NSString+URLEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLEncoding.h"; sourceTree = "<group>"; };
@@ -1012,6 +1021,12 @@
 		FAA9E9DE14F8E52A00AB64D6 /* stop-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "stop-32.png"; sourceTree = "<group>"; };
 		FAA9E9E114F9222500AB64D6 /* WWAN5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WWAN5.png; sourceTree = "<group>"; };
 		FAA9E9E314F9227400AB64D6 /* Airport.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Airport.png; sourceTree = "<group>"; };
+		FAC22D31150662CF0010D3C0 /* LinkedinGroupsTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkedinGroupsTableViewCell.h; sourceTree = "<group>"; };
+		FAC22D32150662CF0010D3C0 /* LinkedinGroupsTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LinkedinGroupsTableViewCell.m; sourceTree = "<group>"; };
+		FAC22D33150662CF0010D3C0 /* LinkedinGroupsTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LinkedinGroupsTableViewCell.xib; sourceTree = "<group>"; };
+		FAC22D45150673840010D3C0 /* enabledPoint.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = enabledPoint.png; sourceTree = "<group>"; };
+		FAC22D46150673840010D3C0 /* disabledPoint.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = disabledPoint.png; sourceTree = "<group>"; };
+		FAC22D4B15067A550010D3C0 /* socialNetworks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = socialNetworks.png; sourceTree = "<group>"; };
 		FACE80B714F8D63F00AD9981 /* snowServer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = snowServer.icns; path = MediaLibrary/snowServer.icns; sourceTree = "<group>"; };
 		FACE80B914F8D65700AD9981 /* snowClientEnterprise.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = snowClientEnterprise.icns; path = MediaLibrary/snowClientEnterprise.icns; sourceTree = "<group>"; };
 		FACE80BB14F8D66B00AD9981 /* snowClientAppstore.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = snowClientAppstore.icns; path = MediaLibrary/snowClientAppstore.icns; sourceTree = "<group>"; };
@@ -1481,6 +1496,10 @@
 				FA4D8FCC14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.h */,
 				FA4D8FCD14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.m */,
 				FA4D8FCE14F8AA7100C90E2E /* RegistrationsDetailTableViewCell.xib */,
+				FAC22D31150662CF0010D3C0 /* LinkedinGroupsTableViewCell.h */,
+				FAC22D32150662CF0010D3C0 /* LinkedinGroupsTableViewCell.m */,
+				FAC22D33150662CF0010D3C0 /* LinkedinGroupsTableViewCell.xib */,
+				FA4E4D7A150661A0009F12F7 /* LinkedinGroupsTableViewCelliPad.xib */,
 			);
 			path = CustomTableCells;
 			sourceTree = "<group>";
@@ -1541,10 +1560,10 @@
 				FA4D901A14F8AD9F00C90E2E /* InfoViewControllerIpad.xib */,
 				FA4D901B14F8AD9F00C90E2E /* RegistrationsAvaitingApproveDetailViewController.h */,
 				FA4D901C14F8AD9F00C90E2E /* RegistrationsAvaitingApproveDetailViewController.m */,
-				FA4D901D14F8AD9F00C90E2E /* TwitterAuthorizationController.h */,
-				FA4D901E14F8AD9F00C90E2E /* TwitterAuthorizationController.m */,
-				FA4D901F14F8AD9F00C90E2E /* TwitterAuthorizationController.xib */,
-				FA4D902014F8AD9F00C90E2E /* TwitterAuthorizationControlleriPad.xib */,
+				FA4D901D14F8AD9F00C90E2E /* SocialNetworksAuthViewController.h */,
+				FA4D901E14F8AD9F00C90E2E /* SocialNetworksAuthViewController.m */,
+				FA4D901F14F8AD9F00C90E2E /* SocialNetworksAuthViewController.xib */,
+				FA4D902014F8AD9F00C90E2E /* SocialNetworksAuthViewControlleriPad.xib */,
 				FA4D8FFF14F8ACC800C90E2E /* CompanyAndUserConfiguration.h */,
 				FA4D900014F8ACC800C90E2E /* CompanyAndUserConfiguration.m */,
 				FA4D900114F8ACC800C90E2E /* CompanyAndUserConfiguration.xib */,
@@ -1564,6 +1583,10 @@
 		FA4D905A14F8BD3000C90E2E /* MediaLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				FAC22D4B15067A550010D3C0 /* socialNetworks.png */,
+				FAC22D45150673840010D3C0 /* enabledPoint.png */,
+				FAC22D46150673840010D3C0 /* disabledPoint.png */,
+				FA4E4D7115065CAF009F12F7 /* linkedin_logo.png */,
 				FAFB878614FE262200E22734 /* delete-icon-md.png */,
 				FAFB878314FE25A900E22734 /* 1277121629_ko.png */,
 				FA24986C14FCEFF70018C1E6 /* progressBackground.png */,
@@ -2097,8 +2120,8 @@
 				FA4D902D14F8AD9F00C90E2E /* FirstPageControllerIPad.xib in Resources */,
 				FA4D902F14F8AD9F00C90E2E /* InfoViewController.xib in Resources */,
 				FA4D903014F8AD9F00C90E2E /* InfoViewControllerIpad.xib in Resources */,
-				FA4D903314F8AD9F00C90E2E /* TwitterAuthorizationController.xib in Resources */,
-				FA4D903414F8AD9F00C90E2E /* TwitterAuthorizationControlleriPad.xib in Resources */,
+				FA4D903314F8AD9F00C90E2E /* SocialNetworksAuthViewController.xib in Resources */,
+				FA4D903414F8AD9F00C90E2E /* SocialNetworksAuthViewControlleriPad.xib in Resources */,
 				FA4D905C14F8BD9000C90E2E /* snow_114x114.png in Resources */,
 				FA4D905F14F8BE1D00C90E2E /* fingerBack.png in Resources */,
 				FA4D906214F8BE4D00C90E2E /* finger.png in Resources */,
@@ -2123,6 +2146,12 @@
 				FA798C4914FD07350004E564 /* AddRoutesCell.xib in Resources */,
 				FAFB878414FE25A900E22734 /* 1277121629_ko.png in Resources */,
 				FAFB878714FE262200E22734 /* delete-icon-md.png in Resources */,
+				FA4E4D7215065CAF009F12F7 /* linkedin_logo.png in Resources */,
+				FA4E4D7B150661A0009F12F7 /* LinkedinGroupsTableViewCelliPad.xib in Resources */,
+				FAC22D35150662CF0010D3C0 /* LinkedinGroupsTableViewCell.xib in Resources */,
+				FAC22D47150673840010D3C0 /* enabledPoint.png in Resources */,
+				FAC22D48150673840010D3C0 /* disabledPoint.png in Resources */,
+				FAC22D4C15067A550010D3C0 /* socialNetworks.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2577,7 +2606,7 @@
 				FA4D902B14F8AD9F00C90E2E /* FirstPageController.m in Sources */,
 				FA4D902E14F8AD9F00C90E2E /* InfoViewController.m in Sources */,
 				FA4D903114F8AD9F00C90E2E /* RegistrationsAvaitingApproveDetailViewController.m in Sources */,
-				FA4D903214F8AD9F00C90E2E /* TwitterAuthorizationController.m in Sources */,
+				FA4D903214F8AD9F00C90E2E /* SocialNetworksAuthViewController.m in Sources */,
 				FA4D903714F8ADD700C90E2E /* Reachability.m in Sources */,
 				FA4D903C14F8B96700C90E2E /* AddRoutesCodesCellTextView.m in Sources */,
 				FA4D905714F8BC9A00C90E2E /* NormalizedCodesTransformer.m in Sources */,
@@ -2606,6 +2635,7 @@
 				FA714B4F150622340025123B /* OAServiceTicket.m in Sources */,
 				FA714B53150622340025123B /* OAToken.m in Sources */,
 				FA714B57150622340025123B /* OATokenManager.m in Sources */,
+				FAC22D34150662CF0010D3C0 /* LinkedinGroupsTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

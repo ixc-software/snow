@@ -8,12 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
-#import "TwitterAuthorizationController.h"
+#import "SocialNetworksAuthViewController.h"
 #import "CompanyAndUserConfiguration.h"
 //#import "PDColoredProgressView.h"
 //#import "SA_OAuthTwitterController.h"
 
-@class TwitterAuthorizationController;
+@class SocialNetworksAuthViewController;
 
 @interface InfoViewController : UIViewController <MFMailComposeViewControllerDelegate>
 //,SA_OAuthTwitterControllerDelegate>
@@ -41,7 +41,7 @@
 
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, retain) UINavigationController *companyInfoAndConfig;
-@property (nonatomic, retain) TwitterAuthorizationController *tw;
+@property (nonatomic, retain) SocialNetworksAuthViewController *tw;
 
 -(IBAction)updateTwitter:(id)sender; 
 

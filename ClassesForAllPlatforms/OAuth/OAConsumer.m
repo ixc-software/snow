@@ -31,7 +31,7 @@
 
 #pragma mark init
 
-- (id)initWithKey:(const NSString *)aKey secret:(const NSString *)aSecret realm:(const NSString *)aRealm {
+- (id)initWithKey:(NSString *)aKey secret:(NSString *)aSecret realm:(NSString *)aRealm {
 	[super init];
 	self.key = [aKey retain];
 	self.secret = [aSecret retain];

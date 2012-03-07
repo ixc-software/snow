@@ -15,7 +15,7 @@
 
 #import "ClientController.h"
 //#import "SA_OAuthTwitterEngine.h"
-#import "TwitterAuthorizationController.h"
+#import "SocialNetworksAuthViewController.h"
 #import "HelpForInfoView.h"
 //#import "DarkView.h"
 /* Define the constants below with the Twitter 
@@ -56,14 +56,14 @@
     
     //self.title = @"Info";
     imgButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    UIImage *twitter = [UIImage imageNamed:@"twitter_icons_36x36.png"];
+    UIImage *twitter = [UIImage imageNamed:@"socialNetworks.png"];
 
 //    UIImageView *imageView = [[UIImageView alloc] initWithImage:twitter];
     
     [imgButton setImage:twitter forState:UIControlStateNormal];
 //    [imageView release];
     imgButton.opaque = NO;
-    imgButton.alpha = 0.5;
+    //imgButton.alpha = 0.5;
     
     imgButton.frame = CGRectMake(0.0, 0.0, twitter.size.width , twitter.size.height);
     [imgButton addTarget:self action:@selector(authTwitterAccount) forControlEvents:UIControlEventTouchUpInside];
@@ -388,20 +388,20 @@
     if (!tw) {
         NSRange range = [[[UIDevice currentDevice] model] rangeOfString:@"iPad"];
         NSString *finalNib = nil;
-        if(range.location==NSNotFound) finalNib = @"TwitterAuthorizationController";
-        else finalNib = @"TwitterAuthorizationControlleriPad";
-        tw = [[TwitterAuthorizationController alloc] initWithNibName:finalNib bundle:[NSBundle mainBundle]];
+        if(range.location==NSNotFound) finalNib = @"SocialNetworksAuthViewController";
+        else finalNib = @"SocialNetworksAuthViewControlleriPad";
+        tw = [[SocialNetworksAuthViewController alloc] initWithNibName:finalNib bundle:[NSBundle mainBundle]];
         tw.infoViewController = self;
         //UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:tw];
         //tw.infoController = nav;
         //[nav release];
 
     }
-    if (![tw isAuthorized]) {
+//    if (![tw isTwitterAuthorized]) {
         //[self dismissModalViewControllerAnimated:YES];
         tw.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
         [self presentModalViewController:tw animated:YES];
-    }
+//    }
 }
 
 -(IBAction)updateTwitter:(id)sender

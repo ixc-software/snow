@@ -587,7 +587,7 @@
     
     InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
     
-    if ([infoObject.tw isAuthorized]) [infoObject.tw sendUpdate:text];
+    if ([infoObject.tw isTwitterAuthorized]) [infoObject.tw sendTwitterUpdate:text];
     
     
 }
@@ -600,7 +600,7 @@
     InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
     NSLog(@"updateTwitterMessagesForDestinations");
 
-    if ([infoObject.tw isAuthorized]) {
+    if ([infoObject.tw isTwitterAuthorized]) {
         NSLog(@"postTwitterMessageForDestinations:%@",destinations);
 
         [infoObject.tw.twitterController postTwitterMessageForDestinations:destinations];

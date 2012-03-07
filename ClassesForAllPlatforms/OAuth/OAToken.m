@@ -138,7 +138,7 @@
 			}
 		}
     }
-    
+    //NSLog(@"%@ %@ %@ %@",aKey,aSecret,aSession,aVerifier);
     return [self initWithKey:aKey 
                       secret:aSecret 
                      session:aSession 

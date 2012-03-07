@@ -8,18 +8,29 @@
 
 #import <Foundation/Foundation.h>
 #import "OAuthConsumer.h"
+#include <libxml/xmlreader.h>
 
 @interface LinkedinUpdateDataController : NSObject { 
 @private
     OAToken *accessToken;
+    OAConsumer *consumer;
+
     id delegate;
     BOOL isAuthorized;
     NSString *linkedinPIN;
+    
+    NSData *rdXML;
+	xmlTextReaderPtr rdReader;
+    id rdResults;
+    NSError* rdError;
 
+    BOOL isLatesGroupsGetAttempt;
 }
 
 @property (nonatomic,assign) id delegate;
-@property (nonatomic,assign) OAToken *accessToken;
+@property (nonatomic,retain) OAToken *accessToken;
+@property (nonatomic,retain) OAConsumer *consumer;
+
 
 @property (readwrite) BOOL isAuthorized;
 @property (nonatomic,retain) NSString *linkedinPIN;
@@ -28,5 +39,6 @@
 - (IBAction)finishAuthorization:(id)sender withUrl:(NSURL *)url; 
 
 - (id)initWithDelegate:(id)delegateForInit;
+-(void) getGroupsStart:(NSUInteger)startPosition count:(NSUInteger)count;
 
 @end

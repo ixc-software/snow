@@ -86,7 +86,7 @@
 
 // The application got a new authorized
 // request token and is notifying us
-- (void)authorizedToken:(const NSString *)aKey
+- (void)authorizedToken:(NSString *)aKey
 {
 	if (reqToken && [aKey isEqualToString:reqToken.key]) {
 		[self exchangeToken];
@@ -252,9 +252,9 @@
 		[reqToken storeInUserDefaultsWithServiceProviderName:oauthBase prefix:[@"request:" stringByAppendingString:realm]];
 		/* Save the token in case we exit and start again
 		 before the token is authorized (useful for iPhone) */
-		NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@authorize?oauth_token=%@&oauth_callback=%@",
-										   oauthBase, token.key, callback]];
-		[[UIApplication sharedApplication] openURL:url];
+		//NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@authorize?oauth_token=%@&oauth_callback=%@",
+		//								   oauthBase, token.key, callback]];
+		//[[UIApplication sharedApplication] openURL:url];
 
 	}
 	[call release];
