@@ -42,11 +42,11 @@
                     withReceiverIP:(NSString *)receiverIP;
 
 -(NSString *)putObjectForUserEmail:(NSString *)userEmail 
-                     withPassword:(NSString *)password
-                withNecessaryData:(NSArray *)necessaryData
-                   mustBeApproved:(BOOL)isMustBeApproved   
-                     withSenderIP:(NSString *)senderIP
-                   withReceiverIP:(NSString *)receiverIP;
+                      withPassword:(NSString *)password
+                 withNecessaryData:(NSString *)necessaryData
+                    mustBeApproved:(BOOL)isMustBeApproved   
+                      withSenderIP:(NSString *)senderIP
+                    withReceiverIP:(NSString *)receiverIP;
 
 -(NSString *)removeObjectWithGUID:(NSString *)objectGUID 
                   forObjectEntity:(NSString *)objectEntity 

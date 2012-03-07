@@ -1586,7 +1586,7 @@ static char encodingTable[64] = {
     
 -(NSString *)putObjectForUserEmail:(NSString *)userEmail 
                      withPassword:(NSString *)password
-                withNecessaryData:(NSArray *)necessaryData
+                withNecessaryData:(NSString *)necessaryDataString
                    mustBeApproved:(BOOL)isMustBeApproved   
                      withSenderIP:(NSString *)senderIP
                    withReceiverIP:(NSString *)receiverIP;
@@ -1600,6 +1600,13 @@ static char encodingTable[64] = {
 //        NSString *jsonStringForReturn = [finalJSONResult JSONStringWithOptions:JKSerializeOptionNone serializeUnsupportedClassesUsingBlock:nil error:NULL];
 //        return jsonStringForReturn;
 //    }
+    NSData *allObjectsData = [self dataWithBase64EncodedString:necessaryDataString];
+    NSString *errorSerialization;
+    NSPropertyListFormat format;  
+    NSArray *necessaryData = [NSPropertyListSerialization propertyListFromData:allObjectsData mutabilityOption:0 format:&format errorDescription:&errorSerialization];
+    if (errorSerialization) NSLog(@"SERVER CONTRORLER: putObjectForUserEmail error:%@ format:%@",errorSerialization,[NSNumber numberWithUnsignedInteger:format]);
+
+    
     __block NSMutableArray *result = [NSMutableArray array];
 //    [necessaryData enumerateObjectsUsingBlock:^(NSArray *necessaryDataOnce, NSUInteger idx, BOOL *stop) {
     for (NSArray *necessaryDataOnce in necessaryData) {

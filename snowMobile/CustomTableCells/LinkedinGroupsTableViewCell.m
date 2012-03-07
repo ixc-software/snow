@@ -14,6 +14,7 @@
 @synthesize signature;
 @synthesize routesList;
 @synthesize postingTitle;
+@synthesize includeRates;
 @synthesize groupSwitch;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -40,6 +41,7 @@
     [signature release];
     [routesList release];
     [postingTitle release];
+    [includeRates release];
     [super dealloc];
 }
 

@@ -27,9 +27,10 @@
        withMinutes:(NSNumber *)minutes 
            withACD:(NSNumber *)acd 
       withObjectID:(NSManagedObjectID *)objectIDexternal 
-           section:(NSInteger)sectionNumber 
-          isOpened:(NSNumber *)isOpenedForHeader 
-          delegate:(id <DestinationPushListHeaderViewDelegate>)aDelegate ;
+           section:(NSNumber *)sectionNumber 
+          isOpened:(NSNumber *)isOpenedForHeader
+          delegate:(id <DestinationPushListHeaderViewDelegate>)aDelegate
+isDestinationsPushList:(BOOL)isDestinationsPushListEntity;
 {
     self = [super initWithFrame:frame];
     
@@ -94,33 +95,35 @@
         rate.shadowOffset = CGSizeMake(2, 2);
         [self addSubview:rate];
         
-        titleLabelFrame.origin.x -= 40.0;
-        titleLabelFrame.origin.y -= 20.0;
-
-        lastUsedACD = [[UILabel alloc] initWithFrame:titleLabelFrame];
-        [formatter setMaximumFractionDigits:1];
-        [formatter setNumberStyle:NSNumberFormatterNoStyle];
-        lastUsedACD.text = [NSString stringWithFormat:@"ACD:%@",[formatter stringFromNumber:acd]];
-        lastUsedACD.font = [UIFont systemFontOfSize:13.0];
-        lastUsedACD.textColor = [UIColor whiteColor];
-        lastUsedACD.backgroundColor = [UIColor clearColor];
-        lastUsedACD.shadowColor = [UIColor blackColor];
-        lastUsedACD.shadowOffset = CGSizeMake(2, 2);
-        [self addSubview:lastUsedACD];
-
-        titleLabelFrame.origin.x += 60.0;
-//        titleLabelFrame.origin.y -= 10.0;
-
-        lastUsedMinutesLenght = [[UILabel alloc] initWithFrame:titleLabelFrame];
-        [formatter setMaximumFractionDigits:0];
-        [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-        lastUsedMinutesLenght.text = [NSString stringWithFormat:@"Minutes:%@",[formatter stringFromNumber:minutes]];        
-        lastUsedMinutesLenght.font = [UIFont systemFontOfSize:13.0];
-        lastUsedMinutesLenght.textColor = [UIColor whiteColor];
-        lastUsedMinutesLenght.backgroundColor = [UIColor clearColor];
-        lastUsedMinutesLenght.shadowColor = [UIColor blackColor];
-        lastUsedMinutesLenght.shadowOffset = CGSizeMake(2, 2);
-        [self addSubview:lastUsedMinutesLenght];
+        if (!isDestinationsPushListEntity) {
+            titleLabelFrame.origin.x -= 40.0;
+            titleLabelFrame.origin.y -= 20.0;
+            
+            lastUsedACD = [[UILabel alloc] initWithFrame:titleLabelFrame];
+            [formatter setMaximumFractionDigits:1];
+            [formatter setNumberStyle:NSNumberFormatterNoStyle];
+            lastUsedACD.text = [NSString stringWithFormat:@"ACD:%@",[formatter stringFromNumber:acd]];
+            lastUsedACD.font = [UIFont systemFontOfSize:13.0];
+            lastUsedACD.textColor = [UIColor whiteColor];
+            lastUsedACD.backgroundColor = [UIColor clearColor];
+            lastUsedACD.shadowColor = [UIColor blackColor];
+            lastUsedACD.shadowOffset = CGSizeMake(2, 2);
+            [self addSubview:lastUsedACD];
+            
+            titleLabelFrame.origin.x += 60.0;
+            //        titleLabelFrame.origin.y -= 10.0;
+            
+            lastUsedMinutesLenght = [[UILabel alloc] initWithFrame:titleLabelFrame];
+            [formatter setMaximumFractionDigits:0];
+            [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+            lastUsedMinutesLenght.text = [NSString stringWithFormat:@"Minutes:%@",[formatter stringFromNumber:minutes]];        
+            lastUsedMinutesLenght.font = [UIFont systemFontOfSize:13.0];
+            lastUsedMinutesLenght.textColor = [UIColor whiteColor];
+            lastUsedMinutesLenght.backgroundColor = [UIColor clearColor];
+            lastUsedMinutesLenght.shadowColor = [UIColor blackColor];
+            lastUsedMinutesLenght.shadowOffset = CGSizeMake(2, 2);
+            [self addSubview:lastUsedMinutesLenght];
+        }
         [formatter release], formatter = nil;
 
         
@@ -183,7 +186,7 @@
 
         self.isOpened = !self.isOpened;
         self.disclosureButton.selected = isOpened;
-        //NSLog(@">>> todge to state :%@",[NSNumber numberWithBool:isOpened]);
+        NSLog(@">>> todge to state :%@ section:%@",[NSNumber numberWithBool:isOpened],section);
     //});
     
     if (isOpened) {

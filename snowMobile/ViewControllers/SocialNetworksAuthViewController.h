@@ -52,6 +52,7 @@
 @property (retain, nonatomic) IBOutlet UIView *groupsView;
 @property (nonatomic, retain) LinkedinGroupsTableViewCell *cellInfo;
 @property (nonatomic,retain) NSMutableArray *groupListObjects;
+@property (nonatomic,retain) NSMutableArray *groupListObjectsForCollectAllGroups;
 @property (retain, nonatomic) IBOutlet UIImageView *twitterEnabled;
 @property (retain, nonatomic) IBOutlet UIImageView *linkedinEnabled;
 @property (retain, nonatomic) IBOutlet UIImageView *facebookEnabled;

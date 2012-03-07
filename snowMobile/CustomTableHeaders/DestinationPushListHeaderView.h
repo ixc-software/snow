@@ -29,7 +29,7 @@
 //@property (nonatomic, assign) DestinationsListPushList *object;
 @property (nonatomic, retain) NSManagedObjectID *objectID;
 
-@property (nonatomic, assign) NSInteger section;
+@property (nonatomic, retain) NSNumber *section;
 @property (nonatomic, assign) BOOL isOpened;
 @property (nonatomic, assign) id <DestinationPushListHeaderViewDelegate> delegate;
 
@@ -40,9 +40,10 @@
        withMinutes:(NSNumber *)minutes 
            withACD:(NSNumber *)acd 
       withObjectID:(NSManagedObjectID *)objectIDexternal 
-           section:(NSInteger)sectionNumber 
-          isOpened:(NSNumber *)isOpenedForHeader 
-          delegate:(id <DestinationPushListHeaderViewDelegate>)aDelegate ;
+           section:(NSNumber *)sectionNumber 
+          isOpened:(NSNumber *)isOpenedForHeader
+          delegate:(id <DestinationPushListHeaderViewDelegate>)aDelegate
+isDestinationsPushList:(BOOL)isDestinationsPushListEntity;
 
 -(void)toggleOpenWithUserAction:(BOOL)userAction;
                    //withLocation:(CGPoint)location;
@@ -54,9 +55,9 @@
 
 @optional
 -(void)sectionHeaderView:(DestinationPushListHeaderView*)sectionHeaderView 
-           sectionOpened:(NSInteger)sectionOpened;
+           sectionOpened:(NSNumber *)sectionOpened;
 -(void)sectionHeaderView:(DestinationPushListHeaderView*)sectionHeaderView 
-           sectionClosed:(NSInteger)sectionClosed;
+           sectionClosed:(NSNumber *)sectionClosed;
 -(void) sectionOpenTodgeStatus;
 
 -(UITableView *)currentTableView;

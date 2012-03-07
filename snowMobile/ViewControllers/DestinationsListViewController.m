@@ -41,6 +41,7 @@
 @property (nonatomic, assign) NSInteger closedSectionIndex;
 @property (nonatomic, assign) CGFloat initialPinchHeight;
 @property (readwrite) BOOL routeAddIsActive;
+@property (readwrite) BOOL keyboardIsShowing;
 //@property (readwrite) BOOL isRoutesWeBuyListUpdated;
 //@property (readwrite) BOOL isRoutesForSaleListUpdated;
 //@property (readwrite) BOOL isRoutesPushlistListUpdated;
@@ -127,7 +128,7 @@
 @synthesize changedDestinationsIDs;
 @synthesize configureRoutesButton;
 
-
+@synthesize keyboardIsShowing;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -168,6 +169,45 @@
 }
 
 #pragma mark - Own view updates
+-(void) keyboardWillShow:(NSNotification *)note
+{
+    CGRect keyboardBounds;
+    [[note.userInfo valueForKey:UIKeyboardFrameBeginUserInfoKey] getValue: &keyboardBounds];
+    CGFloat keyboardHeight = keyboardBounds.size.height;
+    if (keyboardIsShowing == NO)
+    {
+        keyboardIsShowing = YES;
+        CGRect frame = self.tableView.frame;
+        frame.origin.y -= keyboardHeight - HEADER_HEIGHT;
+        
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationBeginsFromCurrentState:YES];
+        [UIView setAnimationDuration:0.3f];
+        self.tableView.frame = frame;
+        [UIView commitAnimations];
+    }
+}
+
+-(void) keyboardWillHide:(NSNotification *)note
+{
+    CGRect keyboardBounds;
+    [[note.userInfo valueForKey:UIKeyboardFrameBeginUserInfoKey] getValue: &keyboardBounds];
+    CGFloat keyboardHeight = keyboardBounds.size.height;
+    if (keyboardIsShowing == YES)
+    {
+        keyboardIsShowing = NO;
+        CGRect frame = self.tableView.frame;
+        frame.origin.y += keyboardHeight - HEADER_HEIGHT;
+        
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationBeginsFromCurrentState:YES];
+        [UIView setAnimationDuration:0.3f];
+        self.tableView.frame = frame;
+        [UIView commitAnimations];
+    }
+
+}
+
 -(NSArray *) indexForSectionIndexTitlesForEntity:(NSString *)entityName;
 {
     __block NSString *entityNameBlock = entityName;
@@ -392,7 +432,7 @@
                 operationProgress.hidden = NO;
                 cancelAllUpdatesButton.hidden = NO;
                 routesChangeFilterWithOrWithoutTraffic.hidden = YES;
-                NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
+               // NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
 
 //                progressView.hidden = NO;
 //                progressView.alpha = 1.0;
@@ -483,6 +523,7 @@
                 
                 cancelAllUpdates = NO;
                 cancelAllUpdatesButton.enabled = YES;
+                [self.tableView reloadData];
             });
             
             
@@ -562,7 +603,6 @@
     self.tableView.backgroundColor = [UIColor colorWithRed:0.34 green:0.34 blue:0.57 alpha:1.0];
     self.tableView.separatorColor = [UIColor colorWithRed:0.42 green:0.43 blue:0.64 alpha:1.0];
     self.tableView.sectionHeaderHeight = HEADER_HEIGHT;
-    
     rowHeight_ = DEFAULT_ROW_HEIGHT;
     openSectionIndex_ = NSNotFound;
     
@@ -576,6 +616,9 @@
     self.bar.autocorrectionType = UITextAutocorrectionTypeNo;
     self.bar.autocapitalizationType = UITextAutocapitalizationTypeNone;
     self.bar.placeholder = @"country,specific";
+    self.tableView.tableHeaderView = self.bar;
+    [self.bar sizeToFit];
+
     [self updateNavigatorViews];
     if (!self.previousSearchString) previousSearchString = [[NSMutableString alloc] initWithString:@""];
     fetchedResultsController = [self newFetchedResultsControllerWithSearch:previousSearchString];
@@ -633,7 +676,7 @@
     if (isControllerStartedFromOutsideTabbar) { 
         
 
-        NSLog(@"ok it's here");
+        //NSLog(@"ok it's here");
         helpView.isCarriersListFromDestinationsList = YES; 
     } else selectedCarrierID = nil;
 
@@ -651,7 +694,16 @@
     
     [self updateDestinations];
     
-    
+    [[NSNotificationCenter defaultCenter]
+     addObserver:self
+     selector:@selector(keyboardWillShow:)
+     name:UIKeyboardWillShowNotification
+     object:nil];
+    [[NSNotificationCenter defaultCenter]
+     addObserver:self
+     selector:@selector(keyboardWillHide:)
+     name:UIKeyboardWillHideNotification
+     object:nil];
     
 }
 
@@ -717,11 +769,11 @@
             
             NSUInteger lastIndex = [sections lastIndex];
             [sectionOpenedAfterViewDissapier addIndex:lastIndex];
-            [self.tableView beginUpdates];
+//            [self.tableView beginUpdates];
             [sections removeAllIndexes];
             
-            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:lastIndex + 1]] withRowAnimation:UITableViewRowAnimationTop];
-            [self.tableView endUpdates];
+//            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:lastIndex + 1]] withRowAnimation:UITableViewRowAnimationTop];
+//            [self.tableView endUpdates];
         });
     }
     
@@ -730,29 +782,29 @@
     //if (isRoutesListUpdated) [userController startRegistrationForAllObjectsInFutureArrayForTableView:self.tableView sender:self clientStuffGUID:[[userController authorization] valueForKey:@"GUID"]];
     //NSLog(@"changedDestinationsIDs:%@",changedDestinationsIDs);
     
-    if ([changedDestinationsIDs count] > 0) {
-        NSMutableArray *destinationsForPost = [[NSMutableArray alloc] init];
-        
-        //NSLog(@"changedDestinationsIDs:%@",changedDestinationsIDs);
-        NSMutableString *twitterText = [[NSMutableString alloc] initWithCapacity:0];
-        [twitterText appendString:@"I'm currently interesting for those destination (s):"];
-        NSNumberFormatter *rateFormatter = [[NSNumberFormatter alloc] init];
-        [rateFormatter setMaximumFractionDigits:5];
-        
-        [changedDestinationsIDs enumerateObjectsWithOptions:NSSortStable usingBlock:^(NSManagedObjectID *updatedObjectID, NSUInteger idx, BOOL *stop) {
-            DestinationsListPushList *object = (DestinationsListPushList *)[self.managedObjectContext objectWithID:updatedObjectID];
-            NSDictionary *dictionaryForPost = [NSDictionary dictionaryWithObjectsAndKeys:object.country,@"country",object.specific,@"specific",object.rate,@"rate",object.minutesLenght,@"minutesLenght", nil];
-            [destinationsForPost addObject:dictionaryForPost];
-            
-            //[twitterText appendFormat:@"%@/%@ with price %@ volume %@",object.country,object.specific,[rateFormatter stringFromNumber:object.rate],object.minutesLenght];
-            
-        }];
-        mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
-        [delegate updateTwitterMessagesForDestinations:destinationsForPost];
-        //[delegate updateTwitterMessagesForText:twitterText];
-        [twitterText release];
-        [rateFormatter release];
-    }
+//    if ([changedDestinationsIDs count] > 0) {
+//        NSMutableArray *destinationsForPost = [[NSMutableArray alloc] init];
+//        
+//        //NSLog(@"changedDestinationsIDs:%@",changedDestinationsIDs);
+//        NSMutableString *twitterText = [[NSMutableString alloc] initWithCapacity:0];
+//        [twitterText appendString:@"I'm currently interesting for those destination (s):"];
+//        NSNumberFormatter *rateFormatter = [[NSNumberFormatter alloc] init];
+//        [rateFormatter setMaximumFractionDigits:5];
+//        
+//        [changedDestinationsIDs enumerateObjectsWithOptions:NSSortStable usingBlock:^(NSManagedObjectID *updatedObjectID, NSUInteger idx, BOOL *stop) {
+//            DestinationsListPushList *object = (DestinationsListPushList *)[self.managedObjectContext objectWithID:updatedObjectID];
+//            NSDictionary *dictionaryForPost = [NSDictionary dictionaryWithObjectsAndKeys:object.country,@"country",object.specific,@"specific",object.rate,@"rate",object.minutesLenght,@"minutesLenght", nil];
+//            [destinationsForPost addObject:dictionaryForPost];
+//            
+//            //[twitterText appendFormat:@"%@/%@ with price %@ volume %@",object.country,object.specific,[rateFormatter stringFromNumber:object.rate],object.minutesLenght];
+//            
+//        }];
+//        mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
+//        [delegate updateTwitterMessagesForDestinations:destinationsForPost];
+//        //[delegate updateTwitterMessagesForText:twitterText];
+//        [twitterText release];
+//        [rateFormatter release];
+//    }
     //    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
     //        //NSLog(@"isRoutesListUpdated = YES;");
     //        
@@ -769,6 +821,8 @@
     //self.searchWasActive = [self.searchDisplayController isActive];
     //self.savedSearchTerm = [self.searchDisplayController.searchBar text];
     //self.fetchResultControllerSearch = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
 #pragma mark - Table view data source
@@ -777,21 +831,21 @@
 {
     //NSArray *fetchedObjects = [[self fetchedResultsControllerForTableView:tableView] fetchedObjects];
     //NSLog(@"%@",[fetchedObjects lastObject]);
-    
-    NSInteger count = [[[self fetchedResultsController] fetchedObjects] count] + 1;
+    NSInteger count = [[[self fetchedResultsController] fetchedObjects] count];
+    //NSInteger count = [[[self fetchedResultsController] fetchedObjects] count] + 1;
     NSLog(@"Number of sections:%@",[NSNumber numberWithUnsignedInteger:count]);
     return count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (section == 0) return 0;
+    //if (section == 0) return 0;
     
     //DestinationsListPushList *object = [[[self fetchedResultsController] fetchedObjects] objectAtIndex:section - 1 ];
     //    DestinationPushListHeaderView *sectionView = (DestinationPushListHeaderView *)[self.tableView viewWithTag:section + 100];
     //   
     NSInteger finalResult = 0;
-    if ([sections lastIndex] + 1 == section) finalResult = 1;
+    if ([sections lastIndex] == section) finalResult = 1;
     //    @synchronized (self) {
     
     //        if (openedIndexPath && openedIndexPath.section == section) finalResult = 1;
@@ -804,8 +858,9 @@
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
 {
-    if (section == 0) return 45;
-    else return HEADER_HEIGHT;
+//    if (section == 0) return 45;
+//    else 
+        return HEADER_HEIGHT;
     
 }
 
@@ -814,7 +869,7 @@
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setPositiveFormat:@"#####0.#"];
     NSFetchedResultsController *fetchController = [self fetchedResultsController];
-    NSIndexPath *new = [NSIndexPath indexPathForRow:indexPath.section - 1 inSection:0];    
+    NSIndexPath *new = [NSIndexPath indexPathForRow:indexPath.section inSection:0];    
     NSManagedObject *universalObject = [fetchController objectAtIndexPath:new];
     
     if ([universalObject.entity.name isEqualToString:@"DestinationsListPushList"]) {
@@ -945,25 +1000,25 @@
 
 -(UIView*)tableView:(UITableView*)tableView viewForHeaderInSection:(NSInteger)section {
     BOOL isOpened = NO;
-    if (section == 0) return self.bar;
+    //if (section == 0) return self.bar;
     
     if ([sections containsIndex:section]) isOpened = YES;
     
     NSFetchedResultsController *fetchController = [self fetchedResultsController];
-    NSIndexPath *new = [NSIndexPath indexPathForRow:section - 1 inSection:0];
-    NSManagedObject *managedObject = [fetchController objectAtIndexPath:new];
-    
+    //NSIndexPath *new = [NSIndexPath indexPathForRow:section - 1 inSection:0];
+    NSManagedObject *managedObject = [fetchController objectAtIndexPath:[NSIndexPath indexPathForRow:section inSection:0]];
+    NSNumber *sectionNumber = [NSNumber numberWithInteger:section];
     //    if (openedIndexPath && openedIndexPath.section == section) isOpened = YES;
     
-    //if (section < 6) NSLog(@"sections view for country/specific:%@/%@ for section:%@",managedObject.country,managedObject.specific,[NSNumber numberWithInteger:section]); 
+    if (section < 6) NSLog(@"sections view for country/specific:%@/%@ for section:%@",[managedObject valueForKey:@"country"],[managedObject valueForKey:@"specific"],[NSNumber numberWithInteger:section]); 
     DestinationPushListHeaderView *sectionView = nil;
     
     if ([[managedObject class] isSubclassOfClass:[DestinationsListPushList class]]) {
-        sectionView = [[[DestinationPushListHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:nil withACD:nil withObjectID:managedObject.objectID section:section - 1 isOpened:[NSNumber numberWithBool:isOpened] delegate:self] autorelease];
+        sectionView = [[[DestinationPushListHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:nil withACD:nil withObjectID:managedObject.objectID section:sectionNumber isOpened:[NSNumber numberWithBool:isOpened] delegate:self isDestinationsPushList:YES] autorelease];
     }
     
     if ([[managedObject class] isSubclassOfClass:[DestinationsListForSale class]] || [[managedObject class] isSubclassOfClass:[DestinationsListWeBuy class]]) {
-        sectionView = [[[DestinationPushListHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:[managedObject valueForKey:@"lastUsedMinutesLenght"] withACD:[managedObject valueForKey:@"lastUsedACD"] withObjectID:managedObject.objectID section:section - 1 isOpened:[NSNumber numberWithBool:isOpened] delegate:self] autorelease];
+        sectionView = [[[DestinationPushListHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:[managedObject valueForKey:@"lastUsedMinutesLenght"] withACD:[managedObject valueForKey:@"lastUsedACD"] withObjectID:managedObject.objectID section:sectionNumber isOpened:[NSNumber numberWithBool:isOpened] delegate:self isDestinationsPushList:NO] autorelease];
     }
 
     
@@ -1012,17 +1067,17 @@
 
 #pragma mark Section header delegate
 -(void)sectionHeaderView:(DestinationPushListHeaderView *)sectionHeaderView 
-           sectionOpened:(NSInteger)sectionOpened 
+           sectionOpened:(NSNumber *)sectionOpened 
 {
     sectionHeaderView.isOpened = YES;
     [self.tableView beginUpdates];
     //if (![sections containsIndex:sectionOpened]) [sections addIndex:sectionOpened];
     if ([sections count] > 0) {
-        NSUInteger previousOpenedSection = [sections lastIndex] + 1;
+        NSUInteger previousOpenedSection = [sections lastIndex];
         NSUInteger animationDelete = 0;
         NSUInteger animationInsert = 0;
         
-        if (previousOpenedSection > sectionOpened){  
+        if (previousOpenedSection > sectionOpened.unsignedIntegerValue){  
             animationDelete = UITableViewRowAnimationBottom;
             animationInsert = UITableViewRowAnimationTop;
         } else { 
@@ -1030,16 +1085,20 @@
             animationInsert = UITableViewRowAnimationBottom;
             
         }
+        NSLog(@"DESTINATIONS LIST: PREVIOUS OPENED:%@",[NSIndexPath indexPathForRow:0 inSection:previousOpenedSection]);
+
         [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:previousOpenedSection]] withRowAnimation:animationDelete];
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:previousOpenedSection] withRowAnimation:UITableViewRowAnimationNone];
         [sections removeAllIndexes];
-        [sections addIndex:sectionOpened];
-        
-        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionOpened + 1]] withRowAnimation:animationInsert];
-        
+        [sections addIndex:sectionOpened.unsignedIntegerValue];
+        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]] withRowAnimation:animationInsert];
+        NSLog(@"DESTINATIONS LIST: OPENED:%@",[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]);
+
     } else {
-        [sections addIndex:sectionOpened];
-        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionOpened + 1]] withRowAnimation:UITableViewRowAnimationTop];
+        [sections addIndex:sectionOpened.unsignedIntegerValue];
+        NSLog(@"DESTINATIONS LIST: OPENED:%@",[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]);
+
+        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]] withRowAnimation:UITableViewRowAnimationTop];
     }
     [self.tableView endUpdates];
     
@@ -1047,15 +1106,15 @@
 }
 
 -(void)sectionHeaderView:(DestinationPushListHeaderView*)sectionHeaderView 
-           sectionClosed:(NSInteger)sectionClosed  
+           sectionClosed:(NSNumber *)sectionClosed  
 {
     sectionHeaderView.isOpened = NO;
     
-    if ([sections containsIndex:sectionClosed]) {
+    if ([sections containsIndex:sectionClosed.unsignedIntegerValue]) {
         
         [self.tableView beginUpdates];
-        [sections removeIndex:sectionClosed];
-        [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionClosed + 1]] withRowAnimation:UITableViewRowAnimationTop];
+        [sections removeIndex:sectionClosed.unsignedIntegerValue];
+        [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionClosed.unsignedIntegerValue]] withRowAnimation:UITableViewRowAnimationTop];
         [self.tableView endUpdates];
     } else NSLog(@"DESTINATIONS LIST: warning, section for close already closed  do nothing");
     //    DestinationsListPushList *destination = (DestinationsListPushList *)[self.managedObjectContext objectWithID:sectionHeaderView.objectID];
@@ -1100,7 +1159,7 @@
         
 		self.pinchedIndexPath = newPinchedIndexPath;
         
-        DestinationsListPushList *object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:newPinchedIndexPath.section - 1 inSection:0]];
+        DestinationsListPushList *object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:newPinchedIndexPath.section inSection:0]];
         //if (!searchIsActive)  object = [[self fetchedResultsControllerForTableView:currentTableView] objectAtIndexPath:[NSIndexPath indexPathForRow:newPinchedIndexPath.section inSection:0]];
         //if (searchIsActive) object = [[self fetchedResultsControllerForTableView:currentTableView] objectAtIndexPath:[NSIndexPath indexPathForRow:newPinchedIndexPath.section inSection:0]];
         
@@ -1126,7 +1185,7 @@
         
 		CGFloat newHeight = round(MAX(self.initialPinchHeight * scale, DEFAULT_ROW_HEIGHT));
         
-        DestinationsListPushList *object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.section - 1 inSection:0]];
+        DestinationsListPushList *object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.section inSection:0]];
         
         //if (!searchIsActive) object = [[self fetchedResultsControllerForTableView:self.tableView] objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.section inSection:0]];
         //if (searchIsActive)  object = [[self fetchedResultsControllerForTableView:self.searchDisplayController.searchResultsTableView] objectAtIndexPath:[NSIndexPath indexPathForRow:indexPath.section inSection:0]];
@@ -1197,17 +1256,34 @@
             
             NSMutableArray *menuItems = [NSMutableArray arrayWithCapacity:0];
             
+            NSString *twitTitle = nil;
+            NSString *linkedinTitle = nil;
+            if ([delegate isLinkedinAuthoruzed]) linkedinTitle = @"Linkedin it";
+            else linkedinTitle = @"Linedin (restricted)";
+            if ([delegate isTwitterAuthorized]) twitTitle = @"Twit it";
+            else twitTitle = @"Twit (restricted)";
+
+
+            EmailMenuItemFor *menuItemTwit = [[EmailMenuItemFor alloc] initWithTitle:twitTitle action:@selector(sendToTwitter:)];
+            menuItemTwit.indexPath = pressedIndexPath;
+            [menuItems addObject:menuItemTwit];
+
+            EmailMenuItemFor *menuItemLinkedin = [[EmailMenuItemFor alloc] initWithTitle:linkedinTitle action:@selector(sendToLinkedin:)];
+            menuItemLinkedin.indexPath = pressedIndexPath;
+            [menuItems addObject:menuItemLinkedin];
+
+            EmailMenuItemFor *menuItemRemove = [[EmailMenuItemFor alloc] initWithTitle:@"Remove" action:@selector(removeDestinationButtonPressed:)];
+            menuItemRemove.indexPath = pressedIndexPath;
+            [menuItems addObject:menuItemRemove];
+
+            
             if (isCarriersHaveRegisteredJustOne && !isControllerStartedFromOutsideTabbar) {
                 EmailMenuItemFor *menuItem = [[EmailMenuItemFor alloc] initWithTitle:@"Change carrier" action:@selector(changeCarrierButtonPressed:)];
                 menuItem.indexPath = pressedIndexPath;
                 [menuItems addObject:menuItem];
                 [menuItem release];
             }
-            
-            EmailMenuItemFor *menuItemRemove = [[EmailMenuItemFor alloc] initWithTitle:@"Remove" action:@selector(removeDestinationButtonPressed:)];
-            menuItemRemove.indexPath = pressedIndexPath;
-            [menuItems addObject:menuItemRemove];
-            
+
             
             menuController.menuItems = [NSArray arrayWithArray:menuItems];
             [menuItemRemove release];
@@ -1222,7 +1298,7 @@
 
 -(void)changeCarrierButtonPressed:(UIMenuController*)menuController {
     
-    EmailMenuItemFor *menuItem = [[[UIMenuController sharedMenuController] menuItems] objectAtIndex:0];
+    EmailMenuItemFor *menuItem = [[[UIMenuController sharedMenuController] menuItems] objectAtIndex:3];
     if (menuItem.indexPath) {
         [self resignFirstResponder];
         //        if (!currentStuff) {
@@ -1252,13 +1328,13 @@
 }
 
 -(void)removeDestinationButtonPressed:(UIMenuController*)menuController {
-    EmailMenuItemFor *menuItem = nil;
-    if (isControllerStartedFromOutsideTabbar) menuItem = [[[UIMenuController sharedMenuController] menuItems] objectAtIndex:0];
-    else menuItem = [[[UIMenuController sharedMenuController] menuItems] objectAtIndex:1];
+    EmailMenuItemFor *menuItem = [[[UIMenuController sharedMenuController] menuItems] objectAtIndex:2];
+    //if (isControllerStartedFromOutsideTabbar) menuItem = [[[UIMenuController sharedMenuController] menuItems] objectAtIndex:0];
+    //else menuItem = [[[UIMenuController sharedMenuController] menuItems] objectAtIndex:1];
     
     if (menuItem.indexPath) {
         [self resignFirstResponder];
-        DestinationsListPushList *object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:menuItem.indexPath.section - 1 inSection:0]];
+        DestinationsListPushList *object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:menuItem.indexPath.section inSection:0]];
         [changedDestinationsIDs removeObject:[object objectID]];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
             mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
@@ -1271,22 +1347,22 @@
     }
 }
 
--(void)removeLocalDestinationButtonPressed:(UIMenuController*)menuController 
-{
-    EmailMenuItemFor *menuItem = [[[UIMenuController sharedMenuController] menuItems] objectAtIndex:2];
-    if (menuItem.indexPath) {
-        [self resignFirstResponder];
-        
-        DestinationsListPushList * object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:menuItem.indexPath.section - 1 inSection:0]];
-        //        if ([changedDestinationsIDs containsObject:[object objectID]]) [changedDestinationsIDs removeObject:[object objectID]];
-        [self.managedObjectContext deleteObject:object];
-        [self safeSave];
-        [self.tableView reloadData];
-        
-        
-    }
-    
-}
+//-(void)removeLocalDestinationButtonPressed:(UIMenuController*)menuController 
+//{
+//    EmailMenuItemFor *menuItem = [[[UIMenuController sharedMenuController] menuItems] objectAtIndex:2];
+//    if (menuItem.indexPath) {
+//        [self resignFirstResponder];
+//        
+//        DestinationsListPushList * object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:menuItem.indexPath.section - 1 inSection:0]];
+//        //        if ([changedDestinationsIDs containsObject:[object objectID]]) [changedDestinationsIDs removeObject:[object objectID]];
+//        [self.managedObjectContext deleteObject:object];
+//        [self safeSave];
+//        [self.tableView reloadData];
+//        
+//        
+//    }
+//    
+//}
 
 
 -(void)registerDestinationButtonPressed:(UIMenuController*)menuController {
@@ -1322,7 +1398,7 @@
     //NSLog(@"selected carrier:%@",selectedCarrierName);
     
     NSIndexPath *selectedDestination = self.selectedForChangeCarrier;
-    DestinationsListPushList *object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:selectedDestination.section - 1 inSection:0]];
+    DestinationsListPushList *object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:selectedDestination.section inSection:0]];
     ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:self.managedObjectContext];
     CompanyStuff *admin = [clientController authorization];
     [clientController release];
@@ -1582,39 +1658,43 @@
             
         case NSFetchedResultsChangeInsert:
             NSLog(@"DESTINATIONS LIST:INSERT to indexpath :%@",newIndexPath);
-            [tableView insertSections:[NSIndexSet indexSetWithIndex:newIndexPath.row + 1] withRowAnimation:UITableViewRowAnimationTop];
+            [tableView insertSections:[NSIndexSet indexSetWithIndex:newIndexPath.row] withRowAnimation:UITableViewRowAnimationTop];
             break;
             
         case NSFetchedResultsChangeDelete:
-            //NSLog(@"DESTINATIONS LIST: DELETE : %@",indexPath);
+            NSLog(@"DESTINATIONS LIST: DELETE : %@",indexPath);
             [sections removeIndex:indexPath.row];
-            [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.row + 1] withRowAnimation:UITableViewRowAnimationFade];
+            [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.row] withRowAnimation:UITableViewRowAnimationFade];
             
             //[tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(indexPath.row, tableView.numberOfSections - indexPath.row)] withRowAnimation:UITableViewRowAnimationFade];
             //self.sectionsNecessaryToReload = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(indexPath.row, tableView.numberOfSections - indexPath.row)];
             break;
             
         case NSFetchedResultsChangeUpdate:
-            //NSLog(@"DESTINATIONS LIST:UPDATE :%@",indexPath);
-            [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.row + 1] withRowAnimation:UITableViewRowAnimationFade];
+            NSLog(@"DESTINATIONS LIST:UPDATE :%@",indexPath);
+            [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.row] withRowAnimation:UITableViewRowAnimationFade];
             //[self configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
             break;
             
         case NSFetchedResultsChangeMove:
         {
-            //NSLog(@"DESTINATIONS LIST:CHANGE MOVE from :%@ to %@ ",indexPath,newIndexPath);
+            NSLog(@"DESTINATIONS LIST:CHANGE MOVE from :%@ to %@ ",indexPath,newIndexPath);
             BOOL isOpened = [sections containsIndex:indexPath.row];
             if (isOpened) {
                 //NSLog(@"DESTINATIONS LIST:OPENED CHANGE MOVE from :%@ to %@ ",indexPath,newIndexPath);
                 
                 [sections removeIndex:indexPath.row];
-                [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.row + 1] withRowAnimation:UITableViewRowAnimationTop];
+                [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.row] withRowAnimation:UITableViewRowAnimationTop];
                 [sections addIndex:newIndexPath.row];
-                [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:newIndexPath.row + 1]] withRowAnimation:UITableViewRowAnimationTop];
-                [tableView insertSections:[NSIndexSet indexSetWithIndex:newIndexPath.row + 1] withRowAnimation:UITableViewRowAnimationTop];
+                [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:newIndexPath.row]] withRowAnimation:UITableViewRowAnimationTop];
+                [tableView insertSections:[NSIndexSet indexSetWithIndex:newIndexPath.row] withRowAnimation:UITableViewRowAnimationTop];
+                [tableView reloadSections:[NSIndexSet indexSetWithIndex:newIndexPath.row] withRowAnimation:UITableViewRowAnimationFade];
+
             } else { 
-                [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.row + 1] withRowAnimation:UITableViewRowAnimationFade];
-                [tableView insertSections:[NSIndexSet indexSetWithIndex:newIndexPath.row + 1] withRowAnimation:UITableViewRowAnimationFade]; 
+                [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.row] withRowAnimation:UITableViewRowAnimationFade];
+                [tableView insertSections:[NSIndexSet indexSetWithIndex:newIndexPath.row] withRowAnimation:UITableViewRowAnimationFade]; 
+                [tableView reloadSections:[NSIndexSet indexSetWithIndex:newIndexPath.row] withRowAnimation:UITableViewRowAnimationFade];
+
             }
             break;
         }
@@ -1638,82 +1718,88 @@
 {
     //NSArray *keys = [[[object.carrier.companyStuff entity] attributesByName] allKeys];
     //NSDictionary *dict = [object.carrier.companyStuff dictionaryWithValuesForKeys:keys];
-    
-    //NSString *statusForDestination = [userController localStatusForObjectsWithRootGuid:object.GUID];
-    mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
-    
-    ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:delegate.managedObjectContext];
-    
-    NSString *statusForCarrier = [clientController localStatusForObjectsWithRootGuid:object.carrier.GUID];
-    NSString *statusForCompany = [clientController localStatusForObjectsWithRootGuid:object.carrier.companyStuff.currentCompany.GUID];
-    NSString *statusForStuff = [clientController localStatusForObjectsWithRootGuid:object.carrier.companyStuff.GUID];
-    
-   NSLog(@"changedDestinationsIDs addObject start:%@ - %@ - %@",statusForStuff,statusForCompany,statusForCarrier);
-  
-    if ( !statusForCompany || !statusForStuff || !statusForCarrier) { 
-        //NSLog(@"changedDestinationsIDs addObject processing");
-
-        // while company not registered, we are start for registration
-        if (!statusForCarrier) {
-            
-            NSSet *currentCarriers = object.carrier.companyStuff.carrier;
-            mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
-            
-            ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
-            
-            [currentCarriers enumerateObjectsWithOptions:NSSortStable usingBlock:^(Carrier *carrier, BOOL *stop) {
-                NSString *statusForCarrier = [clientController localStatusForObjectsWithRootGuid:carrier.GUID];
-                if (statusForCarrier && ![statusForCarrier isEqualToString:@"unregistered"]);
-                else { 
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-                        
-                        //                        ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:self.managedObjectContext];
-                        [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[carrier objectID]] mustBeApproved:NO];
-                        [clientController release];
-                    });
-                    
-                    //                    [userController makeRemoteChangesForObjectWithID:[carrier objectID] withAdminID:[carrier.companyStuff objectID]];
-                    
-                    //                    [userController addInRegistrationForAllObjectsInFutureArrayObject:carrier 
-                    //                                                                          forOperation:userController.controller.objectOperationNew];
-                    //                    isRoutesListUpdated = YES;
-                }
-            }];
-            [clientController release];
-
-            return;
-            
-        }
-//        NSLog(@"u can't update routes while not register carriers");
-        
-        //        if (!statusForDestination)    { 
-        //            //[userController addInRegistrationForAllObjectsInFutureArrayObject:object 
-        //             //                                                                               forOperation:userController.controller.objectOperationNew];
-        //            //isRoutesListUpdated = YES;
-        //
-        //        }
-        
-        return;
-    }
- 
-    [clientController release];
-
-    //    [userController addInRegistrationForAllObjectsInFutureArrayObject:object 
-    //                                                         forOperation:userController.controller.objectOperationUpdate];
-    //    isRoutesListUpdated = YES;
-    NSLog(@"changedDestinationsIDs addObject:%@",[object objectID]);
-
-    [self.changedDestinationsIDs addObject:[object objectID]];
-//    if (!isRoutesListUpdated) [self safeSave];
-    [self safeSave];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+        
+        //NSString *statusForDestination = [userController localStatusForObjectsWithRootGuid:object.GUID];
         mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
         
         ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:delegate.managedObjectContext];
-        [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[object objectID]] mustBeApproved:NO];
+        
+        NSString *statusForCarrier = [clientController localStatusForObjectsWithRootGuid:object.carrier.GUID];
+        NSString *statusForCompany = [clientController localStatusForObjectsWithRootGuid:object.carrier.companyStuff.currentCompany.GUID];
+        NSString *statusForStuff = [clientController localStatusForObjectsWithRootGuid:object.carrier.companyStuff.GUID];
         [clientController release];
+        NSLog(@"changedDestinationsIDs addObject start:%@ - %@ - %@",statusForStuff,statusForCompany,statusForCarrier);
+        
+        if ( !statusForCompany || !statusForStuff || !statusForCarrier) { 
+            //NSLog(@"changedDestinationsIDs addObject processing");
+            
+            // while company not registered, we are start for registration
+            if (!statusForCarrier) {
+                ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
+                [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[object.carrier objectID]] mustBeApproved:NO];
+                [clientController release];
+
+                //NSSet *currentCarriers = object.carrier.companyStuff.carrier;
+                //mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+                
+                //__block ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
+                
+//                [currentCarriers enumerateObjectsWithOptions:NSSortStable usingBlock:^(Carrier *carrier, BOOL *stop) {
+//                    mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+//                    
+//                    ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:delegate.managedObjectContext];
+//
+//                    NSString *statusForCarrier = [clientController localStatusForObjectsWithRootGuid:carrier.GUID];
+//                    if (statusForCarrier && ![statusForCarrier isEqualToString:@"unregistered"]) [clientController release];
+//                    else { 
+//                        
+//                        //                        ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:self.managedObjectContext];
+//                        [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[carrier objectID]] mustBeApproved:NO];
+//                        [clientController release];
+//                        
+//                        //                    [userController makeRemoteChangesForObjectWithID:[carrier objectID] withAdminID:[carrier.companyStuff objectID]];
+//                        
+//                        //                    [userController addInRegistrationForAllObjectsInFutureArrayObject:carrier 
+//                        //                                                                          forOperation:userController.controller.objectOperationNew];
+//                        //                    isRoutesListUpdated = YES;
+//                    }
+//                }];
+
+                
+                return;
+                
+            }
+            //        NSLog(@"u can't update routes while not register carriers");
+            
+            //        if (!statusForDestination)    { 
+            //            //[userController addInRegistrationForAllObjectsInFutureArrayObject:object 
+            //             //                                                                               forOperation:userController.controller.objectOperationNew];
+            //            //isRoutesListUpdated = YES;
+            //
+            //        }
+
+            return;
+        }
+        
+        
+        //    [userController addInRegistrationForAllObjectsInFutureArrayObject:object 
+        //                                                         forOperation:userController.controller.objectOperationUpdate];
+        //    isRoutesListUpdated = YES;
+        NSLog(@"changedDestinationsIDs addObject:%@",[object objectID]);
+        
+        [self.changedDestinationsIDs addObject:[object objectID]];
+        //    if (!isRoutesListUpdated) [self safeSave];
+        [self safeSave];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+            mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+            
+            ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:delegate.managedObjectContext];
+            [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[object objectID]] mustBeApproved:NO];
+            [clientController release];
+        });
+        
     });
-    
     //    [userController makeRemoteChangesForObjectWithID:[object objectID] withAdminID:[object.carrier.companyStuff objectID]];
     
     //    NSIndexPath *indexPath = [[self fetchedResultsController] indexPathForObject:object];
@@ -1732,14 +1818,14 @@
 //    dispatch_async(dispatch_get_main_queue(), ^(void) { 
         NSUInteger selectedSegmentIndex = [sender selectedSegmentIndex];
 //
-//        if (selectedSegmentIndex == 0 && self.isRoutesForSaleListUpdated) progressView.hidden = NO; 
-//        else progressView.hidden = YES;
-//        if (selectedSegmentIndex == 1 && self.isRoutesWeBuyListUpdated) progressView.hidden = NO;
-//        else progressView.hidden = YES;
+        if (selectedSegmentIndex == 0 && self.isRoutesForSaleListUpdated) progressView.hidden = NO; 
+        else progressView.hidden = YES;
+        if (selectedSegmentIndex == 1 && self.isRoutesWeBuyListUpdated) progressView.hidden = NO;
+        else progressView.hidden = YES;
     if (selectedSegmentIndex == 2) [self.navigationController setToolbarHidden:YES animated:YES];
     else [self.navigationController setToolbarHidden:NO animated:YES];
-//        else progressView.hidden = YES;
-//    });
+
+    //    });
     
     [fetchedResultsController release],fetchedResultsController = nil;
     fetchedResultsController = [self newFetchedResultsControllerWithSearch:nil];
@@ -1766,24 +1852,114 @@
     [self.tableView reloadData];
 
 }
+- (IBAction)sendToTwitter:(id)sender {
+    EmailMenuItemFor *menuItem = [[[UIMenuController sharedMenuController] menuItems] objectAtIndex:0];
+    if (menuItem.indexPath) {
+        DestinationsListPushList *object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:menuItem.indexPath.section inSection:0]];
+        mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
+        if ([delegate isTwitterAuthorized]) [delegate updateTwitterMessagesForDestinations:[NSArray arrayWithObject:object.objectID]]; 
+
+    }
+
+}
+
+- (IBAction)sendToLinkedin:(id)sender {
+    EmailMenuItemFor *menuItem = [[[UIMenuController sharedMenuController] menuItems] objectAtIndex:1];
+    if (menuItem.indexPath) {
+        DestinationsListPushList *object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:menuItem.indexPath.section inSection:0]];
+        mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
+        if ([delegate isLinkedinAuthoruzed]) [delegate postToLinkedinGroupsForDestinations:[NSArray arrayWithObject:object.objectID]];
+
+    }
+
+    
+}
+
 - (IBAction)sendAllToTwitter:(id)sender {
+    
+    mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+    
+    ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
+    CompanyStuff *admin = [clientController authorization];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"DestinationsListPushList"
+                                              inManagedObjectContext:self.managedObjectContext];
+    [fetchRequest setEntity:entity];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"carrier.companyStuff.GUID == %@",admin.GUID];
+    [fetchRequest setPredicate:predicate];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"country"
+                                                                   ascending:YES];
+    NSSortDescriptor *sortDescriptorSpecific = [[NSSortDescriptor alloc] initWithKey:@"specific"
+                                                                           ascending:YES];
+    
+    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor,sortDescriptorSpecific, nil];
+    [fetchRequest setSortDescriptors:sortDescriptors];
+    [fetchRequest setResultType:NSManagedObjectIDResultType];
+    NSError *error = nil;
+    NSArray *fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    if (fetchedObjects == nil) {
+        // Handle the error
+    }
+    if ([delegate isTwitterAuthorized]) [delegate updateTwitterMessagesForDestinations:fetchedObjects];
+
+    [fetchRequest release];
+    [sortDescriptor release];
+    [sortDescriptorSpecific release];
+    [sortDescriptors release];
+
     
 }
 
 - (IBAction)sendAllToLinkedin:(id)sender {
+    mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
     
+    ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
+    CompanyStuff *admin = [clientController authorization];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"DestinationsListPushList"
+                                              inManagedObjectContext:self.managedObjectContext];
+    [fetchRequest setEntity:entity];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"carrier.companyStuff.GUID == %@",admin.GUID];
+    [fetchRequest setPredicate:predicate];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"country"
+                                                                   ascending:YES];
+    NSSortDescriptor *sortDescriptorSpecific = [[NSSortDescriptor alloc] initWithKey:@"specific"
+                                                                   ascending:YES];
+
+    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor,sortDescriptorSpecific, nil];
+    [fetchRequest setSortDescriptors:sortDescriptors];
+    [fetchRequest setResultType:NSManagedObjectIDResultType];
+    NSError *error = nil;
+    NSArray *fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    if (fetchedObjects == nil) {
+        // Handle the error
+    }
+    if ([delegate isLinkedinAuthoruzed]) [delegate postToLinkedinGroupsForDestinations:fetchedObjects];
+    
+    [fetchRequest release];
+    [sortDescriptor release];
+    [sortDescriptorSpecific release];
+    [sortDescriptors release];
+
     
 }
 - (IBAction)didClickConfig:(id)sender {
     [self becomeFirstResponder];
+    NSString *twitTitle = nil;
+    NSString *linkedinTitle = nil;
+    mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+    if ([delegate isLinkedinAuthoruzed]) linkedinTitle = @"Linkedin all";
+    else linkedinTitle = @"Linedin (restricted)";
+    if ([delegate isTwitterAuthorized]) twitTitle = @"Twit all";
+    else twitTitle = @"Twit (restricted)";
 
     UIMenuController *menuController = [UIMenuController sharedMenuController];
     NSMutableArray *menuItems = [NSMutableArray array];
     UIMenuItem *menuItemAdd = [[UIMenuItem alloc] initWithTitle:@"Add" action:@selector(addNewRoute:)];
     [menuItems addObject:menuItemAdd];
-    UIMenuItem *menuItemTwitter = [[UIMenuItem alloc] initWithTitle:@"Twit all" action:@selector(sendAllToTwitter:)];
+    UIMenuItem *menuItemTwitter = [[UIMenuItem alloc] initWithTitle:twitTitle action:@selector(sendAllToTwitter:)];
     [menuItems addObject:menuItemTwitter];
-    UIMenuItem *menuItemLinkedin = [[UIMenuItem alloc] initWithTitle:@"Linkedin all" action:@selector(sendAllToLinkedin:)];
+    UIMenuItem *menuItemLinkedin = [[UIMenuItem alloc] initWithTitle:linkedinTitle action:@selector(sendAllToLinkedin:)];
     [menuItems addObject:menuItemLinkedin];
     
     
@@ -1792,7 +1968,6 @@
 //    menuController.arrowDirection = UIMenuControllerArrowLeft;
     [menuController setTargetRect:CGRectMake(320, 50, 0, 0) inView:self.navigationController.view];
     [menuController setMenuVisible:YES animated:YES];
-
 }
 #pragma mark - external reload methods
 

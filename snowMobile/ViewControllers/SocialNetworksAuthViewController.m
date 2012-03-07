@@ -28,7 +28,7 @@
 @synthesize groupsBack;
 @synthesize groupsView;
 
-@synthesize authorize,back,pin,webView,infoController,twitterController,activity,isAuthorizationProcessed,countTremorAnimation,infoViewController,linkedinController,cellInfo,groupListObjects,isGroupToPostSelected;
+@synthesize authorize,back,pin,webView,infoController,twitterController,activity,isAuthorizationProcessed,countTremorAnimation,infoViewController,linkedinController,cellInfo,groupListObjects,isGroupToPostSelected,groupListObjectsForCollectAllGroups;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -42,6 +42,7 @@
 
 - (void)dealloc
 {
+    [groupListObjectsForCollectAllGroups release];
     [changeAuthorizationType release];
     [groupsList release];
     [groupsBack release];
@@ -153,6 +154,7 @@
     isGroupToPostSelected = YES;
     
     groupListObjects = [[NSMutableArray alloc] init];
+    groupListObjectsForCollectAllGroups = [[NSMutableArray alloc] init];
     // Do any additional setup after loading the view from its nib.
 }
 
@@ -194,7 +196,7 @@
 }
 #pragma mark - internal methods
 
--(NSString *)stringFromObjectIDs:(NSArray *)objecIDs;
+-(NSMutableString *)stringFromObjectIDs:(NSArray *)objecIDs includeRates:(BOOL) isIncludeRates;
 {
     mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
     NSManagedObjectContext *context = delegate.managedObjectContext;
@@ -204,14 +206,24 @@
     [rateFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
 
     [objecIDs enumerateObjectsUsingBlock:^(NSManagedObjectID *objectID, NSUInteger idx, BOOL *stop) {
-        DestinationsListPushList *object = (DestinationsListPushList *)[context objectWithID:objectID];
+        //DestinationsListPushList *object = (DestinationsListPushList *)[context objectWithID:objectID];
+        NSManagedObject *object = [context objectWithID:objectID];
         NSString *country = [object valueForKey:@"country"];
         NSString *specific = [object valueForKey:@"specific"];
-        NSNumber *rate = [object valueForKey:@"rate"];
-        NSNumber *minutesLenght = [object valueForKey:@"minutesLenght"];
+        NSNumber *rateNumber = [object valueForKey:@"rate"];
+        NSString *rate = [rateFormatter stringFromNumber:rateNumber];
+        [rateFormatter setMaximumFractionDigits:0];
 
-        [finalString appendString:[NSString stringWithFormat:@"%@/%@ with price %@ volume %@",country,specific,[rateFormatter stringFromNumber:rate],minutesLenght]];
-        if (objecIDs.count > 1 && idx != objecIDs.count -1) [finalString appendString:@"/n"]; 
+        NSString *minutesLenght = nil;
+        if ([object.entity.name isEqualToString:@"DestinationsListPushList"]) {
+            minutesLenght = [rateFormatter stringFromNumber:[object valueForKey:@"minutesLenght"]];
+        } else {
+            minutesLenght = [rateFormatter stringFromNumber:[object valueForKey:@"lastUsedMinutesLenght"]];
+        }
+        if (isIncludeRates) [finalString appendString:[NSString stringWithFormat:@"%@/%@ with price $%@ volume %@",country,specific,rate,minutesLenght]];
+        else [finalString appendString:[NSString stringWithFormat:@"%@/%@ volume %@",country,specific,rate,minutesLenght]];
+        
+        if (objecIDs.count > 1 && idx != objecIDs.count -1) [finalString appendString:@"\n"]; 
     }];
     return finalString;
 }
@@ -223,7 +235,8 @@
     self.infoController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     back.selectedSegmentIndex = -1;
     authorize.selectedSegmentIndex = -1;
-
+    groupsBack.selectedSegmentIndex = -1;
+    
     [self dismissModalViewControllerAnimated:YES];
     //[self presentModalViewController:infoController animated:YES];
 }
@@ -276,6 +289,7 @@
             [authorize addTarget:self action:@selector(didTwitterAuthorization:) forControlEvents:UIControlEventValueChanged];
 
         } else {
+            back.hidden = NO;
             webView.hidden = NO;
             authorizedDoneLogo.hidden = YES;
             authorizedDoneTitle.hidden = YES;
@@ -283,7 +297,7 @@
             authorize.hidden = NO;
             reloadButton.hidden = NO;
             [twitterController startAuthorization:self];
-            authorize.hidden = YES;//[authorize addTarget:self action:@selector(didTwitterAuthorization:) forControlEvents:UIControlEventValueChanged];
+            //authorize.hidden = YES;//[authorize addTarget:self action:@selector(didTwitterAuthorization:) forControlEvents:UIControlEventValueChanged];
 
         }
 
@@ -325,13 +339,14 @@
     } else {
        // message
         isGroupToPostSelected = NO;
-        groupsList.rowHeight = 138;
+        groupsList.rowHeight = 200;
 
         [groupsList reloadData];
 
     }
 }
 - (IBAction)saveMessageChanges:(id)sender {
+    saveChanges.selectedSegmentIndex = -1;
     LinkedinGroupsTableViewCell *cell = (LinkedinGroupsTableViewCell *)[groupsList cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     [cell.signature resignFirstResponder];
     [cell.bodyForEdit resignFirstResponder];
@@ -340,9 +355,18 @@
     [[NSUserDefaults standardUserDefaults] setValue:cell.bodyForEdit.text forKey:@"bodyForEdit"];
     [[NSUserDefaults standardUserDefaults] setValue:cell.signature.text forKey:@"signature"];
     [[NSUserDefaults standardUserDefaults] setValue:cell.postingTitle.text forKey:@"postingTitle"];
+    [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:cell.includeRates.on] forKey:@"includeRates"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [sender setHidden:YES];
 }
+- (IBAction)routesListIncludePriceChanged:(id)sender {
+    NSNumber *includeRates = [[NSUserDefaults standardUserDefaults] valueForKey:@"includeRates"];
+
+    [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:!includeRates.boolValue] forKey:@"includeRates"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+
 #pragma mark - Twitter controller delegates
 
 
@@ -403,15 +427,23 @@
 //    NSManagedObjectContext *moc = delegate.managedObjectContext;
 
     [managedObjectIDs enumerateObjectsUsingBlock:^(NSManagedObjectID *objectID, NSUInteger idx, BOOL *stop) {
-        NSString *finalDestinationsListString = [self stringFromObjectIDs:managedObjectIDs];
+        NSMutableString *finalDestinationsListString = [self stringFromObjectIDs:[NSArray arrayWithObject:objectID] includeRates:YES];
         NSMutableString *twitterText = [[NSMutableString alloc] initWithCapacity:0];
-        [twitterText appendString:@"I'm currently interesting for those destination (s):"];
+        [twitterText appendString:@"I'm currently interesting for those destination:"];
+        [twitterText appendString:@"\n"];
+
         [twitterText appendString:finalDestinationsListString];
+        [twitterText appendString:@"\n"];
+
         [twitterText appendString:@"(posted from snow ixc)"];
+        if (twitterText.length > 139) [twitterText replaceCharactersInRange:NSMakeRange(139,twitterText.length - 139) withString:@""];
         NSLog(@"SOCIAL NETWORK CONTROLLER: twitter message to post:%@",twitterText);
+        
+        if (twitterController) [twitterController postTwitterMessageWithText:twitterText];
+
     }];
     
-    //if (twitterController) [twitterController postTwitterMessageWithText:text];
+//    if (twitterController) [twitterController postTwitterMessageWithText:text];
 }
 
 #pragma mark - Linkedin controller delegates
@@ -427,7 +459,9 @@
         pin.hidden = YES;
         authorize.hidden = YES;
         reloadButton.hidden = YES;
- 
+        back.hidden = YES;
+        groupsBack.hidden = YES;
+        
         [activity stopAnimating];
         activity.hidden = YES;
         self.infoViewController.imgButton.alpha = 1.0;
@@ -447,7 +481,8 @@
                              groupsView.frame = CGRectMake(groupsView.frame.origin.x, groupsView.frame.origin.y - groupsView.frame.size.height, groupsView.frame.size.width, groupsView.frame.size.height);
                          } 
                          completion:^(BOOL finished){
-                             
+                             groupsBack.hidden = NO;
+
                          }];
         
         
@@ -474,6 +509,10 @@
 
 -(void)linkedinGroupsList:(NSDictionary *)parsedGroups withLatestGroups:(NSNumber *)isLatestGroup;
 {
+    //[self.groupListObjects removeAllObjects];
+    NSMutableArray *finalGroupsList = [[NSUserDefaults standardUserDefaults] valueForKey:@"allGroupList"];
+//    
+    //NSMutableArray *finalGroupsList = 
     NSArray *groupsListParsed = [parsedGroups valueForKey:@"values"];
     [groupsListParsed enumerateObjectsUsingBlock:^(NSDictionary *group, NSUInteger idx, BOOL *stop) {
         NSDictionary *groupInfo = [group valueForKey:@"group"];
@@ -481,14 +520,28 @@
         [groupInfoMutable setValue:[NSNumber numberWithBool:NO] forKey:@"enabled"];
         
         NSNumber *idNumber = [groupInfo valueForKey:@"id"];
-        NSString *name = [groupInfo valueForKey:@"name"];
-        NSLog(@"SOCIAL NETWORKS AUTH: group name:%@ id:%@",idNumber,name);
-        [self.groupListObjects addObject:groupInfoMutable];
+        //NSString *name = [groupInfo valueForKey:@"name"];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id == %@",idNumber];
+        NSArray *filteredFinalGroupList = [finalGroupsList filteredArrayUsingPredicate:predicate];
+        if (filteredFinalGroupList.count > 0) [groupInfoMutable setValue:[filteredFinalGroupList.lastObject valueForKey:@"enabled"] forKey:@"enabled"]; 
+        else [groupInfoMutable setValue:[NSNumber numberWithBool:NO] forKey:@"enabled"];
+        [groupListObjectsForCollectAllGroups addObject:groupInfoMutable];
+        //NSLog(@"SOCIAL NETWORKS AUTH: ADD NEW group name:%@ id:%@",idNumber,name);
         
     }];
+//    [[NSUserDefaults standardUserDefaults] setValue:self.groupListObjects forKey:@"allGroupList"];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     if (isLatestGroup.boolValue == YES) {
+        // ok buffer is done now, time to check 
+        [groupListObjects removeAllObjects];
+        [groupListObjects addObjectsFromArray:groupListObjectsForCollectAllGroups];
+        
+        [[NSUserDefaults standardUserDefaults] setValue:self.groupListObjects forKey:@"allGroupList"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
         [groupsList reloadData];
-    }
+    } else [groupListObjectsForCollectAllGroups setValuesForKeysWithDictionary:parsedGroups];
 }
 
 #pragma mark - Linkedin methods
@@ -503,6 +556,7 @@
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"enabled = %@",[NSNumber numberWithBool:YES]];
     NSArray *enabledGroups = [groupListObjects filteredArrayUsingPredicate:predicate];
     NSString *postingTitle = [[NSUserDefaults standardUserDefaults] valueForKey:@"postingTitle"];
+    NSNumber *includeRates = [[NSUserDefaults standardUserDefaults] valueForKey:@"includeRates"];
     NSString *bodyForEdit = [[NSUserDefaults standardUserDefaults] valueForKey:@"bodyForEdit"];
     NSString *signature = [[NSUserDefaults standardUserDefaults] valueForKey:@"signature"];
 
@@ -512,15 +566,20 @@
 
         NSMutableString *linkedinText = [[NSMutableString alloc] initWithCapacity:0];
         [linkedinText appendString:bodyForEdit];
-        
-        NSString *finalDestinationsListString = [self stringFromObjectIDs:managedObjectIDs];
+        [linkedinText appendString:@"\n"];
+        NSMutableString *finalDestinationsListString = [self stringFromObjectIDs:managedObjectIDs includeRates:includeRates.boolValue];
         [linkedinText appendString:finalDestinationsListString];
+        [linkedinText appendString:@"\n"];
+        [linkedinText appendString:@"\n"];
+
         [linkedinText appendString:signature];
+        [linkedinText appendString:@"\n"];
+
         [linkedinText appendString:@"(posted from snow ixc)"];
 
         NSLog(@"SOCIAL NETWORK CONTROLLER: linkedin message for group:%@ to post:%@",linkedinText,name);
 
-        //[linkedinController postToGroupID:groupID withTitle:postingTitle withSummary:text];        
+        if (linkedinController.isAuthorized) [linkedinController postToGroupID:groupID withTitle:postingTitle withSummary:linkedinText];        
     }];
 }
 
@@ -587,16 +646,25 @@
 }
 
 #pragma mark - UITextField delegate
-
+-(void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    if (textField.tag == 1) {
+        saveChanges.hidden = NO;
+    } 
+}
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if ([textField.text isEqualToString:@""]) return NO;
-    else {
-        [textField resignFirstResponder];
-        [self didTwitterAuthorization:self];
-        return YES;
-    }
+    if (textField.tag == 0) {
+        if ([textField.text isEqualToString:@""]) return NO;
+        else {
+            [textField resignFirstResponder];
+            [self didTwitterAuthorization:self];
+            return YES;
+        }
+    } 
     
+    return YES;
+
 }
 #pragma mark - UITextView delegate
 
@@ -654,6 +722,7 @@
         cell.bodyForEdit.hidden = YES;
         cell.signature.hidden = YES;
         cell.postingTitle.hidden = YES;
+        cell.includeRates.hidden = YES;
         cell.routesList.hidden = YES;
 
     } else {
@@ -662,10 +731,12 @@
         cell.bodyForEdit.hidden = NO;
         cell.signature.hidden = NO;
         cell.postingTitle.hidden = NO;
+        cell.includeRates.hidden = NO;
         cell.routesList.hidden = NO;
         cell.bodyForEdit.text = [[NSUserDefaults standardUserDefaults] valueForKey:@"bodyForEdit"];
         cell.signature.text = [[NSUserDefaults standardUserDefaults] valueForKey:@"signature"];
         cell.postingTitle.text = [[NSUserDefaults standardUserDefaults] valueForKey:@"postingTitle"];
+        cell.includeRates.on = [[[NSUserDefaults standardUserDefaults] valueForKey:@"includeRates"] boolValue];
     }
     return cell;
 }
@@ -683,6 +754,8 @@
 //    }
     [row setValue:[NSNumber numberWithBool:!enabled.boolValue] forKey:@"enabled"];
     [groupsList reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    [[NSUserDefaults standardUserDefaults] setValue:self.groupListObjects forKey:@"allGroupList"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 
 }
 @end

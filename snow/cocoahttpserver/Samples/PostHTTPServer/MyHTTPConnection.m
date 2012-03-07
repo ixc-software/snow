@@ -362,7 +362,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;// | HTTP_LOG_FLAG_TRACE;
         
         NSString *authorizedUserEmail = [result valueForKey:@"authorizedUserEmail"];
         NSString *authorizedUserPassword = [result valueForKey:@"authorizedUserPassword"];
-        NSArray *necessaryData = [result valueForKey:@"necessaryData"];
+        NSString *necessaryDataString = [result valueForKey:@"necessaryData"];
         NSNumber *isMustBeApproved = [result valueForKey:@"isMustBeApproved"];
         
         
@@ -376,7 +376,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;// | HTTP_LOG_FLAG_TRACE;
         //NSLog(@"PutObject: senderIP:%@,receiverIP:%@",senderIP,receiverIP);
         NSString *answer = [serverController putObjectForUserEmail:authorizedUserEmail 
                                                       withPassword:authorizedUserPassword 
-                                                 withNecessaryData:necessaryData 
+                                                 withNecessaryData:necessaryDataString 
                                                     mustBeApproved:[isMustBeApproved boolValue] 
                                                       withSenderIP:senderIP 
                                                     withReceiverIP:receiverIP]; 

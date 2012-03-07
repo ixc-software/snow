@@ -47,6 +47,7 @@
 								<int key="NSvFlags">292</int>
 								<string key="NSFrame">{{9, 2}, {159, 39}}</string>
 								<reference key="NSSuperview" ref="749766055"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="301796888"/>
 								<string key="NSReuseIdentifierKey">_NS:328</string>
 								<bool key="IBUIOpaque">NO</bool>
@@ -88,6 +89,7 @@
 								<int key="NSvFlags">292</int>
 								<string key="NSFrame">{{161, 8}, {94, 27}}</string>
 								<reference key="NSSuperview" ref="749766055"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="960907230"/>
 								<string key="NSReuseIdentifierKey">_NS:606</string>
 								<bool key="IBUIOpaque">NO</bool>
@@ -101,6 +103,7 @@
 								<int key="NSvFlags">-2147483356</int>
 								<string key="NSFrame">{{9, 43}, {228, 47}}</string>
 								<reference key="NSSuperview" ref="749766055"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="409681467"/>
 								<string key="NSReuseIdentifierKey">_NS:639</string>
 								<object class="NSColor" key="IBUIBackgroundColor" id="287948204">
@@ -128,8 +131,9 @@
 							<object class="IBUITextView" id="629027681">
 								<reference key="NSNextResponder" ref="749766055"/>
 								<int key="NSvFlags">-2147483356</int>
-								<string key="NSFrame">{{9, 120}, {228, 45}}</string>
+								<string key="NSFrame">{{9, 134}, {228, 45}}</string>
 								<reference key="NSSuperview" ref="749766055"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:639</string>
 								<reference key="IBUIBackgroundColor" ref="287948204"/>
@@ -148,16 +152,17 @@
 							<object class="IBUILabel" id="409681467">
 								<reference key="NSNextResponder" ref="749766055"/>
 								<int key="NSvFlags">-2147483356</int>
-								<string key="NSFrame">{{9, 98}, {228, 14}}</string>
+								<string key="NSFrame">{{9, 98}, {141, 27}}</string>
 								<reference key="NSSuperview" ref="749766055"/>
-								<reference key="NSNextKeyView" ref="629027681"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="538966698"/>
 								<string key="NSReuseIdentifierKey">_NS:328</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
 								<int key="IBUIContentMode">7</int>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-								<string key="IBUIText">Kenya mobile safaricom 4 min acd 23% asr 0.02</string>
+								<string key="IBUIText">Routes List include price</string>
 								<reference key="IBUITextColor" ref="35281747"/>
 								<nil key="IBUIHighlightedColor"/>
 								<object class="NSColor" key="IBUIShadowColor">
@@ -175,10 +180,12 @@
 								<int key="NSvFlags">-2147483356</int>
 								<string key="NSFrame">{{9, 7}, {228, 31}}</string>
 								<reference key="NSSuperview" ref="749766055"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="166661412"/>
 								<string key="NSReuseIdentifierKey">_NS:304</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
+								<int key="IBUITag">1</int>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<int key="IBUIContentVerticalAlignment">0</int>
 								<string key="IBUIText"/>
@@ -199,9 +206,24 @@
 								<reference key="IBUIFontDescription" ref="917601074"/>
 								<reference key="IBUIFont" ref="168583027"/>
 							</object>
+							<object class="IBUISwitch" id="538966698">
+								<reference key="NSNextResponder" ref="749766055"/>
+								<int key="NSvFlags">-2147483356</int>
+								<string key="NSFrame">{{143, 98}, {94, 27}}</string>
+								<reference key="NSSuperview" ref="749766055"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="629027681"/>
+								<string key="NSReuseIdentifierKey">_NS:606</string>
+								<bool key="IBUIOpaque">NO</bool>
+								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+								<int key="IBUIContentHorizontalAlignment">0</int>
+								<int key="IBUIContentVerticalAlignment">0</int>
+								<bool key="IBUIOn">YES</bool>
+							</object>
 						</array>
-						<string key="NSFrameSize">{320, 44}</string>
+						<string key="NSFrameSize">{320, 199}</string>
 						<reference key="NSSuperview" ref="684572532"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="507180168"/>
 						<string key="NSReuseIdentifierKey">_NS:395</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
@@ -215,8 +237,9 @@
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 					</object>
 				</array>
-				<string key="NSFrameSize">{320, 45}</string>
+				<string key="NSFrameSize">{320, 200}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="749766055"/>
 				<string key="NSReuseIdentifierKey">_NS:384</string>
 				<object class="NSColor" key="IBUIBackgroundColor">
@@ -230,7 +253,7 @@
 				</object>
 				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 				<reference key="IBUIContentView" ref="749766055"/>
-				<real value="410" key="IBUIRowHeight"/>
+				<real value="562" key="IBUIRowHeight"/>
 			</object>
 		</array>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -293,6 +316,14 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">includeRates</string>
+						<reference key="source" ref="684572532"/>
+						<reference key="destination" ref="538966698"/>
+					</object>
+					<int key="connectionID">27</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">delegate</string>
 						<reference key="source" ref="960907230"/>
 						<reference key="destination" ref="372490531"/>
@@ -306,6 +337,23 @@
 						<reference key="destination" ref="372490531"/>
 					</object>
 					<int key="connectionID">20</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="301796888"/>
+						<reference key="destination" ref="372490531"/>
+					</object>
+					<int key="connectionID">29</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchEventConnection" key="connection">
+						<string key="label">routesListIncludePriceChanged:</string>
+						<reference key="source" ref="538966698"/>
+						<reference key="destination" ref="372490531"/>
+						<int key="IBEventType">13</int>
+					</object>
+					<int key="connectionID">28</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -335,8 +383,9 @@
 							<reference ref="166661412"/>
 							<reference ref="301796888"/>
 							<reference ref="960907230"/>
-							<reference ref="629027681"/>
 							<reference ref="409681467"/>
+							<reference ref="629027681"/>
+							<reference ref="538966698"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -370,6 +419,11 @@
 						<reference key="object" ref="301796888"/>
 						<reference key="parent" ref="684572532"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">25</int>
+						<reference key="object" ref="538966698"/>
+						<reference key="parent" ref="684572532"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -381,6 +435,7 @@
 				<string key="14.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="15.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="23.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="25.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="4.CustomClassName">LinkedinGroupsTableViewCell</string>
 				<string key="4.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -390,9 +445,166 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">24</int>
+			<int key="maxID">29</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes"/>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<object class="IBPartialClassDescription">
+					<string key="className">LinkedinGroupsTableViewCell</string>
+					<string key="superclassName">UITableViewCell</string>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="bodyForEdit">UITextView</string>
+						<string key="groupName">UILabel</string>
+						<string key="groupSwitch">UISwitch</string>
+						<string key="includeRates">UISwitch</string>
+						<string key="postingTitle">UITextField</string>
+						<string key="routesList">UILabel</string>
+						<string key="signature">UITextView</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="bodyForEdit">
+							<string key="name">bodyForEdit</string>
+							<string key="candidateClassName">UITextView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="groupName">
+							<string key="name">groupName</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="groupSwitch">
+							<string key="name">groupSwitch</string>
+							<string key="candidateClassName">UISwitch</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="includeRates">
+							<string key="name">includeRates</string>
+							<string key="candidateClassName">UISwitch</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="postingTitle">
+							<string key="name">postingTitle</string>
+							<string key="candidateClassName">UITextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="routesList">
+							<string key="name">routesList</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="signature">
+							<string key="name">signature</string>
+							<string key="candidateClassName">UITextView</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/LinkedinGroupsTableViewCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">SocialNetworksAuthViewController</string>
+					<string key="superclassName">UIViewController</string>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="activity">UIActivityIndicatorView</string>
+						<string key="authorize">UISegmentedControl</string>
+						<string key="authorizedDoneLogo">UIImageView</string>
+						<string key="authorizedDoneTitle">UILabel</string>
+						<string key="back">UISegmentedControl</string>
+						<string key="cellInfo">LinkedinGroupsTableViewCell</string>
+						<string key="changeAuthorizationType">UISegmentedControl</string>
+						<string key="facebookEnabled">UIImageView</string>
+						<string key="groupsActivity">UIActivityIndicatorView</string>
+						<string key="groupsBack">UISegmentedControl</string>
+						<string key="groupsList">UITableView</string>
+						<string key="groupsToMessage">UISegmentedControl</string>
+						<string key="groupsView">UIView</string>
+						<string key="linkedinEnabled">UIImageView</string>
+						<string key="pin">UITextField</string>
+						<string key="reloadButton">UIButton</string>
+						<string key="saveChanges">UISegmentedControl</string>
+						<string key="twitterEnabled">UIImageView</string>
+						<string key="webView">UIWebView</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="activity">
+							<string key="name">activity</string>
+							<string key="candidateClassName">UIActivityIndicatorView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="authorize">
+							<string key="name">authorize</string>
+							<string key="candidateClassName">UISegmentedControl</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="authorizedDoneLogo">
+							<string key="name">authorizedDoneLogo</string>
+							<string key="candidateClassName">UIImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="authorizedDoneTitle">
+							<string key="name">authorizedDoneTitle</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="back">
+							<string key="name">back</string>
+							<string key="candidateClassName">UISegmentedControl</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="cellInfo">
+							<string key="name">cellInfo</string>
+							<string key="candidateClassName">LinkedinGroupsTableViewCell</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="changeAuthorizationType">
+							<string key="name">changeAuthorizationType</string>
+							<string key="candidateClassName">UISegmentedControl</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="facebookEnabled">
+							<string key="name">facebookEnabled</string>
+							<string key="candidateClassName">UIImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="groupsActivity">
+							<string key="name">groupsActivity</string>
+							<string key="candidateClassName">UIActivityIndicatorView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="groupsBack">
+							<string key="name">groupsBack</string>
+							<string key="candidateClassName">UISegmentedControl</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="groupsList">
+							<string key="name">groupsList</string>
+							<string key="candidateClassName">UITableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="groupsToMessage">
+							<string key="name">groupsToMessage</string>
+							<string key="candidateClassName">UISegmentedControl</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="groupsView">
+							<string key="name">groupsView</string>
+							<string key="candidateClassName">UIView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="linkedinEnabled">
+							<string key="name">linkedinEnabled</string>
+							<string key="candidateClassName">UIImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="pin">
+							<string key="name">pin</string>
+							<string key="candidateClassName">UITextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="reloadButton">
+							<string key="name">reloadButton</string>
+							<string key="candidateClassName">UIButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="saveChanges">
+							<string key="name">saveChanges</string>
+							<string key="candidateClassName">UISegmentedControl</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="twitterEnabled">
+							<string key="name">twitterEnabled</string>
+							<string key="candidateClassName">UIImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="webView">
+							<string key="name">webView</string>
+							<string key="candidateClassName">UIWebView</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/SocialNetworksAuthViewController.h</string>
+					</object>
+				</object>
+			</array>
+		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaTouchFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>

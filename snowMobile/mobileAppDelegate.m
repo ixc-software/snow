@@ -580,19 +580,39 @@
     
 }
 
--(void) updateTwitterMessagesForText:(NSArray *)managedObjectIDs;
+//-(void) updateTwitterMessagesForText:(NSArray *)managedObjectIDs;
+//{
+//    NSArray *viewControllers = self.tabBarController.viewControllers;
+//    UINavigationController *info = [viewControllers objectAtIndex:0];
+//    
+//    InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
+//    
+//    if ([infoObject.socialNetworksViewController isTwitterAuthorized]) [infoObject.socialNetworksViewController sendTwitterUpdate:managedObjectIDs];
+//    
+//    
+//}
+-(BOOL)isTwitterAuthorized;
 {
     NSArray *viewControllers = self.tabBarController.viewControllers;
     UINavigationController *info = [viewControllers objectAtIndex:0];
     
     InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
     
-    if ([infoObject.socialNetworksViewController isTwitterAuthorized]) [infoObject.socialNetworksViewController sendTwitterUpdate:managedObjectIDs];
-    
-    
+    return [infoObject.socialNetworksViewController isTwitterAuthorized];
 }
 
--(void) postToLinkedinGroupsText:(NSArray *)managedObjectIDs;
+
+-(BOOL)isLinkedinAuthoruzed;
+{
+    NSArray *viewControllers = self.tabBarController.viewControllers;
+    UINavigationController *info = [viewControllers objectAtIndex:0];
+    
+    InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
+    
+    return [infoObject.socialNetworksViewController isLinkedinAuthorized];
+}
+
+-(void) postToLinkedinGroupsForDestinations:(NSArray *)managedObjectIDs;
 {
     NSArray *viewControllers = self.tabBarController.viewControllers;
     UINavigationController *info = [viewControllers objectAtIndex:0];
@@ -611,12 +631,12 @@
     UINavigationController *info = [viewControllers objectAtIndex:0];
     
     InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
-    NSLog(@"updateTwitterMessagesForDestinations");
+    //NSLog(@"updateTwitterMessagesForDestinations");
 
     if ([infoObject.socialNetworksViewController isTwitterAuthorized]) {
-        NSLog(@"postTwitterMessageForDestinations:%@",destinations);
+        //NSLog(@"postTwitterMessageForDestinations:%@",destinations);
 
-        [infoObject.socialNetworksViewController.twitterController postTwitterMessageForDestinations:destinations];
+        [infoObject.socialNetworksViewController sendTwitterUpdate:destinations];
     }
 }
 

@@ -45,7 +45,10 @@
 -(BOOL)isPad;
 - (void) updateExternalData;
 - (void) updateInterfaceWithReachability: (Reachability*) curReach;
--(void) updateTwitterMessagesForText:(NSString *)text;
+//-(void) updateTwitterMessagesForText:(NSString *)text;
 -(void) updateTwitterMessagesForDestinations:(NSArray *)destinations;
+-(void) postToLinkedinGroupsForDestinations:(NSArray *)managedObjectIDs;
+-(BOOL)isTwitterAuthorized;
+-(BOOL)isLinkedinAuthoruzed;
 
 @end

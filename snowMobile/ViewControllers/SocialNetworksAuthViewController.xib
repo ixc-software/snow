@@ -169,7 +169,6 @@
 						<string key="NSFrame">{{151, 241}, {20, 20}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<object class="NSColor" key="IBUIBackgroundColor" id="222911036">
 							<int key="NSColorSpace">3</int>
 							<bytes key="NSWhite">MQA</bytes>
@@ -376,7 +375,7 @@
 					<object class="IBUISegmentedControl" id="970358720">
 						<reference key="NSNextResponder" ref="451239269"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{220, 13}, {80, 30}}</string>
+						<string key="NSFrame">{{220, 0}, {80, 30}}</string>
 						<reference key="NSSuperview" ref="451239269"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="747425282"/>
@@ -418,7 +417,7 @@
 					<object class="IBUISegmentedControl" id="258148950">
 						<reference key="NSNextResponder" ref="451239269"/>
 						<int key="NSvFlags">-2147483356</int>
-						<string key="NSFrame">{{19, 13}, {83, 30}}</string>
+						<string key="NSFrame">{{19, 0}, {83, 30}}</string>
 						<reference key="NSSuperview" ref="451239269"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="970358720"/>
@@ -460,7 +459,7 @@
 					<object class="IBUITableView" id="747425282">
 						<reference key="NSNextResponder" ref="451239269"/>
 						<int key="NSvFlags">274</int>
-						<string key="NSFrame">{{20, 50}, {280, 309}}</string>
+						<string key="NSFrame">{{20, 37}, {280, 322}}</string>
 						<reference key="NSSuperview" ref="451239269"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="823740464"/>
@@ -563,7 +562,6 @@
 						<string key="NSFrame">{{134, 374}, {37, 37}}</string>
 						<reference key="NSSuperview" ref="451239269"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:1030</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -991,10 +989,10 @@
 						<reference key="object" ref="451239269"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="970358720"/>
 							<reference ref="747425282"/>
 							<reference ref="823740464"/>
 							<reference ref="154073736"/>
+							<reference ref="970358720"/>
 							<reference ref="258148950"/>
 						</object>
 						<reference key="parent" ref="0"/>
@@ -1181,6 +1179,8 @@
 							<string>bodyForEdit</string>
 							<string>groupName</string>
 							<string>groupSwitch</string>
+							<string>includeRates</string>
+							<string>postingTitle</string>
 							<string>routesList</string>
 							<string>signature</string>
 						</object>
@@ -1189,6 +1189,8 @@
 							<string>UITextView</string>
 							<string>UILabel</string>
 							<string>UISwitch</string>
+							<string>UISwitch</string>
+							<string>UITextField</string>
 							<string>UILabel</string>
 							<string>UITextView</string>
 						</object>
@@ -1200,6 +1202,8 @@
 							<string>bodyForEdit</string>
 							<string>groupName</string>
 							<string>groupSwitch</string>
+							<string>includeRates</string>
+							<string>postingTitle</string>
 							<string>routesList</string>
 							<string>signature</string>
 						</object>
@@ -1216,6 +1220,14 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">groupSwitch</string>
 								<string key="candidateClassName">UISwitch</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">includeRates</string>
+								<string key="candidateClassName">UISwitch</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">postingTitle</string>
+								<string key="candidateClassName">UITextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">routesList</string>

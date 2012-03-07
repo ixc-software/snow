@@ -96,7 +96,7 @@ static char encodingTable[64] = {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:self.moc];
 //    [mainMoc release];
     [moc release];
-    [mainServer release];
+    if (self.mainServer) [self.mainServer release];
     //[receivedData release];
     [super dealloc];
 }
@@ -288,7 +288,7 @@ static char encodingTable[64] = {
     [dictionary enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         //NSLog(@"clearance was start:%@",obj);
         
-        if ([[obj class] isSubclassOfClass:[NSNull class]]) [result removeObjectForKey:key];
+        if (!obj || [[obj class] isSubclassOfClass:[NSNull class]]) [result removeObjectForKey:key];
         if ([[obj class] isSubclassOfClass:[NSDate class]]) { 
             [result setValue:[obj description] forKey:key];
             //NSLog(@"date was converted:%@",obj);
@@ -2771,17 +2771,23 @@ static char encodingTable[64] = {
         [self updateUIwithMessage:@"default email not allowed, please start registration." withObjectID:[objectIDs lastObject] withLatestMessage:YES error:YES];
         return;
     }
+    NSString *password = admin.password;
     
     [prepeareForJSONRequest setValue:admin.email forKey:@"authorizedUserEmail"];
-    [prepeareForJSONRequest setValue:admin.password forKey:@"authorizedUserPassword"];
+    [prepeareForJSONRequest setValue:password forKey:@"authorizedUserPassword"];
     [prepeareForJSONRequest setValue:[NSNumber numberWithBool:isMustBeApproved] forKey:@"isMustBeApproved"];
     
     NSMutableArray *allObjects = [NSMutableArray array];
     [objectIDs enumerateObjectsUsingBlock:^(NSManagedObjectID *objectID, NSUInteger idx, BOOL *stop) {
         [allObjects addObject:[self prepareNecessaryDataForObjectWithID:objectID]];
     }];
+    NSString *errorSerialization;
+    NSData *allArchivedObjects = [NSPropertyListSerialization dataFromPropertyList:allObjects format:NSPropertyListBinaryFormat_v1_0 errorDescription:&errorSerialization];
+    if (errorSerialization) NSLog(@"CLIENT CONTRORLER: PUT OBJECT SerializationFailed:%@",errorSerialization);
+    NSString *allObjectsString = [self base64EncodingData:allArchivedObjects];
 
-    [prepeareForJSONRequest setValue:allObjects forKey:@"necessaryData"];
+
+    [prepeareForJSONRequest setValue:allObjectsString forKey:@"necessaryData"];
     NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",prepeareForJSONRequest);
 
     NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"PutObject" withJSONRequest:prepeareForJSONRequest];

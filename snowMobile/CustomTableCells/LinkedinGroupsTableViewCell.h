@@ -15,5 +15,6 @@
 @property (retain, nonatomic) IBOutlet UITextView *signature;
 @property (retain, nonatomic) IBOutlet UILabel *routesList;
 @property (retain, nonatomic) IBOutlet UITextField *postingTitle;
+@property (retain, nonatomic) IBOutlet UISwitch *includeRates;
 
 @end
