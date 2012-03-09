@@ -204,6 +204,7 @@
         [UIView setAnimationDuration:0.3f];
         self.tableView.frame = frame;
         [UIView commitAnimations];
+        
     }
 
 }
@@ -343,7 +344,7 @@
     //dispatch_async(dispatch_get_main_queue(), ^(void) {
     
     NSUInteger selectedSegmentIndex = selectRoutes.selectedSegmentIndex;
-//    NSLog(@"selected index:%u isRoutesForSaleListUpdated:%@ isRoutesWeBuyListUpdated:%@ isRoutesPushlistListUpdated:%@",selectedSegmentIndex,[NSNumber numberWithBool:isRoutesForSaleListUpdated],[NSNumber numberWithBool:isRoutesWeBuyListUpdated],[NSNumber numberWithBool:isRoutesPushlistListUpdated]); 
+    NSLog(@"selected index:%u isRoutesForSaleListUpdated:%@ isRoutesWeBuyListUpdated:%@ isRoutesPushlistListUpdated:%@",selectedSegmentIndex,[NSNumber numberWithBool:isRoutesForSaleListUpdated],[NSNumber numberWithBool:isRoutesWeBuyListUpdated],[NSNumber numberWithBool:isRoutesPushlistListUpdated]); 
     if (selectedSegmentIndex == 2) addRoutes.hidden = NO;
     else addRoutes.hidden = YES;
     
@@ -474,7 +475,7 @@
                 
                 NSArray *allGUIDsDestinations = [clientController getAllObjectsListWithEntityForList:entity withMainObjectGUID:carrier.GUID withMainObjectEntity:@"Carrier" withAdmin:admin withDateFrom:nil withDateTo:nil];
 
-                NSArray *allObjectsForGUIDS = [clientController getAllObjectsListWithGUIDs:allGUIDsDestinations withEntity:entity withAdmin:admin];
+                NSArray *allObjectsForGUIDS = [clientController getAllObjectsWithGUIDs:allGUIDsDestinations withEntity:entity withAdmin:admin];
                 if (allGUIDsDestinations && allObjectsForGUIDS && allGUIDsDestinations.count > 0 && allObjectsForGUIDS > 0) {
                     
                     NSArray *updatedDestinationsIDs = [clientController updateGraphForObjects:allObjectsForGUIDS withEntity:entity withAdmin:admin withRootObject:carrier isEveryTenPercentSave:YES];
@@ -1455,6 +1456,11 @@
     [self.bar resignFirstResponder];   
 }
 
+- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
+{
+    keyboardIsShowing = YES;
+    return YES;
+}
 
 
 #pragma mark Delegate methods of NSFetchedResultsController
@@ -1818,10 +1824,10 @@
 //    dispatch_async(dispatch_get_main_queue(), ^(void) { 
         NSUInteger selectedSegmentIndex = [sender selectedSegmentIndex];
 //
-        if (selectedSegmentIndex == 0 && self.isRoutesForSaleListUpdated) progressView.hidden = NO; 
-        else progressView.hidden = YES;
-        if (selectedSegmentIndex == 1 && self.isRoutesWeBuyListUpdated) progressView.hidden = NO;
-        else progressView.hidden = YES;
+//        if (selectedSegmentIndex == 0 && self.isRoutesForSaleListUpdated) progressView.hidden = NO; 
+//        else progressView.hidden = YES;
+//        if (selectedSegmentIndex == 1 && self.isRoutesWeBuyListUpdated) progressView.hidden = NO;
+//        else progressView.hidden = YES;
     if (selectedSegmentIndex == 2) [self.navigationController setToolbarHidden:YES animated:YES];
     else [self.navigationController setToolbarHidden:NO animated:YES];
 

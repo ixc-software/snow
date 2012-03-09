@@ -349,6 +349,7 @@
 
     cell.url.text = company.url;
     cell.url.textColor = [UIColor whiteColor];
+    cell.activity.hidden = YES;
     
     NSSet *companyStuff = company.companyStuff;
 

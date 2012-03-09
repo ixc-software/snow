@@ -35,7 +35,7 @@
 
 
 -(CompanyStuff *)authorization;
--(BOOL)checkIfCurrentAdminCanLogin;
+//-(BOOL)checkIfCurrentAdminCanLogin;
 
 -(MainSystem *) firstSetup;
 
@@ -50,7 +50,7 @@
 -(void) setUserDefaultsObject:(id)object forKey:(NSString *)key;
 -(NSString *)localStatusForObjectsWithRootGuid:(NSString *)rootObjectGUID;
 -(void) finalSave:(NSManagedObjectContext *)mocForSave; 
--(BOOL) checkIfCurrentAdminCanLogin;
+//-(BOOL) checkIfCurrentAdminCanLogin;
 -(void) updateLocalGraphFromSnowEnterpriseServerWithDateFrom:(NSDate *)dateFrom 
                                                   withDateTo:(NSDate *)dateTo
                                withIncludeCarrierSubentities:(BOOL)isIncludeCarrierSubentities;
@@ -61,7 +61,7 @@
                                      withAdmin:(CompanyStuff *)admin  
                                   withDateFrom:(NSDate *)dateFrom 
                                     withDateTo:(NSDate *)dateTo;
--(NSArray *)getAllObjectsListWithGUIDs:(NSArray *)guids 
+-(NSArray *)getAllObjectsWithGUIDs:(NSArray *)guids 
                             withEntity:(NSString *)entity 
                              withAdmin:(CompanyStuff *)admin;
 -(NSArray *) updateGraphForObjects:(NSArray *)allObjects 
@@ -74,5 +74,6 @@
                                                 withDateFrom:(NSDate *)dateFrom 
                                                   withDateTo:(NSDate *)dateTo
                                                    withAdmin:(CompanyStuff *)admin;
+-(void) processLoginForEmail:(NSString *)email forPassword:(NSString *)password;
 
 @end

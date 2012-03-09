@@ -348,9 +348,9 @@
 //    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.linkedin.com/v1/people/~/group-memberships"]];
     //NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://api.linkedin.com/v1/people/~/group-memberships:(group:(id,name,counts-by-category))?membership-state=member&format=json"]];
 
-    //NSLog(@"LINKEDIN CONTROLLER: parse results:%@",[self parseXMLForData:data withURL:url]);
+    NSLog(@"LINKEDIN CONTROLLER: responseBody:%@",responseBody);
     NSDictionary *result = [responseBody objectFromJSONString];
-    //NSLog(@"LINKEDIN GET GROUPS:get  SUCCESS parsed result:%@",result);
+    NSLog(@"LINKEDIN GET GROUPS:get  SUCCESS parsed result:%@",result);
 
     if (delegate != nil && [delegate respondsToSelector:@selector(twitterAuthFailed)]) {
         //id result = [self parseXMLForData:data withURL:url];

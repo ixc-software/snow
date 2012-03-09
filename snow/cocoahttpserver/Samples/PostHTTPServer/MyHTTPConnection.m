@@ -443,14 +443,14 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;// | HTTP_LOG_FLAG_TRACE;
 	return [super httpResponseForMethod:method URI:path];
 }
 
-- (void)prepareForBodyWithSize:(UInt64)contentLength
-{
-	HTTPLogTrace();
-	// NSLog(@"prepareForBodyWithSize:%@",[NSNumber numberWithUnsignedLongLong:contentLength]);
-	// If we supported large uploads,
-	// we might use this method to create/open files, allocate memory, etc.
-}
-
+//- (void)prepareForBodyWithSize:(UInt64)contentLength
+//{
+//	HTTPLogTrace();
+//	// NSLog(@"prepareForBodyWithSize:%@",[NSNumber numberWithUnsignedLongLong:contentLength]);
+//	// If we supported large uploads,
+//	// we might use this method to create/open files, allocate memory, etc.
+//}
+//
 - (void)processBodyData:(NSData *)postDataChunk
 {
 	HTTPLogTrace();

@@ -60,6 +60,7 @@
 @property (readwrite) BOOL isGroupToPostSelected;
 @property (retain, nonatomic) IBOutlet UISegmentedControl *groupsToMessage;
 @property (retain, nonatomic) IBOutlet UISegmentedControl *saveChanges;
+@property (readwrite) BOOL isGroupMessageEditingUp;
 
 -(void)linkedinGroupsList:(NSDictionary *)parsedGroups withLatestGroups:(NSNumber *)isLatestGroup;
 

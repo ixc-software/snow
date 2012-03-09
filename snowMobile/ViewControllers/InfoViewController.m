@@ -29,6 +29,7 @@
 
 
 @implementation InfoViewController
+@synthesize errorToolBar;
 
 @synthesize readme,operation,managedObjectContext,companyInfoAndConfig,operationProgress,socialNetworksViewController,imgButton;
 
@@ -36,6 +37,7 @@
 
 - (void)dealloc
 {
+    [errorToolBar release];
     [super dealloc];
 }
 
@@ -53,6 +55,8 @@
 {
     [super viewDidLoad];
     self.navigationController.navigationBar.tintColor = [UIColor colorWithRed:0.20 green:0.20 blue:0.52 alpha:1.0];
+    UIBarButtonItem *itemFor = [[[UIBarButtonItem alloc] initWithCustomView:self.errorToolBar] autorelease];
+    [self setToolbarItems:[NSArray arrayWithObject:itemFor]];
     
     //self.title = @"Info";
     imgButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -65,12 +69,12 @@
     imgButton.opaque = NO;
     //imgButton.alpha = 0.5;
     
-    imgButton.frame = CGRectMake(0.0, 0.0, twitter.size.width , twitter.size.height);
+    imgButton.frame = CGRectMake(0.0, 0.0, 36 , 36);
     [imgButton addTarget:self action:@selector(authTwitterAccount) forControlEvents:UIControlEventTouchUpInside];
     //twitter = 0.5;
-//    UIBarButtonItem *twitterAuth = [[UIBarButtonItem alloc] initWithCustomView:imgButton];;
+    UIBarButtonItem *twitterAuth = [[UIBarButtonItem alloc] initWithCustomView:imgButton];;
 //
-//    self.navigationItem.rightBarButtonItem = twitterAuth;
+    self.navigationItem.rightBarButtonItem = twitterAuth;
     
     UISegmentedControl *segmented =  [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Info",@"Configuration", nil]] autorelease];
     [segmented addTarget:self action:@selector(changeView:) forControlEvents:UIControlEventValueChanged];
@@ -78,12 +82,12 @@
     segmented.segmentedControlStyle = UISegmentedControlStyleBar;
     segmented.selectedSegmentIndex = 0;
     
-    UIView *titleView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, segmented.frame.size.width + imgButton.frame.origin.x + 60, segmented.frame.size.height)] autorelease];
+    UIView *titleView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, segmented.frame.size.width, segmented.frame.size.height)] autorelease];
     imgButton.frame = CGRectMake(imgButton.frame.origin.x + segmented.frame.size.width + 40, imgButton.frame.origin.y - 3, imgButton.frame.size.width, imgButton.frame.size.height);
     segmented.frame = CGRectMake(segmented.frame.origin.x + 20, segmented.frame.origin.y, segmented.frame.size.width, segmented.frame.size.height);
 
     [titleView addSubview:segmented];
-    [titleView addSubview:imgButton];
+    //[titleView addSubview:imgButton];
     self.navigationItem.titleView = titleView;
     
 //    [twitterAuth release];
@@ -108,7 +112,10 @@
         CGRect frame = self.readme.frame;
         frame.size = CGSizeMake(728, 964);
         self.readme.frame = frame; 
-        
+        self.operationProgress.frame = CGRectMake(operationProgress.frame.origin.x, operationProgress.frame.origin.y, operationProgress.frame.size.width + 450, operationProgress.frame.size.height);
+        self.operation.frame = CGRectMake(operation.frame.origin.x, operation.frame.origin.y, operation.frame.size.width + 450, operation.frame.size.height);
+
+
     }
     
     if (!self.companyInfoAndConfig) {
@@ -172,6 +179,7 @@
 
 - (void)viewDidUnload
 {
+    [self setErrorToolBar:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -360,8 +368,17 @@
         if ([clientController authorization]) { 
             [self presentModalViewController:companyInfoAndConfig animated:YES];
             control.selectedSegmentIndex = 0;
+        } else {
+            [self.navigationController setToolbarHidden:NO animated:YES];
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+                sleep(3);
+                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                    [self.navigationController setToolbarHidden:YES animated:YES];
+
+                });
+            });
         }
-        [clientController release];
+//        [clientController release];
     }
     
 }

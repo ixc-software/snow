@@ -1726,6 +1726,8 @@
 
 - (void)updateCarrierContactforCarrier:(Carrier *)carrier;
 {
+    //Carrier *carrier = (Carrier *)[self.moc objectWithID:carrierID];
+    
     NSDate *currentDate = [NSDate date];
     carrier.latestUpdateTime = currentDate;
     
@@ -1755,6 +1757,7 @@
 
     carrier.ratesEmail = admemail;
     stuffAdmin.carrier = carrier;
+    //[self finalSave];
 }
 
 - (void) updateResponsibleContactforCarrier:(Carrier *)carrier forCurrentCompany:(CurrentCompany *)currentCompany;
@@ -1783,6 +1786,7 @@
         carrier.companyStuff = authorizedUser;
 
     }
+    [self finalSave];
 }
 
 -(void) updateCarriersFinancialRatingAndLastUpdatedTimeForCarrierGUID:(NSManagedObjectID *)carrierID withTotalProfit:(NSNumber *)totalProfitNumber;
@@ -1845,7 +1849,7 @@
                forCurrentCompany:(NSManagedObjectID *)currentCompanyID 
 forIsUpdateCarriesListOnExternalServer:(BOOL)isUpdateCarriesListOnExternalServer
 {
-    CurrentCompany *currentCompany = (CurrentCompany *)[moc objectWithID:currentCompanyID];
+    CurrentCompany *currentCompany = (CurrentCompany *)[self.moc objectWithID:currentCompanyID];
 
     NSArray *companyListArrays = [database carriersList];
 
@@ -1875,19 +1879,43 @@ forIsUpdateCarriesListOnExternalServer:(BOOL)isUpdateCarriesListOnExternalServer
     [progress updateProgressIndicatorMessageGetExternalData:@"Update carriers list"];
     progress.objectsQuantity = [NSNumber numberWithUnsignedInteger:[companyListForAdd count]];
     progress.countObjects = 0;
+    NSManagedObjectID *stuffID = nil;
+    
+#if defined (SNOW_SERVER)
+    NSString *selectedCompanyStuffEmail = delegate.getExternalInfoView.userToSync.selectedItem.title;
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"email contains [cd] %@",selectedCompanyStuffEmail];
+    NSSet *allCompanyStuff = currentCompany.companyStuff;
+    NSSet *filteredCompanyStuff = [allCompanyStuff filteredSetUsingPredicate:predicate];
+    stuffID = [filteredCompanyStuff.anyObject objectID];
+    
+#else 
+//    
+    ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
+    CompanyStuff *authorizedUserFromClientMoc = [clientController authorization];
+    [clientController release];
+    stuffID = authorizedUserFromClientMoc.objectID;
+
+#endif
+
+    
     for (NSString *carrierName in companyListForAdd)
     {
         
         Carrier *carrier = [NSEntityDescription 
                             insertNewObjectForEntityForName:@"Carrier" 
-                            inManagedObjectContext:self.moc];
+                            inManagedObjectContext:moc];
         carrier.name = carrierName;
-        [self updateResponsibleContactforCarrier:carrier forCurrentCompany:currentCompany];
+        CompanyStuff *authorizedUser = (CompanyStuff *)[self.moc objectWithID:stuffID];
+        NSLog(@"carrier MOC:%@ stuff moc:%@",carrier.managedObjectContext,authorizedUser.managedObjectContext);
+
+        carrier.companyStuff = authorizedUser;
+
         [self updateCarrierContactforCarrier:carrier];
         Financial *financial = (Financial *)[NSEntityDescription insertNewObjectForEntityForName:@"Financial" inManagedObjectContext:self.moc];
         financial.carrier = carrier;
         financial.name = [NSString stringWithFormat:@"%@'s account",carrierName];
-        
+        [self finalSave];
+
         [progress updateProgressIndicatorCountGetExternalData];
         if ([self finalSave]) {
             if (isUpdateCarriesListOnExternalServer) {
@@ -2616,7 +2644,8 @@ forIsUpdateCarriesListOnExternalServer:YES];
         ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
         CompanyStuff *authorizedUser = [clientController authorization];
         [clientController release];
-
+        if (!authorizedUser) return;
+        
         CurrentCompany *currentCompanyFromAnotherMoc = authorizedUser.currentCompany;
         CurrentCompany *currentCompany = (CurrentCompany *)[moc objectWithID:currentCompanyFromAnotherMoc.objectID];
         

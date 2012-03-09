@@ -10,6 +10,10 @@
 #import "CodesList.h"
 #import "MainSystem.h"
 
+#import "NormalizedCountryTransformer.h"
+#import "NormalizedSpecificTransformer.h"
+#import "NormalizedCodesTransformer.h"
+
 
 @implementation CountrySpecificCodeList
 
@@ -52,5 +56,48 @@
         }
     }
 }
+
+- (void)setCodes:(NSString *)codes {
+    
+    [self willChangeValueForKey:@"codes"];
+    [self setPrimitiveValue:codes forKey:@"codes"];
+    
+    // normalize the text and store it the 'normalizedText' derived property
+    
+    [self setCodesNormalized:[NormalizedCodesTransformer normalizeString:codes]];
+    
+    [self didChangeValueForKey:@"codes"];
+}
+
+
+- (void)setSpecific:(NSString *)specific {
+    
+    [self willChangeValueForKey:@"specific"];
+    
+    [self setPrimitiveValue:specific forKey:@"specific"];
+    
+    // normalize the text and store it the 'normalizedText' derived property
+    
+    [self setSpecificNormalized:[NormalizedSpecificTransformer normalizeString:specific]];
+    
+    [self didChangeValueForKey:@"specific"];
+}
+
+
+
+- (void)setCountry:(NSString *)country {
+    
+    [self willChangeValueForKey:@"country"];
+    //[self setPrimitiveСountry:country];
+    [self setPrimitiveValue:country forKey:@"country"];
+    
+    // normalize the text and store it the 'normalizedText' derived property
+    
+    [self setCountryNormalized:[NormalizedCountryTransformer normalizeString:country]];
+    
+    [self didChangeValueForKey:@"country"];
+}
+
+
 
 @end

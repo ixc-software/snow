@@ -49,7 +49,7 @@
 
 
 // methods which need mysql connection
--(void)updateCarrierContactforCarrier:(Carrier *)carrierName;
+- (void)updateCarrierContactforCarrier:(Carrier *)carrier;
 -(BOOL)  updateDestinationListforCarrier:(NSManagedObjectID *)carrierID 
                          destinationType:(NSInteger)destinationType
             withProgressUpdateController:(ProgressUpdateController *)progress;

@@ -64,8 +64,12 @@ static char encodingTable[64] = {
 
         mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
 #else
-        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
-//        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+//        mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
+
+//        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
+        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+//        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
+
 #endif
         
 //
@@ -106,7 +110,7 @@ static char encodingTable[64] = {
 - (void)importerDidSave:(NSNotification *)saveNotification {
 //    [mainMoc performSelectorOnMainThread:@selector(mergeChangesFromContextDidSaveNotification:) withObject:saveNotification waitUntilDone:NO];
 
-//    //NSLog(@"MERGE in client controller");
+    NSLog(@"MERGE in client controller");
 //    if ([NSThread isMainThread]) {
 //        [mainMoc mergeChangesFromContextDidSaveNotification:saveNotification];
 //////        [self performSelectorOnMainThread:@selector(finalSave:) withObject:self.moc waitUntilDone:YES];
@@ -571,50 +575,23 @@ static char encodingTable[64] = {
     NSArray *result = nil;
     __block NSEntityDescription *entity = nil;
     
-    //CHECK IF MAIN SYSTEM IS PRESENT (means that all setup issues is done)
-    entity = [NSEntityDescription entityForName:@"MainSystem" inManagedObjectContext:self.moc];
-    [fetchRequest setEntity:entity];
+    
+    NSString *keyAofAuthorized = @"authorizedUserGUID";
+    
+#if defined(SNOW_CLIENT_APPSTORE)
+    keyAofAuthorized = @"authorizedUserGUIDclient";
+#endif
+
+    NSString *autorizedGUID = [self userDefaultsObjectForKey:keyAofAuthorized];
+    
+    __block NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(GUID == %@)",autorizedGUID];
+
+    //entity = [NSEntityDescription entityForName:@"CompanyStuff" inManagedObjectContext:self.moc];
+    [fetchRequest setEntity:[NSEntityDescription entityForName:@"CompanyStuff" inManagedObjectContext:self.moc]];
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"(GUID == %@)",autorizedGUID]];
+    //NSLog(@">>>>>> FETCH REQUEST:%@",fetchRequest);
+
     result = [self.moc executeFetchRequest:fetchRequest error:&error];
-    
-    MainSystem *mainSystem = nil;
-    if ([result count] == 0) {
-        mainSystem = (MainSystem *)[NSEntityDescription insertNewObjectForEntityForName:@"MainSystem" inManagedObjectContext:self.moc];
-        [self setUserDefaultsObject:mainSystem.GUID forKey:@"mainSystemGUID"];
-        [self.moc save:&error];
-        if (error) NSLog(@"%@",[error localizedDescription]);
-        
-    } else { 
-        mainSystem = [result lastObject];
-        //[fetchRequest release];
-        //[self createCountrySpecificCodesInCoreDataForSender:sender andMainSystem:mainSystem];
-        
-    }
-    
-    //NSAssert(mainSystem != nil,@"main system don't found");
-    
-    // CREATE STUFF,COMPANY AND CARRIER
-    //NSString *authorizedStuffGUID = [[NSUserDefaults standardUserDefaults] valueForKey:@"authorizedUserGUID"];
-
-    CompanyStuff *authorizedUser = [self authorization];
-    
-    if (authorizedUser) {
-        [fetchRequest release];
-        return mainSystem;
-    }
-//#if defined(SNOW_CLIENT_APPSTORE) || defined (SNOW_CLIENT_ENTERPRISE) || defined (SNOW_SERVER) || defined (SNOW_MOBILE)
-    __block NSPredicate *predicate = nil;
-
-//#if defined (SNOW_SERVER)
-    predicate = [NSPredicate predicateWithFormat:@"(email == %@) AND (password == %@)",@"you@email",@"you password"];
-
-//#else
-//    predicate = [NSPredicate predicateWithFormat:@"(email == %@) AND (password == %@)",@"8D9F-415C-82EE@21780-0003B13E42CF2A8F",@"259F69DB34D4"];
-//#endif
-    entity = [NSEntityDescription entityForName:@"CompanyStuff" inManagedObjectContext:self.moc];
-    [fetchRequest setEntity:entity];
-    [fetchRequest setPredicate:predicate];
-    result = [self.moc executeFetchRequest:fetchRequest error:&error];
-    if ([result count] > 1) NSLog(@"WARNING  more than 2 stuff");
     
     CompanyStuff *stuff = nil;
     CurrentCompany *company = nil;
@@ -622,17 +599,19 @@ static char encodingTable[64] = {
     if ([result count] == 0) { 
         
         // don't find a company stuff, try to find company
-//#if defined (SNOW_SERVER)
-//        predicate = [NSPredicate predicateWithFormat:@"(name == %@)",@"E1FA4F2D"];
-//
-//#else
+#if defined (SNOW_SERVER)
+        predicate = [NSPredicate predicateWithFormat:@"(name == %@)",@"E1FA4F2D"];
+
+#else
         predicate = [NSPredicate predicateWithFormat:@"(name == %@)",@"you company"];
 
-//#endif
+#endif
 
         entity = [NSEntityDescription entityForName:@"CurrentCompany" inManagedObjectContext:self.moc];
         [fetchRequest setEntity:entity];
         [fetchRequest setPredicate:predicate];
+        //NSLog(@">>>>>> FETCH REQUEST2:%@",fetchRequest);
+
         result = [self.moc executeFetchRequest:fetchRequest error:&error];
         if ([result count] > 1) NSLog(@"WARNING  more than 2 you company");
         
@@ -641,34 +620,34 @@ static char encodingTable[64] = {
             company = (CurrentCompany *)[NSEntityDescription 
                                          insertNewObjectForEntityForName:@"CurrentCompany" 
                                          inManagedObjectContext:self.moc];
-//#if defined (SNOW_SERVER)
+#if defined (SNOW_SERVER)
 //
-//            company.name = @"E1FA4F2D";
-//            company.isVisibleForCommunity = [NSNumber numberWithBool:NO];
-//#else
+            company.name = @"E1FA4F2D";
+            company.isVisibleForCommunity = [NSNumber numberWithBool:NO];
+#else
             company.name = @"you company";
 
-//#endif
+#endif
 
         } else company = [result lastObject];
         
-        @synchronized(self) {
+        //@synchronized(self) {
             stuff = (CompanyStuff *)[NSEntityDescription 
                                      insertNewObjectForEntityForName:@"CompanyStuff" 
                                      inManagedObjectContext:self.moc];
-//#if defined (SNOW_SERVER)
-//            stuff.firstName = @"you first name";
-//            stuff.lastName = @"you last name";
-//            stuff.email = @"8D9F-415C-82EE@21780-0003B13E42CF2A8F";
-//            stuff.password = @"259F69DB34D4";
-//
-//#else
+#if defined (SNOW_SERVER)
+            stuff.firstName = @"you first name";
+            stuff.lastName = @"you last name";
+            stuff.email = @"8D9F-415C-82EE@21780-0003B13E42CF2A8F";
+            stuff.password = @"259F69DB34D4";
+
+#else
 
             stuff.firstName = @"you first name";
             stuff.lastName = @"you last name";
             stuff.email = @"you@email";
             stuff.password = @"you password";
-//#endif
+#endif
     
             NSString *keyAofAuthorized = @"authorizedUserGUID";
             
@@ -679,7 +658,7 @@ static char encodingTable[64] = {
             [self setUserDefaultsObject:stuff.GUID forKey:keyAofAuthorized];
             company.companyAdminGUID = stuff.GUID;
             stuff.currentCompany = company;
-        }
+        //}
     } else 
     {
         stuff = [result lastObject];
@@ -688,6 +667,7 @@ static char encodingTable[64] = {
     
     NSAssert(stuff != nil,@"stuff don't found");
     NSAssert(company != nil,@"company don't found");
+    [self finalSave:moc];
 
     
     predicate = [NSPredicate predicateWithFormat:@"(name == %@)",@"you first carrier"];
@@ -695,6 +675,8 @@ static char encodingTable[64] = {
     [fetchRequest setEntity:entity];
     [fetchRequest setResultType:NSManagedObjectIDResultType];
     [fetchRequest setPredicate:predicate];
+    //NSLog(@">>>>>> FETCH REQUEST:%@",fetchRequest);
+
     result = [self.moc executeFetchRequest:fetchRequest error:&error];
     
     Carrier *carrier = nil;
@@ -708,14 +690,61 @@ static char encodingTable[64] = {
     
     NSAssert(carrier != nil,@"company don't found");
     
-    [fetchRequest release], fetchRequest = nil;
-    [self finalSave:self.moc];
+    //[self finalSave:self.moc];
 
-    [self createCountrySpecificCodesInCoreDataForMainSystem:mainSystem];
+    //[self createCountrySpecificCodesInCoreDataForMainSystem:mainSystem];
+    //CHECK IF MAIN SYSTEM IS PRESENT (means that all setup issues is done)
+    //entity = [NSEntityDescription entityForName:@"MainSystem" inManagedObjectContext:self.moc];
+    [fetchRequest setEntity:[NSEntityDescription entityForName:@"MainSystem" inManagedObjectContext:self.moc]];
+    [fetchRequest setPredicate:nil];
+    [fetchRequest setResultType:NSManagedObjectResultType];
+    //NSLog(@">>>>>> FETCH REQUEST4:%@",fetchRequest);
 
-    [self finalSave:self.moc];
-//#endif
+    result = [self.moc executeFetchRequest:fetchRequest error:&error];
+
+#if defined(SNOW_SERVER)
+    MainSystem *mainSystem = nil;
+    if ([result count] == 0) {
+        
+        mainSystem = (MainSystem *)[NSEntityDescription insertNewObjectForEntityForName:@"MainSystem" inManagedObjectContext:self.moc];
+        [self setUserDefaultsObject:mainSystem.GUID forKey:@"mainSystemGUID"];
+        [self.moc save:&error];
+        if (error) NSLog(@"%@",[error localizedDescription]);
+        
+    } else { 
+        mainSystem = [result lastObject];
+        [self createCountrySpecificCodesInCoreDataForMainSystem:mainSystem];
+        [self finalSave:moc];
+        return mainSystem;
+        
+    }
     
+#else
+    CompanyStuff *authorizedUser = [self authorization];
+    NSArray *allGUIDsMainSystem = [self getAllObjectsListWithEntityForList:@"MainSystem" withMainObjectGUID:nil withMainObjectEntity:nil withAdmin:authorizedUser withDateFrom:nil withDateTo:nil];
+    NSArray *allObjectsForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsMainSystem withEntity:@"MainSystem" withAdmin:authorizedUser];
+    [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"MainSystem" withAdmin:authorizedUser withRootObject:nil isEveryTenPercentSave:NO];
+    result = [self.moc executeFetchRequest:fetchRequest error:&error];
+    MainSystem *mainSystem = result.lastObject;
+    
+#endif
+    
+#if defined(SNOW_SERVER)
+    [self createCountrySpecificCodesInCoreDataForMainSystem:mainSystem];
+    [self finalSave:moc];
+    
+#else
+    NSArray *allGUIDsCodesSpecific = [self getAllObjectsListWithEntityForList:@"CountrySpecificCodeList" withMainObjectGUID:mainSystem.GUID withMainObjectEntity:@"MainSystem" withAdmin:authorizedUser withDateFrom:nil withDateTo:nil];
+    NSArray *allObjectsCodesSpecificForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsCodesSpecific withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser];
+    
+    NSArray *updatedCodesSpecificIDs = [self updateGraphForObjects:allObjectsCodesSpecificForGUIDS withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser withRootObject:mainSystem isEveryTenPercentSave:NO];
+    NSLog(@">>>>>> updated codes specific IDs:%@",updatedCodesSpecificIDs);
+#endif
+
+    [self finalSave:moc];
+//#endif
+    [fetchRequest release], fetchRequest = nil;
+
     return mainSystem;
 }
 
@@ -805,15 +834,15 @@ static char encodingTable[64] = {
 
 -(NSDictionary *) getJSONAnswerForFunction:(NSString *)function withJSONRequest:(NSMutableDictionary *)request;
 {
-    NSError *error = nil;
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"MainSystem" inManagedObjectContext:self.moc];
-    [fetchRequest setEntity:entity];
-    NSArray *result = [self.moc executeFetchRequest:fetchRequest error:&error];
-    [fetchRequest release];
-    MainSystem *mainSystem = [result lastObject];
-    if (!mainSystem) [self updateUIwithMessage:@"main system not found" withObjectID:nil withLatestMessage:NO error:YES];
-    [request setValue:mainSystem.GUID forKey:@"mainSystemGUID"];
+//    NSError *error = nil;
+//    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+//    NSEntityDescription *entity = [NSEntityDescription entityForName:@"MainSystem" inManagedObjectContext:self.moc];
+//    [fetchRequest setEntity:entity];
+//    NSArray *result = [self.moc executeFetchRequest:fetchRequest error:&error];
+//    [fetchRequest release];
+//    MainSystem *mainSystem = [result lastObject];
+//    if (!mainSystem) [self updateUIwithMessage:@"main system not found" withObjectID:nil withLatestMessage:NO error:YES];
+//    [request setValue:mainSystem.GUID forKey:@"mainSystemGUID"];
     [request setValue:@"hash" forKey:@"hash"];
     downloadCompleted = NO;
 //    receivedData = [[NSMutableData alloc] init];
@@ -884,6 +913,7 @@ static char encodingTable[64] = {
     
     //[receivedData release];
     JSONDecoder *jkitDecoder = [JSONDecoder decoder];
+    NSError *error = nil;
 
     NSDictionary *finalResult = [jkitDecoder objectWithUTF8String:(const unsigned char *)[answer UTF8String] length:[answer length] error:&error];
     [receivedData setData:[NSData data]];
@@ -894,24 +924,6 @@ static char encodingTable[64] = {
         return nil;
     }
     return finalResult;
-}
-#pragma mark -
-#pragma mark Login methods
--(BOOL)checkIfCurrentAdminCanLogin;
-{
-    CompanyStuff *admin = [self authorization];
-    
-    NSMutableDictionary *prepeareForJSONRequest = [[NSMutableDictionary alloc] init];
-    [prepeareForJSONRequest setValue:admin.email forKey:@"authorizedUserEmail"];
-    [prepeareForJSONRequest setValue:admin.password forKey:@"authorizedUserPassword"];
-
-    NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"LoginUser" withJSONRequest:prepeareForJSONRequest];
-    [prepeareForJSONRequest release];
-
-    NSString *result = [receivedObject valueForKey:@"result"];
-    if ([result isEqualToString:@"done"]) return YES;
-    else return NO;
-    
 }
 
 #pragma mark -
@@ -2084,6 +2096,13 @@ static char encodingTable[64] = {
                     NSArray *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
                     [self makeUpdatesForEvents:listObjects];
                 }
+//                if ([entityName isEqualToString:@"CountrySpecificCodesList"]) {
+//                    NSString *allObjectsString = [receivedObject valueForKey:@"objects"];
+//                    NSData *allObjectsData = [self dataWithBase64EncodedString:allObjectsString];
+//                    NSArray *listObjects = [NSKeyedUnarchiver unarchiveObjectWithData:allObjectsData];
+//                    [self makeUpdatesForEvents:listObjects];
+//                }
+
             }
             
             [self finalSave:self.moc];
@@ -2194,7 +2213,7 @@ static char encodingTable[64] = {
     
 }
 
--(NSArray *)getAllObjectsListWithGUIDs:(NSArray *)guids 
+-(NSArray *)getAllObjectsWithGUIDs:(NSArray *)guids 
                             withEntity:(NSString *)entity 
                              withAdmin:(CompanyStuff *)admin
 {
@@ -2289,17 +2308,17 @@ static char encodingTable[64] = {
         } else {
             __block NSString *keyForRootObject = nil;
             NSDictionary *allRelationShips = entity.relationshipsByName;
-            [allRelationShips enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSRelationshipDescription *obj, BOOL *stop) {
+            if (rootObject)  [allRelationShips enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSRelationshipDescription *obj, BOOL *stop) {
                 if ([obj.destinationEntity.name isEqualToString:rootObject.entity.name]) {
                     keyForRootObject = key;
                     *stop = YES;
                 }
             }];
-            if (keyForRootObject) {
+            if (keyForRootObject || !rootObject) {
                 NSManagedObject *newObject = [NSEntityDescription insertNewObjectForEntityForName:entityFor inManagedObjectContext:moc];
                 [newObject setValuesForKeysWithDictionary:obj];
                 
-                [newObject setValue:rootObject forKey:keyForRootObject];
+                if (rootObject) [newObject setValue:rootObject forKey:keyForRootObject];
                 [allUpdatedIDs addObject:guid];
 //                if ([entityFor isEqualToString:@"CodesvsDestinationsList"]) {
 //                    NSLog(@"CLIENT CONTROLLER: object with entity:%@ will CREATE and new GUID:%@ oldGUID:%@ country:%@ specific:%@ destination GUID:%@",entityFor,guid,[newObject valueForKey:@"GUID"],[newObject valueForKey:@"country"],[newObject valueForKey:@"specific"],[newObject valueForKeyPath:@"destinationsListForSale.GUID"]);
@@ -2315,7 +2334,7 @@ static char encodingTable[64] = {
 
         }
         
-        if (isEveryTenPercentSave && (allObjectsCount > 100) && (idx % allObjectsCount * 0.1 == 0)) [self finalSave:moc];//,NSLog(@">>>>>>>updateGraphForObjects SAVED");
+        if (isEveryTenPercentSave && (allObjectsCount > 100) && (idx % allObjectsCount * 0.1 == 0)) [self finalSave:moc],NSLog(@">>>>>>>updateGraphForObjects SAVED");
 
     }];
     return allUpdatedIDs;
@@ -2331,7 +2350,7 @@ static char encodingTable[64] = {
     Carrier *carrier = (Carrier *)[self.moc objectWithID:carrierID];
     
     NSArray *allGUIDsForSale = [self getAllObjectsListWithEntityForList:@"DestinationsListForSale" withMainObjectGUID:carrier.GUID withMainObjectEntity:@"Carrier" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
-    NSArray *allObjectsForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsForSale withEntity:@"DestinationsListForSale" withAdmin:admin];
+    NSArray *allObjectsForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsForSale withEntity:@"DestinationsListForSale" withAdmin:admin];
     if (allGUIDsForSale && allObjectsForGUIDS) {
         
         NSArray *updatedForSaleIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"DestinationsListForSale" withAdmin:admin withRootObject:carrier  isEveryTenPercentSave:NO];
@@ -2357,7 +2376,7 @@ static char encodingTable[64] = {
             if (findedDestination) {
                 //////////////////////////////// CODES BLOCK 
                 NSArray *allGUIDsCodes = [self getAllObjectsListWithEntityForList:@"CodesvsDestinationsList" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListForSale" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
-                NSArray *allObjectsCodesForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsCodes withEntity:@"CodesvsDestinationsList" withAdmin:admin];
+                NSArray *allObjectsCodesForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsCodes withEntity:@"CodesvsDestinationsList" withAdmin:admin];
                 if (allGUIDsCodes && allObjectsCodesForGUIDS) {
                     __block NSArray *updatedCodesIDs = [self updateGraphForObjects:allObjectsCodesForGUIDS withEntity:@"CodesvsDestinationsList" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO];
                     [self finalSave:moc];
@@ -2374,7 +2393,7 @@ static char encodingTable[64] = {
                 }
                 //////////////////////////////// PER HOUR STAT BLOCK 
                 NSArray *allGUIDsPerHour = [self getAllObjectsListWithEntityForList:@"DestinationPerHourStat" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListForSale" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
-                NSArray *allObjectsPerHourForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsPerHour withEntity:@"DestinationPerHourStat" withAdmin:admin];
+                NSArray *allObjectsPerHourForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsPerHour withEntity:@"DestinationPerHourStat" withAdmin:admin];
                 if (allGUIDsPerHour && allObjectsPerHourForGUIDS) {
                     
                     NSArray *updatedPerHourIDs = [self updateGraphForObjects:allObjectsPerHourForGUIDS withEntity:@"DestinationPerHourStat" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO];
@@ -2405,7 +2424,7 @@ static char encodingTable[64] = {
     }
     /////////////////////////////// WE BUY BLOCK 
     NSArray *allGUIDsWeBuy = [self getAllObjectsListWithEntityForList:@"DestinationsListWeBuy" withMainObjectGUID:carrier.GUID withMainObjectEntity:@"Carrier" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
-    allObjectsForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsWeBuy withEntity:@"DestinationsListWeBuy" withAdmin:admin];
+    allObjectsForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsWeBuy withEntity:@"DestinationsListWeBuy" withAdmin:admin];
     if (allGUIDsWeBuy && allObjectsForGUIDS) {
         
         NSArray *updatedWeBuyIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"DestinationsListWeBuy" withAdmin:admin withRootObject:carrier  isEveryTenPercentSave:NO];
@@ -2429,7 +2448,7 @@ static char encodingTable[64] = {
             if (findedDestination) {
                 //////////////////////////////// CODES BLOCK 
                 NSArray *allGUIDsCodes = [self getAllObjectsListWithEntityForList:@"CodesvsDestinationsList" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListWeBuy" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
-                NSArray *allObjectsCodesForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsCodes withEntity:@"CodesvsDestinationsList" withAdmin:admin];
+                NSArray *allObjectsCodesForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsCodes withEntity:@"CodesvsDestinationsList" withAdmin:admin];
                 if (allGUIDsCodes && allObjectsCodesForGUIDS) {
                     __block NSArray *updatedCodesIDs = [self updateGraphForObjects:allObjectsCodesForGUIDS withEntity:@"CodesvsDestinationsList" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO];
                     [self finalSave:moc];
@@ -2446,7 +2465,7 @@ static char encodingTable[64] = {
                 }
                 //////////////////////////////// PER HOUR STAT BLOCK 
                 NSArray *allGUIDsPerHour = [self getAllObjectsListWithEntityForList:@"DestinationPerHourStat" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListWeBuy" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
-                NSArray *allObjectsPerHourForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsPerHour withEntity:@"DestinationPerHourStat" withAdmin:admin];
+                NSArray *allObjectsPerHourForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsPerHour withEntity:@"DestinationPerHourStat" withAdmin:admin];
                 if (allGUIDsPerHour && allObjectsPerHourForGUIDS) {
                     
                     NSArray *updatedPerHourIDs = [self updateGraphForObjects:allObjectsPerHourForGUIDS withEntity:@"DestinationPerHourStat" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO];
@@ -2490,7 +2509,7 @@ static char encodingTable[64] = {
     
     // update admin list:
     NSArray *allGUIDs = [self getAllObjectsListWithEntityForList:@"CompanyStuff" withMainObjectGUID:currentCompany.GUID withMainObjectEntity:@"CurrentCompany" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
-    NSArray *allObjectsForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDs withEntity:@"CompanyStuff" withAdmin:admin];
+    NSArray *allObjectsForGUIDS = [self getAllObjectsWithGUIDs:allGUIDs withEntity:@"CompanyStuff" withAdmin:admin];
     if (allGUIDs && allObjectsForGUIDS) {
         NSArray *updatedStuffIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"CompanyStuff" withAdmin:admin withRootObject:currentCompany isEveryTenPercentSave:NO];
         [self finalSave:moc]; 
@@ -2514,7 +2533,7 @@ static char encodingTable[64] = {
             //////////////////////////////// CARRIERS BLOCK 
             
             NSArray *allGUIDsCarrier = [self getAllObjectsListWithEntityForList:@"Carrier" withMainObjectGUID:stuff.GUID withMainObjectEntity:@"CompanyStuff" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
-            NSArray *allObjectsForGUIDS = [self getAllObjectsListWithGUIDs:allGUIDsCarrier withEntity:@"Carrier" withAdmin:admin];
+            NSArray *allObjectsForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsCarrier withEntity:@"Carrier" withAdmin:admin];
             if (allGUIDsCarrier && allObjectsForGUIDS) {
                 
                 NSArray *updatedCarrierIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"Carrier" withAdmin:admin withRootObject:stuff  isEveryTenPercentSave:NO];
@@ -2720,6 +2739,49 @@ static char encodingTable[64] = {
 
     
 }
+#pragma mark -
+#pragma mark Login methods
+
+-(void) processLoginForEmail:(NSString *)email forPassword:(NSString *)password
+{
+    NSMutableDictionary *prepeareForJSONRequest = [[NSMutableDictionary alloc] init];
+    [prepeareForJSONRequest setValue:email forKey:@"authorizedUserEmail"];
+    [prepeareForJSONRequest setValue:password forKey:@"authorizedUserPassword"];
+    
+    NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"LoginUser" withJSONRequest:prepeareForJSONRequest];
+    [prepeareForJSONRequest release];
+    
+    NSString *result = [receivedObject valueForKey:@"result"];
+    if ([result isEqualToString:@"done"]) [self updateUIwithMessage:@"Login success" withObjectID:nil withLatestMessage:NO error:NO];
+    else [self updateUIwithMessage:@"Login failed" withObjectID:nil withLatestMessage:YES error:YES];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"CompanyStuff" inManagedObjectContext:self.moc];
+    [fetchRequest setEntity:entity];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(email == %@) and (password == %@)",email,password];
+    [fetchRequest setPredicate:predicate];
+    
+    NSError *error = nil;
+    NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequest error:&error];
+    
+    [fetchRequest release];
+    if (fetchedObjects.count > 0) {
+        // users don't have passwords, so we like to update it
+        CompanyStuff *findedAuthorizedLogin = fetchedObjects.lastObject;
+        findedAuthorizedLogin.password = password;
+        [self finalSave:moc];
+        NSString *keyAofAuthorized = @"authorizedUserGUID";
+        
+#if defined(SNOW_CLIENT_APPSTORE)
+        keyAofAuthorized = @"authorizedUserGUIDclient";
+#endif
+        [self setUserDefaultsObject:findedAuthorizedLogin.GUID forKey:keyAofAuthorized];
+        // ups, let's start updates ( i like to get carriers list here only
+        [self updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:NO];
+        
+    } else [self updateUIwithMessage:@"please try in few seconds." withObjectID:nil withLatestMessage:YES error:YES];
+    
+}
 
 #pragma mark -
 #pragma mark PutObject methods
@@ -2810,7 +2872,7 @@ static char encodingTable[64] = {
                     NSString *guidForStatus = [updatedObject valueForKey:@"GUID"];
                     if (guidForStatus) [self setUserDefaultsObject:status forKey:guidForStatus];
                     else NSLog(@"CLIENT CONTROLLER: warning, result:%@ don't have GUID to update inside system",result);
-                    //NSLog(@"CLIENT CONTROLLER:updated object:%@ for guid:%@ with object:%@",[[NSUserDefaults standardUserDefaults] objectForKey:[updatedObject valueForKey:@"GUID"]],[updatedObject valueForKey:@"GUID"],updatedObject);
+                    NSLog(@"CLIENT CONTROLLER:updated object:%@ for guid:%@ with object:%@",[[NSUserDefaults standardUserDefaults] objectForKey:[updatedObject valueForKey:@"GUID"]],[updatedObject valueForKey:@"GUID"],updatedObject);
                     
                     
                 } else {
@@ -2819,25 +2881,28 @@ static char encodingTable[64] = {
                 }
                 NSString *operation = [result valueForKey:@"operation"];
                 if (!error && [operation isEqualToString:@"login"]) {
-                    //NSLog(@"stuff before changes:%@",admin);
-                    NSString *objectGUID = [result valueForKey:@"objectGUID"];
-                    
-                    // bcs we don't have passwords in companies list, but admin's there is presend, we must using password which was using for auth
-                    NSString *localPassword = admin.password;
-                    CompanyStuff *newAdmin = [self authorization];
-                    newAdmin.password = localPassword;
-                    
-                    //NSLog(@"stuff after changes:%@",[self authorization]);
-                    
-                    //NSLog(@"CLIENT CONTROLLER: get all objects result:%@",[self getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES]);
-                    //[self finalSave:self.moc];
-                    NSString *keyAofAuthorized = @"authorizedUserGUID";
-                    
-#if defined(SNOW_CLIENT_APPSTORE)
-                    keyAofAuthorized = @"authorizedUserGUIDclient";
-#endif
-                    
-                    [self setUserDefaultsObject:objectGUID forKey:keyAofAuthorized];
+                    //NSLog(@"stuff before changes GUID:%@",admin.GUID);
+                    // OLD STYLE, moved to login
+//                    NSString *objectGUID = [result valueForKey:@"objectGUID"];
+//                    
+//                    // bcs we don't have passwords in companies list, but admin's there is presend, we must using password which was using for auth
+//                    NSString *localPassword = admin.password;
+//                    CompanyStuff *newAdmin = [self authorization];
+//                    newAdmin.password = localPassword;
+//                    
+//                    //NSLog(@"stuff after changes:%@",[self authorization]);
+//                    
+//                    //NSLog(@"CLIENT CONTROLLER: get all objects result:%@",[self getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES]);
+//                    //[self finalSave:self.moc];
+//                    NSString *keyAofAuthorized = @"authorizedUserGUID";
+//                    
+//#if defined(SNOW_CLIENT_APPSTORE)
+//                    keyAofAuthorized = @"authorizedUserGUIDclient";
+//#endif
+//                    //[self setUserDefaultsObject:[NSDictionary dictionaryWithObject:@"registered" forKey:@"update"] forKey:newAdmin.currentCompany.GUID];
+//                    //NSLog(@"stuff company name:%@ admin GUID:%@",newAdmin.currentCompany.name,newAdmin.currentCompany.companyAdminGUID);
+//
+//                    [self setUserDefaultsObject:objectGUID forKey:keyAofAuthorized];
                     
                 }
             }];

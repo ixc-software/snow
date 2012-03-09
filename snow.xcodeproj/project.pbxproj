@@ -1013,6 +1013,7 @@
 		FAA1E00214F8A2E900743E41 /* AVCellHightlight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCellHightlight.m; sourceTree = "<group>"; };
 		FAA1E00314F8A2E900743E41 /* AVScroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVScroller.h; sourceTree = "<group>"; };
 		FAA1E00414F8A2E900743E41 /* AVScroller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVScroller.m; sourceTree = "<group>"; };
+		FAA681BE15089E01008BFCF3 /* snow000001.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = snow000001.xcdatamodel; sourceTree = "<group>"; };
 		FAA9E9CD14F8E3DA00AB64D6 /* apple-update_0_30x30-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "apple-update_0_30x30-1.png"; sourceTree = "<group>"; };
 		FAA9E9CE14F8E3DA00AB64D6 /* events.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = events.png; sourceTree = "<group>"; };
 		FAA9E9CF14F8E3DA00AB64D6 /* settings_30x30.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings_30x30.png; sourceTree = "<group>"; };
@@ -1976,7 +1977,7 @@
 		FA3CE30814F7DE3800E3AF17 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = "IXC-USA Corp";
 			};
 			buildConfigurationList = FA3CE30B14F7DE3800E3AF17 /* Build configuration list for PBXProject "snow" */;
@@ -2203,7 +2204,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "install_name_tool -change libmysqlclient.16.dylib @executable_path/../Frameworks/libmysqlclient.16.dylib $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\ninstall_name_tool -change LibXL.framework/LibXL @executable_path/../Frameworks/LibXL.framework/LibXL $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\n\ncd $CONFIGURATION_BUILD_DIR\ntar cvzpf $PRODUCT_NAME.tgz $PRODUCT_NAME.app\nrm -r /Users/alex/Downloads/$PRODUCT_NAME.app\ncp -R $PRODUCT_NAME.app /Users/alex/Downloads";
+			shellScript = "install_name_tool -change libmysqlclient.16.dylib @executable_path/../Frameworks/libmysqlclient.16.dylib $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\ninstall_name_tool -change LibXL.framework/LibXL @executable_path/../Frameworks/LibXL.framework/LibXL $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\n\ncd $CONFIGURATION_BUILD_DIR\ntar cvzpf $PRODUCT_NAME.tgz $PRODUCT_NAME.app\nrm -r /Users/alex/Downloads/$PRODUCT_NAME.app\ncp -R $PRODUCT_NAME.app /Users/alex/Downloads\n#scp $PRODUCT_NAME.tgz alex@mac1.ixcglobal.com:~\n#ssh alex@mac1.ixcglobal.com killall $PRODUCT_NAME\n#ssh alex@mac1.ixcglobal.com tar xvzpf $PRODUCT_NAME.tgz\n#ssh alex@mac1.ixcglobal.com open $PRODUCT_NAME.app";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -3075,10 +3076,11 @@
 		FA195A8514F8206B002E9A89 /* snow.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				FAA681BE15089E01008BFCF3 /* snow000001.xcdatamodel */,
 				FA195A8914F8207D002E9A89 /* snow000000.xcdatamodel */,
 				FA195A8614F8206B002E9A89 /* snow.xcdatamodel */,
 			);
-			currentVersion = FA195A8914F8207D002E9A89 /* snow000000.xcdatamodel */;
+			currentVersion = FAA681BE15089E01008BFCF3 /* snow000001.xcdatamodel */;
 			path = snow.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

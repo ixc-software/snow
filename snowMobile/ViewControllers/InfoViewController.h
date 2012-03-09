@@ -37,6 +37,7 @@
 //@property (nonatomic, retain) SA_OAuthTwitterEngine *_engine;
 
 
+@property (retain, nonatomic) IBOutlet UIToolbar *errorToolBar;
 
 
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;

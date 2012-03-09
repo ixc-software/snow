@@ -162,7 +162,7 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return 1;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -174,7 +174,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = nil;
-    //NSLog(@"%@",indexPath);
+    NSLog(@"%@",indexPath);
 
     static NSString *SpecificsCellIdentifier = nil;
     
@@ -363,7 +363,7 @@
     if (isLogin) {
         if ([emailLabel.text isEqualToString:@""] || [emailParts count] < 2 || [passwordLabel.text isEqualToString:@""] || !secondPartEmailParts || [secondPartEmailParts count] < 2 ) [self performEmailPasswordTremorIsMovingLeft:NO isFirstStep:YES];  else return YES;
     } else {
-        if ([companyNameLabel.text isEqualToString:@""] || [emailLabel.text isEqualToString:@""] || [emailParts count] < 2 || [passwordLabel.text isEqualToString:@""] || !secondPartEmailParts || [secondPartEmailParts count] < 2 ) [self performEmailPasswordTremorIsMovingLeft:NO isFirstStep:YES];  else return YES;
+        if (!companyNameLabel.text || [companyNameLabel.text isEqualToString:@""] || [emailLabel.text isEqualToString:@""] || [emailParts count] < 2 || [passwordLabel.text isEqualToString:@""] || !secondPartEmailParts || [secondPartEmailParts count] < 2 ) [self performEmailPasswordTremorIsMovingLeft:NO isFirstStep:YES];  else return YES;
     }
     
     return NO;
@@ -442,73 +442,93 @@
         mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
         ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
         CompanyStuff *admin = [clientController authorization];
-        if (admin) {
+        
+        
+        if (admin || isLogin) {
             admin.email = emailLabel.text;
             admin.password = passwordLabel.text;
             [clientController finalSave:clientController.moc];
-            
-            
-            if (isLogin) {
-                //NSString *returnString = [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES];
-                if ([clientController checkIfCurrentAdminCanLogin]) { 
-                    // good, auth was passed
-                    dispatch_async(dispatch_get_main_queue(), ^(void) {
-                        
-                        [UIView animateWithDuration:3 
-                                              delay:0 
-                                            options:UIViewAnimationOptionBeginFromCurrentState
-                                         animations:^{
-                                             
-                                             self.view.alpha = 0.0;
-                                         } completion:nil];
-                    });
-                    
-                    admin.isRegistrationDone = [NSNumber numberWithBool:YES];
-//                    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:YES];
-                    [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[admin objectID]] mustBeApproved:NO];
-                    sleep(2);
-                    [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:NO];
-                } else { 
-                    [self showErrorMessage:@"login failed"];
-                    loginActivity.hidden = YES;
-                    [loginActivity stopAnimating];
-                    [login setEnabled:YES forSegmentAtIndex:0];
-                    [registration setEnabled:YES forSegmentAtIndex:0];
+            ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
 
-                }
+            CompanyStuff *admin = [clientController authorization];
+            NSLog(@"ADMIN email:%@",admin.email);
+            if (isLogin) {
+                [clientController processLoginForEmail:emailLabel.text forPassword:emailLabel.text];
+                //NSString *returnString = [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES];
+//                if ([clientController checkIfCurrentAdminCanLogin]) { 
+//                    // good, auth was passed
+//                    dispatch_async(dispatch_get_main_queue(), ^(void) {
+//                        
+//                        [UIView animateWithDuration:3 
+//                                              delay:0 
+//                                            options:UIViewAnimationOptionBeginFromCurrentState
+//                                         animations:^{
+//                                             
+//                                             self.view.alpha = 0.0;
+//                                         } completion:nil];
+//                    });
+//                    
+//                    admin.isRegistrationDone = [NSNumber numberWithBool:YES];
+//                    //[clientController
+//                    //[clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:YES];
+////                    [clientController up
+////                    [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[admin objectID]] mustBeApproved:NO];
+//                    sleep(2);
+//                    [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:NO];
+//                } else { 
+//                    [self showErrorMessage:@"login failed"];
+//                    loginActivity.hidden = YES;
+//                    [loginActivity stopAnimating];
+//                    [login setEnabled:YES forSegmentAtIndex:0];
+//                    [registration setEnabled:YES forSegmentAtIndex:0];
+//
+//                }
 
             } else {
-                NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-                NSEntityDescription *entity = [NSEntityDescription entityForName:@"CurrentCompany" inManagedObjectContext:delegate.managedObjectContext];
-                [fetchRequest setEntity:entity];
-                NSError *error = nil;
-                NSArray *fetchedObjects = [delegate.managedObjectContext executeFetchRequest:fetchRequest error:&error];
-                [fetchRequest release];
-                //            if ([fetchedObjects count] > 1) {
-                //NSLog(@"UIActionSheet starterd");
-                
-                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(name == %@) AND (companyAdminGUID != %@)",companyNameLabel.text,admin.GUID];
-                NSArray *filtered = [fetchedObjects filteredArrayUsingPredicate:predicate];
-                if ([filtered count] > 0) {
-                    dispatch_async(dispatch_get_main_queue(), ^(void) {
-                        UIActionSheet *sheet = [[[UIActionSheet alloc] initWithTitle:@"Company name already in list, do you like to join?" delegate:self cancelButtonTitle:nil destructiveButtonTitle:@"Cancel" otherButtonTitles:@"Yes, i like to join,",@"No, i like to create company",nil] autorelease];
-                        //iphoneAppDelegate *delegate = (iphoneAppDelegate *)[UIApplication sharedApplication].delegate;
-                        
-                        //[sheet showFromTabBar:delegate.tabBarController.tabBar];
-                        [sheet showInView:self.view];
-                    });
+                if (admin) {
+                    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+                    NSEntityDescription *entity = [NSEntityDescription entityForName:@"CurrentCompany" inManagedObjectContext:delegate.managedObjectContext];
+                    [fetchRequest setEntity:entity];
+                    NSError *error = nil;
+                    NSArray *fetchedObjects = [delegate.managedObjectContext executeFetchRequest:fetchRequest error:&error];
+                    [fetchRequest release];
+                    //            if ([fetchedObjects count] > 1) {
+                    //NSLog(@"UIActionSheet starterd");
                     
-                    //                }
+                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(name == %@) AND (companyAdminGUID != %@)",companyNameLabel.text,admin.GUID];
+                    NSArray *filtered = [fetchedObjects filteredArrayUsingPredicate:predicate];
+                    if ([filtered count] > 0) {
+                        dispatch_async(dispatch_get_main_queue(), ^(void) {
+                            UIActionSheet *sheet = [[[UIActionSheet alloc] initWithTitle:@"Company name already in list, do you like to join?" delegate:self cancelButtonTitle:nil destructiveButtonTitle:@"Cancel" otherButtonTitles:@"Yes, i like to join,",@"No, i like to create company",nil] autorelease];
+                            //iphoneAppDelegate *delegate = (iphoneAppDelegate *)[UIApplication sharedApplication].delegate;
+                            
+                            //[sheet showFromTabBar:delegate.tabBarController.tabBar];
+                            [sheet showInView:self.view];
+                        });
+                        
+                        //                }
+                    } else {
+                        //                NSLog(@"registration starterd");
+                        NSManagedObjectID *companyID = [admin.currentCompany objectID];
+                        admin.currentCompany.name = companyNameLabel.text;
+                        [clientController finalSave:clientController.moc];
+                        
+                        [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:companyID] mustBeApproved:NO];
+                        [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[admin objectID]] mustBeApproved:NO];
+                    }
                 } else {
-                    //                NSLog(@"registration starterd");
-                    NSManagedObjectID *companyID = [admin.currentCompany objectID];
-                    admin.currentCompany.name = companyNameLabel.text;
-                    [clientController finalSave:clientController.moc];
+                    [self showErrorMessage:@"please wait while first setup will done"];
+                    [login setEnabled:YES forSegmentAtIndex:0];
+                    [registration setEnabled:YES forSegmentAtIndex:0];
+                    loginActivity.hidden = YES;
+                    [loginActivity stopAnimating];
+                    [emailAndPassword resignFirstResponder];
 
-                    [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:companyID] mustBeApproved:NO];
-                    [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[admin objectID]] mustBeApproved:NO];
                 }
             }
+            
+            [clientController release];
+
         } else { 
             [self showErrorMessage:@"please wait while first setup will done"];
             [login setEnabled:YES forSegmentAtIndex:0];
@@ -518,7 +538,6 @@
             [emailAndPassword resignFirstResponder];
 
         }
-        [clientController release];
         
     });
     
@@ -604,7 +623,7 @@
 -(void)updateUIWithData:(NSArray *)data;
 {
     //sleep(5);
-    //NSLog(@"AUTHORIZATION: data:%@",data);
+    NSLog(@"AUTHORIZATION: data:%@",data);
     NSString *status = [data objectAtIndex:0];
     //NSNumber *progress = [data objectAtIndex:1];
     NSNumber *isItLatestMessage = [data objectAtIndex:2];
@@ -663,7 +682,6 @@
                     
                 } else {
                     if (![isError boolValue] ) {
-                        
                         
                         dispatch_async(dispatch_get_main_queue(), ^(void) {
                             

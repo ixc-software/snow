@@ -284,6 +284,7 @@
 //    [carrierName release];
 //    [carrierGUID release];
 //    [currentCompanyID release];
+    [super dealloc];
 }
 
 @end

@@ -196,7 +196,7 @@
 
                 });
                 NSArray *allGUIDsCarrier = [clientController getAllObjectsListWithEntityForList:@"Carrier" withMainObjectGUID:admin.GUID withMainObjectEntity:@"CompanyStuff" withAdmin:admin withDateFrom:nil withDateTo:nil];
-                NSArray *allObjectsForGUIDS = [clientController getAllObjectsListWithGUIDs:allGUIDsCarrier withEntity:@"Carrier" withAdmin:admin];
+                NSArray *allObjectsForGUIDS = [clientController getAllObjectsWithGUIDs:allGUIDsCarrier withEntity:@"Carrier" withAdmin:admin];
                 if (allGUIDsCarrier && allObjectsForGUIDS) {
                     
                     NSArray *updatedCarrierIDs = [clientController updateGraphForObjects:allObjectsForGUIDS withEntity:@"Carrier" withAdmin:admin withRootObject:admin isEveryTenPercentSave:NO];
@@ -281,7 +281,8 @@
     cellLocal.delegate = self;
     cellLocal.currentIndexPath = indexPath;
     cellLocal.selectionStyle =  UITableViewCellSelectionStyleNone;
-
+    cellLocal.activity.hidden = YES;
+    
     cellLocal.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
     
     //    if (indexPath.row ==  [[[self fetchedResultsController] fetchedObjects] count]) { 

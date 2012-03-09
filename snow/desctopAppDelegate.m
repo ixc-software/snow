@@ -151,7 +151,14 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 #ifdef SNOW_SERVER
 
     [self.window setTitle:@"snow server distribution"];
-    
+//    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+//    NSEntityDescription *entity = [NSEntityDescription entityForName:@"CountrySpecificCodeList" inManagedObjectContext:self.managedObjectContext];
+//    [fetchRequest setEntity:entity];
+//    
+//    NSError *error = nil;
+//    NSArray *fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
+//    NSLog(@">>>>>>> codes:%@",fetchedObjects);
+//    [fetchRequest release];
 #endif
 
 #ifdef SNOW_CLIENT_ENTERPRISE
@@ -815,11 +822,11 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
             [self.userCompanyInfo localMocMustUpdate];
             
             userCompanyInfo.isViewHidden = NO;
-#if defined(SNOW_SERVER)
-            //userCompanyInfo.view.frame = NSMakeRect(userCompanyInfo.view.frame.origin.x - userCompanyInfo.view.frame.size.width + 15, userCompanyInfo.view.frame.origin.y, userCompanyInfo.view.frame.size.width, userCompanyInfo.view.frame.size.height);
-            [self.window.contentView addSubview:userCompanyInfo.view];
-            
-#else 
+//#if defined(SNOW_SERVER)
+//            //userCompanyInfo.view.frame = NSMakeRect(userCompanyInfo.view.frame.origin.x - userCompanyInfo.view.frame.size.width + 15, userCompanyInfo.view.frame.origin.y, userCompanyInfo.view.frame.size.width, userCompanyInfo.view.frame.size.height);
+//            [self.window.contentView addSubview:userCompanyInfo.view];
+//            
+//#else 
             if (!userCompanyInfoPopover) userCompanyInfoPopover = [[NSPopover alloc] init];
             NSRect frameOfSender = [sender frame];
             
@@ -848,7 +855,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
                 [[userCompanyInfo.view layer] addAnimation:controlPosAnim forKey:@"controlViewPosition"];
                 userCompanyInfo.view.frame = NSMakeRect(userCompanyInfo.view.frame.origin.x - userCompanyInfo.view.frame.size.width + 15, userCompanyInfo.view.frame.origin.y, userCompanyInfo.view.frame.size.width, userCompanyInfo.view.frame.size.height);
             }
-#endif
+//#endif
             //            [self.destinationsView localMocMustUpdate];
             //            [self.carriersView localMocMustUpdate];
             //            [self.userCompanyInfo localMocMustUpdate];

@@ -427,12 +427,12 @@
     [carriersToExecute enumerateObjectsUsingBlock:^(NSManagedObjectID *carrierID, NSUInteger idx, BOOL *stop) {
         sleep(1);
 #if defined (SNOW_SERVER)
-        while (completedSubblocks.count > 5) {
+        while (completedSubblocks.count > 3) {
             sleep(3);
         }
 
 #else 
-        while (completedSubblocks.count > 5) {
+        while (completedSubblocks.count > 3) {
             sleep(3);
         }
         

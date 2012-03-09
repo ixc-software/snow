@@ -573,15 +573,15 @@
                 self.upperPress.hidden = NO;
                 self.upperFinger.hidden = NO;
                 if (isPad) {
-                    self.view.frame = CGRectMake(self.view.frame.origin.x + 180, self.view.frame.origin.y + 600, self.view.frame.size.width, self.view.frame.size.height);
+                    //self.view.frame = CGRectMake(self.view.frame.origin.x + 180, self.view.frame.origin.y + 600, self.view.frame.size.width, self.view.frame.size.height);
 
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 520 , self.upperPress.frame.origin.y, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 520 , self.upperFinger.frame.origin.y, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 300 , self.upperPress.frame.origin.y, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 300 , self.upperFinger.frame.origin.y, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
                     self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + 60, self.view.frame.size.width, self.view.frame.size.height);
 
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 40 , self.upperPress.frame.origin.y , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 40 , self.upperFinger.frame.origin.y , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 40 , self.upperPress.frame.origin.y - 80, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 40 , self.upperFinger.frame.origin.y - 80, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 }
                 
                 self.downPress.hidden = YES;
@@ -589,16 +589,16 @@
                 break;
                 
             case 1:
-                self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
                 
                 self.helpText.text = @"Then u will fill your user name and pass and click go, you will see pin, which u will write here.";
                 self.upperPress.hidden = YES;
                 self.upperFinger.hidden = NO;
                 
                 if (isPad) {
-                    
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x - 190 , self.upperPress.frame.origin.y + 45 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x - 190 , self.upperFinger.frame.origin.y + 45 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.view.frame = CGRectMake(self.view.frame.origin.x , self.view.frame.origin.y + 200, self.view.frame.size.width, self.view.frame.size.height);
+
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x  -450 , self.upperPress.frame.origin.y - 150 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x  - 450 , self.upperFinger.frame.origin.y - 150 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
                     self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x - 190 , self.upperPress.frame.origin.y + 60 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
                     self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x - 190 , self.upperFinger.frame.origin.y + 60 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
@@ -608,7 +608,7 @@
                 self.downFinger.hidden = YES;
                 break;
             case 2:
-                self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
+                //self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
                 
                 self.helpText.text = @"Then u will fill pin box, just press authorize to process authorization.";
                 self.upperPress.hidden = NO;
@@ -616,8 +616,8 @@
                 
                 if (isPad) {
                     
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x - 190 , self.upperPress.frame.origin.y + 45 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x - 190 , self.upperFinger.frame.origin.y + 45 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 150 , self.upperPress.frame.origin.y  , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x  + 150, self.upperFinger.frame.origin.y  , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
                     self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 120 , self.upperPress.frame.origin.y - 10, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
                     self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 120 , self.upperFinger.frame.origin.y - 10, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
@@ -635,8 +635,8 @@
                 
                 if (isPad) {
                     
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 60, self.upperPress.frame.origin.y + 45 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 60 , self.upperFinger.frame.origin.y + 45 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 500, self.upperPress.frame.origin.y  , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 500 , self.upperFinger.frame.origin.y  , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
                     self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 100  , self.upperPress.frame.origin.y, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
                     self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 100 , self.upperFinger.frame.origin.y, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
@@ -678,8 +678,8 @@
                 if (isPad) {
                     self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + 50, self.view.frame.size.width, self.view.frame.size.height);
 
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 520 , self.upperPress.frame.origin.y, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 520 , self.upperFinger.frame.origin.y, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 320 , self.upperPress.frame.origin.y + 200, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 320 , self.upperFinger.frame.origin.y + 200, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
                     self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + 50, self.view.frame.size.width, self.view.frame.size.height);
 
@@ -699,11 +699,11 @@
                 self.upperFinger.hidden = YES;
                 if (isPad) {
                     
-                    self.downPress.frame = CGRectMake(self.downPress.frame.origin.x + 100 , self.downPress.frame.origin.y - 90 , self.downPress.frame.size.width, self.downPress.frame.size.height);
-                    self.downFinger.frame = CGRectMake(self.downFinger.frame.origin.x + 100 , self.downFinger.frame.origin.y - 90 , self.downFinger.frame.size.width, self.downFinger.frame.size.height);
+                    self.downPress.frame = CGRectMake(self.downPress.frame.origin.x + 380 , self.downPress.frame.origin.y + 450, self.downPress.frame.size.width, self.downPress.frame.size.height);
+                    self.downFinger.frame = CGRectMake(self.downFinger.frame.origin.x + 380 , self.downFinger.frame.origin.y + 450, self.downFinger.frame.size.width, self.downFinger.frame.size.height);
                 } else {
-                    self.downPress.frame = CGRectMake(self.downPress.frame.origin.x + 150, self.downPress.frame.origin.y - 10, self.downPress.frame.size.width, self.downPress.frame.size.height);
-                    self.downFinger.frame = CGRectMake(self.downFinger.frame.origin.x + 150, self.downFinger.frame.origin.y - 10, self.downFinger.frame.size.width, self.downFinger.frame.size.height);
+                    self.downPress.frame = CGRectMake(self.downPress.frame.origin.x + 150, self.downPress.frame.origin.y - 60, self.downPress.frame.size.width, self.downPress.frame.size.height);
+                    self.downFinger.frame = CGRectMake(self.downFinger.frame.origin.x + 150, self.downFinger.frame.origin.y - 60, self.downFinger.frame.size.width, self.downFinger.frame.size.height);
                     
                 }
                 self.downPress.hidden = NO;
@@ -735,10 +735,10 @@
                 self.upperPress.hidden = YES;
                 self.upperFinger.hidden = NO;
                 if (isPad) {
-                    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
+                    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + 500, self.view.frame.size.width, self.view.frame.size.height);
 
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 520 , self.upperPress.frame.origin.y, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 520 , self.upperFinger.frame.origin.y, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 300 , self.upperPress.frame.origin.y - 300, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 300 , self.upperFinger.frame.origin.y - 300, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
                     self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + 160, self.view.frame.size.width, self.view.frame.size.height);
 
@@ -753,14 +753,14 @@
             case 1:
 //                self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
                 
-                self.helpText.text = @"Here is you can edit a first part (main body) of you message.";
+                self.helpText.text = @"Here is you can edit a first part (main body) of you message. After body will be routes list, so prepare it like routes list is a part of message. For example: \nHi.\nOur company currently looking for those routes:\n";
                 self.upperPress.hidden = YES;
                 self.upperFinger.hidden = NO;
                 
                 if (isPad) {
                     
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x , self.upperPress.frame.origin.y + 45 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x  , self.upperFinger.frame.origin.y + 45 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x , self.upperPress.frame.origin.y + 100 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x  , self.upperFinger.frame.origin.y + 100 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
                     self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x  , self.upperPress.frame.origin.y + 45 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
                     self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x  , self.upperFinger.frame.origin.y + 45 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
@@ -778,8 +778,8 @@
                 
                 if (isPad) {
                     
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x - 190 , self.upperPress.frame.origin.y + 45 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x - 190 , self.upperFinger.frame.origin.y + 45 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x - 100 , self.upperPress.frame.origin.y + 150 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x - 100 , self.upperFinger.frame.origin.y + 150 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
                     self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x - 50 , self.upperPress.frame.origin.y + 40, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
                     self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x  - 50, self.upperFinger.frame.origin.y + 40, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
@@ -797,8 +797,8 @@
                 
                 if (isPad) {
                     
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 60, self.upperPress.frame.origin.y + 45 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 60 , self.upperFinger.frame.origin.y + 45 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 60, self.upperPress.frame.origin.y + 100 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 60 , self.upperFinger.frame.origin.y + 100 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
                     self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x   , self.upperPress.frame.origin.y + 50, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
                     self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x , self.upperFinger.frame.origin.y + 50, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);

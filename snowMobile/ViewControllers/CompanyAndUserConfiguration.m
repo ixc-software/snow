@@ -161,7 +161,22 @@
 //    if (!self.stuff) {
 //        self.stuff = [userController defaultUser]; 
 //    } else isAuthorized = YES;
-    NSAssert (stuffID != nil,@"can't find stuff");
+    //NSAssert (stuffID != nil,@"can't find stuff");
+//    if (!stuffID) {
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+//            CompanyStuff *admin = nil;
+//            while (!admin) {
+//                ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:self.managedObjectContext];
+//                admin = [clientController authorization];
+//                [clientController release];
+//                sleep(2);
+//            }
+//            dispatch_async(dispatch_get_main_queue(), ^(void) { 
+//                [self.tableView reloadData];
+//            });
+//        });
+//        
+//    }
 //    isRegistrationProcessed = [stuff.isRegistrationProcessed boolValue];
 //    isRegistered = [stuff.isRegistrationDone boolValue];
 
@@ -1277,17 +1292,17 @@
     [activity startAnimating];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
 //            isUpdatesProcessingNow = YES;
-            BOOL isMustBeApproved = NO;
+//            BOOL isMustBeApproved = NO;
             ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:self.managedObjectContext];
             
             if ([sender tag] == 1) { 
-            
+                [clientController processLoginForEmail:stuff.email forPassword:stuff.password];
                 // while login pressing, we are checking and authorization and when it not failed, do this as well;
                 //CompanyStuff *admin = [clientController authorization];
-                if ([clientController checkIfCurrentAdminCanLogin]) {
-//                    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:YES];
-                    [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[stuff objectID]] mustBeApproved:isMustBeApproved];
-                }
+//                if ([clientController checkIfCurrentAdminCanLogin]) {
+////                    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:YES];
+//                    [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[stuff objectID]] mustBeApproved:isMustBeApproved];
+//                }
                     
             }
             else {

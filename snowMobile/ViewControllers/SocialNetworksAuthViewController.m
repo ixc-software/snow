@@ -29,7 +29,7 @@
 @synthesize groupsBack;
 @synthesize groupsView;
 
-@synthesize authorize,back,pin,webView,infoController,twitterController,activity,isAuthorizationProcessed,countTremorAnimation,infoViewController,linkedinController,cellInfo,groupListObjects,isGroupToPostSelected,groupListObjectsForCollectAllGroups;
+@synthesize authorize,back,pin,webView,infoController,twitterController,activity,isAuthorizationProcessed,countTremorAnimation,infoViewController,linkedinController,cellInfo,groupListObjects,isGroupToPostSelected,groupListObjectsForCollectAllGroups,isGroupMessageEditingUp;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -139,7 +139,13 @@
     [saveChanges removeAllSegments];
     [saveChanges insertSegmentWithTitle:@"Save" atIndex:0 animated:NO];
     [saveChanges addTarget:self action:@selector(saveMessageChanges:) forControlEvents:UIControlEventValueChanged];
-
+    //saveChanges.frame = CGRectMake(saveChanges.frame.origin.x + 150, saveChanges.frame.origin.y + 250, saveChanges.frame.size.width, saveChanges.frame.size.height);
+    //saveChanges.hidden = NO;
+    mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
+    if ([delegate isPad]) {
+        [self.groupsList setBackgroundView:nil];
+        [self.groupsList setBackgroundView:[[[UIView alloc] init] autorelease]];
+    }
 
     back.tintColor = [UIColor colorWithRed:0.20 green:0.20 blue:0.52 alpha:1.0];
     
@@ -163,6 +169,11 @@
     
     groupListObjects = [[NSMutableArray alloc] init];
     groupListObjectsForCollectAllGroups = [[NSMutableArray alloc] init];
+    NSMutableArray *finalGroupsList = [[NSUserDefaults standardUserDefaults] valueForKey:@"allGroupList"];
+    [groupListObjects addObjectsFromArray:finalGroupsList];
+    [groupsList reloadData];
+//    self.groupsList.backgroundColor = [UIColor colorWithRed:0.34 green:0.34 blue:0.57 alpha:1.0];
+
     // Do any additional setup after loading the view from its nib.
 }
 - (void)viewWillAppear:(BOOL)animated
@@ -353,15 +364,18 @@
 - (IBAction)changeGroupsToPostToGroupsMessage:(id)sender {
     if (groupsToMessage.selectedSegmentIndex == 0) {
        // groups 
-        isGroupToPostSelected = YES;
         groupsList.rowHeight = 45;
+        isGroupToPostSelected = YES;
 
         [groupsList reloadData];
         
     } else {
        // message
         isGroupToPostSelected = NO;
-        groupsList.rowHeight = 200;
+        mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];        
+        
+        if ([delegate isPad]) groupsList.rowHeight = 530;
+        else groupsList.rowHeight = 230;
 
         [groupsList reloadData];
         HelpForInfoView *helpView = [[HelpForInfoView alloc] init];
@@ -375,6 +389,18 @@
     }
 }
 - (IBAction)saveMessageChanges:(id)sender {
+    groupsBack.hidden = NO;
+    saveChanges.hidden = YES;
+    changeAuthorizationType.hidden = NO;
+    isGroupMessageEditingUp = NO;
+
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    [UIView setAnimationDuration:0.3f];
+    groupsList.frame = CGRectMake(groupsList.frame.origin.x, groupsList.frame.origin.y + 85, groupsList.frame.size.width, groupsList.frame.size.height);
+    saveChanges.frame = CGRectMake(saveChanges.frame.origin.x, saveChanges.frame.origin.y + 85, saveChanges.frame.size.width, saveChanges.frame.size.height);
+    [UIView commitAnimations];
+
     saveChanges.selectedSegmentIndex = -1;
     LinkedinGroupsTableViewCell *cell = (LinkedinGroupsTableViewCell *)[groupsList cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     [cell.signature resignFirstResponder];
@@ -480,8 +506,11 @@
 
 -(void)linkedinAuthSuccess;
 {
+
     dispatch_async(dispatch_get_main_queue(), ^(void) { 
-        [linkedinController getGroupsStart:0 count:10];
+        NSDate *lastUpdate = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastLinedinGroupsUpdatingTime"];
+        if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 86400)  [linkedinController getGroupsStart:0 count:10];
+
         webView.hidden = YES;
         authorizedDoneLogo.hidden = NO;
         authorizedDoneTitle.hidden = NO;
@@ -546,6 +575,7 @@
 
 -(void)linkedinGroupsList:(NSDictionary *)parsedGroups withLatestGroups:(NSNumber *)isLatestGroup;
 {
+
     //[self.groupListObjects removeAllObjects];
     NSMutableArray *finalGroupsList = [[NSUserDefaults standardUserDefaults] valueForKey:@"allGroupList"];
 //    
@@ -624,15 +654,19 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)webViewCheck
 {
-    //NSLog(@"finished:%@",webViewCheck.request.URL);
+    NSLog(@"finished:%@",webViewCheck.request.URL);
     if ([webViewCheck.request.URL.absoluteString rangeOfString:@"https://api.twitter.com/oauth/authorize?oauth_token="].location != NSNotFound){
         //NSLog(@"SCROLL:%@",webViewCheck.request.URL);
 
         [webViewCheck.scrollView scrollRectToVisible:CGRectMake(0, 500, 100, 100) animated:YES];
     }
-    if ([webViewCheck.request.URL.absoluteString rangeOfString:@"https://api.twitter.com/oauth/authorize"].location != NSNotFound){
+    if ([webViewCheck.request.URL.absoluteString rangeOfString:@"https://api.twitter.com/oauth/authorize?"].location != NSNotFound){
         //NSLog(@"SCROLL:%@",webViewCheck.request.URL);
         
+        //[webViewCheck.scrollView scrollRectToVisible:CGRectMake(0, 350, 100, 100) animated:YES];
+    } else if ([webViewCheck.request.URL.absoluteString rangeOfString:@"https://api.twitter.com/oauth/authorize"].location != NSNotFound){
+        //NSLog(@"SCROLL:%@",webViewCheck.request.URL);
+        [pin becomeFirstResponder];
         [webViewCheck.scrollView scrollRectToVisible:CGRectMake(0, 350, 100, 100) animated:YES];
     }
 
@@ -685,8 +719,18 @@
 #pragma mark - UITextField delegate
 -(void)textFieldDidBeginEditing:(UITextField *)textField
 {
-    if (textField.tag == 1) {
+    if (textField.tag == 1 && !isGroupMessageEditingUp) {
+        isGroupMessageEditingUp = YES;
         saveChanges.hidden = NO;
+        groupsBack.hidden = YES;
+        changeAuthorizationType.hidden = YES;
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationBeginsFromCurrentState:YES];
+        [UIView setAnimationDuration:0.3f];
+        groupsList.frame = CGRectMake(groupsList.frame.origin.x, groupsList.frame.origin.y - 85, groupsList.frame.size.width, groupsList.frame.size.height);
+        saveChanges.frame = CGRectMake(saveChanges.frame.origin.x, saveChanges.frame.origin.y - 85, saveChanges.frame.size.width, saveChanges.frame.size.height);
+        [UIView commitAnimations];
+
     } 
 }
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -707,7 +751,21 @@
 
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView
 {
-    saveChanges.hidden = NO;
+    if (!isGroupMessageEditingUp) {
+        groupsBack.hidden = YES;
+        saveChanges.hidden = NO;
+        changeAuthorizationType.hidden = YES;
+
+        isGroupMessageEditingUp = YES;
+
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationBeginsFromCurrentState:YES];
+        [UIView setAnimationDuration:0.3f];
+        groupsList.frame = CGRectMake(groupsList.frame.origin.x, groupsList.frame.origin.y - 85, groupsList.frame.size.width, groupsList.frame.size.height);
+        saveChanges.frame = CGRectMake(saveChanges.frame.origin.x, saveChanges.frame.origin.y - 85, saveChanges.frame.size.width, saveChanges.frame.size.height);
+        [UIView commitAnimations];
+    }
+ 
     return YES;
 }
 #pragma mark - GroupList table view delegate
@@ -723,7 +781,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    //NSLog(@"numberOfRowsInSection:%u",groupListObjects.count);
+    NSLog(@"numberOfRowsInSection:%u",groupListObjects.count);
     if (isGroupToPostSelected) return groupListObjects.count;
     else return 1;
     
@@ -731,11 +789,17 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"groups";
+    static NSString *CellIdentifier = nil;
     
     LinkedinGroupsTableViewCell *cell = (LinkedinGroupsTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        UINib *quoteCellNib = [UINib nibWithNibName:@"LinkedinGroupsTableViewCell" bundle:nil];
+        mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
+        UINib *quoteCellNib = nil;
+        
+        if ([delegate isPad]) quoteCellNib = [UINib nibWithNibName:@"LinkedinGroupsTableViewCelliPad" bundle:nil];
+        else quoteCellNib = [UINib nibWithNibName:@"LinkedinGroupsTableViewCell" bundle:nil];
+
+//        UINib *quoteCellNib = [UINib nibWithNibName:@"LinkedinGroupsTableViewCell" bundle:nil];
         [quoteCellNib instantiateWithOwner:self options:nil];
         cell = self.cellInfo;
         self.cellInfo = nil;
@@ -775,6 +839,8 @@
         cell.postingTitle.text = [[NSUserDefaults standardUserDefaults] valueForKey:@"postingTitle"];
         cell.includeRates.on = [[[NSUserDefaults standardUserDefaults] valueForKey:@"includeRates"] boolValue];
     }
+    cell.backgroundColor = [UIColor colorWithRed:0.52 green:0.53 blue:0.68 alpha:1.0];
+
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
