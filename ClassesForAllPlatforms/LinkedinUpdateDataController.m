@@ -35,7 +35,7 @@
 {
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         
-        if (!consumer) self.consumer = [[OAConsumer alloc] initWithKey:kOAuthConsumerKey
+        consumer = [[OAConsumer alloc] initWithKey:kOAuthConsumerKey
                                                         secret:kOAuthConsumerSecret
                                                          realm:@"http://api.linkedin.com/"];
         
@@ -104,7 +104,7 @@
 
 - (IBAction) getAccessToken:(id)sender withURL:(NSURL *)url
 {
-    if (!consumer) self.consumer = [[OAConsumer alloc] initWithKey:kOAuthConsumerKey
+    consumer = [[OAConsumer alloc] initWithKey:kOAuthConsumerKey
                                                     secret:kOAuthConsumerSecret
                                                      realm:@"http://api.linkedin.com/"];
 	
@@ -118,7 +118,7 @@
     NSLog(@"Using PIN %@", [accessTokenLocal verifier]);
 	
 	OAMutableURLRequest *request = [[OAMutableURLRequest alloc] initWithURL:urlToken
-																   consumer:consumer
+																   consumer:self.consumer
 																	  token:accessTokenLocal
 																	  callback:nil
 														  signatureProvider:nil];

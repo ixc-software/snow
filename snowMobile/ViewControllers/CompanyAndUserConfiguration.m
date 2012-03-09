@@ -154,8 +154,9 @@
     ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:self.managedObjectContext];
 
     //self.stuff = [clientController authorization];
-    
-    self.stuffID = [[clientController authorization] objectID];
+    CompanyStuff *admin = [clientController authorization];
+    //NSLog(@"COMPANY AND USER CONFIG: current admin email:%@, GUID:%@ company name:%@, companyAdminGUID:%@",admin.email,admin.GUID,admin.currentCompany.name,admin.currentCompany.companyAdminGUID);
+    self.stuffID = [admin objectID];
     [clientController release];
 
 //    if (!self.stuff) {

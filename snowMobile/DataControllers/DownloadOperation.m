@@ -141,9 +141,13 @@
         }
         mobileAppDelegate *delegateShared = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
         ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[insertionContext persistentStoreCoordinator] withSender:self withMainMoc:[delegateShared managedObjectContext]];
-        self.operationName = @"Update internal graph";
+        self.operationName = @"Update destinations";
         [self updateProgessInfoWithPercent:[NSNumber numberWithDouble:0]];
         //NSLog(@"authorizedUserGUID for first setup:%@",[[clientController authorization] valueForKey:@"GUID"]);
+        [clientController firstSetup];
+
+        self.operationName = @"Update internal graph";
+        [self updateProgessInfoWithPercent:[NSNumber numberWithDouble:0]];
         
         [clientController getCompaniesListWithImmediatelyStart:YES];
         //    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:NO isUserAuthorized:NO];

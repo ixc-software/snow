@@ -905,7 +905,7 @@
 
         return self.fetchedResultsController;
     }*/
-    NSLog(@"fetch controller start:%@",[NSDate date]);
+    //NSLog(@"fetch controller start:%@",[NSDate date]);
 
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"country" ascending:YES];
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];

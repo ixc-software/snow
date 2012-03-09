@@ -174,7 +174,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = nil;
-    NSLog(@"%@",indexPath);
+    //NSLog(@"%@",indexPath);
 
     static NSString *SpecificsCellIdentifier = nil;
     
@@ -445,15 +445,12 @@
         
         
         if (admin || isLogin) {
-            admin.email = emailLabel.text;
-            admin.password = passwordLabel.text;
-            [clientController finalSave:clientController.moc];
             ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
 
             CompanyStuff *admin = [clientController authorization];
-            NSLog(@"ADMIN email:%@",admin.email);
+            //NSLog(@"ADMIN email:%@",admin.email);
             if (isLogin) {
-                [clientController processLoginForEmail:emailLabel.text forPassword:emailLabel.text];
+                [clientController processLoginForEmail:emailLabel.text forPassword:passwordLabel.text];
                 //NSString *returnString = [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES];
 //                if ([clientController checkIfCurrentAdminCanLogin]) { 
 //                    // good, auth was passed
@@ -486,6 +483,10 @@
 
             } else {
                 if (admin) {
+                    admin.email = emailLabel.text;
+                    admin.password = passwordLabel.text;
+                    [clientController finalSave:clientController.moc];
+
                     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
                     NSEntityDescription *entity = [NSEntityDescription entityForName:@"CurrentCompany" inManagedObjectContext:delegate.managedObjectContext];
                     [fetchRequest setEntity:entity];
@@ -623,7 +624,7 @@
 -(void)updateUIWithData:(NSArray *)data;
 {
     //sleep(5);
-    NSLog(@"AUTHORIZATION: data:%@",data);
+    //NSLog(@"AUTHORIZATION: data:%@",data);
     NSString *status = [data objectAtIndex:0];
     //NSNumber *progress = [data objectAtIndex:1];
     NSNumber *isItLatestMessage = [data objectAtIndex:2];
@@ -644,11 +645,11 @@
     
     if ([data count] > 4) objectID = [data objectAtIndex:4];
     
-    if (objectID) {
-        mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
-        NSManagedObject *updatedObject = [delegate.managedObjectContext objectWithID:objectID];
+ //   if (objectID) {
+//        mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+//        NSManagedObject *updatedObject = [delegate.managedObjectContext objectWithID:objectID];
 
-        if ([[[updatedObject entity] name] isEqualToString:@"CompanyStuff"]) {
+        //if ([[[updatedObject entity] name] isEqualToString:@"CompanyStuff"]) {
 
             
             
@@ -697,9 +698,9 @@
                 }
                 
             }
-        }
+        //}
             
-        }
+   //     }
 }
 
 

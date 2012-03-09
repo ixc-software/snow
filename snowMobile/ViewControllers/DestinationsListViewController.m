@@ -344,7 +344,7 @@
     //dispatch_async(dispatch_get_main_queue(), ^(void) {
     
     NSUInteger selectedSegmentIndex = selectRoutes.selectedSegmentIndex;
-    NSLog(@"selected index:%u isRoutesForSaleListUpdated:%@ isRoutesWeBuyListUpdated:%@ isRoutesPushlistListUpdated:%@",selectedSegmentIndex,[NSNumber numberWithBool:isRoutesForSaleListUpdated],[NSNumber numberWithBool:isRoutesWeBuyListUpdated],[NSNumber numberWithBool:isRoutesPushlistListUpdated]); 
+    //NSLog(@"selected index:%u isRoutesForSaleListUpdated:%@ isRoutesWeBuyListUpdated:%@ isRoutesPushlistListUpdated:%@",selectedSegmentIndex,[NSNumber numberWithBool:isRoutesForSaleListUpdated],[NSNumber numberWithBool:isRoutesWeBuyListUpdated],[NSNumber numberWithBool:isRoutesPushlistListUpdated]); 
     if (selectedSegmentIndex == 2) addRoutes.hidden = NO;
     else addRoutes.hidden = YES;
     
@@ -391,7 +391,7 @@
 
         if (selectRoutes.selectedSegmentIndex == 2) routesChangeFilterWithOrWithoutTraffic.hidden = YES;
         else routesChangeFilterWithOrWithoutTraffic.hidden = NO;
-        NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
+        //NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
 
 
 //        [self.navigationController setToolbarHidden:YES animated:YES];progressView.hidden = YES;
@@ -834,7 +834,7 @@
     //NSLog(@"%@",[fetchedObjects lastObject]);
     NSInteger count = [[[self fetchedResultsController] fetchedObjects] count];
     //NSInteger count = [[[self fetchedResultsController] fetchedObjects] count] + 1;
-    NSLog(@"Number of sections:%@",[NSNumber numberWithUnsignedInteger:count]);
+    //NSLog(@"Number of sections:%@",[NSNumber numberWithUnsignedInteger:count]);
     return count;
 }
 
@@ -966,6 +966,7 @@
     cell.notification.tintColor = [UIColor colorWithRed:0.42 green:0.43 blue:0.64 alpha:1.0];
     if ([delegate isPad]) cell.notification.frame = CGRectMake(760.0 - size.width, 5.0, size.width, size.height); 
     else cell.notification.frame = CGRectMake(315.0 - size.width, 5.0, size.width, size.height);
+    cell.activity.hidden = YES;
     
 }
 
@@ -1011,7 +1012,7 @@
     NSNumber *sectionNumber = [NSNumber numberWithInteger:section];
     //    if (openedIndexPath && openedIndexPath.section == section) isOpened = YES;
     
-    if (section < 6) NSLog(@"sections view for country/specific:%@/%@ for section:%@",[managedObject valueForKey:@"country"],[managedObject valueForKey:@"specific"],[NSNumber numberWithInteger:section]); 
+    //if (section < 6) NSLog(@"sections view for country/specific:%@/%@ for section:%@",[managedObject valueForKey:@"country"],[managedObject valueForKey:@"specific"],[NSNumber numberWithInteger:section]); 
     DestinationPushListHeaderView *sectionView = nil;
     
     if ([[managedObject class] isSubclassOfClass:[DestinationsListPushList class]]) {
@@ -1086,18 +1087,18 @@
             animationInsert = UITableViewRowAnimationBottom;
             
         }
-        NSLog(@"DESTINATIONS LIST: PREVIOUS OPENED:%@",[NSIndexPath indexPathForRow:0 inSection:previousOpenedSection]);
+        //NSLog(@"DESTINATIONS LIST: PREVIOUS OPENED:%@",[NSIndexPath indexPathForRow:0 inSection:previousOpenedSection]);
 
         [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:previousOpenedSection]] withRowAnimation:animationDelete];
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:previousOpenedSection] withRowAnimation:UITableViewRowAnimationNone];
         [sections removeAllIndexes];
         [sections addIndex:sectionOpened.unsignedIntegerValue];
         [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]] withRowAnimation:animationInsert];
-        NSLog(@"DESTINATIONS LIST: OPENED:%@",[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]);
+        //NSLog(@"DESTINATIONS LIST: OPENED:%@",[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]);
 
     } else {
         [sections addIndex:sectionOpened.unsignedIntegerValue];
-        NSLog(@"DESTINATIONS LIST: OPENED:%@",[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]);
+        //NSLog(@"DESTINATIONS LIST: OPENED:%@",[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]);
 
         [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]] withRowAnimation:UITableViewRowAnimationTop];
     }
@@ -1588,7 +1589,7 @@
 //    {
         filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:predicateArray];
 //    }
-    NSLog(@"DESTIONATIONS PUSH LIST:final predicate in fetch:%@ entity name:%@ sort descriptors:%@",filterPredicate,entity.name,sortDescriptors);
+    //NSLog(@"DESTIONATIONS PUSH LIST:final predicate in fetch:%@ entity name:%@ sort descriptors:%@",filterPredicate,entity.name,sortDescriptors);
     [fetchRequest setPredicate:filterPredicate];
     
     // Set the batch size to a suitable number.
@@ -1663,12 +1664,12 @@
     {
             
         case NSFetchedResultsChangeInsert:
-            NSLog(@"DESTINATIONS LIST:INSERT to indexpath :%@",newIndexPath);
+            //NSLog(@"DESTINATIONS LIST:INSERT to indexpath :%@",newIndexPath);
             [tableView insertSections:[NSIndexSet indexSetWithIndex:newIndexPath.row] withRowAnimation:UITableViewRowAnimationTop];
             break;
             
         case NSFetchedResultsChangeDelete:
-            NSLog(@"DESTINATIONS LIST: DELETE : %@",indexPath);
+            //NSLog(@"DESTINATIONS LIST: DELETE : %@",indexPath);
             [sections removeIndex:indexPath.row];
             [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.row] withRowAnimation:UITableViewRowAnimationFade];
             
@@ -1677,14 +1678,14 @@
             break;
             
         case NSFetchedResultsChangeUpdate:
-            NSLog(@"DESTINATIONS LIST:UPDATE :%@",indexPath);
+            //NSLog(@"DESTINATIONS LIST:UPDATE :%@",indexPath);
             [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.row] withRowAnimation:UITableViewRowAnimationFade];
             //[self configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
             break;
             
         case NSFetchedResultsChangeMove:
         {
-            NSLog(@"DESTINATIONS LIST:CHANGE MOVE from :%@ to %@ ",indexPath,newIndexPath);
+            //NSLog(@"DESTINATIONS LIST:CHANGE MOVE from :%@ to %@ ",indexPath,newIndexPath);
             BOOL isOpened = [sections containsIndex:indexPath.row];
             if (isOpened) {
                 //NSLog(@"DESTINATIONS LIST:OPENED CHANGE MOVE from :%@ to %@ ",indexPath,newIndexPath);
@@ -1841,6 +1842,14 @@
 
 - (void) addNewRoute:(id) sender
 {
+    if (sections.count > 0) {
+        [self.tableView beginUpdates];
+        
+        NSUInteger previousOpenedSection = [sections lastIndex];
+        [sections removeAllIndexes];
+        [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:previousOpenedSection]] withRowAnimation:UITableViewRowAnimationTop];
+        [self.tableView endUpdates];
+    }
     [self.bar resignFirstResponder];
     //  UISegmentedControl *senderSegmented = sender;
     
@@ -2103,7 +2112,7 @@
                 operationTitle.hidden = YES;
                 operationProgress.hidden = YES;
                 routesChangeFilterWithOrWithoutTraffic.hidden = NO;
-                NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
+                //NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
 
                 [cell.activity stopAnimating];
                 cell.activity.hidden = YES;

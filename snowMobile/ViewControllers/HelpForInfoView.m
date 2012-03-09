@@ -174,7 +174,7 @@
                     self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x - 280 , self.upperPress.frame.origin.y + 60 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
                     self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x - 280 , self.upperFinger.frame.origin.y + 60 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
-                    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + 20, self.view.frame.size.width, self.view.frame.size.height);
+                    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + 40, self.view.frame.size.width, self.view.frame.size.height);
                     self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x - 180 , self.upperPress.frame.origin.y + 30 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
                     self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x - 180 , self.upperFinger.frame.origin.y + 30 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                     
@@ -196,8 +196,10 @@
                     self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x , self.upperPress.frame.origin.y + 240 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
                     self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x , self.upperFinger.frame.origin.y + 240 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x , self.upperPress.frame.origin.y + 240 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x , self.upperFinger.frame.origin.y + 240 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - 40, self.view.frame.size.width, self.view.frame.size.height);
+
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x , self.upperPress.frame.origin.y + 300 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x , self.upperFinger.frame.origin.y + 300 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                     
                 }
                 self.downPress.hidden = YES;
@@ -386,8 +388,8 @@
                 } else {
                     self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - 60 , self.view.frame.size.width, self.view.frame.size.height + 80);
 
-                    self.downPress.frame = CGRectMake(self.downPress.frame.origin.x + 100 , self.downPress.frame.origin.y - 140 , self.downPress.frame.size.width, self.downPress.frame.size.height);
-                    self.downFinger.frame = CGRectMake(self.downFinger.frame.origin.x + 100 , self.downFinger.frame.origin.y - 140 , self.downFinger.frame.size.width, self.downFinger.frame.size.height);
+                    self.downPress.frame = CGRectMake(self.downPress.frame.origin.x + 100 , self.downPress.frame.origin.y - 50 , self.downPress.frame.size.width, self.downPress.frame.size.height);
+                    self.downFinger.frame = CGRectMake(self.downFinger.frame.origin.x + 100 , self.downFinger.frame.origin.y - 50 , self.downFinger.frame.size.width, self.downFinger.frame.size.height);
                     
                 }
                 self.downPress.hidden = NO;
@@ -740,10 +742,10 @@
                     self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 300 , self.upperPress.frame.origin.y - 300, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
                     self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 300 , self.upperFinger.frame.origin.y - 300, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
-                    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + 160, self.view.frame.size.width, self.view.frame.size.height);
+                    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + 100, self.view.frame.size.width, self.view.frame.size.height);
 
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x  , self.upperPress.frame.origin.y - 80, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x , self.upperFinger.frame.origin.y - 80, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x - 100 , self.upperPress.frame.origin.y - 20, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x - 100, self.upperFinger.frame.origin.y - 20, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 }
                 
                 self.downPress.hidden = YES;
@@ -770,7 +772,7 @@
                 self.downFinger.hidden = NO;
                 break;
             case 2:
-                //self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
+                self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + 20, self.view.frame.size.width, self.view.frame.size.height);
                 
                 self.helpText.text = @"Please keep in your mind, than here will be routes list, if you like to post rates, please uncheck button";
                 self.upperPress.hidden = YES;
@@ -781,15 +783,15 @@
                     self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x - 100 , self.upperPress.frame.origin.y + 150 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
                     self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x - 100 , self.upperFinger.frame.origin.y + 150 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x - 50 , self.upperPress.frame.origin.y + 40, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x  - 50, self.upperFinger.frame.origin.y + 40, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x - 50 , self.upperPress.frame.origin.y + 20, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x  - 50, self.upperFinger.frame.origin.y + 20, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                     
                 }
                 self.downPress.hidden = YES;
                 self.downFinger.hidden = YES;
                 break;
             case 3:
-                self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
+                self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - 200, self.view.frame.size.width, self.view.frame.size.height);
                 
                 self.helpText.text = @"Here is may be you signature like:\nOleksii Vinogradov\nsales manager\nphone:+380442399740\nskype:oleksiivinogradov";
                 self.upperPress.hidden = YES;
@@ -800,8 +802,8 @@
                     self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 60, self.upperPress.frame.origin.y + 100 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
                     self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 60 , self.upperFinger.frame.origin.y + 100 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x   , self.upperPress.frame.origin.y + 50, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x , self.upperFinger.frame.origin.y + 50, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x   , self.upperPress.frame.origin.y + 250, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x , self.upperFinger.frame.origin.y + 250, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                     
                 }
                 self.downPress.hidden = YES;

@@ -110,7 +110,7 @@ static char encodingTable[64] = {
 - (void)importerDidSave:(NSNotification *)saveNotification {
 //    [mainMoc performSelectorOnMainThread:@selector(mergeChangesFromContextDidSaveNotification:) withObject:saveNotification waitUntilDone:NO];
 
-    NSLog(@"MERGE in client controller");
+    //NSLog(@"MERGE in client controller");
 //    if ([NSThread isMainThread]) {
 //        [mainMoc mergeChangesFromContextDidSaveNotification:saveNotification];
 //////        [self performSelectorOnMainThread:@selector(finalSave:) withObject:self.moc waitUntilDone:YES];
@@ -737,8 +737,9 @@ static char encodingTable[64] = {
     NSArray *allGUIDsCodesSpecific = [self getAllObjectsListWithEntityForList:@"CountrySpecificCodeList" withMainObjectGUID:mainSystem.GUID withMainObjectEntity:@"MainSystem" withAdmin:authorizedUser withDateFrom:nil withDateTo:nil];
     NSArray *allObjectsCodesSpecificForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsCodesSpecific withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser];
     
-    NSArray *updatedCodesSpecificIDs = [self updateGraphForObjects:allObjectsCodesSpecificForGUIDS withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser withRootObject:mainSystem isEveryTenPercentSave:NO];
-    NSLog(@">>>>>> updated codes specific IDs:%@",updatedCodesSpecificIDs);
+    //NSArray *updatedCodesSpecificIDs = 
+    [self updateGraphForObjects:allObjectsCodesSpecificForGUIDS withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser withRootObject:mainSystem isEveryTenPercentSave:NO];
+    //NSLog(@">>>>>> updated codes specific IDs:%@",updatedCodesSpecificIDs);
 #endif
 
     [self finalSave:moc];
@@ -945,7 +946,7 @@ static char encodingTable[64] = {
         
         NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"GetCompaniesList" withJSONRequest:prepeareForJSONRequest];
         
-        NSLog(@"CLIENT CONTROLLER: get companies received:%@",receivedObject);
+        //NSLog(@"CLIENT CONTROLLER: get companies received:%@",receivedObject);
         
         [self updateUIwithMessage:@"get companies processing" withObjectID:nil withLatestMessage:NO error:NO];
         
@@ -2320,6 +2321,8 @@ static char encodingTable[64] = {
                 
                 if (rootObject) [newObject setValue:rootObject forKey:keyForRootObject];
                 [allUpdatedIDs addObject:guid];
+                [self setUserDefaultsObject:[NSDictionary dictionaryWithObject:@"registered" forKey:@"update"] forKey:[newObject valueForKey:@"GUID"]];
+
 //                if ([entityFor isEqualToString:@"CodesvsDestinationsList"]) {
 //                    NSLog(@"CLIENT CONTROLLER: object with entity:%@ will CREATE and new GUID:%@ oldGUID:%@ country:%@ specific:%@ destination GUID:%@",entityFor,guid,[newObject valueForKey:@"GUID"],[newObject valueForKey:@"country"],[newObject valueForKey:@"specific"],[newObject valueForKeyPath:@"destinationsListForSale.GUID"]);
 //                    
@@ -2334,7 +2337,7 @@ static char encodingTable[64] = {
 
         }
         
-        if (isEveryTenPercentSave && (allObjectsCount > 100) && (idx % allObjectsCount * 0.1 == 0)) [self finalSave:moc],NSLog(@">>>>>>>updateGraphForObjects SAVED");
+        if (isEveryTenPercentSave && (allObjectsCount > 100) && (idx % allObjectsCount * 0.1 == 0)) [self finalSave:moc];//,NSLog(@">>>>>>>updateGraphForObjects SAVED");
 
     }];
     return allUpdatedIDs;
@@ -2560,7 +2563,7 @@ static char encodingTable[64] = {
                     
                     NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:carriersCount] doubleValue]];
                     [self updateUIwithMessage:[NSString stringWithFormat:@"carrier data progress:%@",carrier.name] andProgressPercent:percentDone withObjectID:nil];
-                    NSLog(@"CLIENT CONTROLLER:>>>>>>> carrier start update:%@",carrier.name);
+                    //NSLog(@"CLIENT CONTROLLER:>>>>>>> carrier start update:%@",carrier.name);
                     if (isIncludeCarrierSubentities) [self updateLocalGraphFromSnowEnterpriseServerForCarrierID:carrier.objectID withDateFrom:dateFrom withDateTo:dateTo withAdmin:admin];
 /*                    //////////////////////////////// FOR SALE BLOCK 
                     NSArray *allGUIDsForSale = [self getAllObjectsListWithEntityForList:@"DestinationsListForSale" withMainObjectGUID:carrier.GUID withMainObjectEntity:@"Carrier" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
@@ -2758,7 +2761,7 @@ static char encodingTable[64] = {
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"CompanyStuff" inManagedObjectContext:self.moc];
     [fetchRequest setEntity:entity];
     
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(email == %@) and (password == %@)",email,password];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(email == %@)",email];
     [fetchRequest setPredicate:predicate];
     
     NSError *error = nil;
@@ -2766,12 +2769,16 @@ static char encodingTable[64] = {
     
     [fetchRequest release];
     if (fetchedObjects.count > 0) {
+        [self updateUIwithMessage:@"we are start updates." withObjectID:nil withLatestMessage:YES error:NO];
         // users don't have passwords, so we like to update it
         CompanyStuff *findedAuthorizedLogin = fetchedObjects.lastObject;
         findedAuthorizedLogin.password = password;
         [self finalSave:moc];
         NSString *keyAofAuthorized = @"authorizedUserGUID";
-        
+        NSLog(@"CLIENT CONTROLLER: finded user email:%@ userGUID:%@ companyName:%@ companyAdminGUID:%@",findedAuthorizedLogin.email,findedAuthorizedLogin.GUID,findedAuthorizedLogin.currentCompany.name,findedAuthorizedLogin.currentCompany.companyAdminGUID);
+        [self setUserDefaultsObject:[NSDictionary dictionaryWithObject:@"registered" forKey:@"update"] forKey:findedAuthorizedLogin.currentCompany.GUID];
+        [self setUserDefaultsObject:[NSDictionary dictionaryWithObject:@"registered" forKey:@"update"] forKey:findedAuthorizedLogin.GUID];
+
 #if defined(SNOW_CLIENT_APPSTORE)
         keyAofAuthorized = @"authorizedUserGUIDclient";
 #endif
@@ -2850,10 +2857,10 @@ static char encodingTable[64] = {
 
 
     [prepeareForJSONRequest setValue:allObjectsString forKey:@"necessaryData"];
-    NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",prepeareForJSONRequest);
+    //NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",prepeareForJSONRequest);
 
     NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"PutObject" withJSONRequest:prepeareForJSONRequest];
-    NSLog(@"CLIENT CONTROLLER PutObject Received:%@",receivedObject);
+    //NSLog(@"CLIENT CONTROLLER PutObject Received:%@",receivedObject);
     if (receivedObject) {
         [self updateUIwithMessage:@"put object processing"  withObjectID:[objectIDs lastObject] withLatestMessage:NO error:NO];
         
@@ -2872,7 +2879,7 @@ static char encodingTable[64] = {
                     NSString *guidForStatus = [updatedObject valueForKey:@"GUID"];
                     if (guidForStatus) [self setUserDefaultsObject:status forKey:guidForStatus];
                     else NSLog(@"CLIENT CONTROLLER: warning, result:%@ don't have GUID to update inside system",result);
-                    NSLog(@"CLIENT CONTROLLER:updated object:%@ for guid:%@ with object:%@",[[NSUserDefaults standardUserDefaults] objectForKey:[updatedObject valueForKey:@"GUID"]],[updatedObject valueForKey:@"GUID"],updatedObject);
+                    //NSLog(@"CLIENT CONTROLLER:updated object:%@ for guid:%@ with object:%@",[[NSUserDefaults standardUserDefaults] objectForKey:[updatedObject valueForKey:@"GUID"]],[updatedObject valueForKey:@"GUID"],updatedObject);
                     
                     
                 } else {

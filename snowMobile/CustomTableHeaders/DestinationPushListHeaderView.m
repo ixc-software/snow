@@ -186,7 +186,7 @@ isDestinationsPushList:(BOOL)isDestinationsPushListEntity;
 
         self.isOpened = !self.isOpened;
         self.disclosureButton.selected = isOpened;
-        NSLog(@">>> todge to state :%@ section:%@",[NSNumber numberWithBool:isOpened],section);
+        //NSLog(@">>> todge to state :%@ section:%@",[NSNumber numberWithBool:isOpened],section);
     //});
     
     if (isOpened) {
