@@ -67,8 +67,8 @@ static char encodingTable[64] = {
 //        mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
 
 //        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
-        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
-//        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
+//        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
 
 #endif
         
@@ -946,7 +946,7 @@ static char encodingTable[64] = {
         
         NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"GetCompaniesList" withJSONRequest:prepeareForJSONRequest];
         
-        //NSLog(@"CLIENT CONTROLLER: get companies received:%@",receivedObject);
+    NSLog(@"CLIENT CONTROLLER: get companies received:%@",receivedObject);
         
         [self updateUIwithMessage:@"get companies processing" withObjectID:nil withLatestMessage:NO error:NO];
         

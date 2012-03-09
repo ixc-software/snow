@@ -15,6 +15,9 @@
 @synthesize routesList;
 @synthesize postingTitle;
 @synthesize includeRates;
+@synthesize priceCorrectionTitle;
+@synthesize priceCorrectionPercent;
+@synthesize priceCorrectionStepper;
 @synthesize groupSwitch;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -42,6 +45,9 @@
     [routesList release];
     [postingTitle release];
     [includeRates release];
+    [priceCorrectionTitle release];
+    [priceCorrectionPercent release];
+    [priceCorrectionStepper release];
     [super dealloc];
 }
 

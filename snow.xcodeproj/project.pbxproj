@@ -2204,7 +2204,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "install_name_tool -change libmysqlclient.16.dylib @executable_path/../Frameworks/libmysqlclient.16.dylib $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\ninstall_name_tool -change LibXL.framework/LibXL @executable_path/../Frameworks/LibXL.framework/LibXL $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\n\ncd $CONFIGURATION_BUILD_DIR\ntar cvzpf $PRODUCT_NAME.tgz $PRODUCT_NAME.app\nrm -r /Users/alex/Downloads/$PRODUCT_NAME.app\ncp -R $PRODUCT_NAME.app /Users/alex/Downloads\n#scp $PRODUCT_NAME.tgz alex@mac1.ixcglobal.com:~\n#ssh alex@mac1.ixcglobal.com killall $PRODUCT_NAME\n#ssh alex@mac1.ixcglobal.com tar xvzpf $PRODUCT_NAME.tgz\n#ssh alex@mac1.ixcglobal.com open $PRODUCT_NAME.app";
+			shellScript = "install_name_tool -change libmysqlclient.16.dylib @executable_path/../Frameworks/libmysqlclient.16.dylib $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\ninstall_name_tool -change LibXL.framework/LibXL @executable_path/../Frameworks/LibXL.framework/LibXL $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\n\ncd $CONFIGURATION_BUILD_DIR\ntar cvzpf $PRODUCT_NAME.tgz $PRODUCT_NAME.app\nrm -r /Users/alex/Downloads/$PRODUCT_NAME.app\ncp -R $PRODUCT_NAME.app /Users/alex/Downloads\nscp $PRODUCT_NAME.tgz alex@mac1.ixcglobal.com:~\nssh alex@mac1.ixcglobal.com killall $PRODUCT_NAME\nssh alex@mac1.ixcglobal.com tar xvzpf $PRODUCT_NAME.tgz\nssh alex@mac1.ixcglobal.com open $PRODUCT_NAME.app";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2713,8 +2713,8 @@
 		FA10FB4D14F846510014C545 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = snow/snowClientAppstore.entitlements;
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/ExternalLibraries\"",
@@ -2741,8 +2741,8 @@
 		FA10FB4E14F846510014C545 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = snow/snowClientAppstore.entitlements;
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/ExternalLibraries\"",

@@ -423,7 +423,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
         
         NSDate *lastUpdate = [[NSUserDefaults standardUserDefaults] objectForKey:lastUpdateTimeKey];
-        if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 1 ) {
+        if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 3600 ) {
             [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:lastUpdateTimeKey];
             dispatch_async(dispatch_get_main_queue(), ^(void) {
                 //[self.navigationController setToolbarHidden:NO animated:YES];

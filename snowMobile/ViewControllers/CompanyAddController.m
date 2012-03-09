@@ -81,6 +81,7 @@
     
     // Release any cached data, images, etc that aren't in use.
 }
+#pragma mark TODO if u register and then change company, user is removed from server.
 
 #pragma mark - View lifecycle
 

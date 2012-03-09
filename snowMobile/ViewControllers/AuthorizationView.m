@@ -624,7 +624,7 @@
 -(void)updateUIWithData:(NSArray *)data;
 {
     //sleep(5);
-    //NSLog(@"AUTHORIZATION: data:%@",data);
+    NSLog(@"AUTHORIZATION: data:%@",data);
     NSString *status = [data objectAtIndex:0];
     //NSNumber *progress = [data objectAtIndex:1];
     NSNumber *isItLatestMessage = [data objectAtIndex:2];
@@ -644,63 +644,56 @@
     }
     
     if ([data count] > 4) objectID = [data objectAtIndex:4];
-    
- //   if (objectID) {
-//        mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
-//        NSManagedObject *updatedObject = [delegate.managedObjectContext objectWithID:objectID];
+    if (![isItLatestMessage boolValue])
+    {
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            
+            loginActivity.hidden = NO;
+            [loginActivity startAnimating];
+        });
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            
+            loginActivity.hidden = YES;
+            [loginActivity stopAnimating];
+        });
+        if ([status isEqualToString:@"put object finish"] && ![isError boolValue] && isJoinStarted) { 
+            [self showErrorMessage:@"you request was sent to admin"];
+            
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                
+                [UIView animateWithDuration:3 
+                                      delay:4 
+                                    options:UIViewAnimationOptionBeginFromCurrentState
+                                 animations:^{
+                                     
+                                     self.view.alpha = 0.0;
+                                 } completion:nil];
+            });
+            
+        } else {
+            if (![isError boolValue] ) {
+                mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
 
-        //if ([[[updatedObject entity] name] isEqualToString:@"CompanyStuff"]) {
-
-            
-            
-            
-            if (![isItLatestMessage boolValue])
-            {
-                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                NSManagedObject *finalObject = [delegate.managedObjectContext objectWithID:objectID];
+                if ([finalObject.entity.name isEqualToString:@"CompanyStuff"]) {
                     
-                    loginActivity.hidden = NO;
-                    [loginActivity startAnimating];
-                });
-            } else {
-                dispatch_async(dispatch_get_main_queue(), ^(void) {
-                    
-                    loginActivity.hidden = YES;
-                    [loginActivity stopAnimating];
-                });
-                if ([status isEqualToString:@"put object finish"] && ![isError boolValue] && isJoinStarted) { 
-                    [self showErrorMessage:@"you request was sent to admin"];
                     
                     dispatch_async(dispatch_get_main_queue(), ^(void) {
                         
                         [UIView animateWithDuration:3 
-                                              delay:4 
+                                              delay:0 
                                             options:UIViewAnimationOptionBeginFromCurrentState
                                          animations:^{
                                              
                                              self.view.alpha = 0.0;
                                          } completion:nil];
                     });
-                    
-                } else {
-                    if (![isError boolValue] ) {
-                        
-                        dispatch_async(dispatch_get_main_queue(), ^(void) {
-                            
-                            [UIView animateWithDuration:3 
-                                                  delay:0 
-                                                options:UIViewAnimationOptionBeginFromCurrentState
-                                             animations:^{
-                                                 
-                                                 self.view.alpha = 0.0;
-                                             } completion:nil];
-                        });
-                    }
                 }
-                
             }
-        //}
-            
-   //     }
+        }
+        
+    }
 }
 
 

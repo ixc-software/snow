@@ -1175,10 +1175,10 @@
 //    
 //    CurrentCompany *selectedFromMainMoc = (CurrentCompany *)[context objectWithID:[previousAdmin.currentCompany objectID]];
     
-    previousAdmin.email = [loginField stringValue];
-    previousAdmin.password = [passwordField stringValue];
-    [clientController finalSave:clientController.moc];
-//    newStuffForLogin.currentCompany = selectedFromMainMoc;
+//    previousAdmin.email = [loginField stringValue];
+//    previousAdmin.password = [passwordField stringValue];
+//    [clientController finalSave:clientController.moc];
+////    newStuffForLogin.currentCompany = selectedFromMainMoc;
     
     //[self finalSaveForMoc:context];
     //temporaryUserForLogin = [newStuffForLogin objectID];
@@ -1193,22 +1193,24 @@
         
         //[clientController setUserDefaultsObject:newStuffForLogin.GUID forKey:keyAofAuthorized];
         //NSLog(@"COMPANY STUFF: admin for login is:%@",[clientController authorization]);
-        //NSString *returnString = [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES ];
-        if ([clientController checkIfCurrentAdminCanLogin]) { 
-            // that means that login was succeseful
-            self.isLoginWasSuccesseful = YES;
-            //NSLog(@"HERE IS A GOOD PLACE TO START THINKING ABOUT SUCCESS LOGIN");
-            previousAdmin.isRegistrationDone = [NSNumber numberWithBool:YES];
+        //NSString *returnString = [loginField getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES ];
+        [clientController processLoginForEmail:loginField.stringValue forPassword:passwordField.stringValue];
 
-            //[clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:YES];
-            [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[previousAdmin objectID]] mustBeApproved:NO];
-        } else { 
-            
-            //[clientController setUserDefaultsObject:previousAdmin.GUID forKey:keyAofAuthorized];
-            //[context deleteObject:newStuffForLogin];
-            //[self finalSaveForMoc:context];
-            
-        }
+//        if ([clientController checkIfCurrentAdminCanLogin]) { 
+//            // that means that login was succeseful
+//            self.isLoginWasSuccesseful = YES;
+//            //NSLog(@"HERE IS A GOOD PLACE TO START THINKING ABOUT SUCCESS LOGIN");
+//            previousAdmin.isRegistrationDone = [NSNumber numberWithBool:YES];
+//
+//            //[clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:YES];
+//            [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[previousAdmin objectID]] mustBeApproved:NO];
+//        } else { 
+//            
+//            //[clientController setUserDefaultsObject:previousAdmin.GUID forKey:keyAofAuthorized];
+//            //[context deleteObject:newStuffForLogin];
+//            //[self finalSaveForMoc:context];
+//            
+//        }
         [clientController release];
     });
     

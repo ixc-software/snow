@@ -150,6 +150,7 @@
         [self updateProgessInfoWithPercent:[NSNumber numberWithDouble:0]];
         
         [clientController getCompaniesListWithImmediatelyStart:YES];
+
         //    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:NO isUserAuthorized:NO];
         self.operationName = @"Download events data";
         self.percentDone = [NSNumber numberWithDouble:0];

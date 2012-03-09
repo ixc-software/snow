@@ -479,26 +479,28 @@
                 return ;
 
             }
-            admin.email = email.stringValue;
-            admin.password = password.stringValue;
-            admin.currentCompany.name = company.stringValue;
+            //admin.email = email.stringValue;
+            //admin.password = password.stringValue;
+            //admin.currentCompany.name = company.stringValue;
 
-            [clientController finalSave:clientController.moc];
+            //[clientController finalSave:clientController.moc];
+            
+            [clientController processLoginForEmail:email.stringValue forPassword:password.stringValue];
             
             //NSString *returnString = [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES];
-            if ([clientController checkIfCurrentAdminCanLogin]) { 
-                admin.isRegistrationDone = [NSNumber numberWithBool:YES];
-                [clientController finalSave:clientController.moc];
-// >>>
-                //[clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:YES];
-                [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[admin objectID]] mustBeApproved:NO];
-            } else {
-                [login setEnabled:YES];
-                [registration setEnabled:YES];
-                progressLogin.hidden = YES;
-                [progressLogin stopAnimation:self];
-                [self showErrorMessage:@"authorization failed"];
-            }
+//            if ([clientController checkIfCurrentAdminCanLogin]) { 
+//                admin.isRegistrationDone = [NSNumber numberWithBool:YES];
+//                [clientController finalSave:clientController.moc];
+//// >>>
+//                //[clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:YES];
+//                [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[admin objectID]] mustBeApproved:NO];
+//            } else {
+//                [login setEnabled:YES];
+//                [registration setEnabled:YES];
+//                progressLogin.hidden = YES;
+//                [progressLogin stopAnimation:self];
+//                [self showErrorMessage:@"authorization failed"];
+//            }
             [clientController release];
             
         });
@@ -641,7 +643,7 @@
 -(void)updateUIWithData:(NSArray *)data;
 {
     //sleep(5);
-    //NSLog(@"FIRST AUTHORIZATION SETUP: data:%@",data);
+    NSLog(@"FIRST AUTHORIZATION SETUP: data:%@",data);
     NSString *status = [data objectAtIndex:0];
     //NSNumber *progress = [data objectAtIndex:1];
     NSNumber *isItLatestMessage = [data objectAtIndex:2];

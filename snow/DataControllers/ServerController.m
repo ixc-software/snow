@@ -52,7 +52,7 @@ static char encodingTable[64] = {
         delegate = (desctopDelegate *)[[NSApplication sharedApplication] delegate];
         moc = [[NSManagedObjectContext alloc] init];
         [moc setUndoManager:nil];
-        //[moc setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
+        [moc setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
         
         //[moc setMergePolicy:NSOverwriteMergePolicy];
         [moc setPersistentStoreCoordinator:[delegate persistentStoreCoordinator]];

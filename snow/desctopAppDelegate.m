@@ -980,7 +980,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
     
 }
 - (IBAction)updateEventsList:(id)sender {
-
+#if defined (SNOW_SERVER)
     NSDateComponents *components = [[NSDateComponents alloc] init];
     [components setMonth:1]; // From January 2012
     [components setYear:2012];
@@ -1003,6 +1003,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
     [updateForMainThread fillEventsListInternallyAndSaveToDiskForExternalUsing:filteredEvents];
     if ([self.loggingLevel intValue] == 1) NSLog(@"APP DELEGATE:Calendar events list to udpate:%@",filteredEvents);
     [components release];
+#endif
 }
 
 

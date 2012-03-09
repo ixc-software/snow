@@ -236,6 +236,7 @@
     NSNumberFormatter *rateFormatter = [[NSNumberFormatter alloc] init];
     [rateFormatter setMaximumFractionDigits:5];
     [rateFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    NSNumber *priceCorrection = [[NSUserDefaults standardUserDefaults] valueForKey:@"priceCorrection"];
 
     [objecIDs enumerateObjectsUsingBlock:^(NSManagedObjectID *objectID, NSUInteger idx, BOOL *stop) {
         //DestinationsListPushList *object = (DestinationsListPushList *)[context objectWithID:objectID];
@@ -243,7 +244,8 @@
         NSString *country = [object valueForKey:@"country"];
         NSString *specific = [object valueForKey:@"specific"];
         NSNumber *rateNumber = [object valueForKey:@"rate"];
-        NSString *rate = [rateFormatter stringFromNumber:rateNumber];
+        NSNumber *rateNew = [NSNumber numberWithDouble:rateNumber.doubleValue * (1 + priceCorrection.doubleValue / 100)];
+        NSString *rate = [rateFormatter stringFromNumber:rateNew];
         [rateFormatter setMaximumFractionDigits:0];
 
         NSString *minutesLenght = nil;
@@ -253,8 +255,8 @@
             minutesLenght = [rateFormatter stringFromNumber:[object valueForKey:@"lastUsedMinutesLenght"]];
         }
         if (isIncludeRates) [finalString appendString:[NSString stringWithFormat:@"%@/%@ with price $%@ volume %@",country,specific,rate,minutesLenght]];
-        else [finalString appendString:[NSString stringWithFormat:@"%@/%@ volume %@",country,specific,rate,minutesLenght]];
-        
+        else if (minutesLenght && minutesLenght.doubleValue > 0) [finalString appendString:[NSString stringWithFormat:@"%@/%@ volume %@",country,specific,minutesLenght]];
+        else [finalString appendString:[NSString stringWithFormat:@"%@/%@",country,specific]];
         if (objecIDs.count > 1 && idx != objecIDs.count -1) [finalString appendString:@"\n"]; 
     }];
     return finalString;
@@ -421,6 +423,16 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+- (IBAction)priceCorrectionChange:(id)sender {
+    UIStepper *senderStep = sender;
+    NSNumber *newValue = [NSNumber numberWithDouble:senderStep.value];
+    [[NSUserDefaults standardUserDefaults] setValue:newValue forKey:@"priceCorrection"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    LinkedinGroupsTableViewCell *cell = (LinkedinGroupsTableViewCell *)[groupsList cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    cell.priceCorrectionPercent.text = [NSString stringWithFormat:@"%@%%",newValue];
+    
+                                         
+}
 
 #pragma mark - Twitter controller delegates
 
@@ -510,7 +522,7 @@
     dispatch_async(dispatch_get_main_queue(), ^(void) { 
         NSDate *lastUpdate = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastLinedinGroupsUpdatingTime"];
         if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 86400)  [linkedinController getGroupsStart:0 count:10];
-
+        [[NSUserDefaults standardUserDefaults] setValue:[NSDate date] forKey:@"lastLinedinGroupsUpdatingTime"];
         webView.hidden = YES;
         authorizedDoneLogo.hidden = NO;
         authorizedDoneTitle.hidden = NO;
@@ -825,6 +837,10 @@
         cell.postingTitle.hidden = YES;
         cell.includeRates.hidden = YES;
         cell.routesList.hidden = YES;
+        cell.priceCorrectionTitle.hidden = YES;
+        cell.priceCorrectionStepper.hidden = YES;
+        cell.priceCorrectionPercent.hidden = YES;
+        
 
     } else {
         cell.groupName.hidden = YES;
@@ -838,6 +854,13 @@
         cell.signature.text = [[NSUserDefaults standardUserDefaults] valueForKey:@"signature"];
         cell.postingTitle.text = [[NSUserDefaults standardUserDefaults] valueForKey:@"postingTitle"];
         cell.includeRates.on = [[[NSUserDefaults standardUserDefaults] valueForKey:@"includeRates"] boolValue];
+        cell.priceCorrectionTitle.hidden = NO;
+        cell.priceCorrectionStepper.hidden = NO;
+        NSNumber *priceCorrection = [[NSUserDefaults standardUserDefaults] valueForKey:@"priceCorrection"];
+        cell.priceCorrectionStepper.value = priceCorrection.doubleValue;
+        
+        cell.priceCorrectionPercent.hidden = NO;
+        cell.priceCorrectionPercent.text = [NSString stringWithFormat:@"%@%%",priceCorrection];
     }
     cell.backgroundColor = [UIColor colorWithRed:0.52 green:0.53 blue:0.68 alpha:1.0];
 

@@ -131,7 +131,7 @@
                 self.downFinger.hidden = YES;
                 break;
             case 5:
-                self.helpText.text = @"In twitter menu you can authorize application to using with twitter account. After you will make authorization, application will automatically post to twitter all routes requirements.";
+                self.helpText.text = @"In social networks menu you can authorize application to using with twitter/linkedin account. After you will make authorization, application will automatically post to twitter or linkedin routes list, include you own configured there title, body and signature of message.";
                 self.upperPress.hidden = NO;
                 self.upperFinger.hidden = NO;
 
@@ -799,8 +799,8 @@
                 
                 if (isPad) {
                     
-                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 60, self.upperPress.frame.origin.y + 100 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
-                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 60 , self.upperFinger.frame.origin.y + 100 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
+                    self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x + 60, self.upperPress.frame.origin.y + 300 , self.upperPress.frame.size.width, self.upperPress.frame.size.height);
+                    self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x + 60 , self.upperFinger.frame.origin.y + 300 , self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);
                 } else {
                     self.upperPress.frame = CGRectMake(self.upperPress.frame.origin.x   , self.upperPress.frame.origin.y + 250, self.upperPress.frame.size.width, self.upperPress.frame.size.height);
                     self.upperFinger.frame = CGRectMake(self.upperFinger.frame.origin.x , self.upperFinger.frame.origin.y + 250, self.upperFinger.frame.size.width, self.upperFinger.frame.size.height);

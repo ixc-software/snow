@@ -16,5 +16,8 @@
 @property (retain, nonatomic) IBOutlet UILabel *routesList;
 @property (retain, nonatomic) IBOutlet UITextField *postingTitle;
 @property (retain, nonatomic) IBOutlet UISwitch *includeRates;
+@property (retain, nonatomic) IBOutlet UILabel *priceCorrectionTitle;
+@property (retain, nonatomic) IBOutlet UILabel *priceCorrectionPercent;
+@property (retain, nonatomic) IBOutlet UIStepper *priceCorrectionStepper;
 
 @end
