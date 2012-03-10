@@ -352,28 +352,33 @@
     NSDictionary *result = [responseBody objectFromJSONString];
     NSLog(@"LINKEDIN GET GROUPS:get  SUCCESS parsed result:%@",result);
 
-    if (delegate != nil && [delegate respondsToSelector:@selector(twitterAuthFailed)]) {
+    if (delegate != nil && [delegate respondsToSelector:@selector(linkedinGroupsList:withLatestGroups:)]) {
         //id result = [self parseXMLForData:data withURL:url];
         //NSLog(@"LINKEDIN GET GROUPS:get  SUCCESS parsed result:%@",result);
 
         if (isLatesGroupsGetAttempt) { 
+            NSLog(@"LINKEDIN CONTROLLER: >>>>>>>>>> start FINAL delegate");
             [delegate performSelector:@selector(linkedinGroupsList:withLatestGroups:) withObject:result withObject:[NSNumber numberWithBool:YES]];
 
             isLatesGroupsGetAttempt = NO;
             return;
-        } else [delegate performSelector:@selector(linkedinGroupsList:withLatestGroups:) withObject:result withObject:[NSNumber numberWithBool:NO]];
+        } else { 
+            NSLog(@"LINKEDIN CONTROLLER: >>>>>>>>>> start SYCLE delegate");
 
+            [delegate performSelector:@selector(linkedinGroupsList:withLatestGroups:) withObject:result withObject:[NSNumber numberWithBool:NO]];
+        }
     }
     //NSNumber *count = [result valueForKey:@"_count"];
     NSNumber *start = [result valueForKey:@"_start"];
     NSNumber *total = [result valueForKey:@"_total"];
     start = [NSNumber numberWithUnsignedInteger:start.unsignedIntegerValue + 10];
-    if (start.unsignedIntegerValue > total.unsignedIntegerValue) {
+    if (start.unsignedIntegerValue >= total.unsignedIntegerValue) {
         // this is last attempt
         isLatesGroupsGetAttempt = YES;
         [self getGroupsStart:start.unsignedIntegerValue count:total.unsignedIntegerValue - start.unsignedIntegerValue];
 
     } else {
+        sleep(2);
         [self getGroupsStart:start.unsignedIntegerValue count:10];
     }
 

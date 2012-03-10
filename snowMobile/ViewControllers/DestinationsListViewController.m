@@ -433,16 +433,6 @@
                 operationProgress.hidden = NO;
                 cancelAllUpdatesButton.hidden = NO;
                 routesChangeFilterWithOrWithoutTraffic.hidden = YES;
-               // NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
-
-//                progressView.hidden = NO;
-//                progressView.alpha = 1.0;
-//                operationProgress.progressTintColor = [UIColor colorWithRed:0.34 green:0.34 blue:0.57 alpha:1.0];
-//                carriersProgress.progressTintColor = [UIColor colorWithRed:0.34 green:0.34 blue:0.57 alpha:1.0];
-//                [alert removeAllSegments];
-//                [alert insertSegmentWithTitle:@"get updates from server..." atIndex:0 animated:NO];
-//                [self.navigationController setToolbarHidden:NO animated:YES];
-                
             });
             
             mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -461,14 +451,9 @@
                 if (cancelAllUpdates == YES) *stop = YES;
                 NSString *carrierName = [NSString stringWithFormat:@"%@",carrier.name];
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
-                    
                     carriersProgressTitle.text = carrierName;
                     NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idxCarriers] doubleValue] / [[NSNumber numberWithUnsignedInteger:allCarriersCount] doubleValue]];
                     carriersProgress.progress = percentDone.floatValue;
-                    
-//                    [alert removeAllSegments];
-//                    [alert insertSegmentWithTitle:[NSString stringWithFormat:@"%@ updating",carrier.name] atIndex:0 animated:NO];
-//                    [self.navigationController setToolbarHidden:NO animated:YES];
                     operationTitle.text = @"Download...";
                 });
                 idxCarriers++;
@@ -497,40 +482,23 @@
                         }
                     }];
                     [clientController finalSave:clientController.moc];
-//                    dispatch_async(dispatch_get_main_queue(), ^(void) {
-//                        [fetchedResultsController release],fetchedResultsController = nil;
-//                        fetchedResultsController = [self newFetchedResultsControllerWithSearch:nil];
-//                        [self.tableView reloadData];
-//                    });
-
                 }
-                
             }];
             dispatch_async(dispatch_get_main_queue(), ^(void) {
-//                [self.navigationController setToolbarHidden:YES animated:YES]; 
                 operationProgress.hidden = YES;
-                //progressView.hidden = YES;
-                //[self.navigationController setToolbarHidden:YES animated:YES];
                 carriersProgress.hidden = YES;
                 carriersProgressTitle.hidden = YES;
                 operationTitle.hidden = YES;
                 operationProgress.hidden = YES;
                 cancelAllUpdatesButton.hidden = YES;
-                
-                //routesChangeFilterWithOrWithoutTraffic.hidden = NO;
-                
                 if (selectRoutes.selectedSegmentIndex == 2) [self.navigationController setToolbarHidden:YES animated:YES];
                     else routesChangeFilterWithOrWithoutTraffic.hidden = NO;
-                
                 cancelAllUpdates = NO;
                 cancelAllUpdatesButton.enabled = YES;
                 [self.tableView reloadData];
             });
-            
-            
             [clientController release];
-            
-            
+
             [[NSUserDefaults standardUserDefaults] synchronize];
             if (selectedSegmentIndex == 0) { 
                 isRoutesForSaleListUpdated = NO;

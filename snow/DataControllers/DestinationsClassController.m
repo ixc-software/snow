@@ -250,6 +250,8 @@
             NSLog(@"UPDATE DESTINATION LIST WARNING: carrier not found for fetchRequest:%@",fetchRequestForCarriers);
         }
         [fetchRequestForCarriers release];
+        
+        // get full codes list
 
         NSFetchRequest *fetchRequestForCode = [[NSFetchRequest alloc] init];
         NSDate *startCheckPresentedCodes = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
@@ -265,43 +267,26 @@
         
         NSEntityDescription *entityForCode = [NSEntityDescription entityForName:@"CodesvsDestinationsList"
                                                          inManagedObjectContext:self.moc];
-        NSArray *allPredicates = [NSArray arrayWithObjects:[NSPredicate predicateWithFormat:@"code IN %@",distinctCodes],[NSPredicate predicateWithFormat:@"prefix IN %@",distinctPrefixes],[NSPredicate predicateWithFormat:@"peerID IN %@",distinctPeerID], nil];
+        
+        NSArray *allPredicates = nil;
+        if (destinationsListForSale || destinationsListWeBuy) allPredicates = [NSArray arrayWithObjects:[NSPredicate predicateWithFormat:@"code IN %@",distinctCodes],[NSPredicate predicateWithFormat:@"prefix IN %@",distinctPrefixes],[NSPredicate predicateWithFormat:@"peerID IN %@",distinctPeerID], nil];
+        else allPredicates = [NSArray arrayWithObjects:[NSPredicate predicateWithFormat:@"code IN %@",distinctCodes],nil];
         
         NSPredicate *filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:allPredicates];
         
         [fetchRequestForCode setPredicate:filterPredicate];
         [fetchRequestForCode setEntity:entityForCode];
         NSArray *allCarrierCodes = [self.moc executeFetchRequest:fetchRequestForCode error:&error];
+        [fetchRequestForCode release];
         NSTimeInterval interval = [startCheckPresentedCodes timeIntervalSinceDate:[NSDate date]];
         NSLog(@"DESTINATIONS CLASS time to check codes was:%@ sec, result:",[NSNumber numberWithDouble:interval]);
-//        [allCarrierCodes enumerateObjectsUsingBlock:^(CodesvsDestinationsList *code, NSUInteger idx, BOOL *stop) {
-//            NSLog(@"DESTINATIONS CLASS code:%@ country:%@ specific:%@",code.code,code.country,code.destinationsListWeBuy.carrier);
-//        }];
-
-        
         [currentCarrierName appendString:carrier.name];
         self.currentCarrierID = [carrier objectID];
-        
-        // get full codes list
-        //NSMutableArray *codesForCarrierObjects = [[NSMutableArray alloc] init];
-        //NSMutableSet *codesForCarrier = [[NSMutableSet alloc] init];
-
-        //NSMutableArray *codesCountryList = [[NSMutableArray alloc] init];
-
         NSMutableArray *destinationsForCheckingLater = [[NSMutableArray alloc] init];
         
                 
         if (destinationsListForSale) {
             NSFetchRequest *fetchRequestForDestinationsListForSale = [[NSFetchRequest alloc] init];
-
-//            NSEntityDescription *entityForCodesvsDestinationsList = [NSEntityDescription entityForName:@"CodesvsDestinationsList"
-//                                 inManagedObjectContext:self.moc];
-//            [fetchRequestForCodesvsDestinationsList setEntity:entityForCodesvsDestinationsList];
-//            [fetchRequestForCodesvsDestinationsList setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.name == %@)",@"destinationsListForSale",carrier.name]];
-//            NSArray *codesInternal = [self.moc executeFetchRequest:fetchRequestForCodesvsDestinationsList error:&error];
-//            if (codesInternal == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-            //[codesForCarrierObjects addObjectsFromArray:codesInternal];
-        
             NSEntityDescription *entityForDestinationsListForSale = [NSEntityDescription entityForName:@"DestinationsListForSale"
                                  inManagedObjectContext:self.moc];
             [fetchRequestForDestinationsListForSale setEntity:entityForDestinationsListForSale];
@@ -316,16 +301,7 @@
         }
         if (destinationsListWeBuy) {
             NSFetchRequest *fetchRequestForDestinationsListWeBuy = [[NSFetchRequest alloc] init];
-            
-//            NSEntityDescription *entityForCodesvsDestinationsList = [NSEntityDescription entityForName:@"CodesvsDestinationsList"
-//                                                                                inManagedObjectContext:self.moc];
-//            [fetchRequestForCodesvsDestinationsList setEntity:entityForCodesvsDestinationsList];
-//            [fetchRequestForCodesvsDestinationsList setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.name == %@)",@"destinationsListWeBuy",carrier.name]];
-//            NSArray *codesInternal = [self.moc executeFetchRequest:fetchRequestForCodesvsDestinationsList error:&error];
-//            if (codesInternal == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-            //[codesForCarrierObjects addObjectsFromArray:codesInternal];
-            
-            NSEntityDescription *entityForDestinationsListWeBuy = [NSEntityDescription entityForName:@"DestinationsListWeBuy"
+             NSEntityDescription *entityForDestinationsListWeBuy = [NSEntityDescription entityForName:@"DestinationsListWeBuy"
                                                            inManagedObjectContext:self.moc];
             [fetchRequestForDestinationsListWeBuy setEntity:entityForDestinationsListWeBuy];
             [fetchRequestForDestinationsListWeBuy setResultType:NSDictionaryResultType];
@@ -335,41 +311,9 @@
             [fetchRequestForDestinationsListWeBuy release];
             if (destinationsLocal == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
             [destinationsForCheckingLater addObjectsFromArray:destinationsLocal];
-
-            
-            
-            
-//            entity = [NSEntityDescription entityForName:@"CodesvsDestinationsList"
-//                                 inManagedObjectContext:self.moc];
-//            [fetchRequest setEntity:entity];
-//            //[fetchRequest setResultType:NSDictionaryResultType];
-//            [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.name == %@)",@"destinationsListWeBuy",carrier.name]];
-//            NSArray *codesInternal = [self.moc executeFetchRequest:fetchRequest error:&error];
-//            if (codesInternal == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-//            [codesForCarrierObjects addObjectsFromArray:codesInternal];
-//            
-//            entity = [NSEntityDescription entityForName:@"DestinationsListWeBuy"
-//                                 inManagedObjectContext:self.moc];
-//            [fetchRequest setEntity:entity];
-//            [fetchRequest setResultType:NSDictionaryResultType];
-//
-//            [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"(carrier.name == %@)",carrier.name]];
-//            NSArray *destinationsLocal = [self.moc executeFetchRequest:fetchRequest error:&error];
-//            if (destinationsLocal == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-//            [destinationsForCheckingLater addObjectsFromArray:destinationsLocal];
-
         }
         if (destinationsListTargets) {
             NSFetchRequest *fetchRequestForDestinationsListTargets = [[NSFetchRequest alloc] init];
-//            
-//            NSEntityDescription *entityForCodesvsDestinationsList = [NSEntityDescription entityForName:@"CodesvsDestinationsList"
-//                                                                                inManagedObjectContext:self.moc];
-//            [fetchRequestForCodesvsDestinationsList setEntity:entityForCodesvsDestinationsList];
-//            [fetchRequestForCodesvsDestinationsList setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.name == %@)",@"destinationsListTargets",carrier.name]];
-//            NSArray *codesInternal = [self.moc executeFetchRequest:fetchRequestForCodesvsDestinationsList error:&error];
-//            if (codesInternal == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-            //[codesForCarrierObjects addObjectsFromArray:codesInternal];
-            
             NSEntityDescription *entityForDestinationsListTargets = [NSEntityDescription entityForName:@"destinationsListTargets"
                                                            inManagedObjectContext:self.moc];
             [fetchRequestForDestinationsListTargets setEntity:entityForDestinationsListTargets];
@@ -380,40 +324,9 @@
             [fetchRequestForDestinationsListTargets release];
             if (destinationsLocal == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
             [destinationsForCheckingLater addObjectsFromArray:destinationsLocal];
-
-            
-            
-//            entity = [NSEntityDescription entityForName:@"CodesvsDestinationsList"
-//                                 inManagedObjectContext:self.moc];
-//            [fetchRequest setEntity:entity];
-//            //[fetchRequest setResultType:NSDictionaryResultType];
-//            [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.name == %@)",@"destinationsListTargets",carrier.name]];
-//            NSArray *codesInternal = [self.moc executeFetchRequest:fetchRequest error:&error];
-//            if (codesInternal == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-//            [codesForCarrierObjects addObjectsFromArray:codesInternal];
-//            
-//            entity = [NSEntityDescription entityForName:@"DestinationsListTargets"
-//                                 inManagedObjectContext:self.moc];
-//            [fetchRequest setEntity:entity];
-//            [fetchRequest setResultType:NSDictionaryResultType];
-//
-//            [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"(carrier.name == %@)",carrier.name]];
-//            NSArray *destinationsLocal = [self.moc executeFetchRequest:fetchRequest error:&error];
-//            if (destinationsLocal == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-//            [destinationsForCheckingLater addObjectsFromArray:destinationsLocal];
-
         }
         if (destinationsListPushList) {
             NSFetchRequest *fetchRequestForDestinationsListPushList = [[NSFetchRequest alloc] init];
-            
-//            NSEntityDescription *entityForCodesvsDestinationsList = [NSEntityDescription entityForName:@"CodesvsDestinationsList"
-//                                                                                inManagedObjectContext:self.moc];
-//            [fetchRequestForCodesvsDestinationsList setEntity:entityForCodesvsDestinationsList];
-//            [fetchRequestForCodesvsDestinationsList setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.name == %@)",@"destinationsListPushList",carrier.name]];
-//            NSArray *codesInternal = [self.moc executeFetchRequest:fetchRequestForCodesvsDestinationsList error:&error];
-//            if (codesInternal == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-            //[codesForCarrierObjects addObjectsFromArray:codesInternal];
-            
             NSEntityDescription *entityForDestinationsListPushList = [NSEntityDescription entityForName:@"DestinationsListPushList"
                                                            inManagedObjectContext:self.moc];
             [fetchRequestForDestinationsListPushList setEntity:entityForDestinationsListPushList];
@@ -424,50 +337,9 @@
             [fetchRequestForDestinationsListPushList release];
             if (destinationsLocal == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
             [destinationsForCheckingLater addObjectsFromArray:destinationsLocal];
-
-            
-            
-            
-//            entity = [NSEntityDescription entityForName:@"CodesvsDestinationsList"
-//                                 inManagedObjectContext:self.moc];
-//            [fetchRequest setEntity:entity];
-////            [fetchRequest setResultType:NSDictionaryResultType];
-//            [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.name == %@)",@"destinationsListPushList",carrier.name]];
-//            NSArray *codesInternal = [self.moc executeFetchRequest:fetchRequest error:&error];
-//            if (codesInternal == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-//            [codesForCarrierObjects addObjectsFromArray:codesInternal];
-//            
-//            entity = [NSEntityDescription entityForName:@"DestinationsListPushList"
-//                                 inManagedObjectContext:self.moc];
-//            [fetchRequest setEntity:entity];
-//            [fetchRequest setResultType:NSDictionaryResultType];
-//            [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"(carrier.name == %@)",carrier.name]];
-//            NSArray *destinationsLocal = [self.moc executeFetchRequest:fetchRequest error:&error];
-//            if (destinationsLocal == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-//            [destinationsForCheckingLater addObjectsFromArray:destinationsLocal];
-
         }
-            
-//        [codesForCarrierObjects enumerateObjectsUsingBlock:^(CodesvsDestinationsList *object, NSUInteger idx, BOOL *stop) {
-//            @autoreleasepool {
-//                
-//                NSArray *attributeKeys = object.entity.attributeKeys;
-//                NSMutableDictionary *codeRow = [NSMutableDictionary dictionaryWithCapacity:0];
-//                [attributeKeys enumerateObjectsUsingBlock:^(NSString *attribute, NSUInteger idx, BOOL *stop) {
-//                    id value = [object valueForKey:attribute];
-//                    [codeRow setValue:value forKey:attribute];
-//                    [codeRow setValue:object.objectID forKey:@"objectID"];
-//                }];
-//                [codesForCarrier addObject:codeRow];
-//            }
-//            
-//        }];
-            
-        //NSLog(@"DESTINATIONS CLASS: codes for carrier:%@",codesForCarrier);
-//        [codesForCarrierObjects release];
-//        [fetchRequest setResultType:NSManagedObjectResultType];
           
-        NSLog(@"For carrier:%@  total codes withExternalCodes:%@",carrier.name,[NSNumber numberWithUnsignedInteger:[externalDataCodes count]]);
+        NSLog(@"For carrier:%@  total codes:%@ withExternalCodes:%@",carrier.name,[NSNumber numberWithUnsignedInteger:[allCarrierCodes count]],[NSNumber numberWithUnsignedInteger:[externalDataCodes count]]);
         double countExternalDataCode = [[NSNumber numberWithInteger:[externalDataCodes count]] doubleValue];
         int everyCountForCountUpdate = [[NSNumber numberWithDouble:countExternalDataCode * 0.01] intValue];
         int everyCountForCoreDataUpdate = [[NSNumber numberWithDouble:countExternalDataCode * 0.1] intValue];
@@ -552,69 +424,6 @@
                             
                         }
                         
-                        /*entity = [NSEntityDescription entityForName:@"CodesList" inManagedObjectContext:self.context];
-                         [fetchRequest setEntity:entity];
-                         predicate = [NSPredicate predicateWithFormat:@"(code == %@)",code];
-                         [fetchRequest setPredicate:predicate];
-                         //[fetchRequest setResultType:NSManagedObjectIDResultType];
-                         
-                         //NSArray *codesCountResultArray = [self.context executeFetchRequest:fetchRequest error:&error];
-                         //NSUInteger codesCountResult = [codesCountResultArray count];
-                         //[fetchRequest setResultType:NSManagedObjectResultType];
-                         NSUInteger codesCountResult = [self.context countForFetchRequest:fetchRequest error:&error];
-                         
-                         if (codesCountResult == 1) {
-                         predicate = [NSPredicate predicateWithFormat:@"(code == %@)",code];
-                         [fetchRequest setPredicate:predicate];
-                         
-                         CodesList *findedCode = [[self.context executeFetchRequest:fetchRequest error:&error] lastObject];
-                         
-                         country = findedCode.countrySpecificCodesList.country;
-                         specific = findedCode.countrySpecificCodesList.specific;
-                         } else {
-                         // start cycle search
-                         if (maxCodesDeep > 1) {
-                         NSRange currentRange = NSMakeRange(0,[codeStr length]);
-                         
-                         for (int codesDeep = 0; codesDeep < maxCodesDeep;codesDeep++)
-                         {
-                         currentRange.length = currentRange.length - 1;
-                         NSString *changedCodeStr = [codeStr substringWithRange:currentRange];
-                         //NSLog(@"search for code :%@", changedCode);
-                         NSNumber *changedCode = [formatter numberFromString:changedCodeStr];
-                         predicate = [NSPredicate predicateWithFormat:@"(code == %@)",changedCode];
-                         [fetchRequest setPredicate:predicate];
-                         //[fetchRequest setResultType:NSManagedObjectIDResultType];
-                         //NSArray *codesCountResultInDeepArray = [self.context executeFetchRequest:fetchRequest error:&error];
-                         //NSUInteger codesCountResultInDeep = [codesCountResultInDeepArray count];
-                         NSUInteger codesCountResultInDeep = [self.context countForFetchRequest:fetchRequest error:&error];
-                         //[fetchRequest setResultType:NSManagedObjectResultType];
-                         
-                         //NSUInteger codesCountResultInDeep = [self.context countForFetchRequest:fetchRequest error:&error];
-                         if (codesCountResultInDeep == 1)
-                         {
-                         originalCode = [NSNumber numberWithDouble:[code doubleValue]];
-                         code = [NSNumber numberWithDouble:[changedCode doubleValue]];
-                         
-                         predicate = [NSPredicate predicateWithFormat:@"(code == %@)",code];
-                         [fetchRequest setPredicate:predicate];
-                         NSArray *codesListInternal = [self.context executeFetchRequest:fetchRequest error:&error];
-                         
-                         CodesList *findedCode = [codesListInternal lastObject];
-                         
-                         country = findedCode.countrySpecificCodesList.country;
-                         specific = findedCode.countrySpecificCodesList.specific;
-                         break;
-                         }  
-                         //[pool drain], pool = nil;
-                         //pool = [[NSAutoreleasePool alloc] init];
-                         
-                         }
-                         
-                         }
-                         }*/
-                        
-                        
                     }
                     else
                     {
@@ -682,38 +491,19 @@
                                      code];
                     }
                     
-//                    NSError *error = nil;
-//                    NSFetchRequest *fetchRequestForCode = [[NSFetchRequest alloc] init];
-//                    
-//                    NSEntityDescription *entityForCode = [NSEntityDescription entityForName:@"CodesvsDestinationsList"
-//                                                                                      inManagedObjectContext:self.moc];
-//                    [fetchRequestForCode setPredicate:predicateForCurrentCodes];
-//                    [fetchRequestForCode setEntity:entityForCode];
-                    //                    NSArray *codesFilteredFirstStep = [self.moc executeFetchRequest:fetchRequestForCode error:&error];
                     NSArray *codesFilteredFirstStep = [allCarrierCodes filteredArrayUsingPredicate:predicateForCurrentCodes];
-
-                    //                    [fetchRequestForCode release];
-//                    
                     NSMutableArray *codesFilteredFirstStepMutable = [NSMutableArray arrayWithArray:codesFilteredFirstStep];
-
-                    //NSArray *codesFilteredFirstStep = [[NSArray alloc] init];
-                    //@autoreleasepool {
-                    //NSSet *filteredCodesForCarrier = [codesForCarrier filteredSetUsingPredicate:predicateForCurrentCodes];
-                    //NSArray *codesFilteredFirstStep = [[NSArray alloc] initWithArray:filteredCodesForCarrier];
-                    //NSMutableSet *codesFilteredFirstStepMutable = [[NSMutableSet alloc] initWithSet:filteredCodesForCarrier];
-
-                    //[codesFilteredFirstStepMutable unionSet:filteredCodesForCarrier];
-                        //[codesFilteredFirstStep release];
-                    //}
-
                     if ([codesFilteredFirstStep count] > 1) { 
                         if (!originalCode) originalCode = [NSNumber numberWithInt:0];
                         NSPredicate *predicateForOriginalCode = [NSPredicate predicateWithFormat:@"originalCode == %@",originalCode];
                         //NSArray *fetchedObjectsFiltered = [fetchedObjects filteredArrayUsingPredicate:predicate];
                         [codesFilteredFirstStepMutable filterUsingPredicate:predicateForOriginalCode];
+                        if (codesFilteredFirstStepMutable.count == 0) { 
+                            [codesFilteredFirstStepMutable addObject:codesFilteredFirstStep.lastObject];
+                            NSLog(@"DESTINATIONS:warning, we are addind last object from duplicates, but that is WRONG!");
+
+                        }
                     }
-                    
-                    //NSArray *codesFilteredSecondStep = [NSArray arrayWithArray:codesFilteredFirstStepMutable];
                     if ([codesFilteredFirstStepMutable count] > 1) NSLog(@"DESTINATIONS:warning, more than 1 code finally!!");
                     // insert  new destination and add code
                     if ([codesFilteredFirstStepMutable count] == 0) {
@@ -725,37 +515,14 @@
                                          country,specific,prefix,rateSheetName];
                         }
                         if (destinationsListTargets || destinationsListPushList) {
-                            predicateForDestinationsFirstStep = [NSPredicate predicateWithFormat:@"(country == %@) AND (specific == %@)",
+                            predicateForDestinationsFirstStep = [NSPredicate predicateWithFormat:@"(country contains %@) AND (specific contains %@)",
                                          country,specific];
                         }
                         
-                        /*if (destinationsListForSale) entity = [NSEntityDescription entityForName:@"DestinationsListForSale"
-                         inManagedObjectContext:self.context];
-                         if (destinationsListWeBuy) entity = [NSEntityDescription entityForName:@"DestinationsListWeBuy"
-                         inManagedObjectContext:self.context];
-                         if (destinationsListTargets) entity = [NSEntityDescription entityForName:@"DestinationsListTargets"
-                         inManagedObjectContext:self.context];
-                         if (destinationsListPushList) { 
-                         entity = [NSEntityDescription entityForName:@"DestinationsListPushList"
-                         inManagedObjectContext:self.context];
-                         predicate = [NSPredicate predicateWithFormat:@"(country == %@) AND (specific == %@) and (carrier.name == %@)",
-                         country,specific,carrierName];
-                         
-                         }
-                         
-                         
-                         [fetchRequest setPredicate:predicate];
-                         [fetchRequest setEntity:entity];
-                         
-                         NSArray *fetchedObjects = [self.context executeFetchRequest:fetchRequest error:&error];
-                         if (fetchedObjects == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-                         if ([fetchedObjects count] != 1 && [fetchedObjects count] != 0) NSLog(@"UPDATE DESTINATION LIST WARNING: find more than one destinations for fetchRequest:%@",fetchRequest);*/
-                        
-                        NSArray *fetchedObjects = [destinationsForCheckingLater filteredArrayUsingPredicate:predicateForDestinationsFirstStep];
+                        NSArray *findedDestinationsAlreadyCreated = [destinationsForCheckingLater filteredArrayUsingPredicate:predicateForDestinationsFirstStep];
                         
                         
                         if (destinationsListForSale) {
-                            //DestinationsListForSale *object = nil;
                             CodesvsDestinationsList *objectCode = (CodesvsDestinationsList *)[NSEntityDescription insertNewObjectForEntityForName:@"CodesvsDestinationsList" inManagedObjectContext:self.moc];
                             objectCode.code = code;
                             objectCode.externalChangedDate = changeDate;
@@ -770,7 +537,7 @@
                             objectCode.enabled = enabled;
                             objectCode.modificationDate = [NSDate date];
                             
-                            if ([fetchedObjects count] == 0) { 
+                            if ([findedDestinationsAlreadyCreated count] == 0) { 
                                 DestinationsListForSale *object = (DestinationsListForSale *)[NSEntityDescription insertNewObjectForEntityForName:@"DestinationsListForSale" inManagedObjectContext:self.moc];
                                 Carrier *carrierForInsert = (Carrier *)[self.moc objectWithID:self.currentCarrierID];
                                 
@@ -796,7 +563,7 @@
 
                                 NSEntityDescription *entityForDestinationsListForSale = [NSEntityDescription entityForName:@"DestinationsListForSale"
                                                      inManagedObjectContext:self.moc];
-                                NSDictionary *objectForGet = [fetchedObjects lastObject];
+                                NSDictionary *objectForGet = [findedDestinationsAlreadyCreated lastObject];
                                 NSString *guid = [objectForGet valueForKey:@"GUID"];
                                 NSPredicate *predicateForDestinationsListForSale = [NSPredicate predicateWithFormat:@"(GUID == %@)",guid];
                                 [fetchRequestForDestinationsListForSale setPredicate:predicateForDestinationsListForSale];
@@ -809,13 +576,13 @@
 //                                NSArray *finalRelationships = [NSArray arrayWithArray:allRelationships];
 //                                [fetchRequest setRelationshipKeyPathsForPrefetching:finalRelationships];
 //                                
-                                NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequestForDestinationsListForSale error:&error];
+                                NSArray *destinationForSale = [self.moc executeFetchRequest:fetchRequestForDestinationsListForSale error:&error];
 //                                [fetchRequest setRelationshipKeyPathsForPrefetching:nil];
                                 
-                                if ([fetchedObjects count] != 1) NSLog(@"DESTINATION:warning, destination more than 1");
+                                if ([destinationForSale count] != 1) NSLog(@"DESTINATION:warning, destination more than 1");
                                 [fetchRequestForDestinationsListForSale release];
                                 
-                                DestinationsListForSale *object = [fetchedObjects lastObject];
+                                DestinationsListForSale *object = [destinationForSale lastObject];
                                 object.rateSheet = rateSheetName;
                                 object.rateSheetID = rateSheetID;
                                 object.ipAddressesList = ip;
@@ -846,7 +613,7 @@
                             objectCode.modificationDate = [NSDate date];
                             objectCode.externalChangedDate = changeDate;
                             
-                            if ([fetchedObjects count] == 0) { 
+                            if ([findedDestinationsAlreadyCreated count] == 0) { 
                                 DestinationsListWeBuy *object = (DestinationsListWeBuy *)[NSEntityDescription insertNewObjectForEntityForName:@"DestinationsListWeBuy" inManagedObjectContext:self.moc];
                                 Carrier *carrierForInsert = (Carrier *)[self.moc objectWithID:currentCarrierID];
                                 
@@ -873,7 +640,7 @@
 
                                 NSEntityDescription *entityForDestinationsListWeBuy = [NSEntityDescription entityForName:@"DestinationsListWeBuy"
                                                      inManagedObjectContext:self.moc];
-                                NSDictionary *objectForGet = [fetchedObjects lastObject];
+                                NSDictionary *objectForGet = [findedDestinationsAlreadyCreated lastObject];
                                 NSString *guid = [objectForGet valueForKey:@"GUID"];
                                 NSPredicate *predicateForDestinationsListWeBuy = [NSPredicate predicateWithFormat:@"(GUID == %@)",guid];
                                 [fetchRequestForDestinationsListWeBuy setPredicate:predicateForDestinationsListWeBuy];
@@ -886,11 +653,11 @@
 //                                }];
 //                                NSArray *finalRelationships = [NSArray arrayWithArray:allRelationships];
 //                                [fetchRequest setRelationshipKeyPathsForPrefetching:finalRelationships];
-                                NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequestForDestinationsListWeBuy error:&error];
+                                NSArray *destinationsWeBuy = [self.moc executeFetchRequest:fetchRequestForDestinationsListWeBuy error:&error];
 //                                [fetchRequest setRelationshipKeyPathsForPrefetching:nil];
                                 [fetchRequestForDestinationsListWeBuy release];
                                 
-                                DestinationsListWeBuy *object = [fetchedObjects lastObject];
+                                DestinationsListWeBuy *object = [destinationsWeBuy lastObject];
                                 object.rateSheet = rateSheetName;
                                 object.rateSheetID = rateSheetID;
                                 object.ipAddressesList = ip;
@@ -904,7 +671,7 @@
                         
                         if (destinationsListTargets) {
                             DestinationsListTargets *object = nil;
-                            if ([fetchedObjects count] == 0) { 
+                            if ([findedDestinationsAlreadyCreated count] == 0) { 
                                 object = (DestinationsListTargets *)[NSEntityDescription insertNewObjectForEntityForName:@"DestinationsListTargets" inManagedObjectContext:self.moc];
                                 Carrier *carrierForInsert = (Carrier *)[self.moc objectWithID:currentCarrierID];
                                 
@@ -933,15 +700,15 @@
 
                                 NSEntityDescription *entityForDestinationsListTargets = [NSEntityDescription entityForName:@"DestinationsListTargets"
                                                      inManagedObjectContext:self.moc];
-                                NSDictionary *objectForGet = [fetchedObjects lastObject];
+                                NSDictionary *objectForGet = [findedDestinationsAlreadyCreated lastObject];
                                 NSString *guid = [objectForGet valueForKey:@"GUID"];
                                 NSPredicate *predicateForDestinationsListTargets = [NSPredicate predicateWithFormat:@"(GUID == %@)",guid];
                                 [fetchRequestForDestinationsListTargets setPredicate:predicateForDestinationsListTargets];
                                 [fetchRequestForDestinationsListTargets setEntity:entityForDestinationsListTargets];
-                                NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequestForDestinationsListTargets error:&error];
+                                NSArray *destinationsTargets = [self.moc executeFetchRequest:fetchRequestForDestinationsListTargets error:&error];
                                 [fetchRequestForDestinationsListTargets release];
                                 
-                                object = [fetchedObjects lastObject];
+                                object = [destinationsTargets lastObject];
                                 //object.rateSheet = rateSheetName;
                                 object.enabled = enabled;
                                 object.rate = rate;
@@ -974,7 +741,7 @@
                         
                         if (destinationsListPushList) {
                             DestinationsListPushList *object = nil;
-                            if ([fetchedObjects count] == 0) { 
+                            if ([findedDestinationsAlreadyCreated count] == 0) { 
                                 object = (DestinationsListPushList *)[NSEntityDescription insertNewObjectForEntityForName:@"DestinationsListPushList" inManagedObjectContext:self.moc];
                                 Carrier *carrierForInsert = (Carrier *)[self.moc objectWithID:currentCarrierID];
                                 
@@ -994,43 +761,27 @@
                                 NSArray *keys = [[[object entity] attributesByName] allKeys];
                                 NSDictionary *objectFullInfo = [object dictionaryWithValuesForKeys:keys];
                                 [destinationsForCheckingLater addObject:objectFullInfo];
-                                CodesvsDestinationsList *objectCode = (CodesvsDestinationsList *)[NSEntityDescription insertNewObjectForEntityForName:@"CodesvsDestinationsList" inManagedObjectContext:self.moc];
-                                objectCode.code = code;
-                                objectCode.externalChangedDate = changeDate;
-                                objectCode.country = country;
-                                objectCode.specific = specific;
-                                objectCode.originalCode = originalCode;
-                                objectCode.rate = rate;
-                                objectCode.prefix = prefix;
-                                objectCode.rateSheetName = rateSheetName;
-                                objectCode.peerID = peerID;
-                                objectCode.enabled = enabled;
-                                objectCode.modificationDate = [NSDate date];
-                                objectCode.destinationsListPushList = object;
                                 
+//                                
+//                                CodesvsDestinationsList *objectCode = (CodesvsDestinationsList *)[NSEntityDescription insertNewObjectForEntityForName:@"CodesvsDestinationsList" inManagedObjectContext:self.moc];
+//                                objectCode.code = code;
+//                                objectCode.externalChangedDate = changeDate;
+//                                objectCode.country = country;
+//                                objectCode.specific = specific;
+//                                objectCode.originalCode = originalCode;
+//                                objectCode.rate = rate;
+//                                objectCode.prefix = prefix;
+//                                objectCode.rateSheetName = rateSheetName;
+//                                objectCode.peerID = peerID;
+//                                objectCode.enabled = enabled;
+//                                objectCode.modificationDate = [NSDate date];
+//                                objectCode.destinationsListPushList = object;
+//                                NSLog(@"DESTINATIONS LIST: code created for new destination PUSHLIST:%@ country:%@ specific:%@",objectCode.code,objectCode.country,objectCode.specific);
+
 #if defined(SNOW_CLIENT_APPSTORE) || defined (SNOW_CLIENT_ENTERPRISE)
                                 if (![insertedDestinationsIDs containsObject:[object objectID]]) {
-                                    //dispatch_async(dispatch_get_main_queue(), ^(void) { 
-                                    //[self performSelectorOnMainThread:@selector(safeSave) withObject:nil waitUntilDone:YES];
-                                    [self safeSave];
-                                    //[self.context refreshObject:object mergeChanges:NO];
-                                    //NSLog(@"%@",[object objectID]);
                                     isDestinationsPushListUpdated = YES;
-                                    //                                [userController addInRegistrationForAllObjectsInFutureArrayObject:object 
-                                    //                                                                                     forOperation:userController.controller.objectOperationNew];
-                                    [insertedDestinationsIDs addObject:[object objectID]];
-                                    //});
-                                    NSMutableString *twitterText = [[NSMutableString alloc] initWithCapacity:0];
-                                    [twitterText appendString:@"I'm currently interesting for those destination:"];
-                                    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-                                    [formatter setFormat:@"$#,#####0.0"];
-                                    NSString *priceForTwitter = [formatter stringFromNumber:object.rate];
-                                    NSString *minutesLenghtForTwitter = [object.minutesLenght stringValue];
-                                    if (!minutesLenghtForTwitter) minutesLenghtForTwitter = @"please send reques to more info";
-                                    [twitterText appendFormat:@"%@/%@ with price %@ and volume %@",object.country,object.specific,priceForTwitter,object.minutesLenght];
-                                    
-                                    [delegate.carriersView.twitterController postTwitterMessageWithText:twitterText];
-                                    
+                                    [insertedDestinationsIDs addObject:object];
                                 }
 #endif
                             }
@@ -1039,15 +790,15 @@
 
                                 NSEntityDescription *entityForDestinationsListPushList = [NSEntityDescription entityForName:@"DestinationsListPushList"
                                                      inManagedObjectContext:self.moc];
-                                NSDictionary *objectForGet = [fetchedObjects lastObject];
+                                NSDictionary *objectForGet = [findedDestinationsAlreadyCreated lastObject];
                                 NSString *guid = [objectForGet valueForKey:@"GUID"];
                                 NSPredicate *predicateForDestinationsListPushList = [NSPredicate predicateWithFormat:@"(GUID == %@)",guid];
                                 [fetchRequestForDestinationsListPushList setPredicate:predicateForDestinationsListPushList];
                                 [fetchRequestForDestinationsListPushList setEntity:entityForDestinationsListPushList];
-                                NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequestForDestinationsListPushList error:&error];
+                                NSArray *destinationsPushList = [self.moc executeFetchRequest:fetchRequestForDestinationsListPushList error:&error];
                                 [fetchRequestForDestinationsListPushList release];
                                 
-                                object = [fetchedObjects lastObject];
+                                object = [destinationsPushList lastObject];
                                 //object.rateSheet = rateSheetName;
                                 //object.enabled = enabled;
                                 object.rate = rate;
@@ -1073,9 +824,8 @@
                                 //                                [delegate postTwitterMessageWithText:twitterText];
                                 //                            }
 #endif
-                                
+
                             }
-                            
                             CodesvsDestinationsList *objectCode = (CodesvsDestinationsList *)[NSEntityDescription insertNewObjectForEntityForName:@"CodesvsDestinationsList" inManagedObjectContext:self.moc];
                             objectCode.code = code;
                             objectCode.externalChangedDate = changeDate;
@@ -1089,6 +839,8 @@
                             objectCode.enabled = enabled;
                             objectCode.modificationDate = [NSDate date];
                             objectCode.destinationsListPushList = object;
+                            NSLog(@"DESTINATIONS LIST: code created and added to destination:%@ country:%@ specific:%@",objectCode.code,objectCode.country,objectCode.specific);
+
                         }
                         
                         
@@ -1511,7 +1263,12 @@
 
     //[insertedDestinationsIDs release];
     [self safeSave];
-
+//    [insertedDestinationsIDs enumerateObjectsUsingBlock:^(NSManagedObject *destination, NSUInteger idx, BOOL *stop) {
+//        NSSet *codes = [destination valueForKey:@"codesvsDestinationsList"];
+//        [codes enumerateObjectsUsingBlock:^(CodesvsDestinationsList *code, BOOL *stop) {
+//            NSLog(@"For destination:%@/%@ code is:%@",[destination valueForKey:@"country"],[destination valueForKey:@"specific"],code.code);
+//        }];             
+//    }];
 //    [pool drain], pool = nil;
     return NO;
 }
@@ -2206,14 +1963,14 @@
                 [self safeSave];
 #if defined(SNOW_CLIENT_APPSTORE) | defined (SNOW_CLIENT_ENTERPRISE)
 
-                NSMutableString *twitterText = [[NSMutableString alloc] initWithCapacity:0];
-
-                [twitterText appendString:@"I'm currently interesting for this destination:"];
-                
-                [twitterText appendFormat:@"%@/%@ with price %@ volume %@",object.country,object.specific,object.rate,object.minutesLenght];
-                
-                [delegate.carriersView.twitterController postTwitterMessageWithText:twitterText];
-                [twitterText release];
+//                NSMutableString *twitterText = [[NSMutableString alloc] initWithCapacity:0];
+//
+//                [twitterText appendString:@"I'm currently interesting for this destination:"];
+//                
+//                [twitterText appendFormat:@"%@/%@ with price %@ volume %@",object.country,object.specific,object.rate,object.minutesLenght];
+//                
+//                [delegate.carriersView.twitterController postTwitterMessageWithText:twitterText];
+//                [twitterText release];
 #endif
                 [addedObjectIDS addObject:[object objectID]];
                 

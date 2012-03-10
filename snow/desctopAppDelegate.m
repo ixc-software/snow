@@ -254,9 +254,9 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
         CompanyStuff *authorizedUser = [clientController authorization];
         //if ([delegate.loggingLevel intValue] == 1) NSLog(@"CLIENT:current authorized user:%@",authorizedUser.firstName);
         if (!authorizedUser) {
-            NSLog(@"APP DELEGATE:authorized user is starting to create.");
-            [clientController firstSetup];
-            [clientController getCompaniesListWithImmediatelyStart:YES];
+//            NSLog(@"APP DELEGATE:authorized user is starting to create.");
+//            [clientController firstSetup];
+//            [clientController getCompaniesListWithImmediatelyStart:YES];
             //[clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:NO];
             
             dispatch_async(dispatch_get_main_queue(), ^(void) { 
@@ -288,8 +288,11 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
                 [setup.enterprise setHidden:NO];
                 
 #endif
-                
+
             });
+            NSLog(@"APP DELEGATE:authorized user is starting to create.");
+            [clientController firstSetup];
+            [clientController getCompaniesListWithImmediatelyStart:YES];
             
             
         } else {
@@ -366,6 +369,8 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 #if defined (SNOW_CLIENT_ENTERPRISE) || defined(SNOW_CLIENT_APPSTORE)
         
         [clientController getCompaniesListWithImmediatelyStart:YES];
+        CompanyStuff *admin = [clientController authorization];
+        if ([[clientController localStatusForObjectsWithRootGuid:admin.GUID] isEqualToString:@"registered"]) [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:YES];
         //[clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:NO];
         
         //CurrentCompany *necessaryCompany = authorizedUser.currentCompany;
@@ -1035,18 +1040,21 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 -(void)updateWellcomeTitle;
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-        //NSLog(@"APP DELEGATE:update title will update");
         
         ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[[self managedObjectContext] persistentStoreCoordinator] withSender:self withMainMoc:[self managedObjectContext]];
         
         CompanyStuff *admin = [clientController authorization];
+        //NSLog(@"APP DELEGATE:update title will update admin email:%@ adminGUID:%@ companyAdminGUID:%@",admin.email,admin.GUID,admin.currentCompany.companyAdminGUID);
+
         NSString *title = nil;
         
         if (admin && [admin.GUID isEqualToString:admin.currentCompany.companyAdminGUID]) title = [NSString stringWithFormat:@"Welcome, %@ %@. With email %@ you are admin of the company %@",admin.firstName,admin.lastName,admin.email,admin.currentCompany.name];
         else title = [NSString stringWithFormat:@"Welcome, %@ %@. With email %@ you are part of the community of the company %@",admin.firstName,admin.lastName,admin.email,admin.currentCompany.name];
         if (!admin || !admin.email || [admin.email isEqualToString:@"you@email"]) title = nil;
-        self.currentUserInfoList.title = title;
-        // });
+        dispatch_async(dispatch_get_main_queue(), ^(void) { 
+            
+            self.currentUserInfoList.title = title;
+        });
         [clientController release];
         
     });

@@ -11,13 +11,15 @@
 #import "AVTableView.h"
 #import "FinancialView.h"
 #import "TwitterUpdateDataController.h"
+#import "LinkedinUpdateDataController.h"
 
 @class desctopAppDelegate;
 
 
-@interface CarriersView : NSViewController <NSTableViewDelegate,NSTableViewDataSource> {
+@interface CarriersView : NSViewController <NSTableViewDelegate,NSTableViewDataSource,NSTabViewDelegate> {
     desctopAppDelegate *delegate;
     NSManagedObjectContext *moc;
+    NSManagedObjectContext *mainMoc;
     NSManagedObjectID *selectedCarrierID;
     FinancialView *financialView;
     
@@ -26,7 +28,6 @@
     NSMutableArray *allCarrierCompanyStufffIDs;
     NSMutableArray *allUpdatedObjectIDs;
     
-    NSArrayController *carrier;
 
     NSButton *twitterAuthorizationButton;
     NSButton *addCarrier;
@@ -44,6 +45,7 @@
     NSButton *infoCarrierButton;
     NSPanel *errorPanel;
     NSTextField *errorText;
+    NSTableView *linkedinGroups;
     NSPopover *infoViewPopover;
     NSPopover *financialViewPopover;
     NSPanel *infoViewPanel;
@@ -79,7 +81,20 @@
     NSTextField *pin;
     NSButton *authorizeButton;
     NSViewController *twitterAuthViewController;
+    NSTabView *networkTypeTab;
+    NSProgressIndicator *networksUpdateProgress;
+    WebView *linkedinWebView;
+    NSImageView *twitterEnabled;
+    NSImageView *linkedinEnabled;
+    NSArrayController *groupsListController;
+    NSTextField *messageTitle;
+    NSTextField *messageBody;
+    NSTextField *messageSignature;
+    NSButton *messageIncludePrice;
+    NSTextField *messagePriceCorrectionPercentTitle;
     TwitterUpdateDataController *twitterController;
+    LinkedinUpdateDataController *linkedinController;
+    NSArrayController *carrier;
     NSPopover *twitterViewPopover;
     NSPanel *twitterViewPanel;
     NSNumber *introductionShowAgain;
@@ -91,15 +106,20 @@
     IBOutlet NSViewController *introductionViewController;
     IBOutlet NSPopover *importRatesPanel;
     NSPanel *importRatesMainPanel;
-
+    NSMutableArray *groupListObjectsForCollectAllGroups;
+    NSMutableArray *groupListObjects;
+    NSNumber *messageIncludePriceValue;
+    NSNumber *messagePriceCorrectionPercent;
 }
 @property (assign) desctopAppDelegate *delegate;
 @property (assign) NSManagedObjectContext *moc;
+@property (assign) NSManagedObjectContext *mainMoc;
 @property (assign) FinancialView *financialView;
 @property (assign) TwitterUpdateDataController *twitterController;
-
-
+@property (assign) LinkedinUpdateDataController *linkedinController;
 @property (assign) IBOutlet NSArrayController *carrier;
+
+
 // main block
 @property (assign) IBOutlet NSButton *twitterAuthorizationButton;
 @property (assign) IBOutlet NSButton *addCarrier;
@@ -152,16 +172,31 @@
 @property (assign) IBOutlet NSArrayController *infoFinansialDetails;
 @property (assign) IBOutlet NSArrayController *infoCompanyDetails;
 
-// twitter auth block;
+// social network auth block;
 
 @property (assign) IBOutlet WebView *twitterWebView;
 @property (assign) IBOutlet NSTextField *pin;
 @property (assign) IBOutlet NSButton *authorizeButton;
 @property (assign) IBOutlet NSViewController *twitterAuthViewController;
+@property (assign) IBOutlet NSTabView *networkTypeTab;
+@property (assign) IBOutlet NSProgressIndicator *networksUpdateProgress;
+@property (assign) IBOutlet WebView *linkedinWebView;
+@property (assign) IBOutlet NSImageView *twitterEnabled;
+@property (assign) IBOutlet NSImageView *linkedinEnabled;
+@property (assign) IBOutlet NSArrayController *groupsListController;
+@property (assign) IBOutlet NSTextField *messageTitle;
+@property (assign) IBOutlet NSTextField *messageBody;
+@property (assign) IBOutlet NSTextField *messageSignature;
+@property (assign) IBOutlet NSButton *messageIncludePrice;
+@property (assign) IBOutlet NSTextField *messagePriceCorrectionPercentTitle;
+@property (retain) NSNumber *messageIncludePriceValue;
+@property (retain) NSNumber *messagePriceCorrectionPercent;
+
 
 // error block
 @property (assign) IBOutlet NSPanel *errorPanel;
 @property (assign) IBOutlet NSTextField *errorText;
+@property (assign) IBOutlet NSTableView *linkedinGroups;
 
 // indroduction view
 @property (retain) NSNumber *introductionShowAgain;
@@ -177,5 +212,9 @@
 
 -(void)localMocMustUpdate;
 -(void) introductionShowFromOutsideView;
+-(void) sortCarrierForCurrentUserAndUpdate;
+-(void)linkedinGroupsList:(NSDictionary *)parsedGroups withLatestGroups:(NSNumber *)isLatestGroup;
+-(void) postToLinkedinGroups:(NSArray *)managedObjectIDs;
+-(void) sendTwitterUpdate:(NSArray *)managedObjectIDs;
 
 @end

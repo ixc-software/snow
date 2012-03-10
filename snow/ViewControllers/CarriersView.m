@@ -25,10 +25,22 @@
 
 
 @implementation CarriersView
-@synthesize twitterWebView,twitterController;
+@synthesize carrier;
+@synthesize twitterWebView,twitterController,linkedinController;
 @synthesize pin;
 @synthesize authorizeButton;
 @synthesize twitterAuthViewController;
+@synthesize networkTypeTab;
+@synthesize networksUpdateProgress;
+@synthesize linkedinWebView;
+@synthesize twitterEnabled;
+@synthesize linkedinEnabled;
+@synthesize groupsListController;
+@synthesize messageTitle;
+@synthesize messageBody;
+@synthesize messageSignature;
+@synthesize messageIncludePrice;
+@synthesize messagePriceCorrectionPercentTitle;
 @synthesize infoTab;
 @synthesize contactsTableView;
 @synthesize contactsScrollView;
@@ -56,7 +68,7 @@
 @synthesize infoCompanyDetails;
 @synthesize errorPanel;
 @synthesize errorText;
-@synthesize carrier;
+@synthesize linkedinGroups;
 @synthesize twitterAuthorizationButton;
 @synthesize addCarrier;
 @synthesize removeCarrier;
@@ -79,8 +91,8 @@
 @synthesize introductionPanel;
 @synthesize introductionButton;
 @synthesize introductionPopover;
-
-@synthesize delegate,moc;
+@synthesize messageIncludePriceValue,messagePriceCorrectionPercent;
+@synthesize delegate,moc,mainMoc;
 
 @synthesize infoViewPopover,financialViewPopover,infoViewPanel,financialViewPanel,financialView;
 @synthesize importRatesPanel,importRatesMainPanel;
@@ -91,15 +103,17 @@
     if (self) {
         // Initialization code here.
         delegate = (desctopAppDelegate *)[[NSApplication sharedApplication] delegate];
-        
+        mainMoc = delegate.managedObjectContext;
         moc = [[NSManagedObjectContext alloc] init];
         [moc setUndoManager:nil];
-        [moc setMergePolicy:NSOverwriteMergePolicy];
+        [moc setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
         [moc setPersistentStoreCoordinator:[delegate persistentStoreCoordinator]];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(importerDidSave:) name:NSManagedObjectContextDidSaveNotification object:moc];
         introductionShowAgain = [[NSNumber alloc] init];
-
+        groupListObjectsForCollectAllGroups = [[NSMutableArray alloc] init];
+        groupListObjects  = [[NSMutableArray alloc] init];
+        
     }
     
     return self;
@@ -110,14 +124,15 @@
 
 
 - (void)importerDidSave:(NSNotification *)saveNotification {
-    //NSLog(@"MERGE in carriers view controller");
+    NSLog(@"MERGE in carriers view controller");
     
-    if (![NSThread isMainThread]) {
-        [self performSelectorOnMainThread:@selector(importerDidSave:) withObject:saveNotification waitUntilDone:YES];
-        return;
-    }
     
-    [delegate.managedObjectContext mergeChangesFromContextDidSaveNotification:saveNotification];
+    //[delegate.managedObjectContext mergeChangesFromContextDidSaveNotification:saveNotification];
+    //NSManagedObjectContext *mainMoc = [delegate managedObjectContext];
+    
+    [mainMoc performSelectorOnMainThread:@selector(mergeChangesFromContextDidSaveNotification:)	
+                              withObject:saveNotification
+                           waitUntilDone:YES];
  
     //    AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
 //    @synchronized (delegate) {
@@ -283,6 +298,23 @@
     [tableView setCornerView:newView];
     
 }
+-(void) sortCarrierForCurrentUserAndUpdate;
+{
+#if defined(SNOW_CLIENT_APPSTORE) || defined (SNOW_CLIENT_ENTERPRISE)
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+        
+        ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[[delegate managedObjectContext] persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
+        CompanyStuff *admin = [clientController authorization];
+        if (admin) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"companyStuff.currentCompany.GUID == %@",admin.currentCompany.GUID];
+            carrier.filterPredicate = predicate;
+        } 
+        
+        [clientController release];
+    });
+#endif
+
+}
 
 - (void)awakeFromNib
 {
@@ -300,24 +332,13 @@
     [self updateTableView:detailsTableView];
     [self updateTableView:financialDetailsTableView];
     [self updateTableView:companyDetailsTableView];
+    [self updateTableView:linkedinGroups];
     [statisticChoicePeriod removeAllItems];
     [statisticChoicePeriod addItemsWithTitles:[NSArray arrayWithObjects:@"last day",@"last week",@"last month", nil]];
     //[twitterAuthorizationButton setAlphaValue:0.5];
 
     
-#if defined(SNOW_CLIENT_APPSTORE) || defined (SNOW_CLIENT_ENTERPRISE)
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-        
-        ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[[delegate managedObjectContext] persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
-        CompanyStuff *admin = [clientController authorization];
-        if (admin) {
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"companyStuff.currentCompany.GUID == %@",admin.currentCompany.GUID];
-            carrier.filterPredicate = predicate;
-        } 
-        [clientController release];
-    });
-#endif
-
+    [self sortCarrierForCurrentUserAndUpdate];
 
 #if defined(SNOW_CLIENT_APPSTORE)
     [infoTab removeTabViewItem:[infoTab tabViewItemAtIndex:5]];
@@ -345,11 +366,17 @@
     
 #endif
     
-#if defined(SNOW_CLIENT_APPSTORE)
-    
+#if defined(SNOW_SERVER)
+    [addCarrier setEnabled:YES];
+    [removeCarrier setEnabled:YES];
+
 #endif
 //    [twitterWebView setDrawsBackground:NO];
 //    [[[twitterWebView mainFrame] frameView] setAllowsScrolling:NO];
+    
+//    NSLog(@">>>>>>>>> %@ %@",carrier.arrangedObjects,carrier.filterPredicate);
+    [carrier setFilterPredicate:nil];
+//    NSLog(@">>>>>>>>> %@ %@",carrier.arrangedObjects,carrier.filterPredicate);
 
 }
 
@@ -559,7 +586,7 @@
     
     Carrier *newCarrier = (Carrier *)[NSEntityDescription 
                                       insertNewObjectForEntityForName:@"Carrier" 
-                                      inManagedObjectContext:moc];
+                                      inManagedObjectContext:self.moc];
     newCarrier.name = [NSString stringWithFormat:@"new carrier %@",[NSNumber numberWithInteger:[[carrier arrangedObjects] count]]];
     newCarrier.companyStuff = companyStuffForNewCarrier;
     [self finalSaveForMoc:moc];
@@ -602,30 +629,32 @@
                     [self showErrorBoxWithText:@"You can't remove server registered carriers."];
                 } else
                 {
+                    NSString *guidToCheckUser = carrierToRemove.companyStuff.GUID;
                     
-                    //if ([status isEqualToString:@"registered"]) {
-                    NSString *statusForCompanyStuff = [self localStatusForObjectsWithRootGuid:carrierToRemove.companyStuff.GUID];
-                    if ([statusForCompanyStuff isEqualToString:@"registered"]) {
-                        dispatch_async(dispatch_get_main_queue(), ^(void) {
-                            //NSLog(@"CARRIER: >>>>>>>DISABLE");
-                            [removeCarrier setEnabled:NO];
-                        });
-                        
-                        ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[[delegate managedObjectContext] persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
-                        [clientController removeObjectWithID:[carrierToRemove objectID]];
-                        [clientController release];
-                    } else { 
-                        
-                        [self showErrorBoxWithText:@"Please register yourself first."];
-                        dispatch_async(dispatch_get_main_queue(), ^(void) {
-                            //NSLog(@"CARRIER: >>>>>>>ENABLE");
+                    if (guidToCheckUser) {
+                        NSString *statusForCompanyStuff = [self localStatusForObjectsWithRootGuid:guidToCheckUser];
+                        if ([statusForCompanyStuff isEqualToString:@"registered"]) {
+                            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                                //NSLog(@"CARRIER: >>>>>>>DISABLE");
+                                [removeCarrier setEnabled:NO];
+                            });
                             
-                            [removeCarrier setEnabled:YES];
-                        });
-                        *stop = YES;
-                    }
-                    //}
-                }
+                            ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[[delegate managedObjectContext] persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
+                            [clientController removeObjectWithID:[carrierToRemove objectID]];
+                            [clientController release];
+                        } else { 
+                            
+                            [self showErrorBoxWithText:@"Please register yourself first."];
+                            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                                //NSLog(@"CARRIER: >>>>>>>ENABLE");
+                                
+                                [removeCarrier setEnabled:YES];
+                            });
+                            *stop = YES;
+                        }
+                    } else [self showErrorBoxWithText:@"Carier removing process."];
+                } 
+
             }];
         });
     } else {
@@ -1004,14 +1033,44 @@
 }
 
 
-#pragma mark - twitter block functions
+#pragma mark - social network start functions
 //-(NSArray*)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems{
 //    NSArray *empty = [NSArray array];
 //    return empty;
 //}
-
+//- (void)webView:(WebView *)sender resource:(id)identifier did
+- (NSURLRequest *)webView:(WebView *)sender resource:(id)identifier willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
+{
+    [networksUpdateProgress startAnimation:self];
+    [networksUpdateProgress setHidden:NO];
+    //if ([identifier isEqualToString:@"linkedin"]) {
+        BOOL requestForCallbackURL = ([request.URL.absoluteString rangeOfString:@"hdlinked://linkedin/oauth"].location != NSNotFound);
+        if ( requestForCallbackURL )
+        {
+            BOOL userAllowedAccess = ([request.URL.absoluteString  rangeOfString:@"user_refused"].location == NSNotFound);
+            
+            if ( userAllowedAccess )
+            {            
+                //self.linkedinController.accessToken.verifier =  url;
+                [linkedinController finishAuthorization:self withUrl:request.URL];
+                //NSLog(@"VERIFIER URL:%@",self.linkedinController.accessToken.verifier);
+                
+            }
+        }
+        NSLog(@"finished linkedin:%@",request);
+        
+    //}
+    return request;
+}
 - (void)webView:(WebView *)sender resource:(id)identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource
 {
+    [networksUpdateProgress stopAnimation:self];
+    [networksUpdateProgress setHidden:YES];
+    //if ([identifier isEqualToString:@"linkedin"]) {
+        
+        NSLog(@"finished linkedin:%@",sender.mainFrameURL);
+
+    //}
 //    dispatch_async(dispatch_get_main_queue(), ^(void) {
 //
 //    [sender becomeFirstResponder];
@@ -1019,6 +1078,30 @@
     //NSLog(@"all data received");
 }
 - (IBAction)twitterAuthStart:(id)sender {
+    
+    NSRect frameOfSender = [twitterAuthorizationButton frame]; 
+    if (!twitterViewPopover) twitterViewPopover = [[NSPopover alloc] init];
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        
+        if (twitterViewPopover) {
+            twitterViewPopover.contentViewController = twitterAuthViewController;
+            twitterViewPopover.behavior = NSPopoverBehaviorApplicationDefined;
+            [twitterViewPopover showRelativeToRect:frameOfSender ofView:self.view preferredEdge:NSMaxYEdge];
+        } else
+        {
+            twitterViewPanel = [[[NSPanel alloc] initWithContentRect:twitterAuthViewController.view.frame styleMask:NSHUDWindowMask backing:NSBackingStoreBuffered defer:YES] autorelease];
+            [twitterViewPanel.contentView addSubview:twitterAuthViewController.view];
+            [twitterViewPanel makeFirstResponder:twitterWebView];
+
+            [NSApp beginSheet:twitterViewPanel 
+               modalForWindow:delegate.window
+                modalDelegate:nil 
+               didEndSelector:nil
+                  contextInfo:nil];
+            
+        }
+    });
+
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
         [twitterAuthorizationButton setEnabled:NO];
         if (!twitterController) { 
@@ -1026,52 +1109,37 @@
             twitterController.delegate = self;
         }
 
-        [twitterController startAuthorization:self];
+        if (!twitterController.isAuthorized) [twitterController startAuthorization:self];
+
+        // linkedin
+        NSMutableArray *finalGroupsList = [[NSUserDefaults standardUserDefaults] valueForKey:@"allGroupList"];
+        [groupsListController setContent:finalGroupsList];
+        NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"enabled" ascending:NO];
+        [groupsListController setSortDescriptors:[NSArray arrayWithObject:sort]];
+        [sort release];
         
+        if (!linkedinController) { 
+            linkedinController = [[LinkedinUpdateDataController alloc] init];
+            linkedinController.delegate = self;
+        }
+        
+        if (!linkedinController.isAuthorized)[linkedinController startAuthorization:self];
+        NSNumber *includeRates = [[NSUserDefaults standardUserDefaults] valueForKey:@"includeRates"];
+        messageIncludePriceValue = includeRates;
+        NSNumber *priceCorrection = [[NSUserDefaults standardUserDefaults] valueForKey:@"priceCorrection"];
+        messagePriceCorrectionPercent = priceCorrection;
+        NSString *postingTitle = [[NSUserDefaults standardUserDefaults] valueForKey:@"postingTitle"];
+        NSString *bodyForEdit = [[NSUserDefaults standardUserDefaults] valueForKey:@"bodyForEdit"];
+        NSString *signature = [[NSUserDefaults standardUserDefaults] valueForKey:@"signature"];
+        messageTitle.stringValue = postingTitle;
+        messageBody.stringValue = bodyForEdit;
+        messageSignature.stringValue = signature;
+        messagePriceCorrectionPercentTitle.stringValue = [NSString stringWithFormat:@"Percent correction:%@%%",priceCorrection];
+        [messageIncludePrice bind:@"value" toObject:self withKeyPath:@"messageIncludePriceValue" options:nil];
     });
 
 }
--(void)startTwitterAuthForURL:(NSURL *)url
-{
-    [[twitterWebView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
 
-    NSRect frameOfSender = [twitterAuthorizationButton frame]; 
-    if (!twitterViewPopover) twitterViewPopover = [[NSPopover alloc] init];
-    dispatch_async(dispatch_get_main_queue(), ^(void) {
-   
-    if (twitterViewPopover) {
-        twitterViewPopover.contentViewController = twitterAuthViewController;
-        twitterViewPopover.behavior = NSPopoverBehaviorApplicationDefined;
-        [twitterViewPopover showRelativeToRect:frameOfSender ofView:self.view preferredEdge:NSMaxYEdge];
-    } else
-    {
-        twitterViewPanel = [[[NSPanel alloc] initWithContentRect:twitterAuthViewController.view.frame styleMask:NSHUDWindowMask backing:NSBackingStoreBuffered defer:YES] autorelease];
-        [twitterViewPanel.contentView addSubview:twitterAuthViewController.view];
-        [twitterViewPanel makeFirstResponder:twitterWebView];
-
-        [NSApp beginSheet:twitterViewPanel 
-           modalForWindow:delegate.window
-            modalDelegate:nil 
-           didEndSelector:nil
-              contextInfo:nil];
-
-    }
-    });
-}
-- (IBAction)twitterAuthorizeFinal:(id)sender {
-    twitterController.twitterPIN = [pin stringValue];
-    
-    if (twitterViewPopover) [twitterViewPopover close];
-
-    if (twitterViewPanel) {
-        [twitterViewPanel orderOut:sender];
-        [NSApp endSheet:twitterViewPanel];
-    }
-    [twitterController finishAuthorization:self];
-    
-    //[self getAccessToken:sender];
-    
-}
 - (IBAction)twitterAuthorizeCancel:(id)sender {
     if (twitterViewPopover) [twitterViewPopover close];
     
@@ -1080,19 +1148,295 @@
         [NSApp endSheet:twitterViewPanel];
     }
     [twitterAuthorizationButton setEnabled:YES];
+    
+}
+- (void)tabView:(NSTabView *)tabView didSelectTabViewItem:(NSTabViewItem *)tabViewItem
+{
+    if ([tabViewItem.identifier isEqualToString:@"1"]) {
+        // twitter start
+    }
+    if ([tabViewItem.identifier isEqualToString:@"2"]) {
+        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+            
+//            if (!linkedinController) { 
+//                linkedinController = [[LinkedinUpdateDataController alloc] init];
+//                linkedinController.delegate = self;
+//            }
+//            
+//            [linkedinController startAuthorization:self];
+//        NSMutableArray *finalGroupsList = [[NSUserDefaults standardUserDefaults] valueForKey:@"allGroupList"];
+//        [groupsListController setContent:finalGroupsList];
+            
+        //});
+    }
+    if ([tabViewItem.identifier isEqualToString:@"3"]) {
+//        NSNumber *includeRates = [[NSUserDefaults standardUserDefaults] valueForKey:@"includeRates"];
+//        messageIncludePriceValue = includeRates;
+//        NSNumber *priceCorrection = [[NSUserDefaults standardUserDefaults] valueForKey:@"priceCorrection"];
+//        messagePriceCorrectionPercent = priceCorrection;
+//        NSString *postingTitle = [[NSUserDefaults standardUserDefaults] valueForKey:@"postingTitle"];
+//        NSString *bodyForEdit = [[NSUserDefaults standardUserDefaults] valueForKey:@"bodyForEdit"];
+//        NSString *signature = [[NSUserDefaults standardUserDefaults] valueForKey:@"signature"];
+//        messageTitle.stringValue = postingTitle;
+//        messageBody.stringValue = bodyForEdit;
+//        messageSignature.stringValue = signature;
+//        
 
+    }
+
+    
+}
+-(NSMutableString *)stringFromObjectIDs:(NSArray *)objecIDs includeRates:(BOOL) isIncludeRates;
+{
+    NSManagedObjectContext *context = delegate.managedObjectContext;
+    //NSMutableString *finalString = [NSMutableString string];
+    NSNumberFormatter *rateFormatter = [[NSNumberFormatter alloc] init];
+    [rateFormatter setMaximumFractionDigits:5];
+    [rateFormatter setMinimumIntegerDigits:1];
+
+    //[rateFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    NSNumber *priceCorrection = [[NSUserDefaults standardUserDefaults] valueForKey:@"priceCorrection"];
+    NSMutableString *finalString = [NSMutableString string];
+
+    [objecIDs enumerateObjectsUsingBlock:^(NSManagedObjectID *objectID, NSUInteger idx, BOOL *stop) {
+        //DestinationsListPushList *object = (DestinationsListPushList *)[context objectWithID:objectID];
+        NSManagedObject *object = [context objectWithID:objectID];
+        NSString *country = [object valueForKey:@"country"];
+        NSString *specific = [object valueForKey:@"specific"];
+        NSNumber *rateNumber = [object valueForKey:@"rate"];
+        NSNumber *rateNew = [NSNumber numberWithDouble:rateNumber.doubleValue * (1 + priceCorrection.doubleValue / 100)];
+        [rateFormatter setMaximumFractionDigits:5];
+        [rateFormatter setMinimumIntegerDigits:1];
+
+        NSString *rate = [rateFormatter stringFromNumber:rateNew];
+        [rateFormatter setMaximumFractionDigits:0];
+        
+        NSString *minutesLenght = nil;
+        if ([object.entity.name isEqualToString:@"DestinationsListPushList"]) {
+            minutesLenght = [rateFormatter stringFromNumber:[object valueForKey:@"minutesLenght"]];
+        } else {
+            minutesLenght = [rateFormatter stringFromNumber:[object valueForKey:@"lastUsedMinutesLenght"]];
+        }
+        [finalString appendString:[NSString stringWithFormat:@"%@/%@",country,specific]];
+        if (isIncludeRates) [finalString appendString:[NSString stringWithFormat:@" with price $%@",rate]];
+        if (minutesLenght && minutesLenght.doubleValue > 0) [finalString appendString:[NSString stringWithFormat:@" and volume %@",minutesLenght]];
+        if (objecIDs.count > 1 && idx != objecIDs.count -1) [finalString appendString:@"\n"]; 
+    }];
+    
+    return finalString;
+}
+
+
+#pragma mark - twitter block functions
+
+
+
+-(void)startTwitterAuthForURL:(NSURL *)url
+{
+    [[twitterWebView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
+
+}
+- (IBAction)twitterAuthorizeFinal:(id)sender {
+    twitterController.twitterPIN = [pin stringValue];
+    
+//    if (twitterViewPopover) [twitterViewPopover close];
+//
+//    if (twitterViewPanel) {
+//        [twitterViewPanel orderOut:sender];
+//        [NSApp endSheet:twitterViewPanel];
+//    }
+    [twitterController finishAuthorization:self];
+    
+    //[self getAccessToken:sender];
+    
 }
 
 -(void)twitterAuthSuccess;
 {
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         //NSLog(@"twitterAuthSuccess");
-        [twitterAuthorizationButton.animator setAlphaValue:1.0];
-        [twitterAuthorizationButton setEnabled:YES];
-        [twitterAuthorizationButton setAction:nil];
+        twitterEnabled.image = [NSImage imageNamed:@"enabledPoint.png"];
+        [twitterWebView setHidden:YES];
+        [[delegate.destinationsView.twitIt layer] setOpacity:1.0];
+        [delegate.destinationsView.twitIt setEnabled:YES];
+
     });
 }
 
+-(void) sendTwitterUpdate:(NSArray *)managedObjectIDs;
+{
+    //    mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+    //    NSManagedObjectContext *moc = delegate.managedObjectContext;
+    
+    [managedObjectIDs enumerateObjectsUsingBlock:^(NSManagedObjectID *objectID, NSUInteger idx, BOOL *stop) {
+        NSMutableString *finalDestinationsListString = [self stringFromObjectIDs:[NSArray arrayWithObject:objectID] includeRates:YES];
+        NSMutableString *twitterText = [[NSMutableString alloc] initWithCapacity:0];
+        [twitterText appendString:@"I'm currently interesting for those destination:"];
+        [twitterText appendString:@"\n"];
+        
+        [twitterText appendString:finalDestinationsListString];
+        [twitterText appendString:@"\n"];
+        
+        [twitterText appendString:@"(posted from snow ixc)"];
+        if (twitterText.length > 139) [twitterText replaceCharactersInRange:NSMakeRange(139,twitterText.length - 139) withString:@""];
+        NSLog(@"SOCIAL NETWORK CONTROLLER: twitter message to post:%@",twitterText);
+        
+        if (twitterController) [twitterController postTwitterMessageWithText:twitterText];
+        
+    }];
+    
+    //    if (twitterController) [twitterController postTwitterMessageWithText:text];
+}
+
+#pragma mark - Linkedin controller delegates
+
+-(void)linkedinAuthSuccess;
+{
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        //NSLog(@"twitterAuthSuccess");
+        linkedinEnabled.image = [NSImage imageNamed:@"enabledPoint.png"];
+        [networksUpdateProgress setHidden:YES];
+        [networksUpdateProgress stopAnimation:self];
+        [linkedinWebView setHidden:YES];
+        ////[[delegate.destinationsView.linkedinIn layer] setOpacity:1.0];
+        [delegate.destinationsView.linkedinIn setEnabled:YES];
+    });
+    NSDate *lastUpdate = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastLinedinGroupsUpdatingTime"];
+    if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 86400)  [linkedinController getGroupsStart:0 count:10];
+    [[NSUserDefaults standardUserDefaults] setValue:[NSDate date] forKey:@"lastLinedinGroupsUpdatingTime"];
+    NSMutableArray *finalGroupsList = [[NSUserDefaults standardUserDefaults] valueForKey:@"allGroupList"];
+    [groupsListController setContent:finalGroupsList];
+}
+
+-(void)linkedinAuthFailed;
+{
+    dispatch_async(dispatch_get_main_queue(), ^(void) { 
+        
+        [self showErrorBoxWithText:@"linkedin authorization failed"];
+    });
+}
+
+-(void)linkedinAuthForURL:(NSURL *)url;
+{
+    dispatch_async(dispatch_get_main_queue(), ^(void) { 
+        NSLog(@"LINKEDIN START URL:%@",url);
+        
+        [[linkedinWebView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
+
+    });
+    
+}
+
+-(void)linkedinGroupsList:(NSDictionary *)parsedGroups withLatestGroups:(NSNumber *)isLatestGroup;
+{
+    NSLog(@"CARRIER VIEW: isLatestGroup:%@ ",isLatestGroup);
+
+    //[self.groupListObjects removeAllObjects];
+    NSMutableArray *finalGroupsList = [[NSUserDefaults standardUserDefaults] valueForKey:@"allGroupList"];
+    //    
+    //NSMutableArray *finalGroupsList = 
+    NSArray *groupsListParsed = [parsedGroups valueForKey:@"values"];
+    [groupsListParsed enumerateObjectsUsingBlock:^(NSDictionary *group, NSUInteger idx, BOOL *stop) {
+        NSDictionary *groupInfo = [group valueForKey:@"group"];
+        NSMutableDictionary *groupInfoMutable = [NSMutableDictionary dictionaryWithDictionary:groupInfo];
+        [groupInfoMutable setValue:[NSNumber numberWithBool:NO] forKey:@"enabled"];
+        
+        NSNumber *idNumber = [groupInfo valueForKey:@"id"];
+        //NSString *name = [groupInfo valueForKey:@"name"];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id == %@",idNumber];
+        NSArray *filteredFinalGroupList = [finalGroupsList filteredArrayUsingPredicate:predicate];
+        if (filteredFinalGroupList.count > 0) [groupInfoMutable setValue:[filteredFinalGroupList.lastObject valueForKey:@"enabled"] forKey:@"enabled"]; 
+        else [groupInfoMutable setValue:[NSNumber numberWithBool:NO] forKey:@"enabled"];
+        [groupListObjectsForCollectAllGroups addObject:groupInfoMutable];
+        //NSLog(@"SOCIAL NETWORKS AUTH: ADD NEW group name:%@ id:%@",idNumber,name);
+        
+    }];
+    //    [[NSUserDefaults standardUserDefaults] setValue:self.groupListObjects forKey:@"allGroupList"];
+    //    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    if (isLatestGroup.boolValue == YES) {
+        // ok buffer is done now, time to check 
+        [groupListObjects removeAllObjects];
+        [groupListObjects addObjectsFromArray:groupListObjectsForCollectAllGroups];
+        
+        [[NSUserDefaults standardUserDefaults] setValue:groupListObjects forKey:@"allGroupList"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        [groupsListController setContent:groupListObjects];
+        [networksUpdateProgress setHidden:YES];
+        [linkedinGroups reloadData];
+    } else [groupListObjectsForCollectAllGroups setValuesForKeysWithDictionary:parsedGroups];
+}
+
+-(BOOL)isLinkedinAuthorized;
+{
+    if (linkedinController) return linkedinController.isAuthorized;
+    else return NO;
+}
+-(void) postToLinkedinGroups:(NSArray *)managedObjectIDs;
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"enabled = %@",[NSNumber numberWithBool:YES]];
+    NSArray *enabledGroups = [groupsListController.arrangedObjects filteredArrayUsingPredicate:predicate];
+    NSString *postingTitle = [[NSUserDefaults standardUserDefaults] valueForKey:@"postingTitle"];
+    NSNumber *includeRates = [[NSUserDefaults standardUserDefaults] valueForKey:@"includeRates"];
+    NSString *bodyForEdit = [[NSUserDefaults standardUserDefaults] valueForKey:@"bodyForEdit"];
+    NSString *signature = [[NSUserDefaults standardUserDefaults] valueForKey:@"signature"];
+    
+    [enabledGroups enumerateObjectsUsingBlock:^(NSMutableDictionary *group, NSUInteger idx, BOOL *stop) {
+        NSString *groupID = [group valueForKey:@"id"];
+        NSString *name = [group valueForKey:@"name"];
+        
+        NSMutableString *linkedinText = [[NSMutableString alloc] initWithCapacity:0];
+        [linkedinText appendString:bodyForEdit];
+        [linkedinText appendString:@"\n"];
+        NSMutableString *finalDestinationsListString = [self stringFromObjectIDs:managedObjectIDs includeRates:includeRates.boolValue];
+        [linkedinText appendString:finalDestinationsListString];
+        [linkedinText appendString:@"\n"];
+        [linkedinText appendString:@"\n"];
+        
+        [linkedinText appendString:signature];
+        [linkedinText appendString:@"\n"];
+        
+        [linkedinText appendString:@"(posted from snow ixc)"];
+        
+        NSLog(@"SOCIAL NETWORK CONTROLLER: linkedin message for group:%@ to post:%@",linkedinText,name);
+        
+        if (linkedinController.isAuthorized) [linkedinController postToGroupID:groupID withTitle:postingTitle withSummary:linkedinText];        
+    }];
+}
+
+- (IBAction)routesListIncludePriceChanged:(id)sender {
+    NSNumber *includeRates = [[NSUserDefaults standardUserDefaults] valueForKey:@"includeRates"];
+    
+    [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:!includeRates.boolValue] forKey:@"includeRates"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (IBAction)priceCorrectionChange:(id)sender {
+    NSStepper *senderStep = sender;
+    NSNumber *newValue = [NSNumber numberWithDouble:senderStep.doubleValue];
+    [[NSUserDefaults standardUserDefaults] setValue:newValue forKey:@"priceCorrection"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    messagePriceCorrectionPercentTitle.stringValue = [NSString stringWithFormat:@"Percent correction:%@%%",newValue];
+}
+
+- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
+{
+    [[NSUserDefaults standardUserDefaults] setValue:messageBody.stringValue forKey:@"bodyForEdit"];
+    [[NSUserDefaults standardUserDefaults] setValue:messageSignature.stringValue forKey:@"signature"];
+    [[NSUserDefaults standardUserDefaults] setValue:messageTitle.stringValue forKey:@"postingTitle"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    return YES;
+    
+}
+
+//- (BOOL)tableView:(NSTableView *)aTableView shouldSelectRow:(NSInteger)rowIndex
+//{
+//    NSMutableDictionary *row = [groupsListController.arrangedObjects objectAtIndex:rowIndex];
+//    NSNumber *enabled = [row valueForKey:@"enabled"];
+//    [row setValue:[NSNumber numberWithBool:!enabled.boolValue] forKey:@"enabled"];
+//    [[NSUserDefaults standardUserDefaults] setValue:groupsListController.arrangedObjects forKey:@"allGroupList"];
+//
+//}
 #pragma mark - info block functions
 
 - (IBAction)closeInforBlock:(id)sender {
@@ -1252,6 +1596,7 @@
 
 - (BOOL)tableView:(NSTableView *)aTableView shouldSelectRow:(NSInteger)rowIndex
 {
+    if (aTableView.tag == 0) {
     if (delegate.isSearchProcessing == YES) return NO; 
     else {
         [globalSearchProgress setHidden:NO];
@@ -1306,7 +1651,22 @@
 
         });
     }
+    } 
     
+    if (aTableView.tag == 1) {
+        NSArray *allGroups = groupsListController.arrangedObjects;
+        
+        NSMutableDictionary *row = [allGroups objectAtIndex:rowIndex];
+        NSNumber *enabled = [row valueForKey:@"enabled"];
+        [row setValue:[NSNumber numberWithBool:!enabled.boolValue] forKey:@"enabled"];
+//        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id != %@",[row valueForKey:@"id"]];
+//        NSArray *filteredAllGroups = [allGroups filteredArrayUsingPredicate:predicate];
+//        NSMutableArray *finalGroups = [NSMutableArray arrayWithArray:filteredAllGroups];
+//        [finalGroups addObject:row];
+//        [groupsListController setContent:finalGroups];
+        [[NSUserDefaults standardUserDefaults] setValue:groupsListController.arrangedObjects forKey:@"allGroupList"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
     return YES;
 }
 
@@ -1451,17 +1811,24 @@
         //if ([idsWithProgress containsObject:objectID] && ![isItLatestMessage boolValue]) return;
         //[idsWithProgress addObject:objectID];
         delegate.destinationsView.currentObservedDestination = nil;
-        [delegate.destinationsView localMocMustUpdate];
+        //[delegate.destinationsView localMocMustUpdate];
         [self localMocMustUpdate];
         NSManagedObject *object = [self.moc objectWithID:objectID];
-        
+        //NSLog(@"CARRIER:update object entity:%@",object.entity.name);
+
         if (object) {
             if ([[[object entity] name] isEqualToString:@"Carrier"]) {
                 if ([statusUpdate isEqualToString:@"remove object finish"] || [statusUpdate isEqualToString:@"carrier for removing not found"]) { 
-                    
-                    [moc deleteObject:[moc objectWithID:objectID]];
-                    
-                    [self finalSaveForMoc:moc];
+                    NSLog(@"CARRIER:remove object entity:%@",[object valueForKey:@"name"]);
+                    //dispatch_async(dispatch_get_main_queue(), ^(void) {
+
+                    [self.moc deleteObject:[self.moc objectWithID:objectID]];
+                    //[carrier removeObject:object];
+                    [self finalSaveForMoc:self.moc];
+                    //[carrier removeObject:object];
+                    //[self.carriersTableView reloadData]; 
+                    //});
+                    //[self sortCarrierForCurrentUserAndUpdate];
                 }
                 
             }
@@ -1469,7 +1836,7 @@
         
         
     }
-    //NSLog(@"CARRIER:update UI:%@ latest message:%@",status,isItLatestMessage);
+    //NSLog(@"CARRIER:update UI:%@ latest message:%@",statusUpdate,isItLatestMessage);
     
 }
 

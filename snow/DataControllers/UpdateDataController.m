@@ -3325,7 +3325,16 @@ forIsUpdateCarriesListOnExternalServer:YES];
     
     // importCSVUserChoices have dictionary with carriersNames keys, which have dictionary with relationships, which have arrays of user selection
     NSMutableDictionary *importRatesUserChoices = [NSMutableDictionary dictionary];
-    [importRatesUserChoices addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:[NSString stringWithFormat:@"%@/importCSVUserChoices.dict",[delegate applicationFilesDirectory]]]];
+    NSURL *appicationFiles = delegate.applicationFilesDirectory;
+    NSURL *finalURL = [NSURL URLWithString:@"importCSVUserChoices.dat" relativeToURL:appicationFiles];
+
+    NSData *allObjectsData = [NSData dataWithContentsOfURL:finalURL];
+    NSPropertyListFormat format;  
+    NSString *error;
+
+    NSDictionary *decodedObjects = [NSPropertyListSerialization propertyListFromData:allObjectsData mutabilityOption:0 format:&format errorDescription:&error];
+
+    [importRatesUserChoices addEntriesFromDictionary:decodedObjects];
     NSMutableDictionary *carrierChoisesList = [importRatesUserChoices valueForKey:carrierName];
     NSArray *allColumns = [carrierChoisesList valueForKey:relationshipName];
 
@@ -3565,10 +3574,13 @@ forIsUpdateCarriesListOnExternalServer:YES];
                     NSError *error = nil;
                     NSArray *fetchedObjects = [delegate.managedObjectContext executeFetchRequest:fetchRequest error:&error];
                     CountrySpecificCodeList *fetchedList = [fetchedObjects lastObject];
-                    NSSet *codes = fetchedList.codesList;
                     
-                    [codes enumerateObjectsWithOptions:NSSortStable usingBlock:^(CodesList *codesList, BOOL *stop) {                    
-                        NSDictionary *codeRow = [NSDictionary dictionaryWithObjectsAndKeys:[codesList.code stringValue],@"code", nil];
+                    NSArray *codes = [fetchedList.codes componentsSeparatedByString:@", "];
+                    //[finalCodesList addObjectsFromArray:codes];
+                    //NSSet *codes = fetchedList.codesList;
+                    
+                    [codes enumerateObjectsUsingBlock:^(NSString *code, NSUInteger idx, BOOL *stop) {
+                        NSDictionary *codeRow = [NSDictionary dictionaryWithObjectsAndKeys:code,@"code", nil];
                         [finalCodesList addObject:codeRow];
                     }];
                     [fetchRequest release];
@@ -3971,17 +3983,17 @@ forIsUpdateCarriesListOnExternalServer:YES];
  
                 }
                 if ([currentTargetChoice intValue] == 1) [self updateTargetListWithData:row 
-                                                                            withCarrierGUID:carrierGUID 
+                                                                        withCarrierGUID:carrierGUID 
                                                                              withPrefix:prefix 
                                                                         withRateSheetID:rateSheetID 
                                                                       withRateSheetName:rateSheetName 
                                                                          withEntityName:@"DestinationsListTargets"];
                 if ([currentTargetChoice intValue] == 2) {
                     NSMutableArray *inseredDestinations = [self updateTargetListWithData:row 
-                                                                            withCarrierGUID:carrierGUID 
-                                                                             withPrefix:nil 
-                                                                        withRateSheetID:nil 
-                                                                      withRateSheetName:nil 
+                                                                         withCarrierGUID:carrierGUID 
+                                                                              withPrefix:nil 
+                                                                         withRateSheetID:nil 
+                                                                       withRateSheetName:nil 
                                                                           withEntityName:@"DestinationsListPushList"];
                     [allInsertedDestinationsIDs addObjectsFromArray:inseredDestinations];
 
@@ -4021,22 +4033,23 @@ forIsUpdateCarriesListOnExternalServer:YES];
 
             [rowsCountNumber release];
             
-            //NSLog(@"UPDATE DATA CONTROLLER: inserted IDS:%@",allInsertedDestinationsIDs);
             if ([allInsertedDestinationsIDs count] > 0) {
-                
+                sleep(2);
+                NSLog(@"UPDATE DATA CONTROLLER: inserted IDS:%@",allInsertedDestinationsIDs);
+
 #if defined(SNOW_CLIENT_APPSTORE) || defined (SNOW_CLIENT_ENTERPRISE)
 //                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
                     
 //                    AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
 //                    ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[[delegate managedObjectContext] persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
-                [allInsertedDestinationsIDs enumerateObjectsUsingBlock:^(NSManagedObjectID *necessaryID, NSUInteger idx, BOOL *stop) {
+                [allInsertedDestinationsIDs enumerateObjectsUsingBlock:^(NSManagedObject *necessaryID, NSUInteger idx, BOOL *stop) {
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
                         
 //                        AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
-                        ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[[delegate managedObjectContext] persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
+                        ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[[delegate managedObjectContext] persistentStoreCoordinator] withSender:delegate withMainMoc:[delegate managedObjectContext]];
                         
                         //sleep(1);
-                        [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:necessaryID] mustBeApproved:NO];
+                        [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:necessaryID.objectID] mustBeApproved:NO];
                         [clientController release];
                     });
                 }];

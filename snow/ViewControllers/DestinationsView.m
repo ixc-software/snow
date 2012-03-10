@@ -113,6 +113,8 @@
 @synthesize pushListCodesTableView;
 @synthesize pushListRemoveDestinations;
 @synthesize addDestinationsPushlistButton;
+@synthesize twitIt;
+@synthesize linkedinIn;
 @synthesize targetsInfo;
 @synthesize targetsProgress;
 @synthesize targetsTableView;
@@ -711,6 +713,10 @@
                 [delegate.importRatesView loadView];
                 
                 if (!importRatesPanel) importRatesPanel = [[NSPopover alloc] init];
+                else {
+                    [importRatesPanel release];
+                    importRatesPanel = [[NSPopover alloc] init];
+                }
                 //                NSRect frameOfTestingCell = [sender frame]; 
                 NSRect frameOfSender = [sender frame]; 
                 frameOfSender = NSMakeRect(frameOfSender.origin.x + 15, frameOfSender.origin.y + 20, frameOfSender.size.width, frameOfSender.size.height);
@@ -2523,6 +2529,23 @@
 
 
 #pragma mark - destinations pushlist actions
+- (IBAction)linkedinSelectedDestinations:(id)sender {
+    NSMutableArray *selectedIDs = [NSMutableArray array];
+    NSArray *selectedDestintions = destinationsListPushList.selectedObjects; 
+    [selectedDestintions enumerateObjectsUsingBlock:^(DestinationsListPushList *destination, NSUInteger idx, BOOL *stop) {
+        [selectedIDs addObject:destination.objectID];        
+    }];
+    [delegate.carriersView postToLinkedinGroups:selectedIDs];
+    
+}
+- (IBAction)twitSelectedDestinations:(id)sender {
+    NSMutableArray *selectedIDs = [NSMutableArray array];
+    NSArray *selectedDestintions = destinationsListPushList.selectedObjects; 
+    [selectedDestintions enumerateObjectsUsingBlock:^(DestinationsListPushList *destination, NSUInteger idx, BOOL *stop) {
+        [selectedIDs addObject:destination.objectID];        
+    }];
+    [delegate.carriersView sendTwitterUpdate:selectedIDs];
+}
 
 
 #pragma mark - testing result actions
@@ -3519,6 +3542,8 @@ return YES;
                 [self localMocMustUpdate];
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
                     [pushListRemoveDestinations setEnabled:YES];
+                    [pushListTableView reloadData];
+                    [pushListCodesTableView reloadData];
                 });
             }
         }

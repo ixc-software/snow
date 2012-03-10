@@ -2194,7 +2194,7 @@ static char encodingTable[64] = {
     }
     NSString *error = [receivedObject valueForKey:@"error"];
     if (error) {
-        NSAssert(error != nil, @""); 
+        //NSAssert(error != nil, @""); 
 
         NSLog(@"CLIENT CONROLLER:>>>>>>>>>>>>> warning! get all objects List withMainEntity:%@ and guid:%@ list error from server:%@",mainObjectEntity,mainObjectGUID,error);
     }
@@ -2326,7 +2326,8 @@ static char encodingTable[64] = {
 //                if ([entityFor isEqualToString:@"CodesvsDestinationsList"]) {
 //                    NSLog(@"CLIENT CONTROLLER: object with entity:%@ will CREATE and new GUID:%@ oldGUID:%@ country:%@ specific:%@ destination GUID:%@",entityFor,guid,[newObject valueForKey:@"GUID"],[newObject valueForKey:@"country"],[newObject valueForKey:@"specific"],[newObject valueForKeyPath:@"destinationsListForSale.GUID"]);
 //                    
-//                } else NSLog(@"CLIENT CONTROLLER: object with entity:%@ will CREATE and new GUID:%@ oldGUID:%@ objectsFinded:%lu",entityFor,guid,[newObject valueForKey:@"GUID"],fetchedObjects.count);
+//                } else 
+                //NSLog(@"CLIENT CONTROLLER: object with entity:%@ will CREATE and new GUID:%@ oldGUID:%@ objectsFinded:%lu",entityFor,guid,[newObject valueForKey:@"GUID"],fetchedObjects.count);
 
 
             } else { 
@@ -2493,6 +2494,27 @@ static char encodingTable[64] = {
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",destination.GUID];
             NSArray *filteredWeBuyIDs = [updatedWeBuyIDs filteredArrayUsingPredicate:predicate];
             if (filteredWeBuyIDs.count == 0) {
+                [moc deleteObject:destination];
+                NSLog(@"CLIENT CONTROLLER: object with entity %@ not on server and will removed",destination.entity.name);
+            }
+        }];
+    }
+
+    /////////////////////////////// PUSH LIST BLOCK 
+    NSArray *allGUIDsPushlist = [self getAllObjectsListWithEntityForList:@"DestinationsListPushList" withMainObjectGUID:carrier.GUID withMainObjectEntity:@"Carrier" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
+    allObjectsForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsPushlist withEntity:@"DestinationsListPushList" withAdmin:admin];
+    //NSLog(@">>>>>>>>>allGUIDsPushlist:%@ allObjectsForGUIDS:%@",allGUIDsPushlist,allObjectsForGUIDS);
+    
+    if (allGUIDsPushlist && allObjectsForGUIDS) {
+        
+        NSArray *updatedPushListIDs = [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"DestinationsListPushList" withAdmin:admin withRootObject:carrier  isEveryTenPercentSave:NO];
+        [self finalSave:moc];
+        // remove objects which was not on server
+        NSSet *allDestinationsWeBuy = carrier.destinationsListPushList;
+        [allDestinationsWeBuy enumerateObjectsUsingBlock:^(DestinationsListPushList *destination, BOOL *stop) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",destination.GUID];
+            NSArray *filteredPushlistIDs = [updatedPushListIDs filteredArrayUsingPredicate:predicate];
+            if (filteredPushlistIDs.count == 0) {
                 [moc deleteObject:destination];
                 NSLog(@"CLIENT CONTROLLER: object with entity %@ not on server and will removed",destination.entity.name);
             }
@@ -2756,7 +2778,10 @@ static char encodingTable[64] = {
     
     NSString *result = [receivedObject valueForKey:@"result"];
     if ([result isEqualToString:@"done"]) [self updateUIwithMessage:@"Login success" withObjectID:nil withLatestMessage:NO error:NO];
-    else [self updateUIwithMessage:@"Login failed" withObjectID:nil withLatestMessage:YES error:YES];
+    else { 
+        [self updateUIwithMessage:@"Login failed" withObjectID:nil withLatestMessage:YES error:YES];
+        return;
+    }
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"CompanyStuff" inManagedObjectContext:self.moc];
     [fetchRequest setEntity:entity];
@@ -2769,7 +2794,6 @@ static char encodingTable[64] = {
     
     [fetchRequest release];
     if (fetchedObjects.count > 0) {
-        [self updateUIwithMessage:@"we are start updates." withObjectID:nil withLatestMessage:YES error:NO];
         // users don't have passwords, so we like to update it
         CompanyStuff *findedAuthorizedLogin = fetchedObjects.lastObject;
         findedAuthorizedLogin.password = password;
@@ -2784,7 +2808,9 @@ static char encodingTable[64] = {
 #endif
         [self setUserDefaultsObject:findedAuthorizedLogin.GUID forKey:keyAofAuthorized];
         // ups, let's start updates ( i like to get carriers list here only
-        [self updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:NO];
+        [self updateUIwithMessage:@"we are start updates." withObjectID:nil withLatestMessage:YES error:NO];
+
+        [self updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:YES];
         
     } else [self updateUIwithMessage:@"please try in few seconds." withObjectID:nil withLatestMessage:YES error:YES];
     
@@ -2809,9 +2835,19 @@ static char encodingTable[64] = {
     NSDictionary *rootObjectToAdd = nil;
     if (relationShipName) {
         NSManagedObject *rootObject = [object valueForKey:relationShipName];
+//
+//        if (!rootObject) { 
+//            NSLog(@"CLIENT CONTROLLER: PutObject failed. root object not found for object:%@ with root relationship:%@ ",object,relationShipName);
+//
+//            return nil;
+//        }
         NSString *rootEntity = [[rootObject entity] name];
         NSString *guid = [rootObject valueForKey:@"GUID"];
         rootObjectToAdd = [NSDictionary dictionaryWithObjectsAndKeys:guid,rootEntity, nil];
+    } else {
+//        NSLog(@"CLIENT CONTROLLER: PutObject failed. relationShipName not found for object:%@",object);
+//        return nil;
+        
     }
     
     NSDictionary *objectDictionary = [self dictionaryFromObject:object];
@@ -2847,9 +2883,24 @@ static char encodingTable[64] = {
     [prepeareForJSONRequest setValue:[NSNumber numberWithBool:isMustBeApproved] forKey:@"isMustBeApproved"];
     
     NSMutableArray *allObjects = [NSMutableArray array];
+    __block BOOL isPrepareWasSuccesseful = YES;
     [objectIDs enumerateObjectsUsingBlock:^(NSManagedObjectID *objectID, NSUInteger idx, BOOL *stop) {
-        [allObjects addObject:[self prepareNecessaryDataForObjectWithID:objectID]];
+        NSArray *preparedResult = [self prepareNecessaryDataForObjectWithID:objectID];
+        if (preparedResult) [allObjects addObject:preparedResult];
+        else {
+            NSLog(@"CLIENT CONTROLLER: PutObject failed. root object not found");
+
+            [self updateUIwithMessage:@"Root object not found." withObjectID:[objectIDs lastObject] withLatestMessage:YES error:YES];
+            isPrepareWasSuccesseful = NO;
+
+        }
     }];
+    
+    if (!isPrepareWasSuccesseful) { 
+        NSLog(@"CLIENT CONTROLLER: PutObject failed and not send.");
+
+        return;
+    }
     NSString *errorSerialization;
     NSData *allArchivedObjects = [NSPropertyListSerialization dataFromPropertyList:allObjects format:NSPropertyListBinaryFormat_v1_0 errorDescription:&errorSerialization];
     if (errorSerialization) NSLog(@"CLIENT CONTRORLER: PUT OBJECT SerializationFailed:%@",errorSerialization);
@@ -2857,10 +2908,10 @@ static char encodingTable[64] = {
 
 
     [prepeareForJSONRequest setValue:allObjectsString forKey:@"necessaryData"];
-    //NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",prepeareForJSONRequest);
+    NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",prepeareForJSONRequest);
 
     NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"PutObject" withJSONRequest:prepeareForJSONRequest];
-    //NSLog(@"CLIENT CONTROLLER PutObject Received:%@",receivedObject);
+    NSLog(@"CLIENT CONTROLLER PutObject Received:%@",receivedObject);
     if (receivedObject) {
         [self updateUIwithMessage:@"put object processing"  withObjectID:[objectIDs lastObject] withLatestMessage:NO error:NO];
         

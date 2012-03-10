@@ -89,6 +89,8 @@
     NSTableView *pushListCodesTableView;
     NSButton *pushListRemoveDestinations;
     NSButton *addDestinationsPushlistButton;
+    NSButton *twitIt;
+    NSButton *linkedinIn;
     
     NSManagedObjectID *currentObservedDestination;
     NSInteger previousSelectedIndex;
@@ -260,6 +262,8 @@
 @property (assign) IBOutlet NSTableView *pushListCodesTableView;
 @property (assign) IBOutlet NSButton *pushListRemoveDestinations;
 @property (assign) IBOutlet NSButton *addDestinationsPushlistButton;
+@property (assign) IBOutlet NSButton *twitIt;
+@property (assign) IBOutlet NSButton *linkedinIn;
 
 // errorPanel
 

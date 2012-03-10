@@ -613,9 +613,12 @@
     
     if (isLatestGroup.boolValue == YES) {
         // ok buffer is done now, time to check 
+        NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"enabled" ascending:NO];
         [groupListObjects removeAllObjects];
         [groupListObjects addObjectsFromArray:groupListObjectsForCollectAllGroups];
-        
+        [groupsListParsed sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort];
+        [sort release];
+         
         [[NSUserDefaults standardUserDefaults] setValue:self.groupListObjects forKey:@"allGroupList"];
         [[NSUserDefaults standardUserDefaults] synchronize];
         

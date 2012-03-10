@@ -160,6 +160,7 @@
 - (BOOL)tableView:(NSTableView *)aTableView shouldSelectRow:(NSInteger)rowIndex
 {
     if ([aTableView tag] == 201) {
+        
         NSMutableDictionary *row = [[importRatesSecondParserResult arrangedObjects ] objectAtIndex:rowIndex];
         //NSArray *codeList = [row valueForKey:@"codes"];
         NSString *countryFirstVersion = [row valueForKey:@"country"];
@@ -184,10 +185,12 @@
                 NSError *error = nil;
                 NSArray *fetchedObjects = [moc executeFetchRequest:fetchRequest error:&error];
                 CountrySpecificCodeList *fetchedList = [fetchedObjects lastObject];
-                NSSet *codes = fetchedList.codesList;
+                NSArray *codes = [fetchedList.codes componentsSeparatedByString:@", "];
+                //[finalCodesList addObjectsFromArray:codes];
+                //NSSet *codes = fetchedList.codesList;
                 
-                [codes enumerateObjectsWithOptions:NSSortStable usingBlock:^(CodesList *codesList, BOOL *stop) {                    
-                    NSDictionary *codeRow = [NSDictionary dictionaryWithObjectsAndKeys:[codesList.code stringValue],@"code", nil];
+                [codes enumerateObjectsUsingBlock:^(NSString *code, NSUInteger idx, BOOL *stop) {
+                    NSDictionary *codeRow = [NSDictionary dictionaryWithObjectsAndKeys:code,@"code", nil];
                     [finalCodesList addObject:codeRow];
                 }];
                 
@@ -439,7 +442,18 @@
     [relationshipAndChoises setValue:allColumnsTitles forKey:importRatesRelationshipName];
     [importRatesUserChoices setValue:relationshipAndChoises forKey:importRatesCarrierName];
     
-    [importRatesUserChoices writeToFile:[NSString stringWithFormat:@"%@/importCSVUserChoices.dict",[delegate applicationFilesDirectory]] atomically:YES];
+    NSString *errorSerialization;
+    
+    NSData *allArchived = [NSPropertyListSerialization dataFromPropertyList:importRatesUserChoices format:NSPropertyListBinaryFormat_v1_0 errorDescription:&errorSerialization];
+    if (errorSerialization) NSLog(@"IMPORT RATES: relationshipAndChoises serialization failed:%@",errorSerialization);
+    NSError *error = nil;
+    NSURL *appicationFiles = delegate.applicationFilesDirectory;
+    NSURL *finalURL = [NSURL URLWithString:@"importCSVUserChoices.dat" relativeToURL:appicationFiles];
+    
+    [allArchived writeToURL:finalURL options:NSDataWritingAtomic error:&error];
+    
+    //BOOL result = [importRatesUserChoices writeToFile:[NSString stringWithFormat:@"%@/importCSVUserChoices.dict",[delegate applicationFilesDirectory]] atomically:YES];
+    //NSLog(@"IMPORT RATES VIEW: result to write dict choices:%@ error:%@",[NSNumber numberWithBool:result],[error localizedDescription]);
     
 }
 #pragma TODO - fix projects array!!!!!!!!!
@@ -591,11 +605,12 @@
             [fetchRequest release];
             CountrySpecificCodeList *list = [result lastObject];
             
-            NSSet *codesToRemove = list.codesList;
+            NSArray *codes = [list.codes componentsSeparatedByString:@", "];
+
             
             NSMutableArray *currentCodesList = [NSMutableArray arrayWithArray:[row valueForKey:@"codes"]];
-            [codesToRemove enumerateObjectsUsingBlock:^(CodesList *codesObject, BOOL *stop) {
-                NSArray *removedObject = [currentCodesList filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF contains[c] %@",codesObject.code.stringValue]];
+            [codes enumerateObjectsUsingBlock:^(NSString *code, NSUInteger idx, BOOL *stop) {
+                NSArray *removedObject = [currentCodesList filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF contains[c] %@",code]];
                 [currentCodesList removeObjectsInArray:removedObject];
 
             }];
@@ -1073,7 +1088,17 @@
     [importRatesCarrierName setString:carrierToImportName];
     // read current choices and update tableview
     NSMutableDictionary *importRatesUserChoices = [NSMutableDictionary dictionary];
-    [importRatesUserChoices addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:[NSString stringWithFormat:@"%@/importCSVUserChoices.dict",[delegate applicationFilesDirectory]]]];
+    
+    NSURL *appicationFiles = delegate.applicationFilesDirectory;
+    NSURL *finalURL = [NSURL URLWithString:@"importCSVUserChoices.dat" relativeToURL:appicationFiles];
+    
+    NSData *allObjectsData = [NSData dataWithContentsOfURL:finalURL];
+    NSPropertyListFormat format;  
+    NSString *error;
+    
+    NSDictionary *decodedObjects = [NSPropertyListSerialization propertyListFromData:allObjectsData mutabilityOption:0 format:&format errorDescription:&error];
+    
+    [importRatesUserChoices addEntriesFromDictionary:decodedObjects];
     NSMutableDictionary *carrierChoisesList = [importRatesUserChoices valueForKey:importRatesCarrierName];
     NSArray *allColumns = [carrierChoisesList valueForKey:importRatesRelationshipName];
     NSArray *allTableColumns = [importRatesImportedRoutes tableColumns];
@@ -1104,7 +1129,7 @@
     //NSLog(@"content parsed:%@",importRatesFirsParserResult.arrangedObjects);
     
     [addDestinationCarriersList setContent:[delegate.updateForMainThread fillCarriersForAddArrayForCarriers:carriers withRelationShipName:relationShipName forCurrentContent:[addDestinationCarriersList arrangedObjects]]];
-
+    //[importRatesParsedRows reloadData];
 }
 
 //- (void)viewDidLoad {

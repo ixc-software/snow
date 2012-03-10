@@ -933,7 +933,7 @@ static char encodingTable[64] = {
                     NSString *errorSerialization;
                     
                     NSData *allArchived = [NSPropertyListSerialization dataFromPropertyList:allGUIDs format:NSPropertyListBinaryFormat_v1_0 errorDescription:&errorSerialization];
-                    if (error) NSLog(@"SERVER CONTRORLER: allObjectsList serialization failed:%@",errorSerialization);
+                    if (errorSerialization) NSLog(@"SERVER CONTRORLER: allObjectsList serialization failed:%@",errorSerialization);
                     
                     NSString *stringToPass = [self base64EncodingData:allArchived];
                     [allGUIDs release];

@@ -271,6 +271,8 @@
 
 -(void)hideAuthorizationView
 {
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+
     [self.view setHidden:YES];
     desctopAppDelegate *delegate = (desctopAppDelegate *)[NSApplication sharedApplication].delegate;
     [delegate.window setFrame:delegate.startupPosition display:NO];
@@ -300,6 +302,7 @@
 //    [[self.view layer] addAnimation:controlPosAnim forKey:@"opacity"];
 //    [[self.view layer] setOpacity:0.0];
 ////    [[self.view layer] setHidden:YES];
+    });
 }
 
 -(void) showErrorMessage:(NSString *)message
@@ -660,7 +663,19 @@
         return;
         
     }
-    
+    if ([status isEqualToString:@"we are start updates."] && isItLatestMessage.boolValue == YES) { 
+        desctopAppDelegate *delegate = (desctopAppDelegate *)[NSApplication sharedApplication].delegate;
+        [delegate updateWellcomeTitle];
+//        [delegate.carriersView sortCarrierForCurrentUserAndUpdate];
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+//            desctopAppDelegate *delegate = (desctopAppDelegate *)[NSApplication sharedApplication].delegate;
+//            ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
+//            
+//            [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:YES];
+//            [clientController release];
+//        });
+        [self hideAuthorizationView];
+    }
     if ([data count] > 4) objectID = [data objectAtIndex:4];
     
     if (objectID) {
@@ -680,39 +695,40 @@
 
                 } else {
                     dispatch_async(dispatch_get_main_queue(), ^(void) {
-
-                    progressLogin.hidden = YES;
-                    [progressLogin stopAnimation:self];
-                    [delegate.carriersView localMocMustUpdate];
-                    [delegate.destinationsView localMocMustUpdate];
-                    [delegate updateWellcomeTitle];
-                        [self hideAuthorizationView];
-
-//                    [delegate.companyStuffTableViewDelegate updateStatusButtons]; 
-//                    [delegate.companyStuffTableViewDelegate updateWellcomeTitle]; 
-//                    [delegate.companyStuffTableViewDelegate updateVerticalViewDataForObjectID:updatedObject.objectID];
-                    
-//                    NSUInteger index = 0;
-//                    NSArray *allCompanies = [currentCompany arrangedObjects];        
-//                    
-//                    for (NSManagedObject *companyForCheck in allCompanies)
-//                    {
-//                        if ([[companyForCheck objectID] isEqual:[[updatedObject valueForKey:@"currentCompany"] objectID]]) {
-//                            break;
-//                        }
-//                        index++;
-//                    }
-
-//                    [delegate.currentCompanyTableVew selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:YES];
-//                    [delegate.currentCompanyTableVew scrollRowToVisible:index];
-
-                    if ([status isEqualToString:@"put object finish"] && ![isError boolValue] && isCompanyListWasSelected) { 
-                        [self showErrorMessage:@"you request was sent to admin"];
-                        [self hideAuthorizationView];
-                    } else {
-                        //[self hideAuthorizationView];
                         
-                    }
+                        progressLogin.hidden = YES;
+                        [progressLogin stopAnimation:self];
+                        [delegate.carriersView localMocMustUpdate];
+                        [delegate.destinationsView localMocMustUpdate];
+                        //[delegate.carriersView.carrier setFilterPredicate:[NSPredicate predicateWithFormat:@"companyStuff.currentCompany.GUID == %@",[[[updatedObject valueForKey:@"companyStuff"] valueForKey:@"currentCompany"] valueForKey:@"GUID"]]];
+                        [delegate updateWellcomeTitle];
+                        [self hideAuthorizationView];
+                        
+                        //                    [delegate.companyStuffTableViewDelegate updateStatusButtons]; 
+                        //                    [delegate.companyStuffTableViewDelegate updateWellcomeTitle]; 
+                        //                    [delegate.companyStuffTableViewDelegate updateVerticalViewDataForObjectID:updatedObject.objectID];
+                        
+                        //                    NSUInteger index = 0;
+                        //                    NSArray *allCompanies = [currentCompany arrangedObjects];        
+                        //                    
+                        //                    for (NSManagedObject *companyForCheck in allCompanies)
+                        //                    {
+                        //                        if ([[companyForCheck objectID] isEqual:[[updatedObject valueForKey:@"currentCompany"] objectID]]) {
+                        //                            break;
+                        //                        }
+                        //                        index++;
+                        //                    }
+                        
+                        //                    [delegate.currentCompanyTableVew selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:YES];
+                        //                    [delegate.currentCompanyTableVew scrollRowToVisible:index];
+                        
+                        if ([status isEqualToString:@"put object finish"] && ![isError boolValue] && isCompanyListWasSelected) { 
+                            [self showErrorMessage:@"you request was sent to admin"];
+                            [self hideAuthorizationView];
+                        } else {
+                            //[self hideAuthorizationView];
+                            
+                        }
                     });
 
                     
