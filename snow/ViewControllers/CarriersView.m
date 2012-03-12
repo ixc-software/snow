@@ -839,6 +839,15 @@
 }
 
 - (IBAction)syncCarrier:(id)sender {
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+        
+        ProgressUpdateController *progressForDaylySync = [[ProgressUpdateController alloc] initWithDelegate:delegate];
+        progressForDaylySync.cycleSyncType = @"dayly";
+        NSManagedObjectID *selectedCarrierIDforSync = [carrier.selectedObjects.lastObject objectID];
+        [delegate.getExternalInfoView startUserChoiceSyncForCarriers:[NSArray arrayWithObject:selectedCarrierIDforSync] withProgress:progressForDaylySync withOperationName:@"once"];
+        [progressForDaylySync release];
+    });
 }
 
 - (IBAction)financialInfo:(id)sender {
@@ -1131,9 +1140,11 @@
         NSString *postingTitle = [[NSUserDefaults standardUserDefaults] valueForKey:@"postingTitle"];
         NSString *bodyForEdit = [[NSUserDefaults standardUserDefaults] valueForKey:@"bodyForEdit"];
         NSString *signature = [[NSUserDefaults standardUserDefaults] valueForKey:@"signature"];
-        messageTitle.stringValue = postingTitle;
-        messageBody.stringValue = bodyForEdit;
-        messageSignature.stringValue = signature;
+        
+        if (postingTitle) messageTitle.stringValue = postingTitle;
+        if (bodyForEdit) messageBody.stringValue = bodyForEdit;
+        if (signature) messageSignature.stringValue = signature;
+        if (!priceCorrection) priceCorrection = [NSNumber numberWithInt:0];
         messagePriceCorrectionPercentTitle.stringValue = [NSString stringWithFormat:@"Percent correction:%@%%",priceCorrection];
         [messageIncludePrice bind:@"value" toObject:self withKeyPath:@"messageIncludePriceValue" options:nil];
     });
@@ -1282,6 +1293,7 @@
         NSLog(@"SOCIAL NETWORK CONTROLLER: twitter message to post:%@",twitterText);
         
         if (twitterController) [twitterController postTwitterMessageWithText:twitterText];
+        [twitterText release];
         
     }];
     
@@ -1400,7 +1412,8 @@
         
         NSLog(@"SOCIAL NETWORK CONTROLLER: linkedin message for group:%@ to post:%@",linkedinText,name);
         
-        if (linkedinController.isAuthorized) [linkedinController postToGroupID:groupID withTitle:postingTitle withSummary:linkedinText];        
+        if (linkedinController.isAuthorized) [linkedinController postToGroupID:groupID withTitle:postingTitle withSummary:linkedinText];  
+        [linkedinText release];
     }];
 }
 

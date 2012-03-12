@@ -224,7 +224,9 @@
         OARequestParameter *x1 = [[OARequestParameter alloc] initWithName:@"status" value:status];
         
         NSArray *params = [NSArray arrayWithObjects:x1, nil];
+        
         [request setParameters:params];
+        [x1 release];
         
         OADataFetcher *fetcher = [[OADataFetcher alloc] init];
         [fetcher fetchDataWithRequest:request
@@ -241,6 +243,7 @@
     
     NSDictionary *result = [responseBody objectFromJSONString];
     NSLog(@"TWITTER UPDATE:post twitter SUCCESS result:%@",result);
+    [responseBody release];
 }
 
 - (void)postTwitterMessageResult:(OAServiceTicket *)ticket didFail:(NSData *)data 
@@ -250,6 +253,7 @@
     
     NSDictionary *result = [responseBody objectFromJSONString];
     NSLog(@"TWITTER UPDATE:post twitter FAILED result:%@",result);
+    [responseBody release];
 
 }
 

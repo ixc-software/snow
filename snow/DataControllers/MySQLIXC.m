@@ -164,20 +164,31 @@
                 
             } else {
                 if (!sqlPut) {
-                    sqlPut = mysql_init(NULL);
-                    if (sqlPut == NULL) NSLog(@"MYSQL: Failed to initate connection");
+                    MYSQL *con;
+                    con = mysql_init(NULL);
+                    if (con == NULL) NSLog(@"MYSQL: Failed to initate connection");
                     my_bool reconnect = 1;
-                    mysql_options(sqlPut, MYSQL_OPT_RECONNECT, &reconnect);
-                    NSInteger connectionTimeout = 300; 
-                    mysql_options(sqlPut, MYSQL_OPT_CONNECT_TIMEOUT, (const void *)&connectionTimeout);
-                    mysql_options(sqlPut, MYSQL_OPT_WRITE_TIMEOUT, (const void *)&connectionTimeout);
-                    mysql_options(sqlPut, MYSQL_OPT_READ_TIMEOUT, (const void *)&connectionTimeout);
+                    mysql_options(con, MYSQL_OPT_RECONNECT, &reconnect);
+                    NSInteger connectionTimeout = 900; 
+                    mysql_options(con, MYSQL_OPT_CONNECT_TIMEOUT, (const void *)&connectionTimeout);
+                    mysql_options(con, MYSQL_OPT_WRITE_TIMEOUT, (const void *)&connectionTimeout);
+                    mysql_options(con, MYSQL_OPT_READ_TIMEOUT, (const void *)&connectionTimeout);
+                    
+
+//                    sqlPut = mysql_init(NULL);
+//                    if (sqlPut == NULL) NSLog(@"MYSQL: Failed to initate connection");
+//                    my_bool reconnect = 1;
+//                    mysql_options(sqlPut, MYSQL_OPT_RECONNECT, &reconnect);
+//                    NSInteger connectionTimeout = 300; 
+//                    mysql_options(sqlPut, MYSQL_OPT_CONNECT_TIMEOUT, (const void *)&connectionTimeout);
+//                    mysql_options(sqlPut, MYSQL_OPT_WRITE_TIMEOUT, (const void *)&connectionTimeout);
+//                    mysql_options(sqlPut, MYSQL_OPT_READ_TIMEOUT, (const void *)&connectionTimeout);
                     
                     //mysql_options(newSql, CLIENT_INTERACTIVE, &reconnect);
                     
                     NSNumberFormatter *portTransfer = [[NSNumberFormatter alloc] init];
                     
-                    mysql_real_connect(sqlPut, [[connection valueForKey:@"ip"] UTF8String] , [[connection valueForKey:@"login"] UTF8String], [[connection valueForKey:@"password"] UTF8String], [[connection valueForKey:@"database"] UTF8String], [[portTransfer numberFromString:[connection valueForKey:@"port"]] unsignedIntValue], NULL, 0);
+                    sqlPut = mysql_real_connect(con, [[connection valueForKey:@"ip"] UTF8String] , [[connection valueForKey:@"login"] UTF8String], [[connection valueForKey:@"password"] UTF8String], [[connection valueForKey:@"database"] UTF8String], [[portTransfer numberFromString:[connection valueForKey:@"port"]] unsignedIntValue], NULL, 0);
                     if (sqlPut == NULL) { 
                         NSLog(@"MYSQL: Failed to connect database with error:%s\n for connection:%@",mysql_error(sqlPut),connection); 
                         [portTransfer release];

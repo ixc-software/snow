@@ -359,15 +359,18 @@
         if (isLatesGroupsGetAttempt) { 
             NSLog(@"LINKEDIN CONTROLLER: >>>>>>>>>> start FINAL delegate");
             [delegate performSelector:@selector(linkedinGroupsList:withLatestGroups:) withObject:result withObject:[NSNumber numberWithBool:YES]];
-
+            [responseBody release];
             isLatesGroupsGetAttempt = NO;
             return;
         } else { 
             NSLog(@"LINKEDIN CONTROLLER: >>>>>>>>>> start SYCLE delegate");
 
             [delegate performSelector:@selector(linkedinGroupsList:withLatestGroups:) withObject:result withObject:[NSNumber numberWithBool:NO]];
+            [responseBody release];
+
         }
-    }
+    } else [responseBody release];
+
     //NSNumber *count = [result valueForKey:@"_count"];
     NSNumber *start = [result valueForKey:@"_start"];
     NSNumber *total = [result valueForKey:@"_total"];
@@ -393,6 +396,7 @@
     
     //NSDictionary *result = [responseBody objectFromJSONString];
     NSLog(@"LINKEDIN GET GROUPS:get  FAILED result:%@",responseBody);
+    [responseBody release];
     
 }
 

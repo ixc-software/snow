@@ -278,7 +278,7 @@
     
     [progress clearForRecord:index];
     [progress release];
-    [totalProfit release];
+    //[totalProfit release];
     [index release];
     [queuePosition release];
 //    [carrierName release];

@@ -10,8 +10,9 @@
 #import "OAAttachment.h"
 
 @implementation OAAttachment
+@synthesize filename;
 
-@synthesize name, filename, contentType, data;
+@synthesize name, contentType, data;
 
 - (id)initWithName:(NSString *)aName filename:(NSString *)aFilename contentType:(NSString *)aContentType data:(NSData *)aData{
 	self = [super init];

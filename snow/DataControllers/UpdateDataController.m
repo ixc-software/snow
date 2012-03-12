@@ -325,171 +325,175 @@
 
 -(void) getInvoicesAndPaymentsForCarrier:(NSManagedObjectID *)carrierName;
 {
-    NSError *error = nil; 
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    __block Carrier *carrier = (Carrier *)[self.moc objectWithID:carrierName];
-    __block NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(financial.carrier.GUID == %@)",carrier.GUID];
-    [request setEntity:[NSEntityDescription entityForName:@"InvoicesAndPayments" inManagedObjectContext:self.moc]];
-    [request setPredicate:predicate];
-    NSArray *result = [self.moc executeFetchRequest:request error:&error];
-    if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd)); 
-    
-//    __block Carrier *carrier = nil;
-    __block Financial *financial = nil;
-    
-    if ([result count] == 0)
-    {
-        predicate = [NSPredicate predicateWithFormat:@"(carrier.GUID == %@)",carrier.GUID];
-        [request setEntity:[NSEntityDescription entityForName:@"Financial" inManagedObjectContext:self.moc]];
+    @autoreleasepool {
+        
+        
+        NSError *error = nil; 
+        NSFetchRequest *request = [[NSFetchRequest alloc] init];
+        __block Carrier *carrier = (Carrier *)[self.moc objectWithID:carrierName];
+        __block NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(financial.carrier.GUID == %@)",carrier.GUID];
+        [request setEntity:[NSEntityDescription entityForName:@"InvoicesAndPayments" inManagedObjectContext:self.moc]];
         [request setPredicate:predicate];
         NSArray *result = [self.moc executeFetchRequest:request error:&error];
+        if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd)); 
+        
+        //    __block Carrier *carrier = nil;
+        __block Financial *financial = nil;
+        
         if ([result count] == 0)
         {
-            NSLog(@"FINANSIAL: warning, financial entity not here");
-            financial = (Financial *)[NSEntityDescription insertNewObjectForEntityForName:@"Financial" inManagedObjectContext:self.moc];
-            financial.carrier = carrier;
-            financial.name = [NSString stringWithFormat:@"%@'s account",carrier.name];
-
+            predicate = [NSPredicate predicateWithFormat:@"(carrier.GUID == %@)",carrier.GUID];
+            [request setEntity:[NSEntityDescription entityForName:@"Financial" inManagedObjectContext:self.moc]];
+            [request setPredicate:predicate];
+            NSArray *result = [self.moc executeFetchRequest:request error:&error];
+            if ([result count] == 0)
+            {
+                NSLog(@"FINANSIAL: warning, financial entity not here");
+                financial = (Financial *)[NSEntityDescription insertNewObjectForEntityForName:@"Financial" inManagedObjectContext:self.moc];
+                financial.carrier = carrier;
+                financial.name = [NSString stringWithFormat:@"%@'s account",carrier.name];
+                
+            } else
+            {
+                financial = [result lastObject];
+                carrier = financial.carrier;
+                //financial.name = [NSString stringWithFormat:@"%@'s account",carrier.name];
+                
+            }
+            
         } else
         {
-            financial = [result lastObject];
-            carrier = financial.carrier;
-            //financial.name = [NSString stringWithFormat:@"%@'s account",carrier.name];
-
+            InvoicesAndPayments *anyInvoice = [result lastObject];
+            carrier = anyInvoice.financial.carrier;
+            financial = anyInvoice.financial;
         }
+        [request release];
         
-    } else
-    {
-        InvoicesAndPayments *anyInvoice = [result lastObject];
-        carrier = anyInvoice.financial.carrier;
-        financial = anyInvoice.financial;
-    }
-    [request release];
-
-    NSSet *currentInvoicesAndPayments = [NSSet setWithSet:financial.invoicesAndPayments];
-    
-    /*[currentInvoicesAndPayments enumerateObjectsWithOptions:NSSortStable usingBlock:^(id obj, BOOL *stop) {
-        [moc deleteObject:obj];
-    }];*/
-    
-    NSSet *companyAccounts = carrier.companyStuff.currentCompany.companyAccounts;
-    
-    //if ([companyAccounts count] == 0) { 
-    //    [self updateCompanyAccounts];
-    //    companyAccounts = carrier.companyStuff.currentCompany.companyAccounts;
-   // }
-    if ([companyAccounts count] == 0) {
-        NSArray *accounts = [self.database getCompanyAccounts];
+        NSSet *currentInvoicesAndPayments = [NSSet setWithSet:financial.invoicesAndPayments];
         
-        NSArray *updatedAccounts = [accounts arrayByAddingObject:[NSDictionary dictionaryWithObjectsAndKeys:@"NONE",@"name", nil]];
+        /*[currentInvoicesAndPayments enumerateObjectsWithOptions:NSSortStable usingBlock:^(id obj, BOOL *stop) {
+         [moc deleteObject:obj];
+         }];*/
         
-//        [progress updateProgressIndicatorMessageGetExternalData:@"Update company accounts."];
-//        progress.objectsQuantity = [NSNumber numberWithUnsignedInteger:[updatedAccounts count]];
+        NSSet *companyAccounts = carrier.companyStuff.currentCompany.companyAccounts;
         
-        
-        //    [updatedAccounts enumerateObjectsWithOptions:NSSortStable usingBlock:^(id account, NSUInteger idx, BOOL *stop) {
-        for (NSDictionary *account in updatedAccounts) {
-//            [progress updateProgressIndicatorCountGetExternalData];
+        //if ([companyAccounts count] == 0) { 
+        //    [self updateCompanyAccounts];
+        //    companyAccounts = carrier.companyStuff.currentCompany.companyAccounts;
+        // }
+        if ([companyAccounts count] == 0) {
+            NSArray *accounts = [self.database getCompanyAccounts];
             
-            predicate = [NSPredicate predicateWithFormat:@"name == %@",[account valueForKey:@"name"]];
-            if ([[companyAccounts filteredSetUsingPredicate:predicate] count] == 0)
-            {
-                CompanyAccounts *newAccount = (CompanyAccounts *)[NSEntityDescription insertNewObjectForEntityForName:@"CompanyAccounts" inManagedObjectContext:self.moc];
-                newAccount.name = [account valueForKey:@"name"];
-                newAccount.bankAccountNumber = [account valueForKey:@"accountNumber"];
-                newAccount.bankName = [account valueForKey:@"bankName"];
-                newAccount.bankAddress = [account valueForKey:@"bankAddress"];
-                newAccount.bankABA = [account valueForKey:@"aba"];
-                newAccount.bankSwift = [account valueForKey:@"swift"];
-                newAccount.externalID = [account valueForKey:@"id"];
-                newAccount.currentCompany = carrier.companyStuff.currentCompany;
+            NSArray *updatedAccounts = [accounts arrayByAddingObject:[NSDictionary dictionaryWithObjectsAndKeys:@"NONE",@"name", nil]];
+            
+            //        [progress updateProgressIndicatorMessageGetExternalData:@"Update company accounts."];
+            //        progress.objectsQuantity = [NSNumber numberWithUnsignedInteger:[updatedAccounts count]];
+            
+            
+            //    [updatedAccounts enumerateObjectsWithOptions:NSSortStable usingBlock:^(id account, NSUInteger idx, BOOL *stop) {
+            for (NSDictionary *account in updatedAccounts) {
+                //            [progress updateProgressIndicatorCountGetExternalData];
+                
+                predicate = [NSPredicate predicateWithFormat:@"name == %@",[account valueForKey:@"name"]];
+                if ([[companyAccounts filteredSetUsingPredicate:predicate] count] == 0)
+                {
+                    CompanyAccounts *newAccount = (CompanyAccounts *)[NSEntityDescription insertNewObjectForEntityForName:@"CompanyAccounts" inManagedObjectContext:self.moc];
+                    newAccount.name = [account valueForKey:@"name"];
+                    newAccount.bankAccountNumber = [account valueForKey:@"accountNumber"];
+                    newAccount.bankName = [account valueForKey:@"bankName"];
+                    newAccount.bankAddress = [account valueForKey:@"bankAddress"];
+                    newAccount.bankABA = [account valueForKey:@"aba"];
+                    newAccount.bankSwift = [account valueForKey:@"swift"];
+                    newAccount.externalID = [account valueForKey:@"id"];
+                    newAccount.currentCompany = carrier.companyStuff.currentCompany;
+                }
             }
+            
         }
-
+        
+        
+        NSArray *invoices = [NSArray arrayWithArray:[self.database getInvoicesAndPaymentsForCarrier:carrier.name]];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"yyyy-MM-dd"];
+        
+        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+        [numberFormatter setDecimalSeparator:@"."];
+        
+        [invoices enumerateObjectsWithOptions:NSSortStable usingBlock:^(NSDictionary *invoice, NSUInteger idx, BOOL *stop) {
+            predicate = [NSPredicate predicateWithFormat:@"(externalID == %@)",[invoice valueForKey:@"id"]];
+            InvoicesAndPayments *newInvoice = nil;
+            NSSet *filteredInvoices = [currentInvoicesAndPayments filteredSetUsingPredicate:predicate];
+            if ([filteredInvoices count] == 0) 
+            {
+                newInvoice = (InvoicesAndPayments *)[NSEntityDescription insertNewObjectForEntityForName:@"InvoicesAndPayments" inManagedObjectContext:self.moc];
+            } else newInvoice = [filteredInvoices anyObject];
+            
+            newInvoice.externalID = [invoice valueForKey:@"id"];
+            newInvoice.date = [formatter dateFromString:[invoice valueForKey:@"oDate"]];
+            newInvoice.usagePeriodStart = [formatter dateFromString:[invoice valueForKey:@"sDate"]];
+            
+            NSString *toAcccount = [invoice valueForKey:@"toAccount"];
+            NSString *fromAccount = [invoice valueForKey:@"fromAccount"];
+            
+            predicate = [NSPredicate predicateWithFormat:@"(externalID == %@)",toAcccount];
+            CompanyAccounts *necessaryAccount = [[companyAccounts filteredSetUsingPredicate:predicate] anyObject];
+            if (!necessaryAccount) {
+                predicate = [NSPredicate predicateWithFormat:@"(externalID == %@)",fromAccount];
+                necessaryAccount = [[companyAccounts filteredSetUsingPredicate:predicate] anyObject];
+            }
+            if (!necessaryAccount)
+            {
+                predicate = [NSPredicate predicateWithFormat:@"(name == %@)",@"NONE"];
+                necessaryAccount = [[companyAccounts filteredSetUsingPredicate:predicate] anyObject];
+            }
+            if (!necessaryAccount)
+            {
+                NSLog(@"FINANCIAL:warning, necessary account don't found for carrier:%@",carrier);
+            }
+            if (!carrier.companyStuff)
+            {
+                NSLog(@"FINANCIAL:warning, companyStuff don't found for carrier:%@",carrier);
+            }
+            if (!financial)
+            {
+                NSLog(@"FINANCIAL:warning, financial don't found for carrier:%@",carrier);
+            }
+            
+            newInvoice.financial = financial;
+            newInvoice.companyAccounts = necessaryAccount;
+            CompanyStuff *currentStuff = carrier.companyStuff;
+            
+            newInvoice.companyStuff = currentStuff;
+            
+            
+            // fucking buggy grossbook, in/out can be revert!!!
+            //        NSString *direction = [invoice valueForKey:@"direction"];
+            //
+            //        if ([direction isEqualToString:@"In"])  newInvoice.isReceived = [NSNumber numberWithBool:YES];
+            //        else newInvoice.isReceived = [NSNumber numberWithBool:NO];
+            
+            if ([[invoice valueForKey:@"what"] isEqualToString:@"Inv"]) newInvoice.isInvoice = [NSNumber numberWithBool:YES];
+            else newInvoice.isInvoice = [NSNumber numberWithBool:NO];
+            
+            
+            if ([toAcccount isEqualToString:@"0"]) {
+                newInvoice.isReceived = [NSNumber numberWithBool:NO];
+            } else newInvoice.isReceived = [NSNumber numberWithBool:YES];
+            
+            
+            NSNumber *externalAmount = [numberFormatter numberFromString:[invoice valueForKey:@"defSum"]];
+            newInvoice.amountOurSide = externalAmount;
+            newInvoice.amountCarrierSide = externalAmount;
+            newInvoice.amountConfirmed = externalAmount;
+            
+            newInvoice.details = [invoice valueForKey:@"comment"];
+            
+        }] ;
+        [formatter release],formatter = nil;
+        [numberFormatter release],numberFormatter = nil;
+        //NSLog(@"FINANCIAL:updated for carrier:%@",carrier.name);
+        [self finalSave];
     }
-    
-
-    NSArray *invoices = [NSArray arrayWithArray:[self.database getInvoicesAndPaymentsForCarrier:carrier.name]];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"yyyy-MM-dd"];
-    
-    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    [numberFormatter setDecimalSeparator:@"."];
-    
-    [invoices enumerateObjectsWithOptions:NSSortStable usingBlock:^(NSDictionary *invoice, NSUInteger idx, BOOL *stop) {
-        predicate = [NSPredicate predicateWithFormat:@"(externalID == %@)",[invoice valueForKey:@"id"]];
-        InvoicesAndPayments *newInvoice = nil;
-        NSSet *filteredInvoices = [currentInvoicesAndPayments filteredSetUsingPredicate:predicate];
-        if ([filteredInvoices count] == 0) 
-        {
-            newInvoice = (InvoicesAndPayments *)[NSEntityDescription insertNewObjectForEntityForName:@"InvoicesAndPayments" inManagedObjectContext:self.moc];
-        } else newInvoice = [filteredInvoices anyObject];
-            
-        newInvoice.externalID = [invoice valueForKey:@"id"];
-        newInvoice.date = [formatter dateFromString:[invoice valueForKey:@"oDate"]];
-        newInvoice.usagePeriodStart = [formatter dateFromString:[invoice valueForKey:@"sDate"]];
-        
-        NSString *toAcccount = [invoice valueForKey:@"toAccount"];
-        NSString *fromAccount = [invoice valueForKey:@"fromAccount"];
-        
-        predicate = [NSPredicate predicateWithFormat:@"(externalID == %@)",toAcccount];
-        CompanyAccounts *necessaryAccount = [[companyAccounts filteredSetUsingPredicate:predicate] anyObject];
-        if (!necessaryAccount) {
-            predicate = [NSPredicate predicateWithFormat:@"(externalID == %@)",fromAccount];
-            necessaryAccount = [[companyAccounts filteredSetUsingPredicate:predicate] anyObject];
-        }
-        if (!necessaryAccount)
-        {
-            predicate = [NSPredicate predicateWithFormat:@"(name == %@)",@"NONE"];
-            necessaryAccount = [[companyAccounts filteredSetUsingPredicate:predicate] anyObject];
-        }
-        if (!necessaryAccount)
-        {
-            NSLog(@"FINANCIAL:warning, necessary account don't found for carrier:%@",carrier);
-        }
-        if (!carrier.companyStuff)
-        {
-            NSLog(@"FINANCIAL:warning, companyStuff don't found for carrier:%@",carrier);
-        }
-        if (!financial)
-        {
-            NSLog(@"FINANCIAL:warning, financial don't found for carrier:%@",carrier);
-        }
-        
-        newInvoice.financial = financial;
-        newInvoice.companyAccounts = necessaryAccount;
-        CompanyStuff *currentStuff = carrier.companyStuff;
-        
-        newInvoice.companyStuff = currentStuff;
-        
-        
-        // fucking buggy grossbook, in/out can be revert!!!
-//        NSString *direction = [invoice valueForKey:@"direction"];
-//
-//        if ([direction isEqualToString:@"In"])  newInvoice.isReceived = [NSNumber numberWithBool:YES];
-//        else newInvoice.isReceived = [NSNumber numberWithBool:NO];
-
-        if ([[invoice valueForKey:@"what"] isEqualToString:@"Inv"]) newInvoice.isInvoice = [NSNumber numberWithBool:YES];
-        else newInvoice.isInvoice = [NSNumber numberWithBool:NO];
-
-        
-        if ([toAcccount isEqualToString:@"0"]) {
-            newInvoice.isReceived = [NSNumber numberWithBool:NO];
-        } else newInvoice.isReceived = [NSNumber numberWithBool:YES];
-
-        
-        NSNumber *externalAmount = [numberFormatter numberFromString:[invoice valueForKey:@"defSum"]];
-        newInvoice.amountOurSide = externalAmount;
-        newInvoice.amountCarrierSide = externalAmount;
-        newInvoice.amountConfirmed = externalAmount;
-        
-        newInvoice.details = [invoice valueForKey:@"comment"];
-            
-    }] ;
-    [formatter release],formatter = nil;
-    [numberFormatter release],numberFormatter = nil;
-    //NSLog(@"FINANCIAL:updated for carrier:%@",carrier.name);
-    [self finalSave];
 }
 
 
@@ -2786,116 +2790,120 @@ forIsUpdateCarriesListOnExternalServer:YES];
 - (void) readExternalCountryCodesListWithProgressUpdateController:(ProgressUpdateController *)progress;
 {
 //    AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
- 
-    NSArray *myCountrySpecificCodeList = [NSArray arrayWithContentsOfFile:[[delegate applicationFilesDirectory].path stringByAppendingString:@"/myCountrySpecificCodeList.ary"]];
-    NSDictionary *dictionaryDictionaryesForCountryCodes = [NSDictionary dictionaryWithContentsOfFile:[[delegate applicationFilesDirectory].path stringByAppendingString:@"/dictionaryDictionaryesForCountryCodes.dic"]];
-    NSMutableDictionary *result = [NSMutableDictionary dictionary];
-    
-
-    if (!myCountrySpecificCodeList || !dictionaryDictionaryesForCountryCodes)
-    {    
+    @autoreleasepool {
         
-        NSString *path = [[NSBundle mainBundle] pathForResource:@"codeList" ofType:@"txt" ];
-        NSAssert(path != nil, @"Unable to find codeList.txt in main bundle"); 
-        ParseCSV *parser = [[ParseCSV alloc] init];
-        [parser openFile:path];
-        NSMutableArray *codesFromFile = [parser parseFile];
-        [parser release], parser = nil;
-        path = nil;
-        [progress updateProgressIndicatorMessageGetExternalData:@"Get country,specific,codes,outgroups from file"];
-        progress.objectsQuantity = [NSNumber numberWithUnsignedInteger:[codesFromFile count]];
+        NSArray *myCountrySpecificCodeList = [NSArray arrayWithContentsOfFile:[[delegate applicationFilesDirectory].path stringByAppendingString:@"/myCountrySpecificCodeList.ary"]];
+        
+        NSDictionary *dictionaryDictionaryesForCountryCodes = [NSDictionary dictionaryWithContentsOfFile:[[delegate applicationFilesDirectory].path stringByAppendingString:@"/dictionaryDictionaryesForCountryCodes.dic"]];
+        NSMutableDictionary *result = [NSMutableDictionary dictionary];
         
         
-        [codesFromFile enumerateObjectsWithOptions:NSSortStable usingBlock:^(id code, NSUInteger idx, BOOL *stop) {
-            [progress updateProgressIndicatorMessageGetExternalData:[NSString stringWithFormat:@"Get country,specific:%lu",idx]];
+        if (!myCountrySpecificCodeList || !dictionaryDictionaryesForCountryCodes)
+        {    
             
-            [progress updateProgressIndicatorCountGetExternalData];
+            NSString *path = [[NSBundle mainBundle] pathForResource:@"codeList" ofType:@"txt" ];
+            NSAssert(path != nil, @"Unable to find codeList.txt in main bundle"); 
+            ParseCSV *parser = [[ParseCSV alloc] init];
+            [parser openFile:path];
+            NSMutableArray *codesFromFile = [parser parseFile];
+            [parser release], parser = nil;
+            path = nil;
+            [progress updateProgressIndicatorMessageGetExternalData:@"Get country,specific,codes,outgroups from file"];
+            progress.objectsQuantity = [NSNumber numberWithUnsignedInteger:[codesFromFile count]];
             
-            NSMutableDictionary *codesFromFileListNew = [NSMutableDictionary dictionary];
-            [codesFromFileListNew setValue:[code objectAtIndex:0] forKey:@"country"];
-            [codesFromFileListNew setValue:[code objectAtIndex:1] forKey:@"specific"];
             
-            
-            [[ProjectArrays sharedProjectArrays].dictionaryDictionaryesForCountryCodes setValue:codesFromFileListNew forKey:[code objectAtIndex:2]];
-            codesFromFileListNew = nil;
-            
-            //        NSLog (@"codesFromFileLists before array  %@",codesFromFileLists);
-            
-            NSMutableArray *filteredResult = [NSMutableArray arrayWithArray:[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList];
-            [filteredResult filterUsingPredicate:[NSPredicate predicateWithFormat:@"(country == %@) and (specific == %@)",[code objectAtIndex:0],[code objectAtIndex:1]]];
-            
-            if ([filteredResult count] != 0)
-            {
-                // NSLog (@"We find a simular country: %@ specific %@ and code %@ Total destinations:%ld",[code objectAtIndex:0],[code objectAtIndex:1], [code objectAtIndex:2], [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList count]);
-                NSMutableDictionary *lastObject = [[NSArray arrayWithArray:[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList] lastObject];
-                NSMutableArray *codes = [lastObject valueForKey:@"code"];
-                [codes addObject:[code objectAtIndex:2]];
-                [lastObject setValue:codes forKey:@"code"];
-                [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList removeLastObject];
-                [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList addObject:lastObject];
-                lastObject = nil;
-                codes = nil;
-            } else
-            {
-                //NSLog (@"Add country: %@ specific %@ and code %@ Total destinations:%ld",[code objectAtIndex:0],[code objectAtIndex:1], [code objectAtIndex:2],[[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList count]);
-                NSMutableDictionary *codesFromFileList = [NSMutableDictionary dictionary];
-                NSString *countryBefore = [code objectAtIndex:0];
-                NSString *specificBefore = [code objectAtIndex:1];
-                NSString *country = [countryBefore stringByReplacingOccurrencesOfString:@"'" withString:@"~"];
-                NSString *specific = [specificBefore stringByReplacingOccurrencesOfString:@"'" withString:@"~"];
+            [codesFromFile enumerateObjectsWithOptions:NSSortStable usingBlock:^(id code, NSUInteger idx, BOOL *stop) {
+                [progress updateProgressIndicatorMessageGetExternalData:[NSString stringWithFormat:@"Get country,specific:%lu",idx]];
                 
-                [codesFromFileList setValue:country forKey:@"country"];
-                [codesFromFileList setValue:specific forKey:@"specific"];
-                [codesFromFileList setValue:[NSMutableArray arrayWithObject:[code objectAtIndex:2]] forKey:@"code"];
-                [codesFromFileList setValue:[NSNumber numberWithBool:NO] forKey:@"selected"];
-                NSArray *outGroups = nil;
+                [progress updateProgressIndicatorCountGetExternalData];
+                
+                NSMutableDictionary *codesFromFileListNew = [NSMutableDictionary dictionary];
+                [codesFromFileListNew setValue:[code objectAtIndex:0] forKey:@"country"];
+                [codesFromFileListNew setValue:[code objectAtIndex:1] forKey:@"specific"];
+                
+                
+                [[ProjectArrays sharedProjectArrays].dictionaryDictionaryesForCountryCodes setValue:codesFromFileListNew forKey:[code objectAtIndex:2]];
+                codesFromFileListNew = nil;
+                
+                //        NSLog (@"codesFromFileLists before array  %@",codesFromFileLists);
+                
+                NSMutableArray *filteredResult = [NSMutableArray arrayWithArray:[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList];
+                [filteredResult filterUsingPredicate:[NSPredicate predicateWithFormat:@"(country == %@) and (specific == %@)",[code objectAtIndex:0],[code objectAtIndex:1]]];
+                
+                if ([filteredResult count] != 0)
+                {
+                    // NSLog (@"We find a simular country: %@ specific %@ and code %@ Total destinations:%ld",[code objectAtIndex:0],[code objectAtIndex:1], [code objectAtIndex:2], [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList count]);
+                    NSMutableDictionary *lastObject = [[NSArray arrayWithArray:[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList] lastObject];
+                    NSMutableArray *codes = [lastObject valueForKey:@"code"];
+                    [codes addObject:[code objectAtIndex:2]];
+                    [lastObject setValue:codes forKey:@"code"];
+                    [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList removeLastObject];
+                    [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList addObject:lastObject];
+                    lastObject = nil;
+                    codes = nil;
+                } else
+                {
+                    //NSLog (@"Add country: %@ specific %@ and code %@ Total destinations:%ld",[code objectAtIndex:0],[code objectAtIndex:1], [code objectAtIndex:2],[[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList count]);
+                    NSMutableDictionary *codesFromFileList = [NSMutableDictionary dictionary];
+                    NSString *countryBefore = [code objectAtIndex:0];
+                    NSString *specificBefore = [code objectAtIndex:1];
+                    NSString *country = [countryBefore stringByReplacingOccurrencesOfString:@"'" withString:@"~"];
+                    NSString *specific = [specificBefore stringByReplacingOccurrencesOfString:@"'" withString:@"~"];
+                    
+                    [codesFromFileList setValue:country forKey:@"country"];
+                    [codesFromFileList setValue:specific forKey:@"specific"];
+                    [codesFromFileList setValue:[NSMutableArray arrayWithObject:[code objectAtIndex:2]] forKey:@"code"];
+                    [codesFromFileList setValue:[NSNumber numberWithBool:NO] forKey:@"selected"];
+                    NSArray *outGroups = nil;
 #ifdef SNOW_SERVER
-                
+                    
 #else
-                outGroups = [database getOutGroupsListWithOutPeersListInsideForCountry:country forSpecific:specific];
+                    outGroups = [database getOutGroupsListWithOutPeersListInsideForCountry:country forSpecific:specific];
 #endif
-                
-                //NSMutableSet *outGroupsSet = [NSMutableSet setWithArray:outGroups];
-                [codesFromFileList setValue:outGroups forKey:@"outGroups"];
-                [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList addObject:codesFromFileList];
-                codesFromFileList = nil;
-            }
-            if ([[result valueForKey:[code objectAtIndex:0]] count] == 0) [result setValue:[NSMutableArray arrayWithObject:[code objectAtIndex:1]] forKey:[code objectAtIndex:0]];
-            else {
-                if ([[result valueForKey:[code objectAtIndex:0]] containsObject:[code objectAtIndex:1]]);
-                else [[result valueForKey:[code objectAtIndex:0]] addObject:[code objectAtIndex:1]];
-            }
-        }];
+                    
+                    //NSMutableSet *outGroupsSet = [NSMutableSet setWithArray:outGroups];
+                    [codesFromFileList setValue:outGroups forKey:@"outGroups"];
+                    [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList addObject:codesFromFileList];
+                    codesFromFileList = nil;
+                }
+                if ([[result valueForKey:[code objectAtIndex:0]] count] == 0) [result setValue:[NSMutableArray arrayWithObject:[code objectAtIndex:1]] forKey:[code objectAtIndex:0]];
+                else {
+                    if ([[result valueForKey:[code objectAtIndex:0]] containsObject:[code objectAtIndex:1]]);
+                    else [[result valueForKey:[code objectAtIndex:0]] addObject:[code objectAtIndex:1]];
+                }
+            }];
+            
+            NSString *pathForSaveArray = [[delegate applicationFilesDirectory].path stringByAppendingString:@"/myCountrySpecificCodeList.ary"];
+            BOOL success = [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList writeToFile:pathForSaveArray atomically:YES];
+            NSLog(@"Write to file:%@",success ? @"YES" : @"NO");
+            [[ProjectArrays sharedProjectArrays].dictionaryDictionaryesForCountryCodes writeToFile:[[delegate applicationFilesDirectory].path stringByAppendingString:@"/dictionaryDictionaryesForCountryCodes.dic"] atomically:YES];
+            pathForSaveArray = [[delegate applicationFilesDirectory].path stringByAppendingString:@"/countryspecific.dict"];
+            success = [result writeToFile:pathForSaveArray atomically:YES];
+            NSLog(@"Write to file:%@",success ? @"YES" : @"NO");
+            
+            
+        } else {
+            [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList addObjectsFromArray:myCountrySpecificCodeList];
+            [[ProjectArrays sharedProjectArrays].dictionaryDictionaryesForCountryCodes addEntriesFromDictionary:dictionaryDictionaryesForCountryCodes];
+        }
         
-        NSString *pathForSaveArray = [[delegate applicationFilesDirectory].path stringByAppendingString:@"/myCountrySpecificCodeList.ary"];
-        BOOL success = [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList writeToFile:pathForSaveArray atomically:YES];
-        NSLog(@"Write to file:%@",success ? @"YES" : @"NO");
-        [[ProjectArrays sharedProjectArrays].dictionaryDictionaryesForCountryCodes writeToFile:[[delegate applicationFilesDirectory].path stringByAppendingString:@"/dictionaryDictionaryesForCountryCodes.dic"] atomically:YES];
-        pathForSaveArray = [[delegate applicationFilesDirectory].path stringByAppendingString:@"/countryspecific.dict"];
-        success = [result writeToFile:pathForSaveArray atomically:YES];
-        NSLog(@"Write to file:%@",success ? @"YES" : @"NO");
-
         
-    } else {
-        [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList addObjectsFromArray:myCountrySpecificCodeList];
-        [[ProjectArrays sharedProjectArrays].dictionaryDictionaryesForCountryCodes addEntriesFromDictionary:dictionaryDictionaryesForCountryCodes];
+        
+        //[delegate.countryCodeslist setContent:myCountrySpecificCodeList];
+        
+        if ([delegate.loggingLevel intValue] > 0) {
+            //        NSLog(@"INIT: result with dict :%@",[[ProjectArrays sharedProjectArrays].dictionaryDictionaryesForCountryCodes valueForKey:@"38066"]);
+            //        NSLog(@"INIT: result with array :%@",[[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList lastObject]);
+            //        
+            //        NSLog(@"INIT: result with array :%@",[result valueForKey:@"Ukraine"]);
+        }
+        
+        NSMutableArray *ratesStack = [NSMutableArray arrayWithContentsOfFile:[[delegate applicationFilesDirectory].path stringByAppendingString:@"/ratesStack.ary"]];
+        //    [delegate.ratesStack setContent:[NSArray arrayWithArray:ratesStack]];
+        [progress changeIndicatorRatesStackWithObjectsQuantity:[NSNumber numberWithUnsignedInteger:[ratesStack count]]];
+        [progress updateProgressIndicatorMessageGetExternalData:@""];
+        
     }
-    
-    
-    
-    //[delegate.countryCodeslist setContent:myCountrySpecificCodeList];
-    
-    if ([delegate.loggingLevel intValue] > 0) {
-//        NSLog(@"INIT: result with dict :%@",[[ProjectArrays sharedProjectArrays].dictionaryDictionaryesForCountryCodes valueForKey:@"38066"]);
-//        NSLog(@"INIT: result with array :%@",[[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList lastObject]);
-//        
-//        NSLog(@"INIT: result with array :%@",[result valueForKey:@"Ukraine"]);
-    }
-    
-    NSMutableArray *ratesStack = [NSMutableArray arrayWithContentsOfFile:[[delegate applicationFilesDirectory].path stringByAppendingString:@"/ratesStack.ary"]];
-//    [delegate.ratesStack setContent:[NSArray arrayWithArray:ratesStack]];
-    [progress changeIndicatorRatesStackWithObjectsQuantity:[NSNumber numberWithUnsignedInteger:[ratesStack count]]];
-    [progress updateProgressIndicatorMessageGetExternalData:@""];
 }
 
 #pragma mark -

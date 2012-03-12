@@ -47,7 +47,22 @@
     NSPopover *userCompanyInfoPopover;
     NSPopover *getExternalCompanyInfoPopover;
     NSTimer *durationRefreasher;
-    
+    NSWindow *_window;
+    NSPersistentStoreCoordinator *__persistentStoreCoordinator;
+    NSManagedObjectModel *__managedObjectModel;
+    NSManagedObjectContext *__managedObjectContext;
+
+    IBOutlet NSButton *_currentUserInfoList;
+    IBOutlet NSButton *_showHideUserCompanyInfo;
+    IBOutlet NSImageView *_mainLogo;
+    NSTextField *_mainLogoSubTitle;
+    NSTextField *_mainLogoSubSubTitle;
+    NSButton *_getExternalInfoButton;
+    NSProgressIndicator *getExternalInfoProgress;
+    NSProgressIndicator *mainProgressIndicator;
+    NSButton *totalProfit;
+    IBOutlet NSTextField *_mainLogoTitle;
+
 }
 @property (assign) IBOutlet NSWindow *window;
 

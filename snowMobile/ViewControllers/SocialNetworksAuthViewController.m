@@ -507,6 +507,7 @@
         NSLog(@"SOCIAL NETWORK CONTROLLER: twitter message to post:%@",twitterText);
         
         if (twitterController) [twitterController postTwitterMessageWithText:twitterText];
+        [twitterText release];
 
     }];
     
@@ -616,7 +617,7 @@
         NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"enabled" ascending:NO];
         [groupListObjects removeAllObjects];
         [groupListObjects addObjectsFromArray:groupListObjectsForCollectAllGroups];
-        [groupsListParsed sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort];
+        [groupsListParsed sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
         [sort release];
          
         [[NSUserDefaults standardUserDefaults] setValue:self.groupListObjects forKey:@"allGroupList"];
@@ -661,7 +662,8 @@
 
         NSLog(@"SOCIAL NETWORK CONTROLLER: linkedin message for group:%@ to post:%@",linkedinText,name);
 
-        if (linkedinController.isAuthorized) [linkedinController postToGroupID:groupID withTitle:postingTitle withSummary:linkedinText];        
+        if (linkedinController.isAuthorized) [linkedinController postToGroupID:groupID withTitle:postingTitle withSummary:linkedinText];    
+        [linkedinText release];
     }];
 }
 

@@ -72,10 +72,10 @@
     imgButton.frame = CGRectMake(0.0, 0.0, 36 , 36);
     [imgButton addTarget:self action:@selector(authTwitterAccount) forControlEvents:UIControlEventTouchUpInside];
     //twitter = 0.5;
-    UIBarButtonItem *twitterAuth = [[UIBarButtonItem alloc] initWithCustomView:imgButton];;
+    UIBarButtonItem *twitterAuth = [[UIBarButtonItem alloc] initWithCustomView:imgButton];
 //
     self.navigationItem.rightBarButtonItem = twitterAuth;
-    
+    [twitterAuth release];
     UISegmentedControl *segmented =  [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Info",@"Configuration", nil]] autorelease];
     [segmented addTarget:self action:@selector(changeView:) forControlEvents:UIControlEventValueChanged];
     segmented.tintColor = [UIColor colorWithRed:0.20 green:0.20 blue:0.52 alpha:1.0];
@@ -378,7 +378,8 @@
                 });
             });
         }
-//        [clientController release];
+        
+        [clientController release];
     }
     
 }

@@ -538,6 +538,11 @@
 		FA714B58150622340025123B /* OATokenManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FA714B29150622340025123B /* OATokenManager.m */; };
 		FA714B59150622340025123B /* OATokenManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FA714B29150622340025123B /* OATokenManager.m */; };
 		FA714B5A150622340025123B /* OATokenManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FA714B29150622340025123B /* OATokenManager.m */; };
+		FA7277B2150C011D005F627B /* snow_72x72.png in Resources */ = {isa = PBXBuildFile; fileRef = FA7277B1150C011D005F627B /* snow_72x72.png */; };
+		FA7277B4150C0129005F627B /* snow_72x72.png in Resources */ = {isa = PBXBuildFile; fileRef = FA7277B3150C0129005F627B /* snow_72x72.png */; };
+		FA7277BA150C027E005F627B /* snow_114x114.png in Resources */ = {isa = PBXBuildFile; fileRef = FA7277B9150C027E005F627B /* snow_114x114.png */; };
+		FA7277C2150C03B7005F627B /* snow_144x144.png in Resources */ = {isa = PBXBuildFile; fileRef = FA7277C1150C03B7005F627B /* snow_144x144.png */; };
+		FA7277C4150C045D005F627B /* snow_1_.png in Resources */ = {isa = PBXBuildFile; fileRef = FA7277C3150C045D005F627B /* snow_1_.png */; };
 		FA798C4914FD07350004E564 /* AddRoutesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA798C4814FD07350004E564 /* AddRoutesCell.xib */; };
 		FA79EA7214FCCAC8002EDE78 /* DestinationsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA79EA7014FCCAC8002EDE78 /* DestinationsListViewController.m */; };
 		FA79EA7314FCCAC8002EDE78 /* DestinationsListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA79EA7114FCCAC8002EDE78 /* DestinationsListViewController.xib */; };
@@ -818,7 +823,7 @@
 		FA10FAB414F840B80014C545 /* SynthesizeSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynthesizeSingleton.h; sourceTree = "<group>"; };
 		FA10FAB514F842D70014C545 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		FA10FAB714F842EC0014C545 /* CalendarStore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CalendarStore.framework; path = System/Library/Frameworks/CalendarStore.framework; sourceTree = SDKROOT; };
-		FA10FB4F14F846510014C545 /* snowClientAppstore.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = snowClientAppstore.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA10FB4F14F846510014C545 /* client.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = client.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA10FBE314F846780014C545 /* snowClientEnterprise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = snowClientEnterprise.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA10FC7714F8468D0014C545 /* snowServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = snowServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA10FC7F14F849A20014C545 /* debugAnalizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = debugAnalizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -864,7 +869,7 @@
 		FA3CE32714F7DE3800E3AF17 /* desctopAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = desctopAppDelegate.h; sourceTree = "<group>"; };
 		FA3CE32814F7DE3800E3AF17 /* desctopAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = desctopAppDelegate.m; sourceTree = "<group>"; };
 		FA3CE32B14F7DE3800E3AF17 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		FA3CE33914F7DEAF00E3AF17 /* snowMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = snowMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA3CE33914F7DEAF00E3AF17 /* snow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = snow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA3CE34514F7DEAF00E3AF17 /* snowMobile-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "snowMobile-Info.plist"; sourceTree = "<group>"; };
 		FA3CE34714F7DEAF00E3AF17 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FA3CE34914F7DEAF00E3AF17 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -1016,6 +1021,12 @@
 		FA714B28150622340025123B /* OATokenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OATokenManager.h; sourceTree = "<group>"; };
 		FA714B29150622340025123B /* OATokenManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OATokenManager.m; sourceTree = "<group>"; };
 		FA714B2A150622340025123B /* OAuthConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthConsumer.h; sourceTree = "<group>"; };
+		FA7277B0150BF80E005F627B /* client.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = client.entitlements; sourceTree = "<group>"; };
+		FA7277B1150C011D005F627B /* snow_72x72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = snow_72x72.png; sourceTree = "<group>"; };
+		FA7277B3150C0129005F627B /* snow_72x72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = snow_72x72.png; path = ../../snow_72x72.png; sourceTree = "<group>"; };
+		FA7277B9150C027E005F627B /* snow_114x114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = snow_114x114.png; path = ../../snow_114x114.png; sourceTree = "<group>"; };
+		FA7277C1150C03B7005F627B /* snow_144x144.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = snow_144x144.png; path = ../../snow_144x144.png; sourceTree = "<group>"; };
+		FA7277C3150C045D005F627B /* snow_1_.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = snow_1_.png; path = ../../snow_1_.png; sourceTree = "<group>"; };
 		FA798C4814FD07350004E564 /* AddRoutesCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddRoutesCell.xib; sourceTree = "<group>"; };
 		FA79EA6F14FCCAC8002EDE78 /* DestinationsListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DestinationsListViewController.h; sourceTree = "<group>"; };
 		FA79EA7014FCCAC8002EDE78 /* DestinationsListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DestinationsListViewController.m; sourceTree = "<group>"; };
@@ -1361,6 +1372,7 @@
 		FA3CE30614F7DE3800E3AF17 = {
 			isa = PBXGroup;
 			children = (
+				FA7277B0150BF80E005F627B /* client.entitlements */,
 				FA10FC7A14F8496D0014C545 /* debugAnalizer */,
 				FA1959E414F81C97002E9A89 /* ClassesForAllPlatforms */,
 				FA1959E514F81C97002E9A89 /* ExternalLibraries */,
@@ -1376,8 +1388,8 @@
 		FA3CE31214F7DE3800E3AF17 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				FA3CE33914F7DEAF00E3AF17 /* snowMobile.app */,
-				FA10FB4F14F846510014C545 /* snowClientAppstore.app */,
+				FA3CE33914F7DEAF00E3AF17 /* snow.app */,
+				FA10FB4F14F846510014C545 /* client.app */,
 				FA10FBE314F846780014C545 /* snowClientEnterprise.app */,
 				FA10FC7714F8468D0014C545 /* snowServer.app */,
 				FA10FC7F14F849A20014C545 /* debugAnalizer.app */,
@@ -1602,6 +1614,11 @@
 		FA4D905A14F8BD3000C90E2E /* MediaLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				FA7277C3150C045D005F627B /* snow_1_.png */,
+				FA7277C1150C03B7005F627B /* snow_144x144.png */,
+				FA7277B9150C027E005F627B /* snow_114x114.png */,
+				FA7277B3150C0129005F627B /* snow_72x72.png */,
+				FA7277B1150C011D005F627B /* snow_72x72.png */,
 				FA0372411507EB91009B5D1F /* reload.png */,
 				FA4A2E35150764C9007A7E33 /* routesConfig.png */,
 				FAC22D4B15067A550010D3C0 /* socialNetworks.png */,
@@ -1906,7 +1923,7 @@
 			);
 			name = snowClientAppstore;
 			productName = snow;
-			productReference = FA10FB4F14F846510014C545 /* snowClientAppstore.app */;
+			productReference = FA10FB4F14F846510014C545 /* client.app */;
 			productType = "com.apple.product-type.application";
 		};
 		FA10FB5214F846780014C545 /* snowClientEnterprise */ = {
@@ -1982,7 +1999,7 @@
 			);
 			name = snowMobile;
 			productName = snowMobile;
-			productReference = FA3CE33914F7DEAF00E3AF17 /* snowMobile.app */;
+			productReference = FA3CE33914F7DEAF00E3AF17 /* snow.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -2187,6 +2204,11 @@
 				FAC22D4C15067A550010D3C0 /* socialNetworks.png in Resources */,
 				FA4A2E36150764C9007A7E33 /* routesConfig.png in Resources */,
 				FA0372421507EB91009B5D1F /* reload.png in Resources */,
+				FA7277B2150C011D005F627B /* snow_72x72.png in Resources */,
+				FA7277B4150C0129005F627B /* snow_72x72.png in Resources */,
+				FA7277BA150C027E005F627B /* snow_114x114.png in Resources */,
+				FA7277C2150C03B7005F627B /* snow_144x144.png in Resources */,
+				FA7277C4150C045D005F627B /* snow_1_.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2230,7 +2252,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "install_name_tool -change libmysqlclient.16.dylib @executable_path/../Frameworks/libmysqlclient.16.dylib $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\ninstall_name_tool -change LibXL.framework/LibXL @executable_path/../Frameworks/LibXL.framework/LibXL $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\n\ncd $CONFIGURATION_BUILD_DIR\ntar cvzpf $PRODUCT_NAME.tgz $PRODUCT_NAME.app\nrm -r /Users/alex/Downloads/$PRODUCT_NAME.app\ncp -R $PRODUCT_NAME.app /Users/alex/Downloads\nscp $PRODUCT_NAME.tgz alex@mac1.ixcglobal.com:~\nssh alex@mac1.ixcglobal.com killall $PRODUCT_NAME\nssh alex@mac1.ixcglobal.com tar xvzpf $PRODUCT_NAME.tgz\nssh alex@mac1.ixcglobal.com open $PRODUCT_NAME.app";
+			shellScript = "install_name_tool -change libmysqlclient.16.dylib @executable_path/../Frameworks/libmysqlclient.16.dylib $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\ninstall_name_tool -change LibXL.framework/LibXL @executable_path/../Frameworks/LibXL.framework/LibXL $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\n\ncd $CONFIGURATION_BUILD_DIR\ntar cvzpf $PRODUCT_NAME.tgz $PRODUCT_NAME.app\nrm -r /Users/alex/Downloads/$PRODUCT_NAME.app\ncp -R $PRODUCT_NAME.app /Users/alex/Downloads\n#scp $PRODUCT_NAME.tgz alex@mac1.ixcglobal.com:~\n#ssh alex@mac1.ixcglobal.com killall $PRODUCT_NAME\n#ssh alex@mac1.ixcglobal.com tar xvzpf $PRODUCT_NAME.tgz\n#ssh alex@mac1.ixcglobal.com open $PRODUCT_NAME.app";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2739,8 +2761,8 @@
 		FA10FB4D14F846510014C545 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_ENTITLEMENTS = client.entitlements;
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: Oleksii Vynogradov";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/ExternalLibraries\"",
@@ -2759,7 +2781,8 @@
 					"\"$(SRCROOT)/ExternalLibraries\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				PRODUCT_NAME = snowClientAppstore;
+				PRODUCT_NAME = client;
+				PROVISIONING_PROFILE = "15FB67AF-1DE3-4E5D-B64D-D90AD963713F";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2767,8 +2790,8 @@
 		FA10FB4E14F846510014C545 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_ENTITLEMENTS = client.entitlements;
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: Oleksii Vynogradov";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/ExternalLibraries\"",
@@ -2787,7 +2810,8 @@
 					"\"$(SRCROOT)/ExternalLibraries\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				PRODUCT_NAME = snowClientAppstore;
+				PRODUCT_NAME = client;
+				PROVISIONING_PROFILE = "15FB67AF-1DE3-4E5D-B64D-D90AD963713F";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -2973,8 +2997,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Oleksii Vynogradov (4Q42MB7BMA)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
@@ -2989,8 +3012,8 @@
 				);
 				INFOPLIST_FILE = "snowMobile/snowMobile-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "F1EBB43C-982F-4341-BF28-02E7047A7814";
+				PRODUCT_NAME = snow;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7";
@@ -3002,8 +3025,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Oleksii Vynogradov (4Q42MB7BMA)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
@@ -3019,8 +3041,8 @@
 				INFOPLIST_FILE = "snowMobile/snowMobile-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "F1EBB43C-982F-4341-BF28-02E7047A7814";
+				PRODUCT_NAME = snow;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;

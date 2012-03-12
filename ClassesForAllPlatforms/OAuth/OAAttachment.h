@@ -11,7 +11,7 @@
 
 @interface OAAttachment : NSObject {
 	NSString *name;
-	NSString *fileName;
+	NSString *filename;
 	NSString *contentType;
 	NSData *data;
 }

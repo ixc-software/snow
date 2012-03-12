@@ -15,7 +15,7 @@
 @private
     OAToken *accessToken;
     OAConsumer *consumer;
-//    NSString *twitterPIN;
+    NSString *twitterPIN;
     id delegate;
     BOOL isAuthorized;
 

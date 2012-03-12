@@ -32,8 +32,7 @@
     //MYSQL_RES *qResult;
     NSString *carrierName;
 
-    NSTimer *keepAliveTimer;
-//    ProgressUpdateController *progress;
+    NSTimer *keepAliveTimer;    ProgressUpdateController *progress;
     BOOL updateProgress;
 }
 @property(readwrite) NSUInteger queneNumber;

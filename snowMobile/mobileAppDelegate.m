@@ -173,6 +173,7 @@
             [navigationControllerForEvents release];
             [navigationControllerForPromo release];
             [navigationControllerForCarriers release];
+            [navigationControllerForDestinations release];
             
             [tabBar release];
             [infoAndConfig release];

@@ -313,124 +313,80 @@
                            withProgress:(ProgressUpdateController *)progress 
                       withOperationName:(NSString *)operationName;
 {
-    //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
-//    AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
+    dispatch_async(dispatch_get_main_queue(), ^(void) { 
+        
+        [delegate.getExternalInfoProgress setHidden:NO];
+        [delegate.getExternalInfoProgress startAnimation:self];
+    });
+
     
     [progress startSync];
-//    NSError *error = nil;
-    //NSNumber *index = nil;
+    NSError *error = nil;
     progress.objectsQuantity = [NSNumber numberWithUnsignedInteger:[carriersToExecute count]];
     [progress updateSystemMessage:[NSString stringWithFormat:@"Sync was started:%@ for number %@ carriers.",[NSDate date],[NSNumber numberWithUnsignedInteger:[carriersToExecute count]]]];
     [progress updateProgressIndicatorMessageGetExternalData:@"Update carriers"];
     
-//    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-//    [request setEntity:[NSEntityDescription entityForName:@"DestinationsListForSale"
-//                                   inManagedObjectContext:self.moc]];
-//    ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
-//    CompanyStuff *stuff = [clientController authorization];
-//    [clientController release];
-//
-//    //CompanyStuff *stuff = (CompanyStuff *)[self.moc objectWithID:self.autorizedUserID];
-//    
-//    NSPredicate *predicateLastUsedProfit = [NSPredicate predicateWithFormat:@"(lastUsedProfit > 0) AND (carrier.companyStuff.currentCompany.GUID == %@)",stuff.currentCompany.GUID];
-//    //[request setPredicate:predicateLastUsedProfit];
-//    
-//    NSExpression *ex = [NSExpression expressionForFunction:@"sum:" 
-//                                                 arguments:[NSArray arrayWithObject:[NSExpression expressionForKeyPath:@"lastUsedProfit"]]];
-//    
-//    NSExpressionDescription *ed = [[NSExpressionDescription alloc] init];
-//    [ed setName:@"result"];
-//    [ed setExpression:ex];
-//    [ed setExpressionResultType:NSInteger64AttributeType];
-//    
-//    NSExpression *totalIncome = [NSExpression expressionForFunction:@"sum:" 
-//                                                          arguments:[NSArray arrayWithObject:[NSExpression expressionForKeyPath:@"lastUsedIncome"]]];
-//    
-//    NSExpressionDescription *totalIncomeDesc = [[NSExpressionDescription alloc] init];
-//    [totalIncomeDesc setName:@"totalIncome"];
-//    [totalIncomeDesc setExpression:totalIncome];
-//    [totalIncomeDesc setExpressionResultType:NSInteger64AttributeType];
-//    
-//    NSArray *properties = [NSArray arrayWithObjects:ed,totalIncomeDesc,nil];
-//    [ed release];
-//    [totalIncomeDesc release];
-//    [request setPropertiesToFetch:properties];
-//    [request setResultType:NSDictionaryResultType];
-//    [request setPredicate:predicateLastUsedProfit];
-//    
-//    NSArray *destinations = [self.moc executeFetchRequest:request error:&error]; 
-//    if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-//    NSDictionary *resultsDictionary = [destinations objectAtIndex:0];
-//    NSNumber *totalProfitNumberForUsing = [resultsDictionary objectForKey:@"result"];
-//    NSNumber *totalIncomeNumberForUsing = [resultsDictionary objectForKey:@"totalIncome"];
-//    
-//    NSNumber *totalProfitNumber = [[NSNumber alloc] initWithDouble:[totalProfitNumberForUsing doubleValue]];
-//    //NSNumber *totalProfitNumber = [NSNumber numberWithDouble:[totalProfitNumberForUsing doubleValue]];
-//    
-//    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-//    [formatter setFormat:@"#%"];
-//    
-//    [delegate.totalProfit setTitle:[NSString stringWithFormat:@"Total income:$%@/profit:$%@ (%@%)",totalIncomeNumberForUsing,totalProfitNumberForUsing,[formatter stringFromNumber:[NSNumber numberWithDouble:[totalProfitNumberForUsing doubleValue]/[totalIncomeNumberForUsing doubleValue]]]]];
-//    [formatter release];
-//    [request release];
-//    NSLog(@"Total profit (24h) is:%@ total income is:%@",totalProfitNumberForUsing,totalIncomeNumberForUsing);
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:[NSEntityDescription entityForName:@"DestinationsListForSale"
+                                   inManagedObjectContext:self.moc]];
+    ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
+    CompanyStuff *stuff = [clientController authorization];
+    [clientController release];
+    NSPredicate *predicateLastUsedProfit = [NSPredicate predicateWithFormat:@"(lastUsedProfit > %@) AND (carrier.companyStuff.currentCompany.GUID == %@)",[NSNumber numberWithInt:0],stuff.currentCompany.GUID];
+
+    NSExpression *ex = [NSExpression expressionForFunction:@"sum:" 
+                                                 arguments:[NSArray arrayWithObject:[NSExpression expressionForKeyPath:@"lastUsedProfit"]]];
+    
+    NSExpressionDescription *ed = [[NSExpressionDescription alloc] init];
+    [ed setName:@"result"];
+    [ed setExpression:ex];
+    [ed setExpressionResultType:NSInteger64AttributeType];
+    
+    NSExpression *totalIncome = [NSExpression expressionForFunction:@"sum:" 
+                                                          arguments:[NSArray arrayWithObject:[NSExpression expressionForKeyPath:@"lastUsedIncome"]]];
+    
+    NSExpressionDescription *totalIncomeDesc = [[NSExpressionDescription alloc] init];
+    [totalIncomeDesc setName:@"totalIncome"];
+    [totalIncomeDesc setExpression:totalIncome];
+    [totalIncomeDesc setExpressionResultType:NSInteger64AttributeType];
+    
+    NSArray *properties = [NSArray arrayWithObjects:ed,totalIncomeDesc,nil];
+    [ed release];
+    [totalIncomeDesc release];
+    [request setPropertiesToFetch:properties];
+    [request setResultType:NSDictionaryResultType];
+    [request setPredicate:predicateLastUsedProfit];
+    
+    NSArray *destinations = [self.moc executeFetchRequest:request error:&error]; 
+    if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
+    NSDictionary *resultsDictionary = [destinations objectAtIndex:0];
+    NSNumber *totalProfitNumberForUsing = [resultsDictionary objectForKey:@"result"];
+    NSNumber *totalIncomeNumberForUsing = [resultsDictionary objectForKey:@"totalIncome"];
+    
+    
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setFormat:@"#%"];
+    
+    [delegate.totalProfit setTitle:[NSString stringWithFormat:@"Total income:$%@/profit:$%@ (%@%)",totalIncomeNumberForUsing,totalProfitNumberForUsing,[formatter stringFromNumber:[NSNumber numberWithDouble:[totalProfitNumberForUsing doubleValue]/[totalIncomeNumberForUsing doubleValue]]]]];
+    [formatter release];
+    [request release];
+    NSLog(@"Total profit (24h) is:%@ total income is:%@",totalProfitNumberForUsing,totalIncomeNumberForUsing);
     //[totalProfitNumber release];
     
     progress.objectsCount = [NSNumber numberWithInt:0];
     progress.percentDone = [NSNumber numberWithInt:0];
     progress.objectsQuantity = [NSNumber numberWithUnsignedInteger:[carriersToExecute count]];
-    
-    
-    
-//    NSUInteger activeProcessorCount = [[NSProcessInfo processInfo] activeProcessorCount];
-//    if (activeProcessorCount > 3) {
-//        activeProcessorCount = (activeProcessorCount - 3);
-//    } else
-//    {
-//        activeProcessorCount = 1;
-//    }
-//    __block NSUInteger idx = 0;
-//    dispatch_queue_t queue = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate0", 0);
-//    dispatch_queue_t customQueue0 = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate0", 0);
-//    dispatch_queue_t customQueue1 = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate1", 0);
-//    dispatch_queue_t customQueue2 = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate2", 0);
-//    dispatch_queue_t customQueue3 = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate3", 0);
-//    dispatch_queue_t customQueue4 = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate4", 0);
-//    dispatch_queue_t customQueue5 = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate5", 0);
-//    dispatch_queue_t customQueue6 = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate6", 0);
-//    dispatch_queue_t customQueue7 = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate7", 0);
-
-//    dispatch_queue_t *queues = malloc(sizeof(dispatch_queue_t) * 8);
-//    NSMutableSet *currentBusyQueues = [[NSMutableSet alloc] init];
-//    NSLock *subblocksLock = [[NSLock alloc] init];
-    //NSMutableSet *queues = [[NSMutableSet alloc] init];
-
-//    for (NSUInteger q = 0; q < 8; q++)
-//    {
-//        //char label[20];
-//        NSString *queueName = [NSString stringWithFormat:@"com.ixc.ixcEnterprise.perDayUpdate.Queue%@",[NSNumber numberWithUnsignedInteger:q]];
-//        //sprintf(label, "com.ixc.ixcEnterprise.perDayUpdate.Queue%lu", q);
-//        queues[q] = dispatch_queue_create([queueName cStringUsingEncoding:NSUTF8StringEncoding], NULL);
-//    }
-    //[carriersToExecute enumerateObjectsUsingBlock:^(NSManagedObjectID *carrierID, NSUInteger idx, BOOL *stop) {
   
     NSMutableSet *completedSubblocks = [[NSMutableSet alloc] init];
     NSLock *subblocksLock = [[NSLock alloc] init];
-//    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-//    dispatch_group_t group = dispatch_group_create();
-    //    dispatch_semaphore_t semaphore = dispatch_semaphore_create(8);
-    
-    
-    //    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    //    for (NSManagedObjectID *carrierID in carriersToExecute) {
+
     [carriersToExecute enumerateObjectsUsingBlock:^(NSManagedObjectID *carrierID, NSUInteger idx, BOOL *stop) {
         sleep(1);
 #if defined (SNOW_SERVER)
         while (completedSubblocks.count > 3) {
             sleep(3);
         }
-
+        
 #else 
         while (completedSubblocks.count > 3) {
             sleep(3);
@@ -441,204 +397,76 @@
         NSNumber *idxNumber = [[NSNumber alloc] initWithUnsignedInteger:idx];
         [completedSubblocks addObject:idxNumber];
         [subblocksLock unlock];
-        //dispatch_async(dispatch_get_main_queue(), ^{
-            NSString *queueName = [NSString stringWithFormat:@"com.ixc.ixcEnterprise.perDayUpdate.Queue%@",idxNumber];
-            dispatch_queue_t queue = dispatch_queue_create([queueName cStringUsingEncoding:NSUTF8StringEncoding], NULL);
-            dispatch_async(queue, ^{
-                
-                [subblocksLock lock];
-                NSNumber *idxNumber = [[NSNumber alloc] initWithUnsignedInteger:idx];
-                
-                [completedSubblocks addObject:idxNumber];
-                [subblocksLock unlock];
-                
-                NSManagedObjectID *carrierID = [carriersToExecute objectAtIndex:idx];
-                
-                Carrier *car = (Carrier *)[self.moc objectWithID:carrierID];
-                
-                NSString *carrierGUID = [[NSString alloc] initWithString:car.GUID];
-                NSString *carrierName = [[NSString alloc] initWithString:car.name];
-                
-                NSLog(@"carrier:%@ added to queue with index:%@",carrierName,idxNumber);
-                
-                GetExternalInfoOperation *operation = [[GetExternalInfoOperation alloc] initAndUpdateCarrier:carrierID
-                                                                                                   withIndex:idxNumber 
-                                                                                           withQueuePosition:idxNumber
-                                                                                           withOperationName:operationName withTotalProfit:nil //withCarrierGUID:car.GUID withCarrierName:car.name
-                                                                                             ];
+        NSString *queueName = [NSString stringWithFormat:@"com.ixc.ixcEnterprise.perDayUpdate.Queue%@",idxNumber];
+        dispatch_queue_t queue = dispatch_queue_create([queueName cStringUsingEncoding:NSUTF8StringEncoding], NULL);
+        dispatch_async(queue, ^{
+            
+            [subblocksLock lock];
+            NSNumber *idxNumber = [[NSNumber alloc] initWithUnsignedInteger:idx];
+            
+            [completedSubblocks addObject:idxNumber];
+            [subblocksLock unlock];
+            
+            NSManagedObjectID *carrierID = [carriersToExecute objectAtIndex:idx];
+            
+            Carrier *car = (Carrier *)[self.moc objectWithID:carrierID];
+            
+            NSString *carrierGUID = [[NSString alloc] initWithString:car.GUID];
+            NSString *carrierName = [[NSString alloc] initWithString:car.name];
+            
+            NSLog(@"carrier:%@ added to queue with index:%@",carrierName,idxNumber);
+            [progress updateProgressIndicatorCountGetExternalData];
+            NSNumber *totalProfitNumber = [[NSNumber alloc] initWithDouble:[totalProfitNumberForUsing doubleValue]];
+
+            GetExternalInfoOperation *operation = [[GetExternalInfoOperation alloc] initAndUpdateCarrier:carrierID
+                                                                                               withIndex:idxNumber 
+                                                                                       withQueuePosition:idxNumber
+                                                                                       withOperationName:operationName 
+                                                                                         withTotalProfit:totalProfitNumber]; //withCarrierGUID:car.GUID withCarrierName:car.name
+                                                   
 #if defined (SNOW_SERVER)
-
-                if (operation) [operation updateFromExternalDatabase];
+            
+            if (operation) [operation updateFromExternalDatabase];
 #else
-                if (operation) [operation updateFromEnterpriseServer];
+            if (operation) [operation updateFromEnterpriseServer];
 #endif
-                [operation release];
-                [carrierName release];
-                [carrierGUID release];
+            [totalProfitNumber release];
 
-                [subblocksLock lock];
-                [completedSubblocks removeObject:idxNumber];
-                [subblocksLock unlock];  
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    dispatch_release(queue);
-                    
-                });
+            [operation release];
+            [carrierName release];
+            [carrierGUID release];
+            [idxNumber release];
+            
+            [subblocksLock lock];
+            [completedSubblocks removeObject:idxNumber];
+            [subblocksLock unlock];  
+            dispatch_async(dispatch_get_main_queue(), ^{
+                dispatch_release(queue);
+                
             });
-        //});
+        });
         [idxNumber release];
         //if (idx == 0) *stop = YES;
-
     }];
 
     while (completedSubblocks.count > 0) {
         sleep(3);
     }
-    NSLog(@"GET EXTERNAL INFO: >>>>>>>>>>> operation %@ FINISH, completedSubblocks %lu",operationName, completedSubblocks.count);
+    //NSLog(@"GET EXTERNAL INFO: >>>>>>>>>>> operation %@ FINISH, completedSubblocks %@",operationName, [NSNumber numberWithInteger:completedSubblocks.count]);
     
-//    for (NSManagedObjectID *carrierID in carriersToExecute) {
-//        
-//        if (delegate.cancelAllOperations) break;
-//        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-//
-//        NSNumber *queuePosition = nil;
-//
-//        if (idx < 8) {
-//            [subblocksLock lock];
-//            queuePosition = [NSNumber numberWithUnsignedInteger:idx];
-//            [currentBusyQueues addObject:queuePosition];
-//            [subblocksLock unlock];
-//        } else {
-//            [subblocksLock lock];
-//
-//            for (int q = 0; q < 8; q++)
-//            {
-//                queuePosition = [NSNumber numberWithInt:q];
-//                NSLog(@">>>>>>>>>>>>>>>>>>>>> check for queue number:%@",queuePosition);
-//
-//                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",queuePosition];
-//                NSSet *filteredCurrentBusyObjects = [currentBusyQueues filteredSetUsingPredicate:predicate];
-//                if (filteredCurrentBusyObjects.count == 1) {
-//                    NSLog(@">>>>>>>>>>>>>>>>>>>>> check for queue number:%@ PASSED",queuePosition);
-//
-//                    break;
-//                } else {
-//                    NSLog(@">>>>>>>>>>>>>>>>>>>>> check for queue number:%@ NOT",queuePosition);
-//
-//                }
-//            }
-//            [subblocksLock unlock];
-//
-//        }
-//        NSNumber *idxNumber = [[NSNumber alloc] initWithUnsignedInteger:idx];
-//
-//        __block Carrier *car = (Carrier *)[self.moc objectWithID:carrierID];
-//
-//        NSLog(@"carrier:%@ added to queue:%@ index:%@",car.name,queuePosition,idxNumber);
-//        idx = idx + 1;
-//        dispatch_queue_t necessary_queue;
-//        switch (queuePosition.intValue) {
-//                dispatch_release(necessary_queue);
-//            case 0:
-//                
-//                necessary_queue = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate0", 0);
-//                break;
-//            case 1:
-//                necessary_queue = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate1", 0);
-//                break;
-//            case 2:
-//                necessary_queue = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate2", 0);
-//                break;
-//            case 3:
-//                necessary_queue = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate3", 0);
-//                break;
-//            case 4:
-//                necessary_queue = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate4", 0);
-//                break;
-//            case 5:
-//                necessary_queue = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate5", 0);
-//                break;
-//            case 6:
-//                necessary_queue = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate6", 0);
-//                break;
-//            case 7:
-//                necessary_queue = dispatch_queue_create("com.ixc.ixcEnterprise.perDayUpdate7", 0);
-//                break;
-//                
-//            default:
-//                break;
-//        }
-//        
-//        dispatch_group_async(group, necessary_queue, ^{
-//            
-////            [subblocksLock lock];
-////            idx = idx + 1;
-////            [subblocksLock unlock];
-//            
-//            __block Carrier *necessaryCarrier = (Carrier *)[self.moc objectWithID:carrierID];
-//            
-//            [progress updateProgressIndicatorCountGetExternalData];
-//            //                NSNumber *totalProfit = [[NSNumber alloc] initWithDouble:[totalProfitNumber doubleValue]];
-//            
-//            //NSLog(@">>>>>>>>> really carrier:%@ added to queue:%@ with index:%@",necessaryCarrier.name,queuePosition,idxNumber);
-//            
-//            GetExternalInfoOperation *operation = [[GetExternalInfoOperation alloc] initAndUpdateCarrier:necessaryCarrier.objectID
-//                                                                                               withIndex:idxNumber 
-//                                                                                       withQueuePosition:queuePosition
-//                                                                                       withOperationName:operationName 
-//                                                                                         withTotalProfit:nil];
-//            
-//            if (operation) [operation main];
-//            //    if (operation) [queue addOperation:operation];
-//            [operation release];
-//            [subblocksLock lock];
-//            
-//            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF != %@",queuePosition];
-//            [currentBusyQueues filterUsingPredicate:predicate];
-//            
-//            [subblocksLock unlock];
-//            
-//            //};
-//            dispatch_semaphore_signal(semaphore);
-//            
-//        });
-//        
-//
-//        [idxNumber release];
-//    };
-
-//    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
-//    dispatch_release(group);
-    //dispatch_release(semaphore);
-//    dispatch_release(customQueue0);
-//    dispatch_release(customQueue1);
-//    dispatch_release(customQueue2);
-//    dispatch_release(customQueue3);
-//    dispatch_release(customQueue4);
-//    dispatch_release(customQueue5);
-//    dispatch_release(customQueue6);
-//    dispatch_release(customQueue7);
-//    for (NSUInteger q = 0; q < 8; q++)
-//    {
-//        dispatch_release(queues[q]);
-//    }
-//    [currentBusyQueues release];
-//    [subblocksLock release];
-    
-//    [progress updateProgressIndicatorMessageGetExternalData:@""];
-//    
-//    [progress stopSync];
-//    [progress updateSystemMessage:[NSString stringWithFormat:@"Sync was finished:%@ for number %@ carriers.",[NSDate date],[NSNumber numberWithUnsignedInteger:[carriersToExecute count]]]];
+    [progress updateProgressIndicatorMessageGetExternalData:@""];
     delegate.queueForUpdatesBusy = NO;
-//    [totalProfitNumber release];
-    //[pool drain];
+    dispatch_async(dispatch_get_main_queue(), ^(void) { 
+        [delegate.getExternalInfoProgress setHidden:YES];
+        [delegate.getExternalInfoProgress stopAnimation:self];
+    });
     
+
 }
 
 - (void) everyHourSync;
 
 {
-//    AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
-    
     if (delegate.queueForUpdatesBusy) { 
         //NSLog(@"GET EXTERNAL INFO: keeping everyHourSync out");
         sleep(5);
@@ -684,17 +512,11 @@
     progress.cycleSyncType = @"per hour";
     
     if (carriersToExecute.count > 0) {
-        dispatch_async(dispatch_get_main_queue(), ^(void) { 
-            
-            [delegate.getExternalInfoProgress setHidden:NO];
-            [delegate.getExternalInfoProgress startAnimation:self];
-        });
 
     }
     [self startUserChoiceSyncForCarriers:carriersToExecute withProgress:progress withOperationName:@"Every hour sync"];
     [progress release];
     dispatch_async(dispatch_get_main_queue(), ^(void) { 
-        
         [delegate.getExternalInfoProgress setHidden:YES];
         [delegate.getExternalInfoProgress stopAnimation:self];
     });
@@ -704,10 +526,6 @@
 
 - (void) everyDaySync;
 {
-//    AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
-
-
-    
     while (delegate.queueForUpdatesBusy)
     {
         sleep (5); 
@@ -715,19 +533,11 @@
     }
     ProgressUpdateController *progress = [[ProgressUpdateController alloc] initWithDelegate:delegate];
     progress.cycleSyncType = @"dayly";
-
-//    dispatch_async(dispatch_get_main_queue(), ^(void) { 
-//        
-//        [delegate.getExternalInfoProgress setHidden:NO];
-//        [delegate.getExternalInfoProgress startAnimation:self];
-//    });
-//
     delegate.queueForUpdatesBusy = YES;
     isDaylySyncProcessing = YES;
     NSError *error = nil;
 
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    
     [request setEntity:[NSEntityDescription entityForName:@"Carrier" inManagedObjectContext:self.moc]];
     CurrentCompany *necessaryCompany = nil;
 #if defined (SNOW_SERVER)
@@ -750,34 +560,28 @@
     [request setPredicate:[NSPredicate predicateWithFormat:@"(financialRate == 0) or (financialRate == nil) AND (companyStuff.currentCompany.GUID == %@)",necessaryCompany.GUID]];
     NSArray *carriers = [self.moc executeFetchRequest:request error:&error];
     if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd)); 
-    //[progress updateProgressIndicatorMessageGetExternalData:@"every day sync"];
-    
+
     NSMutableArray *carriersToExecute = [NSMutableArray arrayWithCapacity:0];
     for (Carrier *carrier in carriers) {
-        [carriersToExecute addObject:[carrier objectID]];
-        NSLog (@"GET EXTERNAL VIEW: carrier:%@ was add to PER DAY",carrier.name);
-
-        
+        @autoreleasepool {
+            [carriersToExecute addObject:[carrier objectID]];
+            NSLog (@"GET EXTERNAL VIEW: carrier:%@ was add to PER DAY",carrier.name);
+        }
     }
+    
     [request release], request = nil;
     if (carriersToExecute.count > 0) {
         dispatch_async(dispatch_get_main_queue(), ^(void) { 
-            
             [delegate.getExternalInfoProgress setHidden:NO];
             [delegate.getExternalInfoProgress startAnimation:self];
         });
         
     }
-    
-    //NSLog (@"CYCLE UPDATES: everyDaySyncWithProgress carriers list:\n%@",carriersToExecute);
-    
     [self startUserChoiceSyncForCarriers:carriersToExecute withProgress:progress withOperationName:@"Every day sync"];
     dispatch_async(dispatch_get_main_queue(), ^(void) { 
-        
         [delegate.getExternalInfoProgress setHidden:YES];
         [delegate.getExternalInfoProgress stopAnimation:self];
         isDaylySyncProcessing = NO;
-
     });
    [progress release];
 }
@@ -790,8 +594,6 @@
     [startSync setEnabled:NO];
     [getCarriersList setEnabled:NO];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-//        AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
-
         sleep (1);
         cancelAllOperations = NO;
         ProgressUpdateController *progressForDaylySync = [[ProgressUpdateController alloc] initWithDelegate:delegate];
@@ -800,86 +602,33 @@
             for (int i = 86395;i != 0;i--) 
             {
                 
-                //if ([queueForUpdates operationCount] == 0 && !syncWasDone  && !queueForUpdatesBusy) {
                 if (i == 86395) { 
                     NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
-                    
-                    NSLog(@"GET EXTERNAL INFO VIEW:every DAY sync start");    
-                    //                [progressForDaylySync startCycleDaylySync];
+                    NSLog(@"GET EXTERNAL INFO VIEW:>>>>>>>>>>>>> every DAY sync start");    
                     [self everyDaySync];
                     NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
-                    
-                    NSLog(@"GET EXTERNAL INFO VIEW:every DAY sync time was:%@ min",[NSNumber numberWithDouble:interval/60]);
+                    NSLog(@"GET EXTERNAL INFO VIEW:every DAY sync stop time was:%@ min",[NSNumber numberWithDouble:interval/60]);
                     [startCheckEveryDay release];
-                    //                [progressForDaylySync stopCycleDaylySync];
-                    //queueForUpdatesBusy = NO;
-                    NSLog(@"GET EXTERNAL INFO VIEW:every DAY sync stop");    
                 }
-                //syncWasDone = YES;
-                //}
+
                 sleep (1);
-//                [progressForDaylySync cycleRemaindTime:[NSNumber numberWithInt:i]];
+                [progressForDaylySync cycleRemaindTime:[NSNumber numberWithInt:i]];
                 if (i % 3600) { 
-                    
-                    //                if (i % 3600) { 
-                    //if (!isDaylySyncProcessing) {
                         NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
                         
-                        NSLog(@"GET EXTERNAL INFO VIEW:every HOUR sync start"); 
+                        NSLog(@"GET EXTERNAL INFO VIEW:>>>>>>>>>>>>>>>>> every HOUR sync start"); 
                         [self everyHourSync];
                         NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
                         
                         [startCheckEveryDay release];
                         
-                        NSLog(@"GET EXTERNAL INFO VIEW:every HOUR sync stop. time was:%@ min",[NSNumber numberWithDouble:interval/60]);
-                    //} else NSLog(@"GET EXTERNAL INFO: per hour not started, dayly processing");
+                        NSLog(@"GET EXTERNAL INFO VIEW:>>>>>>>>>>>>>>>>> every HOUR sync stop. time was:%@ min",[NSNumber numberWithDouble:interval/60]);
                 }
             }
         }
         [progressForDaylySync release];
-//        [databaseForDaylySync release];
-//        [updateEveryDaySync release];
         
     });
-    
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-//        sleep(10);
-//        AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
-//
-//        ProgressUpdateController *progressForPerHourSync = [[ProgressUpdateController alloc] initWithDelegate:delegate];
-//        progressForPerHourSync.cycleSyncType = @"hourly";
-////        MySQLIXC *databaseForPerHourSync = [[MySQLIXC alloc] initWithDelegate:delegate withProgress:progressForPerHourSync];
-////        UpdateDataController *updateForPerHourSync = [[UpdateDataController alloc] initWithDatabase:databaseForPerHourSync];
-////        databaseForPerHourSync.connections = [updateForPerHourSync databaseConnections];
-//        
-//        while (!cancelAllOperations) {
-//            BOOL syncWasDone = NO;
-//            for (int i = 3600;i != 0;i--) 
-//            {
-////                NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-//
-//                //if ([queueForUpdates operationCount] == 0 && !syncWasDone && !queueForUpdatesBusy) {
-//                //NSLog(@"GET EXTERNAL INFO VIEW:every HOUR sync start");    
-//
-////                    [progressForPerHourSync startCyclePerHourlySync];          
-//                    [self everyHourSync];
-//                
-////                    [progressForPerHourSync stopCyclePerHourSync];
-//                    syncWasDone = YES;
-//                    //queueForUpdatesBusy = NO;
-//                    
-//                //}
-//                sleep (1);
-//                [progressForPerHourSync cycleRemaindTime:[NSNumber numberWithInt:i]];
-////                [pool drain];
-//                
-//            }  
-//        }
-//        [progressForPerHourSync release];
-////        [databaseForPerHourSync release];
-////        [updateForPerHourSync release];
-//        //
-//    });
     
     
 }

@@ -442,7 +442,7 @@
         mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
         ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
         CompanyStuff *admin = [clientController authorization];
-        
+        [clientController release];
         
         if (admin || isLogin) {
             ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
@@ -624,7 +624,7 @@
 -(void)updateUIWithData:(NSArray *)data;
 {
     //sleep(5);
-    NSLog(@"AUTHORIZATION: data:%@",data);
+    //NSLog(@"AUTHORIZATION: data:%@",data);
     NSString *status = [data objectAtIndex:0];
     //NSNumber *progress = [data objectAtIndex:1];
     NSNumber *isItLatestMessage = [data objectAtIndex:2];

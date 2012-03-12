@@ -100,7 +100,8 @@ static char encodingTable[64] = {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:self.moc];
 //    [mainMoc release];
     [moc release];
-    if (self.mainServer) [self.mainServer release];
+    //if (self.mainServer) [self.mainServer release];
+    [mainServer release];
     //[receivedData release];
     [super dealloc];
 }
@@ -946,7 +947,7 @@ static char encodingTable[64] = {
         
         NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"GetCompaniesList" withJSONRequest:prepeareForJSONRequest];
         
-    NSLog(@"CLIENT CONTROLLER: get companies received:%@",receivedObject);
+    //NSLog(@"CLIENT CONTROLLER: get companies received:%@",receivedObject);
         
         [self updateUIwithMessage:@"get companies processing" withObjectID:nil withLatestMessage:NO error:NO];
         
@@ -2799,7 +2800,7 @@ static char encodingTable[64] = {
         findedAuthorizedLogin.password = password;
         [self finalSave:moc];
         NSString *keyAofAuthorized = @"authorizedUserGUID";
-        NSLog(@"CLIENT CONTROLLER: finded user email:%@ userGUID:%@ companyName:%@ companyAdminGUID:%@",findedAuthorizedLogin.email,findedAuthorizedLogin.GUID,findedAuthorizedLogin.currentCompany.name,findedAuthorizedLogin.currentCompany.companyAdminGUID);
+        //NSLog(@"CLIENT CONTROLLER: finded user email:%@ userGUID:%@ companyName:%@ companyAdminGUID:%@",findedAuthorizedLogin.email,findedAuthorizedLogin.GUID,findedAuthorizedLogin.currentCompany.name,findedAuthorizedLogin.currentCompany.companyAdminGUID);
         [self setUserDefaultsObject:[NSDictionary dictionaryWithObject:@"registered" forKey:@"update"] forKey:findedAuthorizedLogin.currentCompany.GUID];
         [self setUserDefaultsObject:[NSDictionary dictionaryWithObject:@"registered" forKey:@"update"] forKey:findedAuthorizedLogin.GUID];
 
@@ -2908,10 +2909,10 @@ static char encodingTable[64] = {
 
 
     [prepeareForJSONRequest setValue:allObjectsString forKey:@"necessaryData"];
-    NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",prepeareForJSONRequest);
+    //NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",prepeareForJSONRequest);
 
     NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"PutObject" withJSONRequest:prepeareForJSONRequest];
-    NSLog(@"CLIENT CONTROLLER PutObject Received:%@",receivedObject);
+    //NSLog(@"CLIENT CONTROLLER PutObject Received:%@",receivedObject);
     if (receivedObject) {
         [self updateUIwithMessage:@"put object processing"  withObjectID:[objectIDs lastObject] withLatestMessage:NO error:NO];
         
@@ -2989,10 +2990,10 @@ static char encodingTable[64] = {
 //    }
     [prepeareForJSONRequest setValue:[object valueForKey:@"GUID"] forKey:@"objectGUID"];
     [prepeareForJSONRequest setValue:[[object entity] name] forKey:@"objectEntity"];
-    NSLog(@"CLIENT CONTROLLER RemoveObject Sent:%@",prepeareForJSONRequest);
+    //NSLog(@"CLIENT CONTROLLER RemoveObject Sent:%@",prepeareForJSONRequest);
     
     NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"RemoveObject" withJSONRequest:prepeareForJSONRequest];
-    NSLog(@"CLIENT CONTROLLER RemoveObject Received:%@",receivedObject);
+    //NSLog(@"CLIENT CONTROLLER RemoveObject Received:%@",receivedObject);
     [self updateUIwithMessage:@"remove object processing"  withObjectID:objectID withLatestMessage:NO error:NO];
     NSString *error = [receivedObject valueForKey:@"error"];
     if (error) { 

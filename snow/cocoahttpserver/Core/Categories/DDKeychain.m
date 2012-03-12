@@ -347,7 +347,7 @@
 								keychain,              // SecKeychainRef importKeychain
 								&outItems);            // CFArrayRef *outItems
 	
-	NSLog(@"OSStatus: %i", err);
+	NSLog(@"OSStatus: %@", [NSNumber numberWithInt:err]);
 	
 	NSLog(@"SecExternalFormat: %@", [DDKeychain stringForSecExternalFormat:inputFormat]);
 	NSLog(@"SecExternalItemType: %@", [DDKeychain stringForSecExternalItemType:itemType]);

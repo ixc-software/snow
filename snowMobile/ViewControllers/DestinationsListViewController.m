@@ -345,57 +345,6 @@
     
     NSUInteger selectedSegmentIndex = selectRoutes.selectedSegmentIndex;
     //NSLog(@"selected index:%u isRoutesForSaleListUpdated:%@ isRoutesWeBuyListUpdated:%@ isRoutesPushlistListUpdated:%@",selectedSegmentIndex,[NSNumber numberWithBool:isRoutesForSaleListUpdated],[NSNumber numberWithBool:isRoutesWeBuyListUpdated],[NSNumber numberWithBool:isRoutesPushlistListUpdated]); 
-    if (selectedSegmentIndex == 2) addRoutes.hidden = NO;
-    else addRoutes.hidden = YES;
-    
-    if (selectedSegmentIndex == 0 && isRoutesForSaleListUpdated == YES) { 
-        carriersProgress.hidden = NO;
-        carriersProgressTitle.hidden = NO;
-        operationTitle.hidden = NO;
-        operationProgress.hidden = NO;
-        cancelAllUpdatesButton.hidden = NO;
-
-        routesChangeFilterWithOrWithoutTraffic.hidden = YES;
-
-        
-        //[self.navigationController setToolbarHidden:NO animated:YES];//progressView.hidden = NO; 
-    }
-    else if (selectedSegmentIndex == 1 && isRoutesWeBuyListUpdated == YES) {
-        carriersProgress.hidden = NO;
-        carriersProgressTitle.hidden = NO;
-        operationTitle.hidden = NO;
-        operationProgress.hidden = NO;
-        cancelAllUpdatesButton.hidden = NO;
-
-        routesChangeFilterWithOrWithoutTraffic.hidden = YES;
-
-        //[self.navigationController setToolbarHidden:NO animated:YES];//progressView.hidden = NO;
-    }
-    else if (selectedSegmentIndex == 2 && isRoutesPushlistListUpdated == YES) { 
-        carriersProgress.hidden = NO;
-        carriersProgressTitle.hidden = NO;
-        operationTitle.hidden = NO;
-        operationProgress.hidden = NO;
-        cancelAllUpdatesButton.hidden = NO;
-
-        routesChangeFilterWithOrWithoutTraffic.hidden = YES;
-
-        //[self.navigationController setToolbarHidden:NO animated:YES];//progressView.hidden = NO;
-    }
-    else { 
-        carriersProgress.hidden = YES;
-        carriersProgressTitle.hidden = YES;
-        operationTitle.hidden = YES;
-        operationProgress.hidden = YES;
-        cancelAllUpdatesButton.hidden = YES;
-
-        if (selectRoutes.selectedSegmentIndex == 2) routesChangeFilterWithOrWithoutTraffic.hidden = YES;
-        else routesChangeFilterWithOrWithoutTraffic.hidden = NO;
-        //NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
-
-
-//        [self.navigationController setToolbarHidden:YES animated:YES];progressView.hidden = YES;
-    }
     //});
     if (isRoutesWeBuyListUpdated || isRoutesPushlistListUpdated || isRoutesForSaleListUpdated) return;
     //else isRoutesListUpdated = YES;
@@ -426,6 +375,58 @@
         if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 3600 ) {
             [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:lastUpdateTimeKey];
             dispatch_async(dispatch_get_main_queue(), ^(void) {
+                if (selectedSegmentIndex == 2) addRoutes.hidden = NO;
+                else addRoutes.hidden = YES;
+                
+                if (selectedSegmentIndex == 0 && isRoutesForSaleListUpdated == YES) { 
+                    carriersProgress.hidden = NO;
+                    carriersProgressTitle.hidden = NO;
+                    operationTitle.hidden = NO;
+                    operationProgress.hidden = NO;
+                    cancelAllUpdatesButton.hidden = NO;
+                    
+                    routesChangeFilterWithOrWithoutTraffic.hidden = YES;
+                    
+                    
+                    //[self.navigationController setToolbarHidden:NO animated:YES];//progressView.hidden = NO; 
+                }
+                else if (selectedSegmentIndex == 1 && isRoutesWeBuyListUpdated == YES) {
+                    carriersProgress.hidden = NO;
+                    carriersProgressTitle.hidden = NO;
+                    operationTitle.hidden = NO;
+                    operationProgress.hidden = NO;
+                    cancelAllUpdatesButton.hidden = NO;
+                    
+                    routesChangeFilterWithOrWithoutTraffic.hidden = YES;
+                    
+                    //[self.navigationController setToolbarHidden:NO animated:YES];//progressView.hidden = NO;
+                }
+                else if (selectedSegmentIndex == 2 && isRoutesPushlistListUpdated == YES) { 
+                    carriersProgress.hidden = NO;
+                    carriersProgressTitle.hidden = NO;
+                    operationTitle.hidden = NO;
+                    operationProgress.hidden = NO;
+                    cancelAllUpdatesButton.hidden = NO;
+                    
+                    routesChangeFilterWithOrWithoutTraffic.hidden = YES;
+                    
+                    //[self.navigationController setToolbarHidden:NO animated:YES];//progressView.hidden = NO;
+                }
+                else { 
+                    carriersProgress.hidden = YES;
+                    carriersProgressTitle.hidden = YES;
+                    operationTitle.hidden = YES;
+                    operationProgress.hidden = YES;
+                    cancelAllUpdatesButton.hidden = YES;
+                    
+                    if (selectRoutes.selectedSegmentIndex == 2) routesChangeFilterWithOrWithoutTraffic.hidden = YES;
+                    else routesChangeFilterWithOrWithoutTraffic.hidden = NO;
+                    //NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
+                    
+                    
+                    //        [self.navigationController setToolbarHidden:YES animated:YES];progressView.hidden = YES;
+                }
+
                 //[self.navigationController setToolbarHidden:NO animated:YES];
                 carriersProgress.hidden = NO;
                 carriersProgressTitle.hidden = NO;
@@ -854,7 +855,6 @@
         [formatter setPositiveFormat:@"#####0.#####"];
         
         cell.rate.text = [formatter stringFromNumber:object.rate];
-        [formatter release];
         cell.destination = object;
         cell.delegate = self;
     }
@@ -871,7 +871,6 @@
         [formatter setPositiveFormat:@"#####0.#####"];
         
         cell.rate.text = [formatter stringFromNumber:object.rate];
-        [formatter release];
         cell.rate.borderStyle = UITextBorderStyleNone;
         cell.rate.enabled = NO;
         cell.asr.borderStyle = UITextBorderStyleNone;
@@ -895,7 +894,6 @@
         [formatter setPositiveFormat:@"#####0.#####"];
         
         cell.rate.text = [formatter stringFromNumber:object.rate];
-        [formatter release];
         cell.rate.borderStyle = UITextBorderStyleNone;
         cell.rate.enabled = NO;
         cell.asr.borderStyle = UITextBorderStyleNone;
@@ -907,7 +905,8 @@
         cell.notification.hidden = YES;
 
     }
-    
+    [formatter release];
+
     mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
     
     ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
@@ -1253,7 +1252,9 @@
                 [menuItems addObject:menuItem];
                 [menuItem release];
             }
-
+//            [menuItemTwit release];
+//            [menuItemLinkedin release];
+//            [menuItemRemove release];
             
             menuController.menuItems = [NSArray arrayWithArray:menuItems];
             [menuItemRemove release];
@@ -1864,6 +1865,8 @@
     
     ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
     CompanyStuff *admin = [clientController authorization];
+    [clientController release];
+    
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"DestinationsListPushList"
                                               inManagedObjectContext:self.managedObjectContext];
@@ -1898,6 +1901,8 @@
     
     ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
     CompanyStuff *admin = [clientController authorization];
+    [clientController release];
+    
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"DestinationsListPushList"
                                               inManagedObjectContext:self.managedObjectContext];

@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "LightView.h"
+#import "ProgressUpdateController.h"
 @class desctopAppDelegate;
 
 @interface GetExternalInfoView : NSViewController
@@ -81,5 +82,8 @@
 @property (readwrite) BOOL cancelAllOperations;
 
 - (IBAction)getCompaniesList:(id)sender;
+- (void) startUserChoiceSyncForCarriers:(NSArray *)carriersToExecute 
+                           withProgress:(ProgressUpdateController *)progress 
+                      withOperationName:(NSString *)operationName;
 
 @end

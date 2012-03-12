@@ -170,14 +170,14 @@
     //});    
     //NSLog(@"%@",[invoices arrangedObjects]);
 
-    NSArray *allInvoicesContent = [[invoices arrangedObjects] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"isInvoice == YES"]];
-    NSArray *allPaymentsContent = [[invoices arrangedObjects] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"isInvoice == NO"]];
+    NSArray *allInvoicesContent = [allInvoicesAndPaymentsForCarrier filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"isInvoice == %@",[NSNumber numberWithBool:YES]]];
+    NSArray *allPaymentsContent = [allInvoicesAndPaymentsForCarrier filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"isInvoice == %@",[NSNumber numberWithBool:NO]]];
     
-    NSArray *allReceivedInvoicesContent = [allInvoicesContent filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"isReceived == YES"]];
-    NSArray *allSendedInvoicesContent = [allInvoicesContent filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"isReceived == NO"]];
+    NSArray *allReceivedInvoicesContent = [allInvoicesContent filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"isReceived == %@",[NSNumber numberWithBool:YES]]];
+    NSArray *allSendedInvoicesContent = [allInvoicesContent filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"isReceived == %@",[NSNumber numberWithBool:NO]]];
     
-    NSArray *allReceivedPaymentsContent = [allPaymentsContent filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"isReceived == YES"]];
-    NSArray *allSendedPaymentsContent = [allPaymentsContent filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"isReceived == NO"]];
+    NSArray *allReceivedPaymentsContent = [allPaymentsContent filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"isReceived == %@",[NSNumber numberWithBool:YES]]];
+    NSArray *allSendedPaymentsContent = [allPaymentsContent filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"isReceived == %@",[NSNumber numberWithBool:NO]]];
     
     NSNumber *totalSumOfReceivedInvoices = [allReceivedInvoicesContent valueForKeyPath:@"@sum.amountConfirmed"];
     NSNumber *totalSumOfSendedInvoices = [allSendedInvoicesContent valueForKeyPath:@"@sum.amountConfirmed"];
