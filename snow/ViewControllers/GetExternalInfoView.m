@@ -329,10 +329,29 @@
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     [request setEntity:[NSEntityDescription entityForName:@"DestinationsListForSale"
                                    inManagedObjectContext:self.moc]];
+    NSString *companyGUID = nil;
+#if defined (SNOW_SERVER)
+    
+    
+    
+    NSFetchRequest *requestForCompany = [[NSFetchRequest alloc] init];
+    [requestForCompany setEntity:[NSEntityDescription entityForName:@"CurrentCompany" inManagedObjectContext:self.moc]];
+    [requestForCompany setPredicate:[NSPredicate predicateWithFormat:@"name contains [cd] %@",[companyForSync selectedItem].title]];
+    NSArray *companies = [self.moc executeFetchRequest:requestForCompany error:&error];
+    [requestForCompany release];
+    CurrentCompany *selectedCompany = companies.lastObject;
+    companyGUID = selectedCompany.GUID;
+    
+#else 
+
     ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
     CompanyStuff *stuff = [clientController authorization];
     [clientController release];
-    NSPredicate *predicateLastUsedProfit = [NSPredicate predicateWithFormat:@"(lastUsedProfit > %@) AND (carrier.companyStuff.currentCompany.GUID == %@)",[NSNumber numberWithInt:0],stuff.currentCompany.GUID];
+    companyGUID = stuff.currentCompany.GUID;
+
+#endif
+    
+    NSPredicate *predicateLastUsedProfit = [NSPredicate predicateWithFormat:@"(lastUsedProfit != 0) AND (carrier.companyStuff.currentCompany.GUID == %@)",companyGUID];
 
     NSExpression *ex = [NSExpression expressionForFunction:@"sum:" 
                                                  arguments:[NSArray arrayWithObject:[NSExpression expressionForKeyPath:@"lastUsedProfit"]]];
@@ -367,7 +386,9 @@
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setFormat:@"#%"];
     
-    [delegate.totalProfit setTitle:[NSString stringWithFormat:@"Total income:$%@/profit:$%@ (%@%)",totalIncomeNumberForUsing,totalProfitNumberForUsing,[formatter stringFromNumber:[NSNumber numberWithDouble:[totalProfitNumberForUsing doubleValue]/[totalIncomeNumberForUsing doubleValue]]]]];
+    [delegate.totalProfit setHidden:NO];
+    
+    [delegate.totalProfit setTitle:[NSString stringWithFormat:@"Total income:$%@/profit:$%@ (%@%%)",totalIncomeNumberForUsing,totalProfitNumberForUsing,[formatter stringFromNumber:[NSNumber numberWithDouble:[totalProfitNumberForUsing doubleValue]/[totalIncomeNumberForUsing doubleValue]]]]];
     [formatter release];
     [request release];
     NSLog(@"Total profit (24h) is:%@ total income is:%@",totalProfitNumberForUsing,totalIncomeNumberForUsing);

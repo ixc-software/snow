@@ -640,16 +640,7 @@
                                     NSPredicate *predicateForDestinationsListWeBuy = [NSPredicate predicateWithFormat:@"(GUID == %@)",guid];
                                     [fetchRequestForDestinationsListWeBuy setPredicate:predicateForDestinationsListWeBuy];
                                     [fetchRequestForDestinationsListWeBuy setEntity:entityForDestinationsListWeBuy];
-                                    
-                                    //                                NSDictionary *relationShipsByName = [entity relationshipsByName];
-                                    //                                NSMutableArray *allRelationships = [NSMutableArray array];
-                                    //                                [relationShipsByName enumerateKeysAndObjectsWithOptions:NSSortStable usingBlock:^(id key, NSRelationshipDescription *relationshipDescription, BOOL *stop) {
-                                    //                                    [allRelationships addObject:[relationshipDescription name]];
-                                    //                                }];
-                                    //                                NSArray *finalRelationships = [NSArray arrayWithArray:allRelationships];
-                                    //                                [fetchRequest setRelationshipKeyPathsForPrefetching:finalRelationships];
                                     NSArray *destinationsWeBuy = [self.moc executeFetchRequest:fetchRequestForDestinationsListWeBuy error:&error];
-                                    //                                [fetchRequest setRelationshipKeyPathsForPrefetching:nil];
                                     [fetchRequestForDestinationsListWeBuy release];
                                     
                                     DestinationsListWeBuy *object = [destinationsWeBuy lastObject];

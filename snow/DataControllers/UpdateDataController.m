@@ -2423,7 +2423,7 @@ forIsUpdateCarriesListOnExternalServer:YES];
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setFormat:@"#%"];
     
-    [delegate.totalProfit setTitle:[NSString stringWithFormat:@"Total income:$%@/profit:$%@ (%@%)",totalIncomeNumberForUsing,totalProfitNumberForUsing,[formatter stringFromNumber:[NSNumber numberWithDouble:[totalProfitNumberForUsing doubleValue]/[totalIncomeNumberForUsing doubleValue]]]]];
+    [delegate.connections setTitle:[NSString stringWithFormat:@"Total income:$%@/profit:$%@ (%@%)",totalIncomeNumberForUsing,totalProfitNumberForUsing,[formatter stringFromNumber:[NSNumber numberWithDouble:[totalProfitNumberForUsing doubleValue]/[totalIncomeNumberForUsing doubleValue]]]]];
     [formatter release];
     [request release];
     NSLog(@"Total profit (24h) is:%@ total income is:%@",totalProfitNumberForUsing,totalIncomeNumberForUsing);

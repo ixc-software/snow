@@ -57,6 +57,35 @@
     [self didChangeValueForKey:@"modificationDate"];
 }
 
+- (void)setLastUsedMinutesLenght:(NSNumber *)lastUsedMinutesLenght {
+    
+    [self willChangeValueForKey:@"lastUsedMinutesLenght"];
+    [self setPrimitiveValue:lastUsedMinutesLenght forKey:@"lastUsedMinutesLenght"];
+    
+    [self willChangeValueForKey:@"lastUsedIncome"];
+    NSNumber *expenses = [NSNumber numberWithDouble:[lastUsedMinutesLenght doubleValue] * [self.rate doubleValue]];
+    [self setPrimitiveValue:expenses forKey:@"lastUsedIncome"];
+    [self didChangeValueForKey:@"lastUsedIncome"];
+    
+    
+    [self didChangeValueForKey:@"lastUsedMinutesLenght"];
+    
+}
+
+- (void)setRate:(NSNumber *)rate {
+    
+    [self willChangeValueForKey:@"rate"];
+    [self setPrimitiveValue:rate forKey:@"rate"];
+    
+    [self willChangeValueForKey:@"lastUsedIncome"];
+    NSNumber *expenses = [NSNumber numberWithDouble:[self.lastUsedMinutesLenght doubleValue] * [rate doubleValue]];
+    [self setPrimitiveValue:expenses forKey:@"lastUsedIncome"];
+    [self didChangeValueForKey:@"lastUsedIncome"];
+    
+    [self didChangeValueForKey:@"rate"];
+    
+}
+
 //-(void)willSave {
 //    NSDate *now = [NSDate date];
 //    if ([self isUpdated]) {

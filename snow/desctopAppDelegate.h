@@ -56,11 +56,12 @@
     IBOutlet NSButton *_showHideUserCompanyInfo;
     IBOutlet NSImageView *_mainLogo;
     NSTextField *_mainLogoSubTitle;
+    NSButton *totalProfit;
     NSTextField *_mainLogoSubSubTitle;
     NSButton *_getExternalInfoButton;
     NSProgressIndicator *getExternalInfoProgress;
     NSProgressIndicator *mainProgressIndicator;
-    NSButton *totalProfit;
+    NSButton *connections;
     IBOutlet NSTextField *_mainLogoTitle;
 
 }
@@ -80,11 +81,12 @@
 @property (assign) IBOutlet NSImageView *mainLogo;
 @property (assign) IBOutlet NSTextField *mainLogoTitle;
 @property (assign) IBOutlet NSTextField *mainLogoSubTitle;
+@property (assign) IBOutlet NSButton *totalProfit;
 @property (assign) IBOutlet NSTextField *mainLogoSubSubTitle;
 @property (assign) IBOutlet NSButton *getExternalInfoButton;
 @property (assign) IBOutlet NSProgressIndicator *getExternalInfoProgress;
 @property (assign) IBOutlet NSProgressIndicator *mainProgressIndicator;
-@property (assign) IBOutlet NSButton *totalProfit;
+@property (assign) IBOutlet NSButton *connections;
 
 // main views
 @property(assign) CarriersView *carriersView;

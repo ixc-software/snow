@@ -2127,6 +2127,7 @@
             if (object.lastUsedACD) [stringForCopy appendFormat:@" ACD:%@",[formatterACDandMinutes stringFromNumber:object.lastUsedACD]];
             if (object.lastUsedMinutesLenght) [stringForCopy appendFormat:@" Minutes:%@",[formatterACDandMinutes stringFromNumber:object.lastUsedMinutesLenght]];
             if (object.lastUsedCallAttempts) [stringForCopy appendFormat:@" Attempts:%@",[formatterACDandMinutes stringFromNumber:object.lastUsedCallAttempts]];
+            if (object.lastUsedIncome) [stringForCopy appendFormat:@" Income:%@",[formatterACDandMinutes stringFromNumber:object.lastUsedIncome]];
             [stringForCopy appendFormat:@"\n"];
         }];
         [[formatterRate release],formatterACDandMinutes release];

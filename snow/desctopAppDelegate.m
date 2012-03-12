@@ -42,11 +42,12 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 @synthesize mainLogo = _mainLogo;
 @synthesize mainLogoTitle = _mainLogoTitle;
 @synthesize mainLogoSubTitle = _mainLogoSubTitle;
+@synthesize totalProfit;
 @synthesize mainLogoSubSubTitle = _mainLogoSubSubTitle;
 @synthesize getExternalInfoButton = _getExternalInfoButton;
 @synthesize getExternalInfoProgress;
 @synthesize mainProgressIndicator;
-@synthesize totalProfit;
+@synthesize connections;
 
 @synthesize carriersView,importRatesView,destinationsView,getExternalInfoView,userCompanyInfo;
 
@@ -119,8 +120,8 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 }
 -(void)updateServerConnections
 {
-    [totalProfit setHidden:NO];
-    totalProfit.title = [NSString stringWithFormat:@"Conn:%@",[NSNumber numberWithUnsignedInteger:[httpServer numberOfHTTPConnections]]];
+    [connections setHidden:NO];
+    connections.title = [NSString stringWithFormat:@"Conn:%@",[NSNumber numberWithUnsignedInteger:[httpServer numberOfHTTPConnections]]];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -1019,8 +1020,8 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
     if (!databaseForMainThread) databaseForMainThread = [[MySQLIXC alloc] initWithDelegate:self withProgress:nil];
     if (!updateForMainThread) updateForMainThread = [[UpdateDataController alloc] initWithDatabase:databaseForMainThread];
     
-    NSArray *connections = [self.updateForMainThread databaseConnections];
-    if ([connections count] == 0) { 
+    NSArray *connectionsSQL = [self.updateForMainThread databaseConnections];
+    if ([connectionsSQL count] == 0) { 
 #if defined (SNOW_CLIENT_ENTERPRISE) || defined(SNOW_SERVER)
         [self.updateForMainThread setupDefaultDatabaseConnections];
 #endif
@@ -1030,9 +1031,9 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
         //        userDataControllerForMainThread.context = [self managedObjectContext];
 #endif
         [self performSelectorOnMainThread:@selector(safeSave) withObject:nil waitUntilDone:YES];
-        connections = [updateForMainThread databaseConnections];
+        connectionsSQL = [updateForMainThread databaseConnections];
     }
-    databaseForMainThread.connections = connections;
+    databaseForMainThread.connections = connectionsSQL;
     if (!progressForMainThread) progressForMainThread = [[ProgressUpdateController alloc] initWithDelegate:self];
 }
 
