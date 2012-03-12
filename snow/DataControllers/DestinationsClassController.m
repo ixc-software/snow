@@ -84,7 +84,7 @@
         [moc setStalenessInterval:0.0000001213];
 
         [moc setUndoManager:nil];
-        [moc setMergePolicy:NSOverwriteMergePolicy];
+        //[moc setMergePolicy:NSOverwriteMergePolicy];
         [moc setPersistentStoreCoordinator:[delegate persistentStoreCoordinator]];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(importerDidSave:) name:NSManagedObjectContextDidSaveNotification object:moc];
@@ -223,6 +223,8 @@
         for (NSString *carrierGUID in carriers) {
             
             NSMutableArray *updatedDestinationsIDs = [[NSMutableArray alloc] init];
+
+            
             
             NSFetchRequest *fetchRequestForCarriers = [[NSFetchRequest alloc] init];
             // get carrier object
@@ -258,14 +260,16 @@
                                                              inManagedObjectContext:self.moc];
             
             NSArray *allPredicates = nil;
-            if (destinationsListForSale || destinationsListWeBuy) allPredicates = [NSArray arrayWithObjects:[NSPredicate predicateWithFormat:@"code IN %@",distinctCodes],[NSPredicate predicateWithFormat:@"prefix IN %@",distinctPrefixes],[NSPredicate predicateWithFormat:@"peerID IN %@",distinctPeerID], nil];
-            else allPredicates = [NSArray arrayWithObjects:[NSPredicate predicateWithFormat:@"code IN %@",distinctCodes],nil];
+            if (destinationsListForSale || destinationsListWeBuy) allPredicates = [NSArray arrayWithObjects:[NSPredicate predicateWithFormat:@"(code IN %@) or (originalCode IN %@)",distinctCodes,distinctCodes],[NSPredicate predicateWithFormat:@"prefix IN %@",distinctPrefixes],[NSPredicate predicateWithFormat:@"peerID IN %@",distinctPeerID], nil];
+            else allPredicates = [NSArray arrayWithObjects:[NSPredicate predicateWithFormat:@"(code IN %@) or (originalCode IN %@)",distinctCodes,distinctCodes],nil];
             
             NSPredicate *filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:allPredicates];
             
             [fetchRequestForCode setPredicate:filterPredicate];
             [fetchRequestForCode setEntity:entityForCode];
-            NSArray *allCarrierCodes = [self.moc executeFetchRequest:fetchRequestForCode error:&error];
+            NSArray *allCarrierCodesImmutable = [self.moc executeFetchRequest:fetchRequestForCode error:&error];
+            NSMutableArray *allCarrierCodes = [NSMutableArray arrayWithArray:allCarrierCodesImmutable];
+            
             [fetchRequestForCode release];
             NSTimeInterval interval = [startCheckPresentedCodes timeIntervalSinceDate:[NSDate date]];
             NSLog(@"DESTINATIONS CLASS time to check codes was:%@ sec, result:",[NSNumber numberWithDouble:interval]);
@@ -279,20 +283,6 @@
                 NSEntityDescription *entityForDestinationsListForSale = [NSEntityDescription entityForName:@"DestinationsListForSale"
                                                                                     inManagedObjectContext:self.moc];
                 [fetchRequestForDestinationsListForSale setEntity:entityForDestinationsListForSale];
-//                [fetchRequestForDestinationsListForSale setPredicate:[NSPredicate predicateWithFormat:@"(carrier.name == %@) AND (lastUsedACD > 0 OR lastUsedASR > 0 OR lastUsedCallAttempts > 0 OR lastUsedIncome > 0 OR lastUsedMinutesLenght > 0 OR lastUsedMinutesLenght > 0)",carrier.name]];
-//                NSArray *destinationsLocal = [self.moc executeFetchRequest:fetchRequestForDestinationsListForSale error:&error];
-//                [destinationsLocal enumerateObjectsUsingBlock:^(DestinationsListForSale *destination, NSUInteger idx, BOOL *stop) {
-//                    @autoreleasepool {
-//                        destination.lastUsedACD = [NSNumber numberWithInt:0];
-//                        destination.lastUsedASR = [NSNumber numberWithInt:0];
-//                        destination.lastUsedCallAttempts = [NSNumber numberWithInt:0];
-//                        destination.lastUsedIncome = [NSNumber numberWithInt:0];
-//                        destination.lastUsedMinutesLenght = [NSNumber numberWithInt:0];
-//                        destination.lastUsedProfit = [NSNumber numberWithInt:0];
-//                    }
-//                }];
-//                [self safeSave];
-                
                 [fetchRequestForDestinationsListForSale setResultType:NSDictionaryResultType];
                 [fetchRequestForDestinationsListForSale setPredicate:[NSPredicate predicateWithFormat:@"(carrier.name == %@)",carrier.name]];
                 NSArray *destinationsLocal = [self.moc executeFetchRequest:fetchRequestForDestinationsListForSale error:&error];
@@ -307,19 +297,6 @@
                 NSEntityDescription *entityForDestinationsListWeBuy = [NSEntityDescription entityForName:@"DestinationsListWeBuy"
                                                                                   inManagedObjectContext:self.moc];
                 [fetchRequestForDestinationsListWeBuy setEntity:entityForDestinationsListWeBuy];
-//                [fetchRequestForDestinationsListWeBuy setPredicate:[NSPredicate predicateWithFormat:@"(carrier.name == %@) AND (lastUsedACD > 0 OR lastUsedASR > 0 OR lastUsedCallAttempts > 0 OR lastUsedMinutesLenght > 0 OR lastUsedMinutesLenght > 0)",carrier.name]];
-//
-//                NSArray *destinationsLocal = [self.moc executeFetchRequest:fetchRequestForDestinationsListWeBuy error:&error];
-//                [destinationsLocal enumerateObjectsUsingBlock:^(DestinationsListWeBuy *destination, NSUInteger idx, BOOL *stop) {
-//                    @autoreleasepool {
-//                        destination.lastUsedACD = [NSNumber numberWithInt:0];
-//                        destination.lastUsedASR = [NSNumber numberWithInt:0];
-//                        destination.lastUsedCallAttempts = [NSNumber numberWithInt:0];
-//                        destination.lastUsedMinutesLenght = [NSNumber numberWithInt:0];
-//                        destination.lastUsedProfit = [NSNumber numberWithInt:0];
-//                    }
-//                }];
-//                [self safeSave];
                 [fetchRequestForDestinationsListWeBuy setResultType:NSDictionaryResultType];
                 [fetchRequestForDestinationsListWeBuy setPredicate:[NSPredicate predicateWithFormat:@"(carrier.name == %@)",carrier.name]];
                 NSArray *destinationsLocal = [self.moc executeFetchRequest:fetchRequestForDestinationsListWeBuy error:&error];
@@ -506,39 +483,17 @@
                             predicateForCurrentCodes = [NSPredicate predicateWithFormat:@"(code == %@ AND originalCode == %@)",code,originalCode];
                         }
                         
-                        NSArray *codesFilteredFirstStep = [allCarrierCodes filteredArrayUsingPredicate:predicateForCurrentCodes];
+                        NSArray *codesFilteredFirstStep = [allCarrierCodesImmutable filteredArrayUsingPredicate:predicateForCurrentCodes];
                         NSMutableArray *codesFilteredFirstStepMutable = [NSMutableArray arrayWithArray:codesFilteredFirstStep];
-//                        if ([codesFilteredFirstStep count] > 1) { 
-//                            if (originalCode) { 
-//                                NSPredicate *predicateForOriginalCode = [NSPredicate predicateWithFormat:@"originalCode == %@",originalCode];
-//                                [codesFilteredFirstStepMutable filterUsingPredicate:predicateForOriginalCode];
-//                            }
-//                            if (codesFilteredFirstStepMutable.count == 0) { 
-//                                [codesFilteredFirstStepMutable addObject:codesFilteredFirstStep.lastObject];
-//                                NSLog(@"DESTINATIONS:warning, we are addind last object from duplicates, but that is WRONG!");
-//                                
-//                            }
-//                        }
-                        //if ([codesFilteredFirstStepMutable count] > 1) NSLog(@"DESTINATIONS:warning, more than 1 code finally!!");
-                        if ([codesFilteredFirstStepMutable count] > 1) { 
-                            NSLog(@"UPDATE DESTINATION LIST WARNING: find more than one code for predicateForCurrentCodes:%@",predicateForCurrentCodes);
 
+                        if ([codesFilteredFirstStepMutable count] > 1) { 
                             [codesFilteredFirstStepMutable enumerateObjectsUsingBlock:^(CodesvsDestinationsList *code, NSUInteger idx, BOOL *stop) {
-                                
                                 NSLog(@"UPDATE DESTINATION LIST:duplicate code will removed:%@ originalCode:%@ %@/%@ prefix:%@ peerID:%@ carrier:%@",code.code,code.originalCode,code.country,code.specific,code.prefix,code.peerID,carrier.name);
                                 if (idx > 0) [self.moc deleteObject:code];
                             }];
                             [codesFilteredFirstStepMutable removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, codesFilteredFirstStepMutable.count - 1)]];
+                            //NSLog(@"UPDATE DESTINATION LIST: final count of codesFilteredFirstStepMutable:%@",[NSNumber numberWithInteger:codesFilteredFirstStepMutable.count]);
 
-                            //[self safeSave];
-//                            [codesFilteredFirstStepMutable enumerateObjectsUsingBlock:^(CodesvsDestinationsList *code, NSUInteger idx, BOOL *stop) {
-//                                
-//                                NSLog(@"UPDATE DESTINATION LIST:final lived code:%@ originalCode:%@ %@/%@ prefix:%@ peerID:%@ carrier:%@",code.code,code.originalCode,code.country,code.specific,code.prefix,code.peerID,carrier.name);
-//                            }];
-
-                            
-                            //abort();
-                            
                         }
 
                         // insert  new destination and add code
@@ -669,7 +624,7 @@
                                     NSArray *keys = [[[object entity] attributesByName] allKeys];
                                     NSDictionary *objectFullInfo = [object dictionaryWithValuesForKeys:keys];
                                     [destinationsForCheckingLater addObject:objectFullInfo];
-                                    //NSLog(@"DESTINATIONS LIST: code:%@  originalCode:%@ created for NEW destination WE BUY country:%@ specific:%@",objectCode.code,objectCode.originalCode,objectCode.country,objectCode.specific);
+                                    //NSLog(@"DESTINATIONS LIST: CREATE code:%@  originalCode:%@ created for NEW destination WE BUY country:%@ specific:%@",objectCode.code,objectCode.originalCode,objectCode.country,objectCode.specific);
 
                                     
                                 }
@@ -887,22 +842,13 @@
                         } else
                         {
                             // update code and update destination
-                            
-                            //NSDictionary *currentCodeDict = [codesFilteredFirstStepMutable anyObject];
-                            
-                            //                        NSFetchRequest *fetchRequestForCodesvsDestinationsList = [[NSFetchRequest alloc] init];
-                            //
-                            //                        entityForCodesvsDestinationsList = [NSEntityDescription entityForName:@"CodesvsDestinationsList" inManagedObjectContext:self.moc];
-                            //                        [fetchRequest setEntity:entity];
-                            //                        
-                            //NSManagedObjectID *necessaryObjecID = [currentCodeDict valueForKey:@"objectID"];
-                            
                             CodesvsDestinationsList *currentCode = codesFilteredFirstStepMutable.lastObject;
-                            //(CodesvsDestinationsList *)[moc objectWithID:necessaryObjecID];//[codesLocalVersionTwo lastObject];
+                            [allCarrierCodes filterUsingPredicate:[NSPredicate predicateWithFormat:@"objectID != %@",currentCode.objectID]];
+                            //NSLog(@"DESTINATIONS CLASS: >>>> allCarrierCodes count:%@",[NSNumber numberWithInteger:allCarrierCodes.count]);
+                            //NSLog(@"DESTINATIONS LIST: UPDATE code:%@  originalCode:%@ created for NEW destination WE BUY country:%@ specific:%@",currentCode.code,currentCode.originalCode,currentCode.country,currentCode.specific);
+
                             if (!currentCode) NSLog(@"DESTINATIONS CLASS: >>>> warning code not found!");
-                            
-                            //[codesForCarrier removeObject:currentCodeDict];
-                            
+
                             if (destinationsListForSale) {
                                 if ([currentCode.rate isEqualToNumber:rate] && [currentCode.rateSheetName isEqualToString:rateSheetName] && [currentCode.rateSheetID isEqualToString:rateSheetID] && [currentCode.peerID isEqualToNumber:peerID] && [currentCode.enabled isEqualToNumber:enabled] && [currentCode.externalChangedDate isEqualToDate:changeDate]) {
                                     // do nothing, code is same
@@ -940,11 +886,6 @@
                                         NSArray *codesWithUnickRate = [self.moc executeFetchRequest:fetchRequestForCodesvsDestinationsList error:&error];
                                         if (codesWithUnickRate == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
                                         [fetchRequestForCodesvsDestinationsList release];
-                                        
-                                        //                                    [fetchRequest setReturnsDistinctResults:NO];
-                                        //                                    [fetchRequest setResultType:NSManagedObjectResultType];
-                                        //                                    [fetchRequest setPropertiesToFetch:nil];
-                                        //NSSet *allCodes = currentDestination.codesvsDestinationsList;
                                         int maxCount = 0;
                                         double maxRate = 0;
                                         
@@ -972,7 +913,6 @@
                                             }];
                                             
                                             // winned must have less rate in same count issues 
-                                            //[rates enumerateKeysAndObjectsUsingBlock:^(NSNumber *rateFromRatesList, NSNumber *count, BOOL *stop) {
                                             
                                             for (NSNumber *rateFromRatesList in [rates allKeys]) {
                                                 NSNumber *count = [rates objectForKey:rateFromRatesList];
@@ -1048,10 +988,6 @@
                                         NSArray *codesWithUnickRate = [self.moc executeFetchRequest:fetchRequestWithUnickRate error:&error];
                                         if (codesWithUnickRate == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
                                         [fetchRequestWithUnickRate release];
-                                        //                                    [fetchRequest setReturnsDistinctResults:NO];
-                                        //                                    [fetchRequest setResultType:NSManagedObjectResultType];
-                                        //                                    [fetchRequest setPropertiesToFetch:nil];
-                                        //NSSet *allCodes = currentDestination.codesvsDestinationsList;
                                         int maxCount = 0;
                                         double maxRate = 0;
                                         
@@ -1173,66 +1109,9 @@
             }
             
             // final check for codes, which was untouch (don't need for targets
-            /*if (countCodes - [externalDataCodes count] != 0) {
-             NSLog(@"UPDATE DESTINATION LIST: warning, %@ codes leave in system without delete for carrier %@ with externalCodesCount %@",[NSNumber numberWithUnsignedInteger:countCodes - [externalDataCodes count]],carrierName,[NSNumber numberWithUnsignedInteger:[externalDataCodes count]]);
-             //abort();
-             *[codes enumerateObjectsWithOptions:NSSortStable usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-             NSString *code = [obj valueForKey:@"code"];
-             NSString *originalCode = [obj valueForKey:@"originalCode"];
-             NSString *prefix = [obj valueForKey:@"prefix"];
-             // get current code
-             NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-             NSEntityDescription *entity = [NSEntityDescription entityForName:@"CodesvsDestinationsList"
-             inManagedObjectContext:self.context];
-             [fetchRequest setEntity:entity];
-             
-             NSString *relationShipName = nil;
-             if (destinationsListWeBuy) relationShipName = @"destinationsListWeBuy";
-             if (destinationsListForSale) relationShipName = @"destinationsListForSale";            
-             
-             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(code == %@) and (originalCode == %@) and (prefix == %@) and (%K.carrier.name == %@)",
-             code,originalCode,prefix,relationShipName,carrierName];
-             //[fetchRequest setResultType:NSManagedObjectIDResultType];
-             [fetchRequest setPredicate:predicate];
-             
-             NSError *error = nil;
-             NSArray *fetchedObjects = [self.context executeFetchRequest:fetchRequest error:&error];
-             if (fetchedObjects == nil) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-             if ([fetchedObjects count] != 1 && [fetchedObjects count] != 0) NSLog(@"UPDATE DESTINATION LIST WARNING: find more than one untouch code for fetchRequest:%@",fetchRequest);
-             
-             CodesvsDestinationsList *codeForDelete = [fetchedObjects lastObject];
-             
-             
-             if (destinationsListForSale) {
-             NSManagedObject *destination = codeForDelete.destinationsListForSale;
-             NSSet *codes = [destination valueForKey:@"codesvsDestinationsList"];
-             if ([codes count] == 1 && destination)
-             {
-             [self.context deleteObject:destination];
-             }
-             }
-             if (destinationsListWeBuy) {
-             NSManagedObject *destination = codeForDelete.destinationsListWeBuy;
-             NSSet *codes = [destination valueForKey:@"codesvsDestinationsList"];
-             if ([codes count] == 1 && destination)
-             {
-             [self.context deleteObject:destination];
-             }
-             }
-             if (destinationsListTargets) {
-             NSManagedObject *destination = codeForDelete.destinationsListTargets;
-             NSSet *codes = [destination valueForKey:@"codesvsDestinationsList"];
-             if ([codes count] == 1 && destination)
-             {
-             [self.context deleteObject:destination];
-             }
-             }
-             
-             if (codeForDelete) [self.context deleteObject:codeForDelete];
-             
-             }];*
-             }*/
-            //[codesForCarrier release];
+            [allCarrierCodes enumerateObjectsUsingBlock:^(CodesvsDestinationsList *codeToRemove, NSUInteger idx, BOOL *stop) {
+                [self.moc deleteObject:codeToRemove];
+            }];
             [destinationsForCheckingLater release];
             [updatedDestinationsIDs release];
             //        [fetchRequest release];
