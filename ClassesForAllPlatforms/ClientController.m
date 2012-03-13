@@ -67,8 +67,8 @@ static char encodingTable[64] = {
 //        mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
 
 //        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
-//        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
-        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
+        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+//        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
 
 #endif
         
@@ -2322,7 +2322,8 @@ static char encodingTable[64] = {
                 
                 if (rootObject) [newObject setValue:rootObject forKey:keyForRootObject];
                 [allUpdatedIDs addObject:guid];
-                [self setUserDefaultsObject:[NSDictionary dictionaryWithObject:@"registered" forKey:@"update"] forKey:[newObject valueForKey:@"GUID"]];
+                //[self setUserDefaultsObject:[NSDictionary dictionaryWithObject:@"registered" forKey:@"update"] forKey:[newObject valueForKey:@"GUID"]];
+                [[NSUserDefaults standardUserDefaults] setObject:[NSDictionary dictionaryWithObject:@"registered" forKey:@"update"] forKey:[newObject valueForKey:@"GUID"]];
 
 //                if ([entityFor isEqualToString:@"CodesvsDestinationsList"]) {
 //                    NSLog(@"CLIENT CONTROLLER: object with entity:%@ will CREATE and new GUID:%@ oldGUID:%@ country:%@ specific:%@ destination GUID:%@",entityFor,guid,[newObject valueForKey:@"GUID"],[newObject valueForKey:@"country"],[newObject valueForKey:@"specific"],[newObject valueForKeyPath:@"destinationsListForSale.GUID"]);

@@ -349,28 +349,39 @@
     
     
     NSString *lastUpdateTimeKey = nil;
+    NSString *lastFullUpdateTimeKey = nil;
     NSString *entity = nil;
     if (selectedSegmentIndex == 0) { 
         lastUpdateTimeKey = @"lastDestinationsForSaleUpdatingTime";
+        lastFullUpdateTimeKey = @"lastFullDestinationsForSaleUpdatingTime";
         entity = @"DestinationsListForSale";
-
+        [self.navigationController setToolbarHidden:NO animated:YES];
         isRoutesForSaleListUpdated = YES;
     }
     if (selectedSegmentIndex == 1) { 
         lastUpdateTimeKey = @"lastDestinationsWeBuyUpdatingTime";
+        lastFullUpdateTimeKey = @"lastFullDestinationsWeBuyUpdatingTime";
+
         entity = @"DestinationsListWeBuy";
         isRoutesWeBuyListUpdated = YES;
+        [self.navigationController setToolbarHidden:NO animated:YES];
+
     }
     if (selectedSegmentIndex == 2) { 
         lastUpdateTimeKey = @"lastDestinationsPushListUpdatingTime";
+        lastFullUpdateTimeKey = @"lastFullDestinationsPushListUpdatingTime";
         entity = @"DestinationsListPushList";
         isRoutesPushlistListUpdated = YES;
+        [self.navigationController setToolbarHidden:YES animated:YES];
+
     }
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
         
         NSDate *lastUpdate = [[NSUserDefaults standardUserDefaults] objectForKey:lastUpdateTimeKey];
-        if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 3600 ) {
+        NSDate *lastFullUpdate = [[NSUserDefaults standardUserDefaults] objectForKey:lastFullUpdateTimeKey];
+
+        if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 30 ) {
             [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:lastUpdateTimeKey];
             dispatch_async(dispatch_get_main_queue(), ^(void) {
                 if (selectedSegmentIndex == 2) addRoutes.hidden = NO;
@@ -410,7 +421,9 @@
                     operationProgress.hidden = YES;
                     cancelAllUpdatesButton.hidden = YES;
                     
-                    if (selectRoutes.selectedSegmentIndex == 2) routesChangeFilterWithOrWithoutTraffic.hidden = YES;
+                    if (selectRoutes.selectedSegmentIndex == 2) { 
+                        routesChangeFilterWithOrWithoutTraffic.hidden = YES;
+                    }
                     else routesChangeFilterWithOrWithoutTraffic.hidden = NO;
                 }
 
@@ -432,11 +445,24 @@
                 NSPredicate *predicate = [NSPredicate predicateWithFormat:@"objectID == %@",selectedCarrierID];
                 allCarriers = [admin.carrier filteredSetUsingPredicate:predicate];
             } else allCarriers = admin.carrier;
+            NSDate *dateFrom = nil;
+            NSDate *dateTo = nil;
+//            if (lastFullUpdate != nil && -[lastFullUpdate timeIntervalSinceNow] < 36000) {
+                dateFrom = [NSDate dateWithTimeIntervalSinceNow:-360];
+                dateTo = [NSDate date];
+                NSLog(@"DESTINATIONS LIST: using only last 10 hour period for update");
+//            } else {
+//                NSLog(@"DESTINATIONS LIST: FULL update");
+//                [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:lastFullUpdateTimeKey];
+//            }
+            NSArray *allGUIDsCarriers = [clientController getAllObjectsListWithEntityForList:@"Carrier" withMainObjectGUID:admin.GUID withMainObjectEntity:@"CompanyStuff" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
+            NSSet *filteredCarriers = [allCarriers filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"GUID IN %@",allGUIDsCarriers]];
             
+
             NSUInteger allCarriersCount = allCarriers.count;
             __block NSUInteger idxCarriers = 0;
             
-            [allCarriers enumerateObjectsUsingBlock:^(Carrier *carrier, BOOL *stop) {
+            [filteredCarriers enumerateObjectsUsingBlock:^(Carrier *carrier, BOOL *stop) {
                 if (cancelAllUpdates == YES) *stop = YES;
                 NSString *carrierName = [NSString stringWithFormat:@"%@",carrier.name];
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
@@ -447,7 +473,7 @@
                 });
                 idxCarriers++;
                 
-                NSArray *allGUIDsDestinations = [clientController getAllObjectsListWithEntityForList:entity withMainObjectGUID:carrier.GUID withMainObjectEntity:@"Carrier" withAdmin:admin withDateFrom:nil withDateTo:nil];
+                NSArray *allGUIDsDestinations = [clientController getAllObjectsListWithEntityForList:entity withMainObjectGUID:carrier.GUID withMainObjectEntity:@"Carrier" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
 
                 NSArray *allObjectsForGUIDS = [clientController getAllObjectsWithGUIDs:allGUIDsDestinations withEntity:entity withAdmin:admin];
                 if (allGUIDsDestinations && allObjectsForGUIDS && allGUIDsDestinations.count > 0 && allObjectsForGUIDS > 0) {
@@ -542,15 +568,9 @@
             NSLog(@"Total profit (24h) is:%@ total income is:%@ profitability:%@",totalProfitNumberForUsing,totalIncomeNumberForUsing,savedProfitability);
 
             [[NSUserDefaults standardUserDefaults] synchronize];
-            if (selectedSegmentIndex == 0) { 
-                isRoutesForSaleListUpdated = NO;
-            }
-            if (selectedSegmentIndex == 1) { 
-                isRoutesWeBuyListUpdated = NO;
-            }
-            if (selectedSegmentIndex == 2) { 
-                isRoutesPushlistListUpdated = NO;
-            }
+            if (isRoutesForSaleListUpdated == YES) isRoutesForSaleListUpdated = NO;
+            if (isRoutesWeBuyListUpdated == YES) isRoutesWeBuyListUpdated = NO;
+            if (isRoutesPushlistListUpdated == YES) isRoutesPushlistListUpdated = NO;
         }
     });
     
@@ -1657,18 +1677,29 @@
 #pragma mark change view
 - (void) selectRoutesStart:(id) sender
 {
-//    dispatch_async(dispatch_get_main_queue(), ^(void) { 
-//
-//        if (selectedSegmentIndex == 0 && self.isRoutesForSaleListUpdated) progressView.hidden = NO; 
-//        else progressView.hidden = YES;
-//        if (selectedSegmentIndex == 1 && self.isRoutesWeBuyListUpdated) progressView.hidden = NO;
-//        else progressView.hidden = YES;
-
-//    NSUInteger selectedSegmentIndex = [sender selectedSegmentIndex];
-//    if (selectedSegmentIndex == 2) [self.navigationController setToolbarHidden:YES animated:YES];
-//    else [self.navigationController setToolbarHidden:NO animated:YES];
-
-    //    });
+    NSUInteger selectedSegmentIndex = [sender selectedSegmentIndex];
+    if (selectedSegmentIndex == 2) { 
+        [self.navigationController setToolbarHidden:YES animated:YES];
+    }
+    else { 
+        if ((selectedSegmentIndex == 1 && !isRoutesWeBuyListUpdated) || (selectedSegmentIndex == 0 && !isRoutesForSaleListUpdated)) {
+        carriersProgress.hidden = YES;
+        carriersProgressTitle.hidden = YES;
+        operationTitle.hidden = YES;
+        operationProgress.hidden = YES;
+        cancelAllUpdatesButton.hidden = YES;
+        routesChangeFilterWithOrWithoutTraffic.hidden = NO;
+        } else {
+            carriersProgress.hidden = NO;
+            carriersProgressTitle.hidden = NO;
+            operationTitle.hidden = NO;
+            operationProgress.hidden = NO;
+            cancelAllUpdatesButton.hidden = NO;
+            routesChangeFilterWithOrWithoutTraffic.hidden = YES;
+            
+        }
+        [self.navigationController setToolbarHidden:NO animated:YES];
+    }
     
     [fetchedResultsController release],fetchedResultsController = nil;
     fetchedResultsController = [self newFetchedResultsControllerWithSearch:nil];
