@@ -269,7 +269,7 @@
     id <NSFetchedResultsSectionInfo> sectionInfo = [[[self fetchedResultsController] sections] objectAtIndex:section];
     NSInteger count = [sectionInfo numberOfObjects];
     if (isCarriersEditing) count = count + 1;
-    NSLog(@"Rows:%@",[NSNumber numberWithInteger:count]);
+    //NSLog(@"Rows:%@",[NSNumber numberWithInteger:count]);
     return count;
 
     // Return the number of rows in the section.

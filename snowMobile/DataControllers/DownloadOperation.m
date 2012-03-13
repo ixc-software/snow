@@ -132,6 +132,8 @@
 {
     @autoreleasepool {
         self.operationName = @"Prepare internal data";
+        NSLog(@"%@",operationName);
+
         [self updateProgessInfoWithPercent:[NSNumber numberWithDouble:0]];
         
         //self.importPool = [[NSAutoreleasePool alloc] init];
@@ -142,17 +144,22 @@
         mobileAppDelegate *delegateShared = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
         ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[insertionContext persistentStoreCoordinator] withSender:self withMainMoc:[delegateShared managedObjectContext]];
         self.operationName = @"Update destinations";
+        NSLog(@"%@",operationName);
+
         [self updateProgessInfoWithPercent:[NSNumber numberWithDouble:0]];
-        //NSLog(@"authorizedUserGUID for first setup:%@",[[clientController authorization] valueForKey:@"GUID"]);
         [clientController firstSetup];
 
         self.operationName = @"Update internal graph";
+        NSLog(@"%@",operationName);
+
         [self updateProgessInfoWithPercent:[NSNumber numberWithDouble:0]];
         
         [clientController getCompaniesListWithImmediatelyStart:YES];
 
         //    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:NO isUserAuthorized:NO];
         self.operationName = @"Download events data";
+        NSLog(@"%@",operationName);
+
         self.percentDone = [NSNumber numberWithDouble:0];
         [self updateProgessInfoWithPercent:[NSNumber numberWithDouble:0]];
         

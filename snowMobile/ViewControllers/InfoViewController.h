@@ -51,5 +51,6 @@
 
 
 -(IBAction)updateTwitter:(id)sender; 
+-(void) updateMainBoard;
 
 @end

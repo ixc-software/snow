@@ -148,33 +148,16 @@
     // e.g. self.myOutlet = nil;
     
 }
-
-- (void)viewWillAppear:(BOOL)animated
+-(void) updateMainBoard;
 {
-    [super viewWillAppear:animated];
-    mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
-
-    UIBarButtonItem *barButton = [[UIBarButtonItem alloc] init];
-    UIImageView *reachabilityView = delegate.reachabilityImageView;
-    [barButton setCustomView:reachabilityView];
-    self.navigationItem.leftBarButtonItem = barButton;
-    [barButton release];
-    
-    HelpForInfoView *helpView = [[HelpForInfoView alloc] init];
-    
-    helpView.isInfoSheet = YES;
-    if ([helpView isHelpNecessary]) {
-        self.navigationController.view.alpha = 0.8;
-        helpView.delegate = self;
-        [self.tabBarController.view addSubview:helpView.view];
-    } else [helpView release];
-    //[readme removeFromSuperview];
-    //[self.navigationController.view addSubview:readme];
     ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:self.managedObjectContext];
     CompanyStuff *admin = [clientController authorization];
+    [clientController release];
     routesQuantityWeBuy.hidden = YES;
+    routesQuantityForSale.hidden = YES;
+    routesQuantityPushList.hidden = YES;
     routesTitle.text = @"Routes";
-
+    
     if (admin) {
         
         wellcomeTitle.text = [NSString stringWithFormat:@"Wellcome, %@ %@",admin.firstName,admin.lastName];
@@ -215,9 +198,9 @@
             routesTitle.text = @"Routes with traffic";
         }
         else { 
-//            routesQuantityWeBuy.hidden = YES;
-//            routesTitle.text = @"Routes";
-
+            //            routesQuantityWeBuy.hidden = YES;
+            //            routesTitle.text = @"Routes";
+            
         }
         entity = [NSEntityDescription entityForName:@"DestinationsListForSale" inManagedObjectContext:self.managedObjectContext];
         [fetchRequest setEntity:entity];
@@ -228,15 +211,39 @@
             routesQuantityForSale.hidden = NO;
             routesQuantityForSale.text = [NSString stringWithFormat:@"we sell:%@",[NSNumber numberWithInteger:count]];
             routesTitle.text = @"Routes with traffic";
-
+            
         }
         else {
-//            routesQuantityForSale.hidden = YES;
-//            routesTitle.text = @"Routes";
-
+            //            routesQuantityForSale.hidden = YES;
+            //            routesTitle.text = @"Routes";
+            
         }
         carriersQuantity.text = [NSNumber numberWithInteger:admin.carrier.count].description;
     }
+
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
+
+    UIBarButtonItem *barButton = [[UIBarButtonItem alloc] init];
+    UIImageView *reachabilityView = delegate.reachabilityImageView;
+    [barButton setCustomView:reachabilityView];
+    self.navigationItem.leftBarButtonItem = barButton;
+    [barButton release];
+    
+    HelpForInfoView *helpView = [[HelpForInfoView alloc] init];
+    
+    helpView.isInfoSheet = YES;
+    if ([helpView isHelpNecessary]) {
+        self.navigationController.view.alpha = 0.8;
+        helpView.delegate = self;
+        [self.tabBarController.view addSubview:helpView.view];
+    } else [helpView release];
+    //[readme removeFromSuperview];
+    //[self.navigationController.view addSubview:readme];
 }
 
 - (void)viewDidAppear:(BOOL)animated

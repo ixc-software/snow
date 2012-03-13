@@ -67,8 +67,8 @@ static char encodingTable[64] = {
 //        mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
 
 //        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
-        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
-//        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
+//        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
 
 #endif
         
@@ -2903,13 +2903,14 @@ static char encodingTable[64] = {
         return;
     }
     NSString *errorSerialization;
+    //NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",allObjects);
+
     NSData *allArchivedObjects = [NSPropertyListSerialization dataFromPropertyList:allObjects format:NSPropertyListBinaryFormat_v1_0 errorDescription:&errorSerialization];
     if (errorSerialization) NSLog(@"CLIENT CONTRORLER: PUT OBJECT SerializationFailed:%@",errorSerialization);
     NSString *allObjectsString = [self base64EncodingData:allArchivedObjects];
 
 
     [prepeareForJSONRequest setValue:allObjectsString forKey:@"necessaryData"];
-    //NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",prepeareForJSONRequest);
 
     NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"PutObject" withJSONRequest:prepeareForJSONRequest];
     //NSLog(@"CLIENT CONTROLLER PutObject Received:%@",receivedObject);

@@ -713,6 +713,7 @@
 
 /* Begin PBXFileReference section */
 		FA0372411507EB91009B5D1F /* reload.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = reload.png; sourceTree = "<group>"; };
+		FA0497A4150FC0B300F158DE /* snow000002.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = snow000002.xcdatamodel; sourceTree = "<group>"; };
 		FA0D450D14FCBCDA00CDDCF2 /* ParseCSV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseCSV.h; sourceTree = "<group>"; };
 		FA0D450E14FCBCDA00CDDCF2 /* ParseCSV.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParseCSV.m; sourceTree = "<group>"; };
 		FA10F9E714F823590014C545 /* CountrySpecificCodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CountrySpecificCodeList.h; sourceTree = "<group>"; };
@@ -3144,6 +3145,7 @@
 		FA195A8514F8206B002E9A89 /* snow.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				FA0497A4150FC0B300F158DE /* snow000002.xcdatamodel */,
 				FAA681BE15089E01008BFCF3 /* snow000001.xcdatamodel */,
 				FA195A8914F8207D002E9A89 /* snow000000.xcdatamodel */,
 				FA195A8614F8206B002E9A89 /* snow.xcdatamodel */,

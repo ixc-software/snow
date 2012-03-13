@@ -661,7 +661,13 @@
             [self showErrorMessage:@"you request was sent to admin"];
             
             dispatch_async(dispatch_get_main_queue(), ^(void) {
-                
+                mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+                NSArray *viewControllers = delegate.tabBarController.viewControllers;
+                UINavigationController *info = [viewControllers objectAtIndex:0];
+                InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
+                [infoObject updateMainBoard];
+                [infoObject.view setNeedsDisplay];
+
                 [UIView animateWithDuration:3 
                                       delay:4 
                                     options:UIViewAnimationOptionBeginFromCurrentState
@@ -683,14 +689,23 @@
                     
                 }
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
-                    
+                    mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+                    NSArray *viewControllers = delegate.tabBarController.viewControllers;
+                    UINavigationController *info = [viewControllers objectAtIndex:0];
+                    InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
+                    [infoObject updateMainBoard];
+
+                    [infoObject.view setNeedsDisplay];
+
                     [UIView animateWithDuration:3 
                                           delay:0 
                                         options:UIViewAnimationOptionBeginFromCurrentState
                                      animations:^{
                                          
                                          self.view.alpha = 0.0;
-                                     } completion:nil];
+                                     } completion:^(BOOL finished) {
+                                          
+                                     }];
                 });
 
             }
