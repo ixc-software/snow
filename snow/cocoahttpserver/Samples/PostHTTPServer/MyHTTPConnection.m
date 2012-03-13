@@ -259,6 +259,8 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN;// | HTTP_LOG_FLAG_TRACE;
         NSString *dateFromString = [result valueForKey:@"dateFrom"];
         NSString *dateToString = [result valueForKey:@"dateTo"];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyyMMddhh:mm:ss"];
+
         NSDate *dateFrom = [dateFormatter dateFromString:dateFromString];
         NSDate *dateTo = [dateFormatter dateFromString:dateToString];
         [dateFormatter release];

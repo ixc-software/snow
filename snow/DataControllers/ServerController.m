@@ -892,8 +892,9 @@ static char encodingTable[64] = {
             NSEntityDescription *entity = [NSEntityDescription entityForName:mainObjectEntity inManagedObjectContext:self.moc];
             [fetchRequest setEntity:entity];
             NSPredicate *predicate = nil;
-            if (dateFrom && dateTo) predicate = [NSPredicate predicateWithFormat:@"(GUID == %@) AND (modificationDate > %@) AND (modificationDate < %@)",mainObjectGUID,dateFrom,dateTo];
-            else predicate = [NSPredicate predicateWithFormat:@"(GUID == %@)",mainObjectGUID];
+            //if (dateFrom && dateTo) predicate = [NSPredicate predicateWithFormat:@"(GUID == %@)",mainObjectGUID];
+            //else 
+            predicate = [NSPredicate predicateWithFormat:@"(GUID == %@)",mainObjectGUID];
             
             [fetchRequest setPredicate:predicate];
             NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequest error:&error];
@@ -920,7 +921,8 @@ static char encodingTable[64] = {
                 if (destinationEntity) {
                     NSMutableArray *allGUIDs = [[NSMutableArray alloc] init];
                     [fetchRequest setEntity:destinationEntity];
-                    predicate = [NSPredicate predicateWithFormat:@"(%K == %@)",relationshipNameForEntity,findedObject];
+                    if (dateFrom && dateTo) predicate = [NSPredicate predicateWithFormat:@"(%K == %@) AND (modificationDate > %@) AND (modificationDate < %@)",relationshipNameForEntity,findedObject,dateFrom,dateTo];
+                    else predicate = [NSPredicate predicateWithFormat:@"(%K == %@)",relationshipNameForEntity,findedObject];
                     [fetchRequest setPredicate:predicate];
                     [fetchRequest setResultType:NSDictionaryResultType];
                     [fetchRequest setPropertiesToFetch:[NSArray arrayWithObject:@"GUID"]];
