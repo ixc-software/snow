@@ -418,8 +418,8 @@
         
         NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
         [numberFormatter setDecimalSeparator:@"."];
-        
-        [invoices enumerateObjectsWithOptions:NSSortStable usingBlock:^(NSDictionary *invoice, NSUInteger idx, BOOL *stop) {
+        for (NSDictionary *invoice in invoices) {
+        //[invoices enumerateObjectsWithOptions:NSSortStable usingBlock:^(NSDictionary *invoice, NSUInteger idx, BOOL *stop) {
             predicate = [NSPredicate predicateWithFormat:@"(externalID == %@)",[invoice valueForKey:@"id"]];
             InvoicesAndPayments *newInvoice = nil;
             NSSet *filteredInvoices = [currentInvoicesAndPayments filteredSetUsingPredicate:predicate];
@@ -488,7 +488,7 @@
             
             newInvoice.details = [invoice valueForKey:@"comment"];
             
-        }] ;
+        };
         [formatter release],formatter = nil;
         [numberFormatter release],numberFormatter = nil;
         //NSLog(@"FINANCIAL:updated for carrier:%@",carrier.name);

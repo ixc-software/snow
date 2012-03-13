@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FA01830B150F28E0002EBAFE /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6DBB15150E95AC0090BDA4 /* IOKit.framework */; };
 		FA0372421507EB91009B5D1F /* reload.png in Resources */ = {isa = PBXBuildFile; fileRef = FA0372411507EB91009B5D1F /* reload.png */; };
 		FA0D450F14FCBCDA00CDDCF2 /* ParseCSV.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0D450E14FCBCDA00CDDCF2 /* ParseCSV.m */; };
 		FA0D451014FCBCDA00CDDCF2 /* ParseCSV.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0D450E14FCBCDA00CDDCF2 /* ParseCSV.m */; };
@@ -472,7 +473,6 @@
 		FA6DBB03150E6E0D0090BDA4 /* profit.png in Resources */ = {isa = PBXBuildFile; fileRef = FA6DBB02150E6E0D0090BDA4 /* profit.png */; };
 		FA6DBB09150E70E70090BDA4 /* customer-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = FA6DBB08150E70E70090BDA4 /* customer-icon.png */; };
 		FA6DBB0B150E713A0090BDA4 /* carriersList.png in Resources */ = {isa = PBXBuildFile; fileRef = FA6DBB0A150E713A0090BDA4 /* carriersList.png */; };
-		FA6DBB16150E95AD0090BDA4 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6DBB15150E95AC0090BDA4 /* IOKit.framework */; };
 		FA714AF8150621FE0025123B /* NSMutableURLRequest+Parameters.m in Sources */ = {isa = PBXBuildFile; fileRef = FA714AEC150621FE0025123B /* NSMutableURLRequest+Parameters.m */; };
 		FA714AF9150621FE0025123B /* NSMutableURLRequest+Parameters.m in Sources */ = {isa = PBXBuildFile; fileRef = FA714AEC150621FE0025123B /* NSMutableURLRequest+Parameters.m */; };
 		FA714AFA150621FE0025123B /* NSMutableURLRequest+Parameters.m in Sources */ = {isa = PBXBuildFile; fileRef = FA714AEC150621FE0025123B /* NSMutableURLRequest+Parameters.m */; };
@@ -1170,7 +1170,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA6DBB16150E95AD0090BDA4 /* IOKit.framework in Frameworks */,
+				FA01830B150F28E0002EBAFE /* IOKit.framework in Frameworks */,
 				FA4A0EB414F8A439001A2139 /* WebKit.framework in Frameworks */,
 				FA10FC5314F8468D0014C545 /* CalendarStore.framework in Frameworks */,
 				FA10FC5414F8468D0014C545 /* SystemConfiguration.framework in Frameworks */,
@@ -3017,7 +3017,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
@@ -3045,7 +3045,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",

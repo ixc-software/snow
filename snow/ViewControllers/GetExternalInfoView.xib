@@ -3,12 +3,12 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
 		<string key="IBDocument.SystemVersion">11D50</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2182</string>
 		<string key="IBDocument.AppKitVersion">1138.32</string>
 		<string key="IBDocument.HIToolboxVersion">568.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1938</string>
+			<string key="NS.object.0">2182</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSMenuItem</string>
@@ -76,7 +76,7 @@
 														<string key="NSFrameSize">{1170, 91}</string>
 														<reference key="NSSuperview" ref="385330240"/>
 														<reference key="NSWindow"/>
-														<reference key="NSNextKeyView" ref="334770221"/>
+														<reference key="NSNextKeyView" ref="639639765"/>
 														<int key="NSViewLayerContentsRedrawPolicy">2</int>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSTableHeaderView" key="NSHeaderView" id="604758905">
@@ -526,7 +526,7 @@
 										<string key="NSFrame">{{18, 14}, {1172, 109}}</string>
 										<reference key="NSSuperview" ref="437019650"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView" ref="639639765"/>
+										<reference key="NSNextKeyView" ref="385330240"/>
 										<int key="NSViewLayerContentsRedrawPolicy">2</int>
 										<int key="NSsFlags">133650</int>
 										<reference key="NSVScroller" ref="334770221"/>
@@ -541,7 +541,6 @@
 										<string key="NSFrame">{{1193, 99}, {27, 25}}</string>
 										<reference key="NSSuperview" ref="437019650"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView"/>
 										<int key="NSViewLayerContentsRedrawPolicy">2</int>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSButtonCell" key="NSCell" id="699051409">
@@ -869,7 +868,7 @@
 														<string key="NSFrameSize">{998, 164}</string>
 														<reference key="NSSuperview" ref="919247576"/>
 														<reference key="NSWindow"/>
-														<reference key="NSNextKeyView" ref="808335924"/>
+														<reference key="NSNextKeyView" ref="695256294"/>
 														<int key="NSViewLayerContentsRedrawPolicy">2</int>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSTableHeaderView" key="NSHeaderView" id="755076526">
@@ -1143,7 +1142,7 @@
 										<string key="NSFrame">{{18, 222}, {1000, 182}}</string>
 										<reference key="NSSuperview" ref="437019650"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView" ref="695256294"/>
+										<reference key="NSNextKeyView" ref="919247576"/>
 										<int key="NSViewLayerContentsRedrawPolicy">2</int>
 										<int key="NSsFlags">133682</int>
 										<reference key="NSVScroller" ref="808335924"/>
@@ -3494,6 +3493,11 @@
 						</object>
 					</object>
 					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="_currentUserInfoList">NSButton</string>
+						<string key="_mainLogo">NSImageView</string>
+						<string key="_mainLogoTitle">NSTextField</string>
+						<string key="_showHideUserCompanyInfo">NSButton</string>
+						<string key="connections">NSButton</string>
 						<string key="currentUserInfoList">NSButton</string>
 						<string key="getExternalInfoButton">NSButton</string>
 						<string key="getExternalInfoProgress">NSProgressIndicator</string>
@@ -3508,6 +3512,26 @@
 						<string key="window">NSWindow</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="_currentUserInfoList">
+							<string key="name">_currentUserInfoList</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="_mainLogo">
+							<string key="name">_mainLogo</string>
+							<string key="candidateClassName">NSImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="_mainLogoTitle">
+							<string key="name">_mainLogoTitle</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="_showHideUserCompanyInfo">
+							<string key="name">_showHideUserCompanyInfo</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="connections">
+							<string key="name">connections</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
 						<object class="IBToOneOutletInfo" key="currentUserInfoList">
 							<string key="name">currentUserInfoList</string>
 							<string key="candidateClassName">NSButton</string>

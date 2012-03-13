@@ -20,6 +20,7 @@
 #import "GetExternalInfoOperation.h"
 
 #import <QuartzCore/QuartzCore.h>
+#import <IOKit/IOKitLib.h>
 
 #import "Carrier.h"
 
