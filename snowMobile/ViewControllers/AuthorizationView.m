@@ -673,23 +673,26 @@
             
         } else {
             if (![isError boolValue] ) {
-                mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
-
-                NSManagedObject *finalObject = [delegate.managedObjectContext objectWithID:objectID];
-                if ([finalObject.entity.name isEqualToString:@"CompanyStuff"]) {
-                    
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^(void) {
+                if (objectID) {
+                    mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+                    NSManagedObject *finalObject = [delegate.managedObjectContext objectWithID:objectID];
+                    if ([finalObject.entity.name isEqualToString:@"CompanyStuff"]) {
                         
-                        [UIView animateWithDuration:3 
-                                              delay:0 
-                                            options:UIViewAnimationOptionBeginFromCurrentState
-                                         animations:^{
-                                             
-                                             self.view.alpha = 0.0;
-                                         } completion:nil];
-                    });
+                        
+                    }
+                    
                 }
+                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                    
+                    [UIView animateWithDuration:3 
+                                          delay:0 
+                                        options:UIViewAnimationOptionBeginFromCurrentState
+                                     animations:^{
+                                         
+                                         self.view.alpha = 0.0;
+                                     } completion:nil];
+                });
+
             }
         }
         

@@ -341,14 +341,10 @@
 
 -(void) updateDestinations;
 {
-    //dispatch_async(dispatch_get_main_queue(), ^(void) {
-    
     NSUInteger selectedSegmentIndex = selectRoutes.selectedSegmentIndex;
-    //NSLog(@"selected index:%u isRoutesForSaleListUpdated:%@ isRoutesWeBuyListUpdated:%@ isRoutesPushlistListUpdated:%@",selectedSegmentIndex,[NSNumber numberWithBool:isRoutesForSaleListUpdated],[NSNumber numberWithBool:isRoutesWeBuyListUpdated],[NSNumber numberWithBool:isRoutesPushlistListUpdated]); 
-    //});
+    NSLog(@"selected index:%u isRoutesForSaleListUpdated:%@ isRoutesWeBuyListUpdated:%@ isRoutesPushlistListUpdated:%@",selectedSegmentIndex,[NSNumber numberWithBool:isRoutesForSaleListUpdated],[NSNumber numberWithBool:isRoutesWeBuyListUpdated],[NSNumber numberWithBool:isRoutesPushlistListUpdated]); 
     if (isRoutesWeBuyListUpdated || isRoutesPushlistListUpdated || isRoutesForSaleListUpdated) return;
-    //else isRoutesListUpdated = YES;
-    //NSUInteger selectedSegmentIndex = selectRoutes.selectedSegmentIndex;
+    
     
     NSString *lastUpdateTimeKey = nil;
     NSString *entity = nil;
@@ -372,7 +368,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
         
         NSDate *lastUpdate = [[NSUserDefaults standardUserDefaults] objectForKey:lastUpdateTimeKey];
-        if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 3600 ) {
+        if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 1 ) {
             [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:lastUpdateTimeKey];
             dispatch_async(dispatch_get_main_queue(), ^(void) {
                 if (selectedSegmentIndex == 2) addRoutes.hidden = NO;
@@ -386,9 +382,6 @@
                     cancelAllUpdatesButton.hidden = NO;
                     
                     routesChangeFilterWithOrWithoutTraffic.hidden = YES;
-                    
-                    
-                    //[self.navigationController setToolbarHidden:NO animated:YES];//progressView.hidden = NO; 
                 }
                 else if (selectedSegmentIndex == 1 && isRoutesWeBuyListUpdated == YES) {
                     carriersProgress.hidden = NO;
@@ -398,8 +391,6 @@
                     cancelAllUpdatesButton.hidden = NO;
                     
                     routesChangeFilterWithOrWithoutTraffic.hidden = YES;
-                    
-                    //[self.navigationController setToolbarHidden:NO animated:YES];//progressView.hidden = NO;
                 }
                 else if (selectedSegmentIndex == 2 && isRoutesPushlistListUpdated == YES) { 
                     carriersProgress.hidden = NO;
@@ -409,8 +400,6 @@
                     cancelAllUpdatesButton.hidden = NO;
                     
                     routesChangeFilterWithOrWithoutTraffic.hidden = YES;
-                    
-                    //[self.navigationController setToolbarHidden:NO animated:YES];//progressView.hidden = NO;
                 }
                 else { 
                     carriersProgress.hidden = YES;
@@ -421,19 +410,16 @@
                     
                     if (selectRoutes.selectedSegmentIndex == 2) routesChangeFilterWithOrWithoutTraffic.hidden = YES;
                     else routesChangeFilterWithOrWithoutTraffic.hidden = NO;
-                    //NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
-                    
-                    
-                    //        [self.navigationController setToolbarHidden:YES animated:YES];progressView.hidden = YES;
                 }
 
-                //[self.navigationController setToolbarHidden:NO animated:YES];
+                [self.navigationController setToolbarHidden:NO animated:YES];
                 carriersProgress.hidden = NO;
                 carriersProgressTitle.hidden = NO;
                 operationTitle.hidden = NO;
                 operationProgress.hidden = NO;
                 cancelAllUpdatesButton.hidden = NO;
                 routesChangeFilterWithOrWithoutTraffic.hidden = YES;
+
             });
             
             mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -496,9 +482,62 @@
                     else routesChangeFilterWithOrWithoutTraffic.hidden = NO;
                 cancelAllUpdates = NO;
                 cancelAllUpdatesButton.enabled = YES;
+                [self.navigationController setToolbarHidden:YES animated:YES];
                 [self.tableView reloadData];
             });
             [clientController release];
+            NSError *error = nil;
+            
+            NSFetchRequest *request = [[NSFetchRequest alloc] init];
+            [request setEntity:[NSEntityDescription entityForName:@"DestinationsListForSale"
+                                           inManagedObjectContext:self.managedObjectContext]];
+            NSString *companyGUID = admin.currentCompany.GUID;
+            
+            NSPredicate *predicateLastUsedProfit = [NSPredicate predicateWithFormat:@"(lastUsedProfit != 0) AND (carrier.companyStuff.currentCompany.GUID == %@)",companyGUID];
+            
+            NSExpression *ex = [NSExpression expressionForFunction:@"sum:" 
+                                                         arguments:[NSArray arrayWithObject:[NSExpression expressionForKeyPath:@"lastUsedProfit"]]];
+            
+            NSExpressionDescription *ed = [[NSExpressionDescription alloc] init];
+            [ed setName:@"result"];
+            [ed setExpression:ex];
+            [ed setExpressionResultType:NSInteger64AttributeType];
+            
+            NSExpression *totalIncome = [NSExpression expressionForFunction:@"sum:" 
+                                                                  arguments:[NSArray arrayWithObject:[NSExpression expressionForKeyPath:@"lastUsedIncome"]]];
+            
+            NSExpressionDescription *totalIncomeDesc = [[NSExpressionDescription alloc] init];
+            [totalIncomeDesc setName:@"totalIncome"];
+            [totalIncomeDesc setExpression:totalIncome];
+            [totalIncomeDesc setExpressionResultType:NSInteger64AttributeType];
+            
+            NSArray *properties = [NSArray arrayWithObjects:ed,totalIncomeDesc,nil];
+            [ed release];
+            [totalIncomeDesc release];
+            [request setPropertiesToFetch:properties];
+            [request setResultType:NSDictionaryResultType];
+            [request setPredicate:predicateLastUsedProfit];
+            
+            NSArray *destinations = [self.managedObjectContext executeFetchRequest:request error:&error]; 
+            if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
+            NSDictionary *resultsDictionary = [destinations objectAtIndex:0];
+            NSNumber *totalProfitNumberForUsing = [resultsDictionary objectForKey:@"result"];
+            NSNumber *totalIncomeNumberForUsing = [resultsDictionary objectForKey:@"totalIncome"];
+            
+            
+            NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+            formatter.maximumFractionDigits = 0;
+            
+            [[NSUserDefaults standardUserDefaults] setValue:[formatter stringFromNumber:totalProfitNumberForUsing] forKey:@"totalProfit"];
+            [[NSUserDefaults standardUserDefaults] setValue:[formatter stringFromNumber:totalIncomeNumberForUsing] forKey:@"totalIncome"];
+            NSNumber *profitability = [NSNumber numberWithDouble:[totalProfitNumberForUsing doubleValue]/[totalIncomeNumberForUsing doubleValue] * 100];
+            
+            NSString *savedProfitability = [NSString stringWithFormat:@"%@%%",[formatter stringFromNumber:profitability]];
+            [[NSUserDefaults standardUserDefaults] setValue:savedProfitability forKey:@"profitability"];
+
+            [formatter release];
+            [request release];
+            NSLog(@"Total profit (24h) is:%@ total income is:%@ profitability:%@",totalProfitNumberForUsing,totalIncomeNumberForUsing,savedProfitability);
 
             [[NSUserDefaults standardUserDefaults] synchronize];
             if (selectedSegmentIndex == 0) { 
@@ -524,15 +563,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-//    [self.progressView.layer setCornerRadius:5];
-//    [self.progressView.layer setBorderColor:[UIColor blackColor].CGColor];
-//    [self.progressView.layer setBorderWidth:1.5f];
-//    [self.progressView.layer setShadowColor:[UIColor whiteColor].CGColor];
-//    [self.progressView.layer setShadowOpacity:0.8];
-//    [self.progressView.layer setShadowRadius:5];
-//    [self.progressView.layer setShadowOffset:CGSizeMake(1.0, 1.0)];
-    // Do any additional setup after loading the view from its nib.
     shouldBeginEditing = YES;
     
     changedDestinationsIDs = [[NSMutableArray alloc] initWithCapacity:0];
@@ -543,31 +573,18 @@
     
     [tableView addGestureRecognizer:pinchRecognizer];
     [pinchRecognizer release]; 
-
-//    NSLog(@"pinchRecognizer:%@",[tableView gestureRecognizers]);
-
-//    if ([[tableView gestureRecognizers] count] == 0) {
-//        UIPinchGestureRecognizer* pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
-//
-//        [tableView addGestureRecognizer:pinchRecognizer];
-//        [pinchRecognizer release]; 
-//    }
-
     
     self.navigationController.toolbar.backgroundColor = [UIColor clearColor];
     self.navigationController.toolbar.barStyle = UIBarStyleBlack;
     self.navigationController.toolbar.translucent = YES;
     
     self.navigationController.toolbar.tintColor = [UIColor colorWithRed:0.65 green:0.65 blue:0.78 alpha:0.2];
-//    UIBarButtonItem *withTraffic = [[[UIBarButtonItem alloc] initWithTitle:@"with trattic..." style:UIBarButtonItemStyleDone target:self action:@selector(sortRoutesWithTraffic)] autorelease];
-//    UIBarButtonItem *withOutTraffic = [[[UIBarButtonItem alloc] initWithTitle:@"without trattic..." style:UIBarButtonItemStyleBordered target:self action:@selector(sortRoutesWithTraffic)] autorelease];
 
     UIBarButtonItem *itemFor = [[[UIBarButtonItem alloc] initWithCustomView:self.toolBarView] autorelease];
 
     [self setToolbarItems:[NSArray arrayWithObject:itemFor]];
     [routesChangeFilterWithOrWithoutTraffic setHidden:YES];
-    [self.navigationController setToolbarHidden:NO animated:NO];
-
+    [self.navigationController setToolbarHidden:YES animated:NO];
     
     // Set up default values.
     self.tableView.backgroundColor = [UIColor colorWithRed:0.34 green:0.34 blue:0.57 alpha:1.0];
@@ -599,8 +616,6 @@
     isRoutesForSaleListUpdated = NO;
     
     sections = [[NSMutableIndexSet alloc] init];
-//    progressView.backgroundColor = [UIColor clearColor];
-
 }
 
 - (void)viewDidUnload
@@ -681,53 +696,6 @@
 {
     [super viewDidAppear:animated];
     
-//    if (isRoutesListUpdated) {
-//        
-//        dispatch_async(dispatch_get_main_queue(), ^(void) { 
-//            //NSLog(@"status is:%@",status);
-//            
-//            //            UISegmentedControl *alert = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"get updates from server..."]] autorelease];
-//            //            alert.segmentedControlStyle = UISegmentedControlStyleBar;
-//            //            alert.userInteractionEnabled = NO;
-//            //            alert.tintColor = [UIColor colorWithRed:0.65 green:0.65 blue:0.78 alpha:0.2];
-//            //
-//            //            UIActivityIndicatorView *progess = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite] autorelease];
-//            //            [progess startAnimating];
-//            //
-//            //            UIView *finalView = [[[UIView alloc] init] autorelease];
-//            //            alert.frame = CGRectMake(progess.frame.size.width + 10, -(self.navigationController.toolbar.bounds.size.height - alert.frame.size.height), self.navigationController.toolbar.bounds.size.width - (self.navigationController.toolbar.bounds.size.height - alert.frame.size.height + progess.frame.size.width + 10), alert.frame.size.height);
-//            //            progess.frame = CGRectMake(0, -(self.navigationController.toolbar.bounds.size.height - progess.frame.size.height)/2, progess.frame.size.width, progess.frame.size.height);
-//            //
-//            //            [finalView addSubview:alert];
-//            //            [finalView addSubview:progess];
-//            //
-//            //            UIBarButtonItem *item = [[[UIBarButtonItem alloc] initWithCustomView:finalView] autorelease];
-//            //            
-//            //            
-//            //            [self setToolbarItems:[NSArray arrayWithObject:item]];
-//            //            self.navigationController.toolbar.translucent = YES;
-//            //            self.navigationController.toolbar.backgroundColor = [UIColor clearColor];
-//            //            self.navigationController.toolbar.barStyle = UIBarStyleBlack;
-//            //            
-//            //            self.navigationController.toolbar.tintColor = [UIColor colorWithRed:0.65 green:0.65 blue:0.78 alpha:0.2];
-//            //            [alert removeAllSegments];
-//            //            [alert insertSegmentWithTitle:@"get updates from server..." atIndex:0 animated:NO];
-//            //            [self.navigationController setToolbarHidden:NO animated:YES];
-//            //            while (isRoutesListUpdated) {
-//            //                sleep(1);
-//            //            }
-//            //            [self.navigationController setToolbarHidden:YES animated:YES]; 
-//            
-//        });
-//        
-//    } else {
-//        dispatch_async(dispatch_get_main_queue(), ^(void) { 
-//            //            [self.navigationController setToolbarHidden:YES animated:YES]; 
-//            
-//        });
-//    }
-    //    [self updateNavigatorViews];
-    
     sectionsTitles = [[NSArray alloc] initWithArray:[self indexForSectionIndexTitlesForEntity:@"DestinationsListPushList"]];
     //NSLog(@"sectionsTitles:%@",sectionsTitles);
 }
@@ -739,58 +707,11 @@
             
             NSUInteger lastIndex = [sections lastIndex];
             [sectionOpenedAfterViewDissapier addIndex:lastIndex];
-//            [self.tableView beginUpdates];
             [sections removeAllIndexes];
-            
-//            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:lastIndex + 1]] withRowAnimation:UITableViewRowAnimationTop];
-//            [self.tableView endUpdates];
         });
     }
     
     [super viewWillDisappear:animated];
-    // we have new amazing function to add and wait 5 minutes to pickup all changes
-    //if (isRoutesListUpdated) [userController startRegistrationForAllObjectsInFutureArrayForTableView:self.tableView sender:self clientStuffGUID:[[userController authorization] valueForKey:@"GUID"]];
-    //NSLog(@"changedDestinationsIDs:%@",changedDestinationsIDs);
-    
-//    if ([changedDestinationsIDs count] > 0) {
-//        NSMutableArray *destinationsForPost = [[NSMutableArray alloc] init];
-//        
-//        //NSLog(@"changedDestinationsIDs:%@",changedDestinationsIDs);
-//        NSMutableString *twitterText = [[NSMutableString alloc] initWithCapacity:0];
-//        [twitterText appendString:@"I'm currently interesting for those destination (s):"];
-//        NSNumberFormatter *rateFormatter = [[NSNumberFormatter alloc] init];
-//        [rateFormatter setMaximumFractionDigits:5];
-//        
-//        [changedDestinationsIDs enumerateObjectsWithOptions:NSSortStable usingBlock:^(NSManagedObjectID *updatedObjectID, NSUInteger idx, BOOL *stop) {
-//            DestinationsListPushList *object = (DestinationsListPushList *)[self.managedObjectContext objectWithID:updatedObjectID];
-//            NSDictionary *dictionaryForPost = [NSDictionary dictionaryWithObjectsAndKeys:object.country,@"country",object.specific,@"specific",object.rate,@"rate",object.minutesLenght,@"minutesLenght", nil];
-//            [destinationsForPost addObject:dictionaryForPost];
-//            
-//            //[twitterText appendFormat:@"%@/%@ with price %@ volume %@",object.country,object.specific,[rateFormatter stringFromNumber:object.rate],object.minutesLenght];
-//            
-//        }];
-//        mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
-//        [delegate updateTwitterMessagesForDestinations:destinationsForPost];
-//        //[delegate updateTwitterMessagesForText:twitterText];
-//        [twitterText release];
-//        [rateFormatter release];
-//    }
-    //    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-    //        //NSLog(@"isRoutesListUpdated = YES;");
-    //        
-    //        mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
-    //        ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];            
-    //        NSString *result = [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:NO isUserAuthorized:NO];
-    //        if (![result isEqualToString:@"timeout"]) isRoutesListUpdated = YES;;
-    //        [clientController release];
-    ////        if ([result isEqualToString:@"timeout"]) isRoutesListUpdated = NO;
-    //        //[clientController release];
-    //        //isRoutesListUpdated = NO;
-    //    });
-    
-    //self.searchWasActive = [self.searchDisplayController isActive];
-    //self.savedSearchTerm = [self.searchDisplayController.searchBar text];
-    //self.fetchResultControllerSearch = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
@@ -802,36 +723,20 @@
     //NSArray *fetchedObjects = [[self fetchedResultsControllerForTableView:tableView] fetchedObjects];
     //NSLog(@"%@",[fetchedObjects lastObject]);
     NSInteger count = [[[self fetchedResultsController] fetchedObjects] count];
-    //NSInteger count = [[[self fetchedResultsController] fetchedObjects] count] + 1;
     //NSLog(@"Number of sections:%@",[NSNumber numberWithUnsignedInteger:count]);
     return count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    //if (section == 0) return 0;
-    
-    //DestinationsListPushList *object = [[[self fetchedResultsController] fetchedObjects] objectAtIndex:section - 1 ];
-    //    DestinationPushListHeaderView *sectionView = (DestinationPushListHeaderView *)[self.tableView viewWithTag:section + 100];
-    //   
     NSInteger finalResult = 0;
     if ([sections lastIndex] == section) finalResult = 1;
-    //    @synchronized (self) {
-    
-    //        if (openedIndexPath && openedIndexPath.section == section) finalResult = 1;
-    //    };
-    //NSInteger finalResult = [object.opened boolValue] ? 1 : 0;
-    //NSLog(@"Number of rows in section:%@ for country:%@/%@ = %@",[NSNumber numberWithUnsignedInteger:section],object.country,object.specific,[NSNumber numberWithUnsignedInteger:finalResult]);
-    
     return finalResult;
     
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
 {
-//    if (section == 0) return 45;
-//    else 
-        return HEADER_HEIGHT;
-    
+    return HEADER_HEIGHT;
 }
 
 - (void)configureCell:(DestinationsPushListCell *)cell atIndexPath:(NSIndexPath *)indexPath forTableView:(UITableView *)tableView;
@@ -1792,14 +1697,15 @@
 - (void) selectRoutesStart:(id) sender
 {
 //    dispatch_async(dispatch_get_main_queue(), ^(void) { 
-        NSUInteger selectedSegmentIndex = [sender selectedSegmentIndex];
 //
 //        if (selectedSegmentIndex == 0 && self.isRoutesForSaleListUpdated) progressView.hidden = NO; 
 //        else progressView.hidden = YES;
 //        if (selectedSegmentIndex == 1 && self.isRoutesWeBuyListUpdated) progressView.hidden = NO;
 //        else progressView.hidden = YES;
-    if (selectedSegmentIndex == 2) [self.navigationController setToolbarHidden:YES animated:YES];
-    else [self.navigationController setToolbarHidden:NO animated:YES];
+
+//    NSUInteger selectedSegmentIndex = [sender selectedSegmentIndex];
+//    if (selectedSegmentIndex == 2) [self.navigationController setToolbarHidden:YES animated:YES];
+//    else [self.navigationController setToolbarHidden:NO animated:YES];
 
     //    });
     

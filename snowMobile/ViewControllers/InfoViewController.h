@@ -10,20 +10,15 @@
 #import <MessageUI/MessageUI.h>
 #import "SocialNetworksAuthViewController.h"
 #import "CompanyAndUserConfiguration.h"
-//#import "PDColoredProgressView.h"
-//#import "SA_OAuthTwitterController.h"
 
 @class SocialNetworksAuthViewController;
 
 @interface InfoViewController : UIViewController <MFMailComposeViewControllerDelegate>
-//,SA_OAuthTwitterControllerDelegate>
 {
 @private
     UITextView *readme;
     IBOutlet UILabel *operation;
-    //CompanyAndUserConfiguration *companyInfoAndConfig;
     UINavigationController *companyInfoAndConfig;
-    //SA_OAuthTwitterEngine *_engine;
     IBOutlet UIButton *imgButton;
     
 
@@ -34,15 +29,26 @@
 @property (nonatomic, retain)  IBOutlet UILabel *operation;
 @property (nonatomic, retain)  IBOutlet UIProgressView *operationProgress;
 
-//@property (nonatomic, retain) SA_OAuthTwitterEngine *_engine;
-
-
 @property (retain, nonatomic) IBOutlet UIToolbar *errorToolBar;
 
 
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, retain) UINavigationController *companyInfoAndConfig;
 @property (nonatomic, retain) SocialNetworksAuthViewController *socialNetworksViewController;
+
+// main page items
+@property (retain, nonatomic) IBOutlet UILabel *wellcomeTitle;
+@property (retain, nonatomic) IBOutlet UILabel *wellcomeSubTitle;
+@property (retain, nonatomic) IBOutlet UILabel *companyName;
+@property (retain, nonatomic) IBOutlet UILabel *income;
+@property (retain, nonatomic) IBOutlet UILabel *profit;
+@property (retain, nonatomic) IBOutlet UILabel *profitability;
+@property (retain, nonatomic) IBOutlet UILabel *routesQuantityWeBuy;
+@property (retain, nonatomic) IBOutlet UILabel *routesQuantityForSale;
+@property (retain, nonatomic) IBOutlet UILabel *routesQuantityPushList;
+@property (retain, nonatomic) IBOutlet UILabel *carriersQuantity;
+@property (retain, nonatomic) IBOutlet UILabel *routesTitle;
+
 
 -(IBAction)updateTwitter:(id)sender; 
 

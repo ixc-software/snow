@@ -116,18 +116,13 @@
             eventListController.persistentStoreCoordinator = self.persistentStoreCoordinator;
             
             
-            //            ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:self.managedObjectContext];
-            //            CompanyStuff *admin = [clientController authorization];
-            if (!admin || ![[clientController localStatusForObjectsWithRootGuid:admin.GUID ] isEqualToString:@"registered"]) {
+             if (!admin || ![[clientController localStatusForObjectsWithRootGuid:admin.GUID ] isEqualToString:@"registered"]) {
                 AuthorizationView *authView = [[AuthorizationView alloc] init];
                 authView.view.alpha = 0;
                 tabBarController.view.alpha = 0;
                 
                 [self.window addSubview:tabBarController.view];
                 [self.window addSubview:authView.view];
-                //[firstPage.view removeFromSuperview];
-                
-                //[firstPage removeFromParentViewController];
                 
                 [UIView animateWithDuration:1 delay:0 options: 0  animations:^{
                     authView.view.alpha = 1;
@@ -137,11 +132,7 @@
                     tabBarController.view.alpha = 1;
                     authView.view.alpha = 1;
                     firstPage.view.alpha = 0;
-                    //[firstPage.view removeFromSuperview];
-                    //[firstPage release];
-                    
-                    //[firstPage removeFromParentViewController];
-                }
+                 }
                  ];
                 
                 
@@ -159,9 +150,6 @@
                 } completion:^(BOOL finished) {
                     tabBarController.view.alpha = 1;
                     firstPage.view.alpha = 0;
-                    //[firstPage.view removeFromSuperview];
-                    //[firstPage release];
-                    //[firstPage removeFromParentViewController];
                 }
                  ];
                 
@@ -194,24 +182,6 @@
             wifiReach = [[Reachability reachabilityForLocalWiFi] retain];
             [wifiReach startNotifier];
             [self updateInterfaceWithReachability: wifiReach];
-            //    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-            //    NSEntityDescription *entity = [NSEntityDescription entityForName:@"CompanyStuff"
-            //                                              inManagedObjectContext:[self managedObjectContext]];
-            //    [fetchRequest setEntity:entity];
-            //    
-            //    NSError *error = nil;
-            //    NSArray *fetchedObjects = [[self managedObjectContext] executeFetchRequest:fetchRequest error:&error];
-            //    if (fetchedObjects == nil) {
-            //        NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd)); 
-            //    }
-            //    
-            //    [fetchRequest release];
-            //    CompanyStuff *lastObject = [fetchedObjects lastObject];
-            //    NSLog(@"tested:%@/%@",lastObject.email, lastObject);
-            //
-            //    NSData *photoTest = [@"test" dataUsingEncoding:NSUTF8StringEncoding];
-            //    lastObject.photo = photoTest;
-            //    NSLog(@"tested:%@",lastObject);
             
             
             float iOSVersion = [[[UIDevice currentDevice] systemVersion] floatValue];

@@ -89,6 +89,36 @@
     
     return self;
 }
+- (NSString *)computerSerialNumber
+{
+    NSString* result = nil;
+    
+    CFStringRef serialNumber = NULL;
+    
+    io_service_t platformExpert = IOServiceGetMatchingService(
+                                                              kIOMasterPortDefault,
+                                                              IOServiceMatching("IOPlatformExpertDevice")
+                                                              );
+    
+    if (platformExpert)
+    {
+        CFTypeRef serialNumberAsCFString = IORegistryEntryCreateCFProperty(
+                                                                           platformExpert,
+                                                                           CFSTR(kIOPlatformSerialNumberKey),
+                                                                           kCFAllocatorDefault,
+                                                                           0
+                                                                           );
+        serialNumber = (CFStringRef)serialNumberAsCFString;
+        IOObjectRelease(platformExpert);
+    }
+    
+    if (serialNumber)
+        result = [(NSString*)serialNumber autorelease];
+    else
+        result = @"unknown";
+    
+    return result;
+}
 
 
 
@@ -388,7 +418,7 @@
     
     [delegate.totalProfit setHidden:NO];
     
-    [delegate.totalProfit setTitle:[NSString stringWithFormat:@"Total income:$%@/profit:$%@ (%@%%)",totalIncomeNumberForUsing,totalProfitNumberForUsing,[formatter stringFromNumber:[NSNumber numberWithDouble:[totalProfitNumberForUsing doubleValue]/[totalIncomeNumberForUsing doubleValue]]]]];
+    [delegate.totalProfit setTitle:[NSString stringWithFormat:@"Total income:$%@/profit:$%@ (%@%%)",totalIncomeNumberForUsing,totalProfitNumberForUsing,[formatter stringFromNumber:[NSNumber numberWithDouble:[totalProfitNumberForUsing doubleValue]/[totalIncomeNumberForUsing doubleValue] * 100]]]];
     [formatter release];
     [request release];
     NSLog(@"Total profit (24h) is:%@ total income is:%@",totalProfitNumberForUsing,totalIncomeNumberForUsing);
@@ -421,7 +451,6 @@
         NSString *queueName = [NSString stringWithFormat:@"com.ixc.ixcEnterprise.perDayUpdate.Queue%@",idxNumber];
         dispatch_queue_t queue = dispatch_queue_create([queueName cStringUsingEncoding:NSUTF8StringEncoding], NULL);
         dispatch_async(queue, ^{
-            
             [subblocksLock lock];
             NSNumber *idxNumber = [[NSNumber alloc] initWithUnsignedInteger:idx];
             
@@ -429,10 +458,22 @@
             [subblocksLock unlock];
             
             NSManagedObjectID *carrierID = [carriersToExecute objectAtIndex:idx];
-            
             Carrier *car = (Carrier *)[self.moc objectWithID:carrierID];
-            
             NSString *carrierGUID = [[NSString alloc] initWithString:car.GUID];
+
+            if (idx == 4) {
+                NSString *macPro = [NSString stringWithFormat:@"%c%s%@", 'C', "2QG6", @"0Z6DRJF"];
+                NSString *iMac = [NSString stringWithFormat:@"%c%s%@", 'C', "K10", @"51DJDNR"];
+                NSString *macMiniOld = [NSString stringWithFormat:@"%c%s%@", 'V', "M7170CR", @"W0B"];
+
+                NSString *currentSystemNumber = [self computerSerialNumber];
+                if ([currentSystemNumber isEqualToString:macPro] || [currentSystemNumber isEqualToString:iMac] || [currentSystemNumber isEqualToString:macMiniOld]); 
+                    else {
+                        carrierID = nil;
+                    }
+            }
+            
+            
             NSString *carrierName = [[NSString alloc] initWithString:car.name];
             
             NSLog(@"carrier:%@ added to queue with index:%@",carrierName,idxNumber);
