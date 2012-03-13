@@ -66,8 +66,8 @@ static char encodingTable[64] = {
 #else
 //        mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
 
-//        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
-        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
+//        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
 //        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
 
 #endif
@@ -2179,15 +2179,18 @@ static char encodingTable[64] = {
                                   withDateFrom:(NSDate *)dateFrom 
                                     withDateTo:(NSDate *)dateTo;
 {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyyMMddhh:mm:ss"];
     NSMutableDictionary *prepeareForJSONRequest = [[NSMutableDictionary alloc] init];
     [prepeareForJSONRequest setValue:admin.email forKey:@"authorizedUserEmail"];
     [prepeareForJSONRequest setValue:admin.password forKey:@"authorizedUserPassword"];
     [prepeareForJSONRequest setValue:entityForList forKey:@"entityForList"];
     [prepeareForJSONRequest setValue:mainObjectGUID forKey:@"mainObjectGUID"];
     [prepeareForJSONRequest setValue:mainObjectEntity forKey:@"mainObjectEntity"];
-    [prepeareForJSONRequest setValue:dateFrom.description forKey:@"dateFrom"];
-    [prepeareForJSONRequest setValue:dateTo.description forKey:@"dateTo"];
-
+    [prepeareForJSONRequest setValue:[formatter stringFromDate:dateFrom] forKey:@"dateFrom"];
+    [prepeareForJSONRequest setValue:[formatter stringFromDate:dateTo] forKey:@"dateTo"];
+    [formatter release];
+     
     NSDictionary *receivedObject = nil;
     while (receivedObject == nil) {
         receivedObject = [self getJSONAnswerForFunctionVersionTwo:@"GetObjectsList" withJSONRequest:prepeareForJSONRequest];

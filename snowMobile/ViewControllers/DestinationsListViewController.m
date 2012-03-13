@@ -448,7 +448,7 @@
             NSDate *dateFrom = nil;
             NSDate *dateTo = nil;
 //            if (lastFullUpdate != nil && -[lastFullUpdate timeIntervalSinceNow] < 36000) {
-                dateFrom = [NSDate dateWithTimeIntervalSinceNow:-360];
+                dateFrom = [NSDate dateWithTimeIntervalSinceNow:-3600];
                 dateTo = [NSDate date];
                 NSLog(@"DESTINATIONS LIST: using only last 10 hour period for update");
 //            } else {
