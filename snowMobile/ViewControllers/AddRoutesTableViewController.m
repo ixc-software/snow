@@ -926,7 +926,6 @@
     
     if(searchString.length) {
         
-//        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(country CONTAINS[cd] %@) OR (specific CONTAINS[cd] %@) OR (codes CONTAINS[cd] %@)", searchString,searchString,searchString];
         NormalizedCountryTransformer *transformerCountry = [[NormalizedCountryTransformer alloc] init];
         NSPredicate *predicateCountryUnModified = [NSPredicate predicateWithFormat:@"(country CONTAINS[cd] %@)",searchString];
         NSPredicate *predicateCountry = [transformerCountry reverseTransformedValue:predicateCountryUnModified];

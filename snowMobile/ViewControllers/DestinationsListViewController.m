@@ -1310,7 +1310,9 @@
 
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
-{
+{    
+    keyboardIsShowing = NO;
+
     //self.bar.showsCancelButton = YES;
     //NSLog(@"searchBar:textDidChange: isFirstResponder: %i for search string:%@", [self.bar isFirstResponder],searchText);
     [fetchedResultsController release],fetchedResultsController = nil;
