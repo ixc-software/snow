@@ -447,19 +447,20 @@
             } else allCarriers = admin.carrier;
             NSDate *dateFrom = nil;
             NSDate *dateTo = nil;
-//            if (lastFullUpdate != nil && -[lastFullUpdate timeIntervalSinceNow] < 36000) {
-                dateFrom = [NSDate dateWithTimeIntervalSinceNow:-360];
+            if (lastFullUpdate != nil && -[lastFullUpdate timeIntervalSinceNow] < 36000) {
+                dateFrom = [NSDate dateWithTimeIntervalSinceNow:-36000];
                 dateTo = [NSDate date];
                 NSLog(@"DESTINATIONS LIST: using only last 10 hour period for update");
-//            } else {
-//                NSLog(@"DESTINATIONS LIST: FULL update");
-//                [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:lastFullUpdateTimeKey];
-//            }
+            } else {
+                NSLog(@"DESTINATIONS LIST: FULL update");
+                [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:lastFullUpdateTimeKey];
+            }
             NSArray *allGUIDsCarriers = [clientController getAllObjectsListWithEntityForList:@"Carrier" withMainObjectGUID:admin.GUID withMainObjectEntity:@"CompanyStuff" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
             NSSet *filteredCarriers = [allCarriers filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"GUID IN %@",allGUIDsCarriers]];
-            
+            NSLog(@"DESTINATIONS LIST: using only last 10 hour period for update carriers count:%@",[NSNumber numberWithUnsignedInteger:filteredCarriers.count]);
 
-            NSUInteger allCarriersCount = allCarriers.count;
+
+            NSUInteger allCarriersCount = filteredCarriers.count;
             __block NSUInteger idxCarriers = 0;
             
             [filteredCarriers enumerateObjectsUsingBlock:^(Carrier *carrier, BOOL *stop) {
