@@ -419,7 +419,7 @@
     
     [delegate.totalProfit setHidden:NO];
     
-    [delegate.totalProfit setTitle:[NSString stringWithFormat:@"Total income:$%@/profit:$%@ (%@%%)",totalIncomeNumberForUsing,totalProfitNumberForUsing,[formatter stringFromNumber:[NSNumber numberWithDouble:[totalProfitNumberForUsing doubleValue]/[totalIncomeNumberForUsing doubleValue] * 100]]]];
+    [delegate.totalProfit setTitle:[NSString stringWithFormat:@"Total income:$%@/profit:$%@ (%@%%)",totalIncomeNumberForUsing,totalProfitNumberForUsing,[formatter stringFromNumber:[NSNumber numberWithDouble:[totalProfitNumberForUsing doubleValue]/[totalIncomeNumberForUsing doubleValue]]]]];
     [formatter release];
     [request release];
     NSLog(@"Total profit (24h) is:%@ total income is:%@",totalProfitNumberForUsing,totalIncomeNumberForUsing);
