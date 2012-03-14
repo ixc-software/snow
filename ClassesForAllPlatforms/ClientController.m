@@ -66,8 +66,8 @@ static char encodingTable[64] = {
 #else
 //        mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
 
-        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
-//        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+//        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
+        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
 //        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
 
 #endif
