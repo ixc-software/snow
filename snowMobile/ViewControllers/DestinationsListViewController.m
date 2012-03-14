@@ -356,14 +356,12 @@
         lastFullUpdateTimeKey = @"lastFullDestinationsForSaleUpdatingTime";
         entity = @"DestinationsListForSale";
         [self.navigationController setToolbarHidden:NO animated:YES];
-        isRoutesForSaleListUpdated = YES;
     }
     if (selectedSegmentIndex == 1) { 
         lastUpdateTimeKey = @"lastDestinationsWeBuyUpdatingTime";
         lastFullUpdateTimeKey = @"lastFullDestinationsWeBuyUpdatingTime";
 
         entity = @"DestinationsListWeBuy";
-        isRoutesWeBuyListUpdated = YES;
         [self.navigationController setToolbarHidden:NO animated:YES];
 
     }
@@ -371,7 +369,6 @@
         lastUpdateTimeKey = @"lastDestinationsPushListUpdatingTime";
         lastFullUpdateTimeKey = @"lastFullDestinationsPushListUpdatingTime";
         entity = @"DestinationsListPushList";
-        isRoutesPushlistListUpdated = YES;
         [self.navigationController setToolbarHidden:YES animated:YES];
 
     }
@@ -387,7 +384,9 @@
                 if (selectedSegmentIndex == 2) addRoutes.hidden = NO;
                 else addRoutes.hidden = YES;
                 
-                if (selectedSegmentIndex == 0 && isRoutesForSaleListUpdated == YES) { 
+                if (selectedSegmentIndex == 0) {
+                    isRoutesForSaleListUpdated = YES;
+
                     carriersProgress.hidden = NO;
                     carriersProgressTitle.hidden = NO;
                     operationTitle.hidden = NO;
@@ -396,7 +395,9 @@
                     
                     routesChangeFilterWithOrWithoutTraffic.hidden = YES;
                 }
-                else if (selectedSegmentIndex == 1 && isRoutesWeBuyListUpdated == YES) {
+                else if (selectedSegmentIndex == 1) {
+                    isRoutesWeBuyListUpdated = YES;
+
                     carriersProgress.hidden = NO;
                     carriersProgressTitle.hidden = NO;
                     operationTitle.hidden = NO;
@@ -405,7 +406,9 @@
                     
                     routesChangeFilterWithOrWithoutTraffic.hidden = YES;
                 }
-                else if (selectedSegmentIndex == 2 && isRoutesPushlistListUpdated == YES) { 
+                else if (selectedSegmentIndex == 2) { 
+                    isRoutesPushlistListUpdated = YES;
+                    
                     carriersProgress.hidden = NO;
                     carriersProgressTitle.hidden = NO;
                     operationTitle.hidden = NO;
@@ -448,7 +451,7 @@
             NSDate *dateFrom = nil;
             NSDate *dateTo = nil;
             if (lastFullUpdate != nil && -[lastFullUpdate timeIntervalSinceNow] < 36000) {
-                dateFrom = [NSDate dateWithTimeIntervalSinceNow:-36000];
+                dateFrom = lastUpdate;//[NSDate dateWithTimeIntervalSinceNow:-36000];
                 dateTo = [NSDate date];
                 NSLog(@"DESTINATIONS LIST: using only last 10 hour period for update");
             } else {
@@ -511,7 +514,7 @@
                     else routesChangeFilterWithOrWithoutTraffic.hidden = NO;
                 cancelAllUpdates = NO;
                 cancelAllUpdatesButton.enabled = YES;
-                [self.navigationController setToolbarHidden:YES animated:YES];
+                //[self.navigationController setToolbarHidden:YES animated:YES];
                 [self.tableView reloadData];
             });
             [clientController release];
@@ -569,9 +572,19 @@
             NSLog(@"Total profit (24h) is:%@ total income is:%@ profitability:%@",totalProfitNumberForUsing,totalIncomeNumberForUsing,savedProfitability);
 
             [[NSUserDefaults standardUserDefaults] synchronize];
-            if (isRoutesForSaleListUpdated == YES) isRoutesForSaleListUpdated = NO;
-            if (isRoutesWeBuyListUpdated == YES) isRoutesWeBuyListUpdated = NO;
-            if (isRoutesPushlistListUpdated == YES) isRoutesPushlistListUpdated = NO;
+            if (isRoutesForSaleListUpdated == YES) { 
+                NSLog(@"isRoutesForSaleListUpdated = NO");
+                isRoutesForSaleListUpdated = NO;
+            }
+            if (isRoutesWeBuyListUpdated == YES) { 
+                NSLog(@"isRoutesWeBuyListUpdated = NO");
+
+                isRoutesWeBuyListUpdated = NO;
+            }
+            if (isRoutesPushlistListUpdated == YES) { 
+                NSLog(@"isRoutesPushlistListUpdated = NO");
+                isRoutesPushlistListUpdated = NO;
+            }
         }
     });
     
