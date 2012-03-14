@@ -355,6 +355,7 @@
 		FA195A8814F8206B002E9A89 /* snow.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FA195A8514F8206B002E9A89 /* snow.xcdatamodeld */; };
 		FA195A8D14F822AC002E9A89 /* MainSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = FA195A8B14F822AC002E9A89 /* MainSystem.m */; };
 		FA195A9114F822F2002E9A89 /* Events.m in Sources */ = {isa = PBXBuildFile; fileRef = FA195A8F14F822F2002E9A89 /* Events.m */; };
+		FA1CA20615108EB900D38424 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6DBB15150E95AC0090BDA4 /* IOKit.framework */; };
 		FA24986D14FCEFF70018C1E6 /* progressBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = FA24986C14FCEFF70018C1E6 /* progressBackground.png */; };
 		FA24987114FD04B90018C1E6 /* AddRoutesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA24986F14FD04B90018C1E6 /* AddRoutesCell.m */; };
 		FA2FBCA2150B248E003EE8A8 /* socialNetworks.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC22D4B15067A550010D3C0 /* socialNetworks.png */; };
@@ -1154,6 +1155,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA1CA20615108EB900D38424 /* IOKit.framework in Frameworks */,
 				FA4A0EB314F8A42F001A2139 /* WebKit.framework in Frameworks */,
 				FA10FBBF14F846780014C545 /* CalendarStore.framework in Frameworks */,
 				FA10FBC014F846780014C545 /* SystemConfiguration.framework in Frameworks */,

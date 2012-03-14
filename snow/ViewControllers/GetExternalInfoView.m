@@ -808,7 +808,7 @@
                         
                         NSLog(@"GET EXTERNAL INFO VIEW:ENTERPRISE every DAY sync start");    
                         //                [progressForDaylySync startCycleDaylySync];
-                        [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:NO];
+                        [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:YES];
                         NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
                         
                         NSLog(@"GET EXTERNAL INFO VIEW:ENTERPRISE every DAY sync time was:%@ min",[NSNumber numberWithDouble:interval/60]);

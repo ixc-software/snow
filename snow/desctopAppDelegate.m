@@ -370,8 +370,8 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 #if defined (SNOW_CLIENT_ENTERPRISE) || defined(SNOW_CLIENT_APPSTORE)
         
         [clientController getCompaniesListWithImmediatelyStart:YES];
-        CompanyStuff *admin = [clientController authorization];
-        if ([[clientController localStatusForObjectsWithRootGuid:admin.GUID] isEqualToString:@"registered"]) [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:YES];
+        //CompanyStuff *admin = [clientController authorization];
+        //if ([[clientController localStatusForObjectsWithRootGuid:admin.GUID] isEqualToString:@"registered"]) [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:YES];
         //[clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:YES isUserAuthorized:NO];
         
         //CurrentCompany *necessaryCompany = authorizedUser.currentCompany;

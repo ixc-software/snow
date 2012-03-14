@@ -2193,7 +2193,7 @@ static char encodingTable[64] = {
      
     NSDictionary *receivedObject = nil;
     while (receivedObject == nil) {
-        receivedObject = [self getJSONAnswerForFunctionVersionTwo:@"GetObjectsList" withJSONRequest:prepeareForJSONRequest];
+        receivedObject = [self getJSONAnswerForFunction:@"GetObjectsList" withJSONRequest:prepeareForJSONRequest];
         if (!receivedObject) sleep(5);
     }
     NSString *error = [receivedObject valueForKey:@"error"];
@@ -2237,7 +2237,7 @@ static char encodingTable[64] = {
             //NSDictionary *receivedObject = nil;
             NSDictionary *receivedResult = nil;
             while (!receivedResult) {
-                receivedResult = [self getJSONAnswerForFunctionVersionTwo:@"GetObjectsWithGUIDs" withJSONRequest:prepeareForJSONRequest];
+                receivedResult = [self getJSONAnswerForFunction:@"GetObjectsWithGUIDs" withJSONRequest:prepeareForJSONRequest];
             }
             //[receivedObject setValuesForKeysWithDictionary:receivedResult];
 
@@ -2815,7 +2815,7 @@ static char encodingTable[64] = {
         // ups, let's start updates ( i like to get carriers list here only
         [self updateUIwithMessage:@"we are start updates." withObjectID:nil withLatestMessage:YES error:NO];
 
-        [self updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:YES];
+        //[self updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:YES];
         
     } else [self updateUIwithMessage:@"please try in few seconds." withObjectID:nil withLatestMessage:YES error:YES];
     

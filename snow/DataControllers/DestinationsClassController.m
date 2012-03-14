@@ -267,8 +267,8 @@
             
             [fetchRequestForCode setPredicate:filterPredicate];
             [fetchRequestForCode setEntity:entityForCode];
-            NSArray *allCarrierCodesImmutable = [self.moc executeFetchRequest:fetchRequestForCode error:&error];
-            NSMutableArray *allCarrierCodes = [NSMutableArray arrayWithArray:allCarrierCodesImmutable];
+            NSArray *allCarrierCodes = [self.moc executeFetchRequest:fetchRequestForCode error:&error];
+            //NSMutableArray *allCarrierCodes = [NSMutableArray arrayWithArray:allCarrierCodesImmutable];
             
             [fetchRequestForCode release];
             NSTimeInterval interval = [startCheckPresentedCodes timeIntervalSinceDate:[NSDate date]];
@@ -483,7 +483,7 @@
                             predicateForCurrentCodes = [NSPredicate predicateWithFormat:@"(code == %@ AND originalCode == %@)",code,originalCode];
                         }
                         
-                        NSArray *codesFilteredFirstStep = [allCarrierCodesImmutable filteredArrayUsingPredicate:predicateForCurrentCodes];
+                        NSArray *codesFilteredFirstStep = [allCarrierCodes filteredArrayUsingPredicate:predicateForCurrentCodes];
                         NSMutableArray *codesFilteredFirstStepMutable = [NSMutableArray arrayWithArray:codesFilteredFirstStep];
 
                         if ([codesFilteredFirstStepMutable count] > 1) { 
@@ -834,7 +834,7 @@
                         {
                             // update code and update destination
                             CodesvsDestinationsList *currentCode = codesFilteredFirstStepMutable.lastObject;
-                            [allCarrierCodes filterUsingPredicate:[NSPredicate predicateWithFormat:@"objectID != %@",currentCode.objectID]];
+                            //[allCarrierCodes filterUsingPredicate:[NSPredicate predicateWithFormat:@"objectID != %@",currentCode.objectID]];
                             //NSLog(@"DESTINATIONS CLASS: >>>> allCarrierCodes count:%@",[NSNumber numberWithInteger:allCarrierCodes.count]);
                             //NSLog(@"DESTINATIONS LIST: UPDATE code:%@  originalCode:%@ created for NEW destination WE BUY country:%@ specific:%@",currentCode.code,currentCode.originalCode,currentCode.country,currentCode.specific);
 
