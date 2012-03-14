@@ -698,25 +698,16 @@
 
 -(IBAction) getCarriersListStart;
 {
-    //    if (isGetCarrierListProcessing) return;
-    //    else isGetCarrierListProcessing = YES;
     [getCarriersList setEnabled:NO];
     [startSync setEnabled:NO];
-    //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-        //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        //[updateForMainThread getCarriersListFromExternalDatabaseForManagedObjectContext];
-        //getCarriersListWithProgress:progressForMainThread];
-//        AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
-
+#if defined (SNOW_SERVER)
         ProgressUpdateController *progressForCarriersList = [[ProgressUpdateController alloc] initWithDelegate:delegate];
         MySQLIXC *databaseForCarriersList = [[MySQLIXC alloc] initWithDelegate:delegate withProgress:progressForCarriersList];
         UpdateDataController *updateForCarriersList = [[UpdateDataController alloc] initWithDatabase:databaseForCarriersList];
         NSArray *connectionsFirstIteration = [updateForCarriersList databaseConnections];
         NSArray *connections = nil;
-        //NSArray *connections = [[NSArray alloc] initWithArray:[updateForCarriersList databaseConnections]];
-#if defined (SNOW_SERVER)
 
         
         NSError *error = nil;
@@ -732,18 +723,17 @@
         getCompaniesList.title = [NSString stringWithFormat:@"get companies list for company: %@",selectedCompany.name];
         databaseForCarriersList.connections = databaseConnections.arrangedObjects;
         [updateForCarriersList carriersListWithProgress:progressForCarriersList forCurrentCompany:selectedCompany.objectID forIsUpdateCarriesListOnExternalServer:NO];
-
-#else 
-        if (!connections) connections = connectionsFirstIteration;
-        databaseForCarriersList.connections = connections;
-        //[connections release];
-        
-        [updateForCarriersList carriersListWithProgress:progressForCarriersList];
-        
-#endif
         [progressForCarriersList release];
         [databaseForCarriersList release];
         [updateForCarriersList release];
+
+#else 
+        ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[[delegate managedObjectContext] persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
+
+        [clientController updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:NO];
+        [clientController release];
+
+#endif
         
         dispatch_async(dispatch_get_main_queue(), ^(void) { 
 

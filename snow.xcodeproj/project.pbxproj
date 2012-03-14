@@ -356,6 +356,7 @@
 		FA195A8D14F822AC002E9A89 /* MainSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = FA195A8B14F822AC002E9A89 /* MainSystem.m */; };
 		FA195A9114F822F2002E9A89 /* Events.m in Sources */ = {isa = PBXBuildFile; fileRef = FA195A8F14F822F2002E9A89 /* Events.m */; };
 		FA1CA20615108EB900D38424 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6DBB15150E95AC0090BDA4 /* IOKit.framework */; };
+		FA1CA2191510AFE300D38424 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6DBB15150E95AC0090BDA4 /* IOKit.framework */; };
 		FA24986D14FCEFF70018C1E6 /* progressBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = FA24986C14FCEFF70018C1E6 /* progressBackground.png */; };
 		FA24987114FD04B90018C1E6 /* AddRoutesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA24986F14FD04B90018C1E6 /* AddRoutesCell.m */; };
 		FA2FBCA2150B248E003EE8A8 /* socialNetworks.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC22D4B15067A550010D3C0 /* socialNetworks.png */; };
@@ -831,7 +832,7 @@
 		FA10FAB514F842D70014C545 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		FA10FAB714F842EC0014C545 /* CalendarStore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CalendarStore.framework; path = System/Library/Frameworks/CalendarStore.framework; sourceTree = SDKROOT; };
 		FA10FB4F14F846510014C545 /* client.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = client.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		FA10FBE314F846780014C545 /* snowClientEnterprise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = snowClientEnterprise.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA10FBE314F846780014C545 /* snow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = snow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA10FC7714F8468D0014C545 /* snowServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = snowServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA10FC7F14F849A20014C545 /* debugAnalizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = debugAnalizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA10FC8414F849A30014C545 /* debugAnalizer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "debugAnalizer-Info.plist"; sourceTree = "<group>"; };
@@ -1138,6 +1139,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA1CA2191510AFE300D38424 /* IOKit.framework in Frameworks */,
 				FA4A0EB214F8A424001A2139 /* WebKit.framework in Frameworks */,
 				FA10FB2B14F846510014C545 /* CalendarStore.framework in Frameworks */,
 				FA10FB2C14F846510014C545 /* SystemConfiguration.framework in Frameworks */,
@@ -1405,7 +1407,7 @@
 			children = (
 				FA3CE33914F7DEAF00E3AF17 /* snow.app */,
 				FA10FB4F14F846510014C545 /* client.app */,
-				FA10FBE314F846780014C545 /* snowClientEnterprise.app */,
+				FA10FBE314F846780014C545 /* snow.app */,
 				FA10FC7714F8468D0014C545 /* snowServer.app */,
 				FA10FC7F14F849A20014C545 /* debugAnalizer.app */,
 			);
@@ -1963,7 +1965,7 @@
 			);
 			name = snowClientEnterprise;
 			productName = snow;
-			productReference = FA10FBE314F846780014C545 /* snowClientEnterprise.app */;
+			productReference = FA10FBE314F846780014C545 /* snow.app */;
 			productType = "com.apple.product-type.application";
 		};
 		FA10FBE614F8468D0014C545 /* snowServer */ = {
@@ -2262,7 +2264,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "install_name_tool -change libmysqlclient.16.dylib @executable_path/../Frameworks/libmysqlclient.16.dylib $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\ninstall_name_tool -change LibXL.framework/LibXL @executable_path/../Frameworks/LibXL.framework/LibXL $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\n\ncd $CONFIGURATION_BUILD_DIR\ntar cvzpf $PRODUCT_NAME.tgz $PRODUCT_NAME.app\nrm -r /Users/Shared/$PRODUCT_NAME.app\ncp -R $PRODUCT_NAME.app /Users/Shared/";
+			shellScript = "install_name_tool -change libmysqlclient.16.dylib @executable_path/../Frameworks/libmysqlclient.16.dylib $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\ninstall_name_tool -change LibXL.framework/LibXL @executable_path/../Frameworks/LibXL.framework/LibXL $CONFIGURATION_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\n\ncd $CONFIGURATION_BUILD_DIR\ntar cvzpf $PRODUCT_NAME.tgz $PRODUCT_NAME.app\nrm -r /Users/alex/Downloads/$PRODUCT_NAME.app\ncp -R $PRODUCT_NAME.app /Users/alex/Downloads";
 		};
 		FA10FC7214F8468D0014C545 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2804,7 +2806,7 @@
 					"\"$(SRCROOT)/ExternalLibraries\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				PRODUCT_NAME = client;
+				PRODUCT_NAME = snow;
 				PROVISIONING_PROFILE = "15FB67AF-1DE3-4E5D-B64D-D90AD963713F";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2833,7 +2835,7 @@
 					"\"$(SRCROOT)/ExternalLibraries\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				PRODUCT_NAME = client;
+				PRODUCT_NAME = snow;
 				PROVISIONING_PROFILE = "15FB67AF-1DE3-4E5D-B64D-D90AD963713F";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2860,7 +2862,7 @@
 					"\"$(SRCROOT)/ExternalLibraries\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				PRODUCT_NAME = snowClientEnterprise;
+				PRODUCT_NAME = snow;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2886,7 +2888,7 @@
 					"\"$(SRCROOT)/ExternalLibraries\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				PRODUCT_NAME = snowClientEnterprise;
+				PRODUCT_NAME = snow;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

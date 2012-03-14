@@ -68,7 +68,8 @@
                         withEntity:(NSString *)entityFor 
                          withAdmin:(CompanyStuff *)admin 
                     withRootObject:(NSManagedObject *)rootObject
-             isEveryTenPercentSave:(BOOL)isEveryTenPercentSave;
+             isEveryTenPercentSave:(BOOL)isEveryTenPercentSave
+        isNecessaryToLocalRegister:(BOOL)isNecessaryToLocalRegister;
 
 -(void) updateLocalGraphFromSnowEnterpriseServerForCarrierID:(NSManagedObjectID *)carrierID
                                                 withDateFrom:(NSDate *)dateFrom 

@@ -662,6 +662,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"lastGraphUpdatingTime"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"showAgain"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"lastGraphUpdatingTime"];
+    [[NSUserDefaults standardUserDefaults] setPersistentDomain:[NSDictionary dictionary] forName:[[NSBundle mainBundle] bundleIdentifier]];
     NSString *keyOfAuthorized = @"authorizedUserGUID";
     
 #if defined(SNOW_CLIENT_APPSTORE)
