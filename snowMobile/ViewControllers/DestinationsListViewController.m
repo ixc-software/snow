@@ -386,6 +386,7 @@
                 
                 if (selectedSegmentIndex == 0) {
                     isRoutesForSaleListUpdated = YES;
+                    NSLog(@"isRoutesForSaleListUpdated = YES");
 
                     carriersProgress.hidden = NO;
                     carriersProgressTitle.hidden = NO;
@@ -397,6 +398,7 @@
                 }
                 else if (selectedSegmentIndex == 1) {
                     isRoutesWeBuyListUpdated = YES;
+                    NSLog(@"isRoutesWeBuyListUpdated = YES");
 
                     carriersProgress.hidden = NO;
                     carriersProgressTitle.hidden = NO;
@@ -408,7 +410,8 @@
                 }
                 else if (selectedSegmentIndex == 2) { 
                     isRoutesPushlistListUpdated = YES;
-                    
+                    NSLog(@"isRoutesPushlistListUpdated = YES");
+
                     carriersProgress.hidden = NO;
                     carriersProgressTitle.hidden = NO;
                     operationTitle.hidden = NO;

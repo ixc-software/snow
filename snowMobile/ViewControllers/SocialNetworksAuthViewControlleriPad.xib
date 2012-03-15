@@ -87,7 +87,7 @@
 						</object>
 						<object class="NSCustomResource" key="IBUINormalImage">
 							<string key="NSClassName">NSImage</string>
-							<string key="NSResourceName">reload.png</string>
+							<string key="NSResourceName">01-refresh@2x.png</string>
 						</object>
 						<object class="IBUIFontDescription" key="IBUIFontDescription">
 							<string key="name">Helvetica-Bold</string>
@@ -219,7 +219,7 @@
 						<string key="NSFrame">{{232, 13}, {304, 30}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="988602210"/>
+						<reference key="NSNextKeyView" ref="300517809"/>
 						<string key="NSReuseIdentifierKey">_NS:273</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
@@ -267,6 +267,7 @@
 						<string key="NSFrame">{{711, 13}, {37, 37}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="988602210"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
@@ -288,7 +289,7 @@
 				<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 			</object>
 			<object class="IBUIView" id="1044326110">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">292</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -297,7 +298,6 @@
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{668, 27}, {80, 30}}</string>
 						<reference key="NSSuperview" ref="1044326110"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="783132067"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
@@ -339,7 +339,6 @@
 						<int key="NSvFlags">274</int>
 						<string key="NSFrame">{{20, 88}, {728, 787}}</string>
 						<reference key="NSSuperview" ref="1044326110"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="785443887"/>
 						<string key="NSReuseIdentifierKey">_NS:418</string>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -358,7 +357,6 @@
 						<int key="NSvFlags">-2147483356</int>
 						<string key="NSFrame">{{348, 602}, {83, 30}}</string>
 						<reference key="NSSuperview" ref="1044326110"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="817453039"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
@@ -405,8 +403,6 @@
 								<int key="NSvFlags">292</int>
 								<string key="NSFrame">{{271, 8}, {225, 30}}</string>
 								<reference key="NSSuperview" ref="785443887"/>
-								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:273</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
@@ -446,7 +442,6 @@
 						</object>
 						<string key="NSFrame">{{0, 887}, {768, 44}}</string>
 						<reference key="NSSuperview" ref="1044326110"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="1007163235"/>
 						<string key="NSReuseIdentifierKey">_NS:371</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -474,8 +469,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{768, 931}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="234424014"/>
 				<string key="NSReuseIdentifierKey">_NS:196</string>
 				<object class="NSColor" key="IBUIBackgroundColor">
@@ -964,6 +957,9 @@
 							<string>groupSwitch</string>
 							<string>includeRates</string>
 							<string>postingTitle</string>
+							<string>priceCorrectionPercent</string>
+							<string>priceCorrectionStepper</string>
+							<string>priceCorrectionTitle</string>
 							<string>routesList</string>
 							<string>signature</string>
 						</object>
@@ -974,6 +970,9 @@
 							<string>UISwitch</string>
 							<string>UISwitch</string>
 							<string>UITextField</string>
+							<string>UILabel</string>
+							<string>UIStepper</string>
+							<string>UILabel</string>
 							<string>UILabel</string>
 							<string>UITextView</string>
 						</object>
@@ -987,6 +986,9 @@
 							<string>groupSwitch</string>
 							<string>includeRates</string>
 							<string>postingTitle</string>
+							<string>priceCorrectionPercent</string>
+							<string>priceCorrectionStepper</string>
+							<string>priceCorrectionTitle</string>
 							<string>routesList</string>
 							<string>signature</string>
 						</object>
@@ -1011,6 +1013,18 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">postingTitle</string>
 								<string key="candidateClassName">UITextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">priceCorrectionPercent</string>
+								<string key="candidateClassName">UILabel</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">priceCorrectionStepper</string>
+								<string key="candidateClassName">UIStepper</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">priceCorrectionTitle</string>
+								<string key="candidateClassName">UILabel</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">routesList</string>
@@ -1201,8 +1215,8 @@
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
-			<string key="NS.key.0">reload.png</string>
-			<string key="NS.object.0">{40, 30}</string>
+			<string key="NS.key.0">01-refresh@2x.png</string>
+			<string key="NS.object.0">{47, 51}</string>
 		</object>
 		<string key="IBCocoaTouchPluginVersion">1179</string>
 	</data>

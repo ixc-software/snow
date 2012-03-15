@@ -2153,8 +2153,8 @@ static char encodingTable[64] = {
         NSMutableURLRequest *requestToServer = [NSMutableURLRequest requestWithURL:urlForRequest];
         [requestToServer setHTTPMethod:@"POST"];
         [requestToServer setHTTPBody:dataForBody];
-        [requestToServer setTimeoutInterval:60];
-        [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[urlForRequest host]];
+        [requestToServer setTimeoutInterval:2.0];
+        //[NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[urlForRequest host]];
         NSData *receivedResult = nil;
         NSUInteger countAttempts = 0;
         while (!receivedResult) {

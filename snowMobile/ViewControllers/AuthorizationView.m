@@ -642,14 +642,83 @@
         });
         return;
     }
+    BOOL isStatusUpdateGraph = ([status rangeOfString:@"progress for update graph:"].location != NSNotFound);
+    if (isStatusUpdateGraph) {
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+            NSArray *viewControllers = delegate.tabBarController.viewControllers;
+            UINavigationController *info = [viewControllers objectAtIndex:0];
+            InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
+            NSNumber *progress = [data objectAtIndex:1];
+            infoObject.operation.hidden = NO;
+            infoObject.operationProgress.hidden = NO;
+
+            infoObject.operation.text = @"Update internal info";
+            infoObject.operationProgress.progress = progress.floatValue;
+            
+        });
+    }
+    
+    BOOL isProgressWeBuy = ([status rangeOfString:@"progress for destinations we buy"].location != NSNotFound);
+    if (isProgressWeBuy) {
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+            NSArray *viewControllers = delegate.tabBarController.viewControllers;
+            UINavigationController *info = [viewControllers objectAtIndex:0];
+            InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
+            NSNumber *progress = [data objectAtIndex:1];
+            infoObject.operation.text = @"destinations we buy updating...";
+            infoObject.operationProgress.progress = progress.floatValue;
+            infoObject.operation.hidden = NO;
+            infoObject.operationProgress.hidden = NO;
+
+        });
+    }
+    BOOL isProgressForSale = ([status rangeOfString:@"progress for destinations for sale"].location != NSNotFound);
+    if (isProgressForSale) {
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+            NSArray *viewControllers = delegate.tabBarController.viewControllers;
+            UINavigationController *info = [viewControllers objectAtIndex:0];
+            InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
+            NSNumber *progress = [data objectAtIndex:1];
+            infoObject.operation.text = @"destinations for sale updating...";
+            infoObject.operationProgress.progress = progress.floatValue;
+            infoObject.operation.hidden = NO;
+            infoObject.operationProgress.hidden = NO;
+
+        });
+    }
+    
+    BOOL isDownloadingStarting = ([status rangeOfString:@"server download is started"].location != NSNotFound);
+    if (isDownloadingStarting) {
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+            NSArray *viewControllers = delegate.tabBarController.viewControllers;
+            UINavigationController *info = [viewControllers objectAtIndex:0];
+            InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
+            NSNumber *progress = [data objectAtIndex:1];
+            infoObject.operation.text = @"downloading...";
+            infoObject.operationProgress.progress = progress.floatValue;
+            infoObject.operation.hidden = NO;
+            infoObject.operationProgress.hidden = NO;
+
+        });
+    }
+
+
+
     if ([status isEqualToString:@"Login success"]) {
-        [UIView animateWithDuration:3 
-                              delay:4 
-                            options:UIViewAnimationOptionBeginFromCurrentState
-                         animations:^{
-                             
-                             self.view.alpha = 0.0;
-                         } completion:nil];
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            
+            [UIView animateWithDuration:3 
+                                  delay:4 
+                                options:UIViewAnimationOptionBeginFromCurrentState
+                             animations:^{
+                                 
+                                 self.view.alpha = 0.0;
+                             } completion:nil];
+        });
 
     }
     if ([data count] > 4) objectID = [data objectAtIndex:4];
@@ -662,7 +731,14 @@
         });
     } else {
         dispatch_async(dispatch_get_main_queue(), ^(void) {
-            
+            mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+            NSArray *viewControllers = delegate.tabBarController.viewControllers;
+            UINavigationController *info = [viewControllers objectAtIndex:0];
+            InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
+
+            infoObject.operation.hidden = NO;
+            infoObject.operationProgress.hidden = NO;
+
             loginActivity.hidden = YES;
             [loginActivity stopAnimating];
         });
