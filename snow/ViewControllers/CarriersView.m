@@ -375,7 +375,7 @@
 //    [[[twitterWebView mainFrame] frameView] setAllowsScrolling:NO];
     
 //    NSLog(@">>>>>>>>> %@ %@",carrier.arrangedObjects,carrier.filterPredicate);
-    [carrier setFilterPredicate:nil];
+    //[carrier setFilterPredicate:nil];
 //    NSLog(@">>>>>>>>> %@ %@",carrier.arrangedObjects,carrier.filterPredicate);
 
 }

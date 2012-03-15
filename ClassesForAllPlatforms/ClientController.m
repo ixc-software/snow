@@ -63,13 +63,20 @@ static char encodingTable[64] = {
 #if defined(SNOW_SERVER)
 
         mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
+#endif
+        
+#if defined (SNOW_CLIENT_APPSTORE)
+        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
+
 #else
-//        mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
-
-//        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
+        
+        //        mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
+        
+        //        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
         mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
-//        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
+        //        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
 
+        
 #endif
         
 //
@@ -2847,18 +2854,26 @@ static char encodingTable[64] = {
         [self updateUIwithMessage:@"Login failed" withObjectID:nil withLatestMessage:YES error:YES];
         return;
     }
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"CompanyStuff" inManagedObjectContext:self.moc];
-    [fetchRequest setEntity:entity];
     
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(email == %@)",email];
-    [fetchRequest setPredicate:predicate];
+    NSArray *fetchedObjects = nil;
     
-    NSError *error = nil;
-    NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequest error:&error];
-    
-    [fetchRequest release];
-    if (fetchedObjects.count > 0) {
+    while (fetchedObjects.count == 0) {
+        
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"CompanyStuff" inManagedObjectContext:self.moc];
+        [fetchRequest setEntity:entity];
+        
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(email == %@)",email];
+        [fetchRequest setPredicate:predicate];
+        
+        NSError *error = nil;
+        fetchedObjects = [self.moc executeFetchRequest:fetchRequest error:&error];
+        NSLog(@"CLIENT CONTROLLER: wating for receive company lists");
+        [fetchRequest release];
+        sleep(1);
+    }
+
+    //if (fetchedObjects.count > 0) {
         // users don't have passwords, so we like to update it
         CompanyStuff *findedAuthorizedLogin = fetchedObjects.lastObject;
         findedAuthorizedLogin.password = password;
@@ -2881,7 +2896,7 @@ static char encodingTable[64] = {
         [self updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:YES];
 
 #endif
-    } else [self updateUIwithMessage:@"please try in few seconds." withObjectID:nil withLatestMessage:YES error:YES];
+    //} else [self updateUIwithMessage:@"please try in few seconds." withObjectID:nil withLatestMessage:YES error:YES];
     
 }
 
