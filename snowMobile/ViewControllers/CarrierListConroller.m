@@ -199,7 +199,7 @@
                 NSArray *allObjectsForGUIDS = [clientController getAllObjectsWithGUIDs:allGUIDsCarrier withEntity:@"Carrier" withAdmin:admin];
                 if (allGUIDsCarrier && allObjectsForGUIDS) {
                     
-                    NSArray *updatedCarrierIDs = [clientController updateGraphForObjects:allObjectsForGUIDS withEntity:@"Carrier" withAdmin:admin withRootObject:admin isEveryTenPercentSave:NO];
+                    NSArray *updatedCarrierIDs = [clientController updateGraphForObjects:allObjectsForGUIDS withEntity:@"Carrier" withAdmin:admin withRootObject:admin isEveryTenPercentSave:NO isNecessaryToLocalRegister:YES];
                     [clientController finalSave:clientController.moc];
                     // remove objects which was not on server
                     NSSet *allCarriers = admin.carrier;

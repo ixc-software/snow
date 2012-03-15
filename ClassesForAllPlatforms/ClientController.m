@@ -66,8 +66,8 @@ static char encodingTable[64] = {
 #else
 //        mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
 
-        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
-//        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+//        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
+        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
 //        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
 
 #endif
@@ -2291,14 +2291,14 @@ static char encodingTable[64] = {
 
 {
     NSMutableArray *allUpdatedIDs = [NSMutableArray array];
-
+    __block NSMutableArray *allObjectsMutable = [[NSMutableArray alloc] initWithArray:allObjects];
     //@autoreleasepool {
-        
-        //NSArray *allObjects = [self getAllObjectsListWithGUIDs:guids withEntity:entityFor withAdmin:admin];
-        // RETURN UPDATED IDs
-    NSError *error = nil;
     
-    NSArray *allObjectsUniqueGUIDs = [allObjects valueForKeyPath:@"@distinctUnionOfObjects.GUID"];
+    // RETURN UPDATED IDs
+    NSError *error = nil;
+    //NSLog(@"CLIENT CONTROLLER:>>>>>> allObjectsMutable BEFORE count:%@",[NSNumber numberWithInteger:allObjectsMutable.count]);
+    
+    NSMutableArray *allObjectsUniqueGUIDs = [allObjects valueForKeyPath:@"@distinctUnionOfObjects.GUID"];
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:entityFor inManagedObjectContext:self.moc];
@@ -2308,102 +2308,88 @@ static char encodingTable[64] = {
     //[fetchRequest setResultType:NSDictionaryResultType];
     //[fetchRequest setPropertiesToFetch:[NSArray arrayWithObjects:@"GUID",@"objectID", nil]];
     NSArray *allPresentObjects = [self.moc executeFetchRequest:fetchRequest error:&error];
-    NSMutableArray *allPresentObjectsMutable = allPresentObjects.mutableCopy;
+    NSUInteger allObjectsMutableCount = allObjects.count;
     
-    //__block NSArray *fetchedObjects = nil;
-    NSUInteger allObjectsCount = allObjects.count;
-    NSUInteger idx = 0;
-    for (NSDictionary *obj in allObjects) {
-        //[allObjects enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
+    [allPresentObjects enumerateObjectsUsingBlock:^(NSManagedObject *localObject, NSUInteger idx, BOOL *stop) {
+        NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:allObjectsMutableCount] doubleValue]];
+        [self updateUIwithMessage:[NSString stringWithFormat:@"progress for update graph:%@",entityFor] andProgressPercent:percentDone withObjectID:nil];
+        
+        NSString *guid = [localObject valueForKey:@"GUID"];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"GUID == %@",guid];
+        NSArray *filteredAllObjects = [allObjectsMutable filteredArrayUsingPredicate:predicate];
+        NSDictionary *obj = filteredAllObjects.lastObject;
+        if ([entityFor isEqualToString:@"CodesvsDestinationsList"]) {
+            NSNumber *originalCode = [obj valueForKey:@"originalCode"];
+            if (originalCode.intValue == 0) {
+                NSMutableDictionary *newCode = [NSMutableDictionary dictionaryWithDictionary:obj];
+                [newCode removeObjectForKey:@"originalCode"];
+                //[oldObject setValuesForKeysWithDictionary:newCode];
+                [self setValuesFromDictionary:newCode anObject:localObject];
+                [localObject setValue:nil forKey:@"originalCode"];
+            }
+        } else [self setValuesFromDictionary:obj anObject:localObject];//[oldObject setValuesForKeysWithDictionary:obj];
+        
+        [allUpdatedIDs addObject:guid];
+        
+        //NSInteger count = allObjectsMutable.count;
+        //NSLog(@"CLIENT CONTROLLER:>>>>>> allObjectsMutable UPDATE count:%@",[NSNumber numberWithInteger:idx]);
+        //[allObjectsMutable filterUsingPredicate:[NSPredicate predicateWithFormat:@"GUID != %@",guid]];
+        [allObjectsMutable removeObject:obj];
+    }];
+    //NSLog(@"CLIENT CONTROLLER:>>>>>> allObjectsMutable AFTER count:%@  and allPresentObjects count:%@",[NSNumber numberWithInteger:allObjectsMutable.count],[NSNumber numberWithInteger:allPresentObjects.count]);
+    
+    allObjectsMutableCount = allObjectsMutable.count;
+    
+    [allObjectsMutable enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
         //@autoreleasepool {
+        NSString *guid = [obj valueForKey:@"GUID"];
+        
+        NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:allObjectsMutableCount] doubleValue]];
+        [self updateUIwithMessage:[NSString stringWithFormat:@"progress for update graph:%@",entityFor] andProgressPercent:percentDone withObjectID:nil];
+        __block NSString *keyForRootObject = nil;
+        NSDictionary *allRelationShips = entity.relationshipsByName;
+        if (rootObject)  [allRelationShips enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSRelationshipDescription *obj, BOOL *stop) {
+            if ([obj.destinationEntity.name isEqualToString:rootObject.entity.name]) {
+                keyForRootObject = key;
+                *stop = YES;
+            }
+        }];
+        if (keyForRootObject || !rootObject) {
+            NSManagedObject *newObject = [NSEntityDescription insertNewObjectForEntityForName:entityFor inManagedObjectContext:moc];
+            if ([entityFor isEqualToString:@"CodesvsDestinationsList"]) {
+                NSNumber *originalCode = [obj valueForKey:@"originalCode"];
+                if (originalCode.intValue == 0) {
+                    NSMutableDictionary *newCode = [NSMutableDictionary dictionaryWithDictionary:obj];
+                    [newCode removeObjectForKey:@"originalCode"];
+                    //[newObject setValuesForKeysWithDictionary:newCode];
+                    [self setValuesFromDictionary:newCode anObject:newObject];
+                } else [self setValuesFromDictionary:obj anObject:newObject];
+            } else [self setValuesFromDictionary:obj anObject:newObject];//[newObject setValuesForKeysWithDictionary:obj];
             
-                
-                NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:allObjectsCount] doubleValue]];
-                [self updateUIwithMessage:[NSString stringWithFormat:@"progress for update graph:%@",entityFor] andProgressPercent:percentDone withObjectID:nil];
-                
-                NSString *guid = [obj valueForKey:@"GUID"];
-                //if (allPresentObjects.count == 0) NSLog(@"CLIENT CONTROLLER:>>>>> warning, empty allPresentedObjects");
-                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"GUID == %@",guid];
-                //NSArray *filteredPresentedObjects = [allPresentObjectsMutable filteredArrayUsingPredicate:predicate];
-        [allPresentObjectsMutable filterUsingPredicate:predicate];
-                //@synchronized (self) {
-                //    filteredPresentedObjects = [allPresentObjectsMutable filteredArrayUsingPredicate:predicate];
-                //}
-                //        [fetchRequest setPredicate:predicate];
-                //        NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequest error:&error];
-                if (allPresentObjectsMutable.count > 0) {
-                    //NSManagedObject *objectDict = filteredPresentedObjects.lastObject;
-                    //NSManagedObjectID *objectID = [objectDict valueForKey:@"objectID"];
-                    
-                    NSManagedObject *oldObject = allPresentObjectsMutable.lastObject;//[self.moc objectWithID:objectID];
-                    //NSPredicate *predicate = [NSPredicate predicateWithFormat:@"GUID != %@",guid];
-                    //[allPresentObjectsMutable filterUsingPredicate:predicate];
-                    
-                    //NSLog(@"CLIENT CONTROLLER: object with entity:%@ will UPDATE and new GUID:%@ oldGUID:%@ objectsFinded:%lu",entityFor,guid,[oldObject valueForKey:@"GUID"],fetchedObjects.count);
-                    //            if ([entityFor isEqualToString:@"CodesvsDestinationsList"]) {
-                    //                NSLog(@"CLIENT CONTROLLER: object with entity:%@ will UPDATE and new GUID:%@ oldGUID:%@ country:%@ specific:%@ destination GUID:%@",entityFor,guid,[oldObject valueForKey:@"GUID"],[oldObject valueForKey:@"country"],[oldObject valueForKey:@"specific"],[oldObject valueForKeyPath:@"destinationsListForSale.GUID"]);
-                    // 
-                    //            } else NSLog(@"CLIENT CONTROLLER: object with entity:%@ will UPDATE and new GUID:%@ oldGUID:%@ objectsFinded:%lu",entityFor,guid,[oldObject valueForKey:@"GUID"],fetchedObjects.count);
-                    
-                    if ([entityFor isEqualToString:@"CodesvsDestinationsList"]) {
-                        NSNumber *originalCode = [obj valueForKey:@"originalCode"];
-                        if (originalCode.intValue == 0) {
-                            NSMutableDictionary *newCode = [NSMutableDictionary dictionaryWithDictionary:obj];
-                            [newCode removeObjectForKey:@"originalCode"];
-                            //[oldObject setValuesForKeysWithDictionary:newCode];
-                            [self setValuesFromDictionary:newCode anObject:oldObject];
-                            [oldObject setValue:nil forKey:@"originalCode"];
-                        }
-                    } else [self setValuesFromDictionary:obj anObject:oldObject];//[oldObject setValuesForKeysWithDictionary:obj];
-                    
-                    [allUpdatedIDs addObject:guid];
-                } else {
-                    __block NSString *keyForRootObject = nil;
-                    NSDictionary *allRelationShips = entity.relationshipsByName;
-                    if (rootObject)  [allRelationShips enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSRelationshipDescription *obj, BOOL *stop) {
-                        if ([obj.destinationEntity.name isEqualToString:rootObject.entity.name]) {
-                            keyForRootObject = key;
-                            *stop = YES;
-                        }
-                    }];
-                    if (keyForRootObject || !rootObject) {
-                        NSManagedObject *newObject = [NSEntityDescription insertNewObjectForEntityForName:entityFor inManagedObjectContext:moc];
-                        if ([entityFor isEqualToString:@"CodesvsDestinationsList"]) {
-                            NSNumber *originalCode = [obj valueForKey:@"originalCode"];
-                            if (originalCode.intValue == 0) {
-                                NSMutableDictionary *newCode = [NSMutableDictionary dictionaryWithDictionary:obj];
-                                [newCode removeObjectForKey:@"originalCode"];
-                                //[newObject setValuesForKeysWithDictionary:newCode];
-                                [self setValuesFromDictionary:newCode anObject:newObject];
-                            } else [self setValuesFromDictionary:obj anObject:newObject];
-                        } else [self setValuesFromDictionary:obj anObject:newObject];//[newObject setValuesForKeysWithDictionary:obj];
-                        
-                        if (rootObject) [newObject setValue:rootObject forKey:keyForRootObject];
-                        [allUpdatedIDs addObject:guid];
-                        //[self setUserDefaultsObject:[NSDictionary dictionaryWithObject:@"registered" forKey:@"update"] forKey:[newObject valueForKey:@"GUID"]];
-                        if (isNecessaryToLocalRegister) [[NSUserDefaults standardUserDefaults] setObject:[NSDictionary dictionaryWithObject:@"registered" forKey:@"update"] forKey:[newObject valueForKey:@"GUID"]];
-                        
-                        //                if ([entityFor isEqualToString:@"CodesvsDestinationsList"]) {
-                        //                    NSLog(@"CLIENT CONTROLLER: object with entity:%@ will CREATE and new GUID:%@ oldGUID:%@ country:%@ specific:%@ destination GUID:%@",entityFor,guid,[newObject valueForKey:@"GUID"],[newObject valueForKey:@"country"],[newObject valueForKey:@"specific"],[newObject valueForKeyPath:@"destinationsListForSale.GUID"]);
-                        //                    
-                        //                } else 
-                        //NSLog(@"CLIENT CONTROLLER: object with entity:%@ will CREATE and new GUID:%@ oldGUID:%@ objectsFinded:%lu",entityFor,guid,[newObject valueForKey:@"GUID"],fetchedObjects.count);
-                        
-                        
-                    } else { 
-                        
-                        NSLog(@"CLIENT CONTROLLER: >>>>>>>>>>>>warning! object with entity:%@ and allRelationShips:%@ ",entityFor,allRelationShips);
-                    }
-                    //NSLog(@"CLIENT CONTROLLER: object with entity:%@ will CREATE",entityFor);
-                    
-                }
-                
-                if (isEveryTenPercentSave && (allObjectsCount > 100) && (idx % allObjectsCount * 0.1 == 0)) [self finalSave:moc];//,NSLog(@">>>>>>>updateGraphForObjects SAVED");
-            //}
-        };
-    [allPresentObjectsMutable release];
+            if (rootObject) [newObject setValue:rootObject forKey:keyForRootObject];
+            [allUpdatedIDs addObject:guid];
+            if (isNecessaryToLocalRegister) [[NSUserDefaults standardUserDefaults] setObject:[NSDictionary dictionaryWithObject:@"registered" forKey:@"update"] forKey:[newObject valueForKey:@"GUID"]];
+            
+            //                if ([entityFor isEqualToString:@"CodesvsDestinationsList"]) {
+            //                    NSLog(@"CLIENT CONTROLLER: object with entity:%@ will CREATE and new GUID:%@ oldGUID:%@ country:%@ specific:%@ destination GUID:%@",entityFor,guid,[newObject valueForKey:@"GUID"],[newObject valueForKey:@"country"],[newObject valueForKey:@"specific"],[newObject valueForKeyPath:@"destinationsListForSale.GUID"]);
+            //                    
+            //                } else 
+            //NSLog(@"CLIENT CONTROLLER: object with entity:%@ will CREATE and new GUID:%@ oldGUID:%@ objectsFinded:%lu",entityFor,guid,[newObject valueForKey:@"GUID"],fetchedObjects.count);
+            
+            
+        } else { 
+            
+            NSLog(@"CLIENT CONTROLLER: >>>>>>>>>>>>warning! object with entity:%@ and allRelationShips:%@ ",entityFor,allRelationShips);
+        }
+        //NSLog(@"CLIENT CONTROLLER: object with entity:%@ will CREATE",entityFor);
+        
+        
+        if (isEveryTenPercentSave && (allObjectsMutableCount > 100) && (idx % allObjectsMutableCount * 0.1 == 0)) [self finalSave:moc];//,NSLog(@">>>>>>>updateGraphForObjects SAVED");
+        //}
+    }];
+    //[allPresentObjectsMutable release];
     [fetchRequest release];
-
+    [allObjectsMutable release];
     //}
     return allUpdatedIDs;
     
@@ -2414,6 +2400,9 @@ static char encodingTable[64] = {
                                                 withDateTo:(NSDate *)dateTo
                                                  withAdmin:(CompanyStuff *)admin;
 {
+    @autoreleasepool {
+        
+    
     //////////////////////////////// FOR SALE BLOCK 
     Carrier *carrier = (Carrier *)[self.moc objectWithID:carrierID];
     
@@ -2444,9 +2433,9 @@ static char encodingTable[64] = {
             if (findedDestination) {
                 //////////////////////////////// CODES BLOCK 
                 NSArray *allGUIDsCodes = [self getAllObjectsListWithEntityForList:@"CodesvsDestinationsList" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListForSale" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
-                NSArray *allObjectsCodesForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsCodes withEntity:@"CodesvsDestinationsList" withAdmin:admin];
-                if (allGUIDsCodes && allObjectsCodesForGUIDS) {
-                    __block NSArray *updatedCodesIDs = [self updateGraphForObjects:allObjectsCodesForGUIDS withEntity:@"CodesvsDestinationsList" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO isNecessaryToLocalRegister:NO];
+                NSArray *allObjectsCodesForSaleForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsCodes withEntity:@"CodesvsDestinationsList" withAdmin:admin];
+                if (allGUIDsCodes && allObjectsCodesForSaleForGUIDS && allObjectsCodesForSaleForGUIDS.count > 0) {
+                    NSArray *updatedCodesIDs = [self updateGraphForObjects:allObjectsCodesForSaleForGUIDS withEntity:@"CodesvsDestinationsList" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO isNecessaryToLocalRegister:NO];
                     [self finalSave:moc];
                     
                     // remove objects which was not on server
@@ -2527,9 +2516,9 @@ static char encodingTable[64] = {
             if (findedDestination) {
                 //////////////////////////////// CODES BLOCK 
                 NSArray *allGUIDsCodes = [self getAllObjectsListWithEntityForList:@"CodesvsDestinationsList" withMainObjectGUID:findedDestination.GUID withMainObjectEntity:@"DestinationsListWeBuy" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
-                NSArray *allObjectsCodesForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsCodes withEntity:@"CodesvsDestinationsList" withAdmin:admin];
-                if (allGUIDsCodes && allObjectsCodesForGUIDS) {
-                    __block NSArray *updatedCodesIDs = [self updateGraphForObjects:allObjectsCodesForGUIDS withEntity:@"CodesvsDestinationsList" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO isNecessaryToLocalRegister:NO];
+                NSArray *allObjectsCodesWeBuyForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsCodes withEntity:@"CodesvsDestinationsList" withAdmin:admin];
+                if (allGUIDsCodes && allObjectsCodesWeBuyForGUIDS && allObjectsCodesWeBuyForGUIDS.count > 0) {
+                    NSArray *updatedCodesIDs = [self updateGraphForObjects:allObjectsCodesWeBuyForGUIDS withEntity:@"CodesvsDestinationsList" withAdmin:admin withRootObject:findedDestination  isEveryTenPercentSave:NO isNecessaryToLocalRegister:NO];
                     [self finalSave:moc];
 
                     // remove objects which was not on server
@@ -2595,7 +2584,7 @@ static char encodingTable[64] = {
             }
         }];
     }
-
+    }
 }
 
 -(void) updateLocalGraphFromSnowEnterpriseServerWithDateFrom:(NSDate *)dateFrom 
@@ -2819,7 +2808,8 @@ static char encodingTable[64] = {
                     if (filteredCarrierIDs.count == 0) {
                         [moc deleteObject:carrier];
                         NSLog(@"CLIENT CONTROLLER: object with entity %@ not on server and will removed",carrier.entity.name);
-                    }
+                    } 
+
                 }];
             }
         }];

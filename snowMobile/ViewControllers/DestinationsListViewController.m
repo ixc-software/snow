@@ -482,7 +482,7 @@
                 NSArray *allObjectsForGUIDS = [clientController getAllObjectsWithGUIDs:allGUIDsDestinations withEntity:entity withAdmin:admin];
                 if (allGUIDsDestinations && allObjectsForGUIDS && allGUIDsDestinations.count > 0 && allObjectsForGUIDS > 0) {
                     
-                    NSArray *updatedDestinationsIDs = [clientController updateGraphForObjects:allObjectsForGUIDS withEntity:entity withAdmin:admin withRootObject:carrier isEveryTenPercentSave:YES];
+                    NSArray *updatedDestinationsIDs = [clientController updateGraphForObjects:allObjectsForGUIDS withEntity:entity withAdmin:admin withRootObject:carrier isEveryTenPercentSave:YES isNecessaryToLocalRegister:YES];
                     [clientController finalSave:clientController.moc];
                     // remove objects which was not on server
                     NSSet *allDestinations = nil;

@@ -259,7 +259,15 @@
             [progress updateObjectInCurrentObjectsCount:index];            
         });
     }
-    
+    if (status && [status isEqualToString:@"progress for update graph:CodesvsDestinationsList"]) {
+        //NSLog(@"server download progress");
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            [progress updateOperationName:@"codes update"];
+            progress.percentDone = progressReceived;
+            [progress updateObjectInCurrentObjectsCount:index];            
+        });
+    }
+  
     
 //    NSManagedObjectID *objectID = nil;
 //    if ([data count] > 4) objectID = [data objectAtIndex:4];

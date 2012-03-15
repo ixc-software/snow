@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
-	<string>snowClientEnterprise.icns</string>
+	<string>snowLogoEnterprise.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.ixc.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>

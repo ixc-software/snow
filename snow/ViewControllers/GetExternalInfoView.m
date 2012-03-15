@@ -1006,11 +1006,13 @@
 {
     //sleep(5);
     //NSManagedObjectContext *mocForChanges = [delegate managedObjectContext];
-    
+
     NSString *status = [data objectAtIndex:0];
     NSNumber *progress = [data objectAtIndex:1];
     NSNumber *isItLatestMessage = [data objectAtIndex:2];
     NSNumber *isError = [data objectAtIndex:3];
+    NSLog(@"status:%@",status);
+
     if ([isError boolValue]) {  
         [self showErrorBoxWithText:status];
         //NSLog(@"error:%@",status);
@@ -1085,6 +1087,13 @@
         });
     }
 
+    if (status && [status isEqualToString:@"progress for update graph:CodesvsDestinationsList"]) {
+        //NSLog(@"server download progress");
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            operationNameForUpdates.stringValue = @"codes";
+            updateOperationProgress.doubleValue = progress.doubleValue;
+        });
+    }
     
     NSManagedObjectID *objectID = nil;
     if ([data count] > 4) objectID = [data objectAtIndex:4];

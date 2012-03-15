@@ -665,7 +665,7 @@
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"index == %@",indexOfUpdatedobject];
         NSMutableDictionary *currentStatus = [[[delegate.getExternalInfoView.operationProgress arrangedObjects] filteredArrayUsingPredicate:predicate] lastObject];
         [self removeObject:currentStatus];
-        NSLog(@"PROGRESS INDICATOR: cleared index:%@ for status:%@",recordId,currentStatus);
+        //NSLog(@"PROGRESS INDICATOR: cleared index:%@ for status:%@",recordId,currentStatus);
     });
 }
 
