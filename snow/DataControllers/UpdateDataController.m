@@ -721,36 +721,36 @@
                                     forPercent:(NSNumber *)percent 
                          forLinesForActivation:(NSNumber *)lines
 {
-    NSMutableDictionary *tableOfIVRConfig = [self getIVRConfigurationTable];
-
-    NSError *error = nil;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-
-    NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-    [formatter setDateFormat:@"yyyy-MM-dd-HH-mm"];
-    NSString *oldPath = @"/Users/alex/DropBoxTest/rules.txt";
-    NSString *newPath = [NSString stringWithFormat:@"/Users/alex/DropBoxTest/rules%@.txt",[formatter stringFromDate:[NSDate date]]];
-
-    [fileManager moveItemAtPath:oldPath toPath:newPath error:&error];
-    if (error) NSLog(@"Error moveItemAtPath : %@",error);
-
-
-    NSMutableDictionary *carrierDestinationsList = [tableOfIVRConfig valueForKey:carrierName];
-    NSString *destinationCountryAndSpecific = [NSString stringWithFormat:@"%@/%@",country,specific];
-    
-    //NSMutableString *currentLinesAndPercent = [carrierDestinationsList valueForKey:destinationCountryAndSpecific];
-    
-    NSNumber *percentForFile = [NSNumber numberWithDouble:([percent doubleValue] * 100)];
-    NSNumberFormatter *formatterNumber = [[[NSNumberFormatter alloc] init] autorelease];
-    [formatterNumber setFormat:@"#0"];
-    
-    
-    NSMutableString *currentLinesAndPercent = [NSMutableString stringWithFormat:@"%@|%@",[lines stringValue],[formatterNumber stringFromNumber:percentForFile]];
-    [carrierDestinationsList setValue:currentLinesAndPercent forKey:destinationCountryAndSpecific];
-    [tableOfIVRConfig setValue:carrierDestinationsList forKey:carrierName];
-    
-    NSMutableString *finalFile = [self parseInternalDataToRulesForIVR:tableOfIVRConfig];
-    [finalFile writeToFile:oldPath atomically:YES encoding:NSASCIIStringEncoding error:nil];
+//    NSMutableDictionary *tableOfIVRConfig = [self getIVRConfigurationTable];
+//
+//    NSError *error = nil;
+//    NSFileManager *fileManager = [NSFileManager defaultManager];
+//
+//    NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+//    [formatter setDateFormat:@"yyyy-MM-dd-HH-mm"];
+//    NSString *oldPath = @"/Users/alex/DropBoxTest/rules.txt";
+//    NSString *newPath = [NSString stringWithFormat:@"/Users/alex/DropBoxTest/rules%@.txt",[formatter stringFromDate:[NSDate date]]];
+//
+//    [fileManager moveItemAtPath:oldPath toPath:newPath error:&error];
+//    if (error) NSLog(@"Error moveItemAtPath : %@",error);
+//
+//
+//    NSMutableDictionary *carrierDestinationsList = [tableOfIVRConfig valueForKey:carrierName];
+//    NSString *destinationCountryAndSpecific = [NSString stringWithFormat:@"%@/%@",country,specific];
+//    
+//    //NSMutableString *currentLinesAndPercent = [carrierDestinationsList valueForKey:destinationCountryAndSpecific];
+//    
+//    NSNumber *percentForFile = [NSNumber numberWithDouble:([percent doubleValue] * 100)];
+//    NSNumberFormatter *formatterNumber = [[[NSNumberFormatter alloc] init] autorelease];
+//    [formatterNumber setFormat:@"#0"];
+//    
+//    
+//    NSMutableString *currentLinesAndPercent = [NSMutableString stringWithFormat:@"%@|%@",[lines stringValue],[formatterNumber stringFromNumber:percentForFile]];
+//    [carrierDestinationsList setValue:currentLinesAndPercent forKey:destinationCountryAndSpecific];
+//    [tableOfIVRConfig setValue:carrierDestinationsList forKey:carrierName];
+//    
+//    NSMutableString *finalFile = [self parseInternalDataToRulesForIVR:tableOfIVRConfig];
+//    [finalFile writeToFile:oldPath atomically:YES encoding:NSASCIIStringEncoding error:nil];
     
     
 }

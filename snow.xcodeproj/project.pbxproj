@@ -357,6 +357,9 @@
 		FA195A9114F822F2002E9A89 /* Events.m in Sources */ = {isa = PBXBuildFile; fileRef = FA195A8F14F822F2002E9A89 /* Events.m */; };
 		FA1CA20615108EB900D38424 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6DBB15150E95AC0090BDA4 /* IOKit.framework */; };
 		FA1CA2191510AFE300D38424 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6DBB15150E95AC0090BDA4 /* IOKit.framework */; };
+		FA1CA23315120DEF00D38424 /* twitterLinkedin.png in Resources */ = {isa = PBXBuildFile; fileRef = FA1CA23215120DEF00D38424 /* twitterLinkedin.png */; };
+		FA1CA23415120DEF00D38424 /* twitterLinkedin.png in Resources */ = {isa = PBXBuildFile; fileRef = FA1CA23215120DEF00D38424 /* twitterLinkedin.png */; };
+		FA1CA23515120DEF00D38424 /* twitterLinkedin.png in Resources */ = {isa = PBXBuildFile; fileRef = FA1CA23215120DEF00D38424 /* twitterLinkedin.png */; };
 		FA24986D14FCEFF70018C1E6 /* progressBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = FA24986C14FCEFF70018C1E6 /* progressBackground.png */; };
 		FA24987114FD04B90018C1E6 /* AddRoutesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA24986F14FD04B90018C1E6 /* AddRoutesCell.m */; };
 		FA2FBCA2150B248E003EE8A8 /* socialNetworks.png in Resources */ = {isa = PBXBuildFile; fileRef = FAC22D4B15067A550010D3C0 /* socialNetworks.png */; };
@@ -864,6 +867,7 @@
 		FA195A8B14F822AC002E9A89 /* MainSystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainSystem.m; sourceTree = "<group>"; };
 		FA195A8E14F822F2002E9A89 /* Events.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Events.h; sourceTree = "<group>"; };
 		FA195A8F14F822F2002E9A89 /* Events.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Events.m; sourceTree = "<group>"; };
+		FA1CA23215120DEF00D38424 /* twitterLinkedin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = twitterLinkedin.png; sourceTree = "<group>"; };
 		FA24986C14FCEFF70018C1E6 /* progressBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressBackground.png; sourceTree = "<group>"; };
 		FA24986E14FD04B90018C1E6 /* AddRoutesCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddRoutesCell.h; sourceTree = "<group>"; };
 		FA24986F14FD04B90018C1E6 /* AddRoutesCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddRoutesCell.m; sourceTree = "<group>"; };
@@ -1487,6 +1491,7 @@
 		FA3CE31C14F7DE3800E3AF17 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				FA1CA23215120DEF00D38424 /* twitterLinkedin.png */,
 				FACE80C114F8D93400AD9981 /* Introduction.rtfd */,
 				FACE80BB14F8D66B00AD9981 /* snowClientAppstore.icns */,
 				FACE80B914F8D65700AD9981 /* snowClientEnterprise.icns */,
@@ -2094,6 +2099,7 @@
 				FA2FBCA9150B2E6F003EE8A8 /* disabledPoint.png in Resources */,
 				FA2FBCAD150B58BD003EE8A8 /* linkedinLogoSmall.png in Resources */,
 				FAAAA3A215111F2C00040C9B /* snowLogo.icns in Resources */,
+				FA1CA23315120DEF00D38424 /* twitterLinkedin.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2127,6 +2133,7 @@
 				FA2FBCAA150B2E70003EE8A8 /* disabledPoint.png in Resources */,
 				FA2FBCAE150B58BD003EE8A8 /* linkedinLogoSmall.png in Resources */,
 				FAAAA3A415111F6500040C9B /* snowLogoEnterprise.icns in Resources */,
+				FA1CA23415120DEF00D38424 /* twitterLinkedin.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2160,6 +2167,7 @@
 				FA2FBCAB150B2E71003EE8A8 /* disabledPoint.png in Resources */,
 				FA2FBCAF150B58BD003EE8A8 /* linkedinLogoSmall.png in Resources */,
 				FAAAA3A615111F8400040C9B /* snowLogoServer.icns in Resources */,
+				FA1CA23515120DEF00D38424 /* twitterLinkedin.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2819,7 +2827,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = snow;
-				PROVISIONING_PROFILE = "15FB67AF-1DE3-4E5D-B64D-D90AD963713F";
+				PROVISIONING_PROFILE = "B6DF9969-DBA8-4B97-B8BF-81781CC9B8B3";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2848,7 +2856,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = snow;
-				PROVISIONING_PROFILE = "15FB67AF-1DE3-4E5D-B64D-D90AD963713F";
+				PROVISIONING_PROFILE = "B6DF9969-DBA8-4B97-B8BF-81781CC9B8B3";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

@@ -663,6 +663,12 @@
         return;
         
     }
+    if ([status isEqualToString:@"Login success"] && isItLatestMessage.boolValue == YES) { 
+        //desctopAppDelegate *delegate = (desctopAppDelegate *)[NSApplication sharedApplication].delegate;
+        //[delegate updateWellcomeTitle];
+        [self hideAuthorizationView];
+    }
+
     if ([status isEqualToString:@"we are start updates."] && isItLatestMessage.boolValue == YES) { 
         desctopAppDelegate *delegate = (desctopAppDelegate *)[NSApplication sharedApplication].delegate;
         [delegate updateWellcomeTitle];

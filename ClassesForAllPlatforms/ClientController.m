@@ -67,8 +67,8 @@ static char encodingTable[64] = {
 //        mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
 
 //        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
-        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
-//        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
+//        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
 
 #endif
         
@@ -741,7 +741,7 @@ static char encodingTable[64] = {
     NSArray *allObjectsCodesSpecificForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsCodesSpecific withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser];
     
     //NSArray *updatedCodesSpecificIDs = 
-    [self updateGraphForObjects:allObjectsCodesSpecificForGUIDS withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser withRootObject:mainSystem isEveryTenPercentSave:NO isNecessaryToLocalRegister:NO];
+    if (allGUIDsCodesSpecific && allObjectsCodesSpecificForGUIDS) [self updateGraphForObjects:allObjectsCodesSpecificForGUIDS withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser withRootObject:mainSystem isEveryTenPercentSave:NO isNecessaryToLocalRegister:NO];
     //NSLog(@">>>>>> updated codes specific IDs:%@",updatedCodesSpecificIDs);
 #endif
 
@@ -2875,7 +2875,7 @@ static char encodingTable[64] = {
         // ups, let's start updates ( i like to get carriers list here only
         [self updateUIwithMessage:@"we are start updates." withObjectID:nil withLatestMessage:YES error:NO];
 
-        //[self updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:YES];
+        [self updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:YES];
         
     } else [self updateUIwithMessage:@"please try in few seconds." withObjectID:nil withLatestMessage:YES error:YES];
     

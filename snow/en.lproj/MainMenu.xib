@@ -1442,7 +1442,7 @@
 								<string>NeXT Encapsulated PostScript v1.2 pasteboard type</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</set>
-							<string key="NSFrame">{{474, 479}, {326, 256}}</string>
+							<string key="NSFrame">{{571, 515}, {135, 133}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="670112968"/>
@@ -2991,7 +2991,6 @@
 						<array class="NSMutableArray" key="children">
 							<reference ref="387941559"/>
 							<reference ref="7625176"/>
-							<reference ref="151823801"/>
 							<reference ref="670112968"/>
 							<reference ref="106026502"/>
 							<reference ref="905299974"/>
@@ -3000,6 +2999,7 @@
 							<reference ref="583879462"/>
 							<reference ref="271861852"/>
 							<reference ref="770113081"/>
+							<reference ref="151823801"/>
 						</array>
 						<reference key="parent" ref="972006081"/>
 					</object>
@@ -3940,7 +3940,7 @@
 		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
 			<string key="NSMenuCheckmark">{11, 11}</string>
 			<string key="NSMenuMixedState">{10, 3}</string>
-			<string key="snowLogo">{128, 128}</string>
+			<string key="snowLogo">{512, 512}</string>
 		</dictionary>
 	</data>
 </archive>

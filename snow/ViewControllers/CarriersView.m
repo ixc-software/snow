@@ -350,7 +350,7 @@
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
         NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];        
-        carrier.sortDescriptors = [NSArray arrayWithObject:descriptor];
+        self.carrier.sortDescriptors = [NSArray arrayWithObject:descriptor];
         [descriptor release];
     });
 

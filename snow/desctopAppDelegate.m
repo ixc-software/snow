@@ -61,6 +61,12 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 
 #pragma mark - application lifecycle
+- (BOOL)windowShouldClose:(id)sender
+{
+    [NSApp terminate:sender];
+    return YES;
+}
+
 -(void)createNecessaryDirectories;
 {
     NSError *error = nil;
@@ -391,12 +397,13 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 - (NSURL *)applicationFilesDirectory {
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *libraryURL = [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
+    NSURL *libraryURL = [[fileManager URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask] lastObject];
     return [libraryURL URLByAppendingPathComponent:@"snow"];
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
-    
+    return NSTerminateNow;
+
     // Save changes in the application's managed object context before the application terminates.
     
     if (!__managedObjectContext) {
@@ -714,13 +721,17 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
         __block NSArray *keys = [[[stuff entity] attributesByName] allKeys];
         __block NSDictionary *volumes = [stuff dictionaryWithValuesForKeys:keys];
         NSMutableDictionary *cleaned = [self clearNullKeysForDictionary:volumes];
-        [cleaned setValue:[clientController localStatusForObjectsWithRootGuid:stuff.GUID] forKey:@"currentStatus"];
+        NSString *stuffGUID = stuff.GUID;
+        
+        if (stuffGUID) [cleaned setValue:[clientController localStatusForObjectsWithRootGuid:stuffGUID] forKey:@"currentStatus"];
         [finalData addObject:cleaned];
         
         keys = [[[stuff.currentCompany entity] attributesByName] allKeys];
         volumes = [stuff.currentCompany dictionaryWithValuesForKeys:keys];
         cleaned = [self clearNullKeysForDictionary:volumes];
-        [cleaned setValue:[clientController localStatusForObjectsWithRootGuid:stuff.currentCompany.GUID] forKey:@"currentStatus"];
+        NSString *companyGUID = stuff.currentCompany.GUID;
+
+        if (companyGUID) [cleaned setValue:[clientController localStatusForObjectsWithRootGuid:companyGUID] forKey:@"currentStatus"];
         
         [finalData addObject:cleaned];
         
@@ -729,7 +740,9 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
             keys = [[[stuffForDebug entity] attributesByName] allKeys];
             volumes = [stuffForDebug dictionaryWithValuesForKeys:keys];
             NSDictionary *cleaned = [self clearNullKeysForDictionary:volumes];
-            [cleaned setValue:[clientController localStatusForObjectsWithRootGuid:stuffForDebug.GUID] forKey:@"currentStatus"];
+            NSString *stuffForDebugGUID = stuffForDebug.GUID;
+
+            if (stuffForDebugGUID) [cleaned setValue:[clientController localStatusForObjectsWithRootGuid:stuffForDebugGUID] forKey:@"currentStatus"];
             
             [finalData addObject:cleaned];
         }];
@@ -739,7 +752,10 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
             keys = [[[carrier entity] attributesByName] allKeys];
             volumes = [carrier dictionaryWithValuesForKeys:keys];
             NSDictionary *cleaned = [self clearNullKeysForDictionary:volumes];
-            [cleaned setValue:[clientController localStatusForObjectsWithRootGuid:carrier.GUID] forKey:@"currentStatus"];
+            
+            NSString *carrierGUID = carrier.GUID;
+
+            if (carrierGUID) [cleaned setValue:[clientController localStatusForObjectsWithRootGuid:carrierGUID] forKey:@"currentStatus"];
             
             [finalData addObject:cleaned];
             NSSet *destinations = carrier.destinationsListPushList;
@@ -747,7 +763,9 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
                 keys = [[[destination entity] attributesByName] allKeys];
                 volumes = [destination dictionaryWithValuesForKeys:keys];
                 NSDictionary *cleaned = [self clearNullKeysForDictionary:volumes];
-                [cleaned setValue:[clientController localStatusForObjectsWithRootGuid:destination.GUID] forKey:@"currentStatus"];
+                NSString *destinationGUID = carrier.GUID;
+
+                if (destinationGUID) [cleaned setValue:[clientController localStatusForObjectsWithRootGuid:destinationGUID] forKey:@"currentStatus"];
                 [finalData addObject:cleaned];
             }];
         }];
