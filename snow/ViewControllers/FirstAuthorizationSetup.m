@@ -646,7 +646,7 @@
 -(void)updateUIWithData:(NSArray *)data;
 {
     //sleep(5);
-    //NSLog(@"FIRST AUTHORIZATION SETUP: data:%@",data);
+    NSLog(@"FIRST AUTHORIZATION SETUP: data:%@",data);
     NSString *status = [data objectAtIndex:0];
     //NSNumber *progress = [data objectAtIndex:1];
     NSNumber *isItLatestMessage = [data objectAtIndex:2];
@@ -663,7 +663,7 @@
         return;
         
     }
-    if ([status isEqualToString:@"Login success"] && isItLatestMessage.boolValue == YES) { 
+    if ([status isEqualToString:@"Login success"]) { 
         //desctopAppDelegate *delegate = (desctopAppDelegate *)[NSApplication sharedApplication].delegate;
         //[delegate updateWellcomeTitle];
         [self hideAuthorizationView];

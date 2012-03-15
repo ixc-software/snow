@@ -29,6 +29,8 @@
 static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 @implementation desctopAppDelegate
+@synthesize removeAllData;
+@synthesize updateCalendars;
 
 @synthesize window = _window;
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
@@ -171,11 +173,15 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 #ifdef SNOW_CLIENT_ENTERPRISE
     [self.window setTitle:@"snow enterprise"];
     [self.mainLogoSubSubTitle setHidden:NO];
+    [self.updateCalendars setHidden:YES];
+
 #endif
     
 #ifdef SNOW_CLIENT_APPSTORE
     [self.window setTitle:@"snow IXC"];
-    
+    //[self.removeAllData setHidden:YES];
+    [self.updateCalendars setHidden:YES];
+
 #endif
 
 #if defined(SNOW_SERVER)
@@ -669,7 +675,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"lastGraphUpdatingTime"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"showAgain"];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"lastGraphUpdatingTime"];
-    [[NSUserDefaults standardUserDefaults] setPersistentDomain:[NSDictionary dictionary] forName:[[NSBundle mainBundle] bundleIdentifier]];
+    //[[NSUserDefaults standardUserDefaults] setPersistentDomain:[NSDictionary dictionary] forName:[[NSBundle mainBundle] bundleIdentifier]];
     NSString *keyOfAuthorized = @"authorizedUserGUID";
     
 #if defined(SNOW_CLIENT_APPSTORE)
@@ -782,7 +788,9 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
         
         
         NSString *subject = [NSString stringWithFormat:@"debug information for snow mobile"];
-        
+        NSString *from = nil;
+        if (stuff) from = stuff.email;
+        else from = @"me@me.com";
         [updateForMainThread sendEmailMessageTo:@"iphone@ixcglobal.com" 
                                     withSubject:subject 
                                     withContent:[NSString stringWithFormat:@"This is debug info:"] 

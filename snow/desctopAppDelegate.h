@@ -36,6 +36,8 @@
     MySQLIXC *databaseForMainThread;
     UpdateDataController *updateForMainThread;
     ProgressUpdateController *progressForMainThread;
+    NSMenuItem *removeAllData;
+    NSMenuItem *updateCalendars;
 
     BOOL queueForUpdatesBusy;
     BOOL cancelAllOperations;
@@ -97,6 +99,8 @@
 
 @property (assign) UpdateDataController *updateForMainThread;
 @property (assign) ProgressUpdateController *progressForMainThread;
+@property (assign) IBOutlet NSMenuItem *removeAllData;
+@property (assign) IBOutlet NSMenuItem *updateCalendars;
 
 @property (readwrite) BOOL queueForUpdatesBusy;
 @property (readwrite) BOOL cancelAllOperations;

@@ -2277,6 +2277,14 @@
 					<int key="connectionID">535</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="972006081"/>
+						<reference key="destination" ref="976324537"/>
+					</object>
+					<int key="connectionID">623</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">addFontTrait:</string>
 						<reference key="source" ref="755631768"/>
@@ -2459,6 +2467,22 @@
 						<reference key="destination" ref="770113081"/>
 					</object>
 					<int key="connectionID">619</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">removeAllData</string>
+						<reference key="source" ref="976324537"/>
+						<reference key="destination" ref="626780399"/>
+					</object>
+					<int key="connectionID">620</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">updateCalendars</string>
+						<reference key="source" ref="976324537"/>
+						<reference key="destination" ref="297716860"/>
+					</object>
+					<int key="connectionID">621</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3819,7 +3843,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">619</int>
+			<int key="maxID">623</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3852,8 +3876,10 @@
 						<string key="mainLogoSubTitle">NSTextField</string>
 						<string key="mainLogoTitle">NSTextField</string>
 						<string key="mainProgressIndicator">NSProgressIndicator</string>
+						<string key="removeAllData">NSMenuItem</string>
 						<string key="showHideUserCompanyInfo">NSButton</string>
 						<string key="totalProfit">NSButton</string>
+						<string key="updateCalendars">NSMenuItem</string>
 						<string key="window">NSWindow</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -3913,6 +3939,10 @@
 							<string key="name">mainProgressIndicator</string>
 							<string key="candidateClassName">NSProgressIndicator</string>
 						</object>
+						<object class="IBToOneOutletInfo" key="removeAllData">
+							<string key="name">removeAllData</string>
+							<string key="candidateClassName">NSMenuItem</string>
+						</object>
 						<object class="IBToOneOutletInfo" key="showHideUserCompanyInfo">
 							<string key="name">showHideUserCompanyInfo</string>
 							<string key="candidateClassName">NSButton</string>
@@ -3920,6 +3950,10 @@
 						<object class="IBToOneOutletInfo" key="totalProfit">
 							<string key="name">totalProfit</string>
 							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="updateCalendars">
+							<string key="name">updateCalendars</string>
+							<string key="candidateClassName">NSMenuItem</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="window">
 							<string key="name">window</string>
@@ -3940,7 +3974,7 @@
 		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
 			<string key="NSMenuCheckmark">{11, 11}</string>
 			<string key="NSMenuMixedState">{10, 3}</string>
-			<string key="snowLogo">{512, 512}</string>
+			<string key="snowLogo">{128, 128}</string>
 		</dictionary>
 	</data>
 </archive>
