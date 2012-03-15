@@ -67,8 +67,8 @@ static char encodingTable[64] = {
 //        mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
 
 //        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
-//        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
-        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
+        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+//        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
 
 #endif
         
@@ -340,7 +340,7 @@ static char encodingTable[64] = {
 {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"yyyy'-'MM'-'dd' 'HH':'mm':'ss' 'Z'"];
-    [formatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    //[formatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
 
 
     NSEntityDescription *entity = [object entity];
@@ -356,9 +356,9 @@ static char encodingTable[64] = {
         //NSLog(@"class name::%@",className);
         if ([className isEqualToString:@"NSDate"]){
             //NSLog(@"dateUpdate");
-            NSDate *dateToPass = nil;
+            NSDate *dateToPass = nil;//[formatter dateFromString:obj];
             if ([[obj class] isSubclassOfClass:[NSDate class]]) dateToPass = obj;
-            else [formatter dateFromString:obj];
+            else dateToPass = [formatter dateFromString:obj];
             [object setValue:dateToPass forKey:key];
             continue;
         } 
@@ -2874,9 +2874,13 @@ static char encodingTable[64] = {
         [self setUserDefaultsObject:findedAuthorizedLogin.GUID forKey:keyAofAuthorized];
         // ups, let's start updates ( i like to get carriers list here only
         [self updateUIwithMessage:@"we are start updates." withObjectID:nil withLatestMessage:YES error:NO];
+#if defined(SNOW_CLIENT_ENTERPRISE)
 
+        [self updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:NO];
+#else
         [self updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:YES];
-        
+
+#endif
     } else [self updateUIwithMessage:@"please try in few seconds." withObjectID:nil withLatestMessage:YES error:YES];
     
 }

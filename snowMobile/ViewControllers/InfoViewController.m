@@ -242,6 +242,7 @@
         helpView.delegate = self;
         [self.tabBarController.view addSubview:helpView.view];
     } else [helpView release];
+    [self updateMainBoard];
     //[readme removeFromSuperview];
     //[self.navigationController.view addSubview:readme];
 }

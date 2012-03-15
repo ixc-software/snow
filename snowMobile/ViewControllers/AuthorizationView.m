@@ -642,7 +642,16 @@
         });
         return;
     }
-    
+    if ([status isEqualToString:@"Login success"]) {
+        [UIView animateWithDuration:3 
+                              delay:4 
+                            options:UIViewAnimationOptionBeginFromCurrentState
+                         animations:^{
+                             
+                             self.view.alpha = 0.0;
+                         } completion:nil];
+
+    }
     if ([data count] > 4) objectID = [data objectAtIndex:4];
     if (![isItLatestMessage boolValue])
     {

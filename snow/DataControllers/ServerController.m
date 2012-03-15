@@ -888,20 +888,18 @@ static char encodingTable[64] = {
 
     @autoreleasepool {
         if (mainObjectGUID && mainObjectEntity) { 
-            NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+            NSFetchRequest *fetchRequestForMainObject = [[NSFetchRequest alloc] init];
             NSEntityDescription *entity = [NSEntityDescription entityForName:mainObjectEntity inManagedObjectContext:self.moc];
-            [fetchRequest setEntity:entity];
-            NSPredicate *predicate = nil;
-            //if (dateFrom && dateTo) predicate = [NSPredicate predicateWithFormat:@"(GUID == %@)",mainObjectGUID];
-            //else 
-            predicate = [NSPredicate predicateWithFormat:@"(GUID == %@)",mainObjectGUID];
+            [fetchRequestForMainObject setEntity:entity];
+            NSPredicate *predicateForMainObject = [NSPredicate predicateWithFormat:@"(GUID == %@)",mainObjectGUID];
+            [fetchRequestForMainObject setPredicate:predicateForMainObject];
+            NSArray *fetchObjectsForMainObject = [self.moc executeFetchRequest:fetchRequestForMainObject error:&error];
+            [fetchRequestForMainObject release];
             
-            [fetchRequest setPredicate:predicate];
-            NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequest error:&error];
-            if (fetchedObjects == nil)  NSLog(@"Failed to executeFetchRequest:%@ to data store: %@ in function:%@",fetchRequest, [error localizedDescription],NSStringFromSelector(_cmd));
-            if (fetchedObjects.count > 0) {
+            if (fetchObjectsForMainObject == nil)  NSLog(@"Failed to executeFetchRequest:%@ to data store: %@ in function:%@",fetchRequestForMainObject, [error localizedDescription],NSStringFromSelector(_cmd));
+            if (fetchObjectsForMainObject.count > 0) {
                 //NSLog(@"SERVER CONTROLLER: GetObjectsList main object with entity:%@ FINDED with GUID:%@",entityForList,mainObjectGUID);
-                NSManagedObject *findedObject = fetchedObjects.lastObject;
+                NSManagedObject *findedObject = fetchObjectsForMainObject.lastObject;
                 NSEntityDescription *entityDescr = findedObject.entity;
                 NSDictionary *relationships = entityDescr.relationshipsByName;
                 __block BOOL isEntityForListFound = NO;
@@ -919,26 +917,31 @@ static char encodingTable[64] = {
                 }];
                 
                 if (destinationEntity) {
-                    NSMutableArray *allGUIDs = [[NSMutableArray alloc] init];
-                    [fetchRequest setEntity:destinationEntity];
-                    if (dateFrom && dateTo) predicate = [NSPredicate predicateWithFormat:@"(%K == %@) AND (modificationDate > %@) AND (modificationDate < %@)",relationshipNameForEntity,findedObject,dateFrom,dateTo];
-                    else predicate = [NSPredicate predicateWithFormat:@"(%K == %@)",relationshipNameForEntity,findedObject];
-                    [fetchRequest setPredicate:predicate];
-                    [fetchRequest setResultType:NSDictionaryResultType];
-                    [fetchRequest setPropertiesToFetch:[NSArray arrayWithObject:@"GUID"]];
-                    fetchedObjects = [moc executeFetchRequest:fetchRequest error:&error];
-                    [fetchedObjects enumerateObjectsUsingBlock:^(NSDictionary *row, NSUInteger idx, BOOL *stop) {
-                        @autoreleasepool {
-                            [allGUIDs addObject:[row valueForKey:@"GUID"]];
-                        }
-                    }];
+                    NSFetchRequest *fetchRequestForAllObjects = [[NSFetchRequest alloc] init];
+
+                    //NSMutableArray *allGUIDs = [[NSMutableArray alloc] init];
+                    [fetchRequestForAllObjects setEntity:destinationEntity];
+                    NSPredicate *predicateForAllObjects = nil;
+                    if (dateFrom && dateTo) predicateForAllObjects = [NSPredicate predicateWithFormat:@"(%K == %@) AND (modificationDate > %@) AND (modificationDate < %@)",relationshipNameForEntity,findedObject,dateFrom,dateTo];
+                    else predicateForAllObjects = [NSPredicate predicateWithFormat:@"(%K == %@)",relationshipNameForEntity,findedObject];
+                    [fetchRequestForAllObjects setPredicate:predicateForAllObjects];
+                    [fetchRequestForAllObjects setResultType:NSDictionaryResultType];
+                    [fetchRequestForAllObjects setPropertiesToFetch:[NSArray arrayWithObject:@"GUID"]];
+                    NSArray *allObjects = [moc executeFetchRequest:fetchRequestForAllObjects error:&error];
+                    [fetchRequestForAllObjects release];
+                    NSMutableArray *allObjectsUniqueGUIDs = [allObjects valueForKeyPath:@"@distinctUnionOfObjects.GUID"];
+//                    [allObjects enumerateObjectsUsingBlock:^(NSDictionary *row, NSUInteger idx, BOOL *stop) {
+//                        @autoreleasepool {
+//                            [allGUIDs addObject:[row valueForKey:@"GUID"]];
+//                        }
+//                    }];
                     NSString *errorSerialization;
                     
-                    NSData *allArchived = [NSPropertyListSerialization dataFromPropertyList:allGUIDs format:NSPropertyListBinaryFormat_v1_0 errorDescription:&errorSerialization];
+                    NSData *allArchived = [NSPropertyListSerialization dataFromPropertyList:allObjectsUniqueGUIDs format:NSPropertyListBinaryFormat_v1_0 errorDescription:&errorSerialization];
                     if (errorSerialization) NSLog(@"SERVER CONTRORLER: allObjectsList serialization failed:%@",errorSerialization);
                     
                     NSString *stringToPass = [self base64EncodingData:allArchived];
-                    [allGUIDs release];
+                    //[allGUIDs release];
                     //[finalJSONResult setValue:stringToPass forKey:@"objects"];
                     [finalJSONResult setValue:stringToPass forKey:@"allGUIDs"];
                 } else [finalJSONResult setValue:@"destination entity not found" forKey:@"error"];
@@ -948,39 +951,41 @@ static char encodingTable[64] = {
                 NSLog(@"SERVER CONTROLLER: allObjectsList main object with entity:%@ NOT FINDED with GUID:%@",entityForList,mainObjectGUID);
             }
             
-            [fetchRequest release];
+            //[fetchRequest release];
         } else {
             //this is main entity without upper entities
             if (entityForList) {
-                NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+                NSFetchRequest *fetchRequestForAllObjects = [[NSFetchRequest alloc] init];
                 NSEntityDescription *entity = [NSEntityDescription entityForName:entityForList inManagedObjectContext:self.moc];
-                [fetchRequest setEntity:entity];
-                NSPredicate *predicate = nil;
+                [fetchRequestForAllObjects setEntity:entity];
+//                NSPredicate *predicateForAllObjects = nil;
                 if (dateFrom && dateTo) { 
-                    predicate = [NSPredicate predicateWithFormat:@"(modificationDate > %@) AND (modificationDate < %@)",dateFrom,dateTo];
-                    [fetchRequest setPredicate:predicate];
+                     NSPredicate *predicateForAllObjects = [NSPredicate predicateWithFormat:@"(modificationDate > %@) AND (modificationDate < %@)",dateFrom,dateTo];
+                    [fetchRequestForAllObjects setPredicate:predicateForAllObjects];
                 }
                 //else predicate = [NSPredicate predicateWithFormat:@"(GUID == %@)",mainObjectGUID];
                 
-                [fetchRequest setResultType:NSDictionaryResultType];
-                [fetchRequest setPropertiesToFetch:[NSArray arrayWithObject:@"GUID"]];
+                [fetchRequestForAllObjects setResultType:NSDictionaryResultType];
+                [fetchRequestForAllObjects setPropertiesToFetch:[NSArray arrayWithObject:@"GUID"]];
                 
-                NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequest error:&error];
-                if (fetchedObjects == nil)  NSLog(@"Failed to executeFetchRequest:%@ to data store: %@ in function:%@",fetchRequest, [error localizedDescription],NSStringFromSelector(_cmd));
-                if (fetchedObjects.count > 0) {
-                    NSMutableArray *allGUIDs = [[NSMutableArray alloc] init];
-                    [fetchedObjects enumerateObjectsUsingBlock:^(NSDictionary *row, NSUInteger idx, BOOL *stop) {
-                        @autoreleasepool {
-                            [allGUIDs addObject:[row valueForKey:@"GUID"]];
-                        }
-                    }];
+                NSArray *allObjects = [self.moc executeFetchRequest:fetchRequestForAllObjects error:&error];
+                if (allObjects == nil)  NSLog(@"Failed to executeFetchRequest:%@ to data store: %@ in function:%@",fetchRequestForAllObjects, [error localizedDescription],NSStringFromSelector(_cmd));
+                if (allObjects.count > 0) {
+                    //NSMutableArray *allGUIDs = [[NSMutableArray alloc] init];
+                    NSMutableArray *allObjectsUniqueGUIDs = [allObjects valueForKeyPath:@"@distinctUnionOfObjects.GUID"];
+
+//                    [fetchedObjects enumerateObjectsUsingBlock:^(NSDictionary *row, NSUInteger idx, BOOL *stop) {
+//                        @autoreleasepool {
+//                            [allGUIDs addObject:[row valueForKey:@"GUID"]];
+//                        }
+//                    }];
                     NSString *errorSerialization;
                     
-                    NSData *allArchived = [NSPropertyListSerialization dataFromPropertyList:allGUIDs format:NSPropertyListBinaryFormat_v1_0 errorDescription:&errorSerialization];
+                    NSData *allArchived = [NSPropertyListSerialization dataFromPropertyList:allObjectsUniqueGUIDs format:NSPropertyListBinaryFormat_v1_0 errorDescription:&errorSerialization];
                     if (error) NSLog(@"SERVER CONTRORLER: allObjectsList serialization failed:%@",errorSerialization);
                     
                     NSString *stringToPass = [self base64EncodingData:allArchived];
-                    [allGUIDs release];
+                    //[allGUIDs release];
                     //[finalJSONResult setValue:stringToPass forKey:@"objects"];
                     [finalJSONResult setValue:stringToPass forKey:@"allGUIDs"];
                 } else [finalJSONResult setValue:@"entity name must present" forKey:@"error"];

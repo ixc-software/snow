@@ -23,6 +23,7 @@
 #import "Reachability.h"
 #import "TwitterUpdateDataController.h"
 
+
 @implementation mobileAppDelegate
 
 @synthesize window = _window;
@@ -38,6 +39,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    UIImage* tabBarBackground = [UIImage imageNamed:@"tabbar.png"];
+    [[UITabBar appearance] setBackgroundImage:tabBarBackground];
+    
+    [[UITabBar appearance] setSelectionIndicatorImage:[UIImage imageNamed:@"selection-tab.png"]];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
@@ -72,14 +77,18 @@
             UITabBarController *tabBar = [[UITabBarController alloc] init];
             EventsTableViewController *events = [[EventsTableViewController alloc] initWithNibName:@"EventsTableViewController" bundle:nil];
             self.eventListController = events;
-            UITabBarItem *eventsBar = [[UITabBarItem alloc] initWithTitle:@"Events" image:nil tag:0];
+            
+            
+            UITabBarItem *eventsBar = [[UITabBarItem alloc] initWithTitle:@"Events" image:[UIImage imageNamed:@"Picture-51-1.png"] tag:0];
             events.tabBarItem = eventsBar;
             
             [eventsBar release];
             
-            InfoViewController *infoAndConfig = [[InfoViewController alloc] init];
+            InfoViewController *infoAndConfig = nil;
+            if ([self isPad]) infoAndConfig = [[InfoViewController alloc] initWithNibName:@"InfoViewControllerIpad" bundle:nil];
+            else infoAndConfig = [[InfoViewController alloc] initWithNibName:@"InfoViewController" bundle:nil];
             infoAndConfig.managedObjectContext = self.managedObjectContext;        
-            UITabBarItem *infoBar = [[UITabBarItem alloc] initWithTitle:@"Info" image:nil tag:1];
+            UITabBarItem *infoBar = [[UITabBarItem alloc] initWithTitle:@"Info" image:[UIImage imageNamed:@"42-info.png"] tag:1];
             infoAndConfig.tabBarItem = infoBar;
             
             [infoBar release];
@@ -88,7 +97,7 @@
             
             routesTableViewController.managedObjectContext = self.managedObjectContext;
             
-            UITabBarItem *routesBar = [[UITabBarItem alloc] initWithTitle:@"Routes" image:nil tag:2];
+            UITabBarItem *routesBar = [[UITabBarItem alloc] initWithTitle:@"Routes" image:[UIImage imageNamed:@"05-shuffle.png"] tag:2];
             routesTableViewController.tabBarItem = routesBar;
             [routesBar release];
             
@@ -97,7 +106,7 @@
             ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:self.managedObjectContext];
             CompanyStuff *admin = [clientController authorization];
             
-            UITabBarItem *carriersBar = [[UITabBarItem alloc] initWithTitle:@"Carriers" image:nil tag:3];
+            UITabBarItem *carriersBar = [[UITabBarItem alloc] initWithTitle:@"Carriers" image:[UIImage imageNamed:@"44-shoebox.png"] tag:3];
             carriersList.tabBarItem = carriersBar;
             [carriersBar release];
             
@@ -109,9 +118,20 @@
             UINavigationController *navigationControllerForCarriers = [[UINavigationController alloc] initWithRootViewController:carriersList];
             
             [tabBar setViewControllers:[NSArray arrayWithObjects:navigationControllerForPromo,navigationControllerForEvents,navigationControllerForDestinations,navigationControllerForCarriers,nil]];        
-            self.tabBarController = tabBar;
+            self.self.tabBarController = tabBar;
             self.tabBarController.delegate = self;
+//            UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"snowTabbarbackground.png"]];
+//
+//            if ([[[UIDevice currentDevice] systemVersion] floatValue] > 4.9) {
+//                //iOS 5
+//                [self.tabBarController.tabBar insertSubview:imageView atIndex:1];
+//            }
+//            else {
+//                //iOS 4.whatever and below
+//                [self.tabBarController.tabBar insertSubview:imageView atIndex:0];
+//            }
             
+//            [imageView release];
             eventListController.managedObjectContext = self.managedObjectContext;
             eventListController.persistentStoreCoordinator = self.persistentStoreCoordinator;
             
@@ -183,7 +203,7 @@
             [wifiReach startNotifier];
             [self updateInterfaceWithReachability: wifiReach];
             
-            
+            /*
             float iOSVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
             if(iOSVersion <= 4.3){
                 //[[tabBarController tabBar] insertSubview:viewa aboveSubview:self.tabBarController.view];
@@ -250,7 +270,7 @@
             info.title = @"Routes";
             
             info = [self.tabBarController.tabBar.items objectAtIndex:3];
-            info.title = @"Carriers";
+            info.title = @"Carriers";*/
             
         });
         
