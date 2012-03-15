@@ -2875,7 +2875,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = client.entitlements;
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: Oleksii Vynogradov";
+				CODE_SIGN_IDENTITY = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/ExternalLibraries\"",
@@ -2895,7 +2895,6 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = snow;
-				PROVISIONING_PROFILE = "B6DF9969-DBA8-4B97-B8BF-81781CC9B8B3";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2904,7 +2903,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = client.entitlements;
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: Oleksii Vynogradov";
+				CODE_SIGN_IDENTITY = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/ExternalLibraries\"",
@@ -2924,7 +2923,6 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = snow;
-				PROVISIONING_PROFILE = "B6DF9969-DBA8-4B97-B8BF-81781CC9B8B3";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
