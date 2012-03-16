@@ -173,42 +173,75 @@
 #pragma mark - Own view updates
 -(void) keyboardWillShow:(NSNotification *)note
 {
-    CGRect keyboardBounds;
-    [[note.userInfo valueForKey:UIKeyboardFrameBeginUserInfoKey] getValue: &keyboardBounds];
-    CGFloat keyboardHeight = keyboardBounds.size.height;
-    if (keyboardIsShowing == NO && keyboardIsShowingFromSearchString == NO)
-    {
-        keyboardIsShowing = YES;
-        CGRect frame = self.tableView.frame;
-        frame.origin.y -= keyboardHeight - HEADER_HEIGHT;
+    NSUInteger openedSection = sections.lastIndex;
+    BOOL isNecessaryToView = YES;
+    if (openedSection != NSNotFound) {
         
-        [UIView beginAnimations:nil context:NULL];
-        [UIView setAnimationBeginsFromCurrentState:YES];
-        [UIView setAnimationDuration:0.3f];
-        self.tableView.frame = frame;
-        [UIView commitAnimations];
+        CGRect position = [self.tableView rectForSection:openedSection];
+        mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+        if ([delegate isPad]) {
+            NSLog(@"iPad sectionFrame:%@",NSStringFromCGRect(position));
+            if (position.origin.y < 240) isNecessaryToView = NO;
+        } else {
+            NSLog(@"iPhone sectionFrame:%@",NSStringFromCGRect(position));
+            if (position.origin.y < 240) isNecessaryToView = NO;
+        }
+    }
+    if (isNecessaryToView) {
+        CGRect keyboardBounds;
+        [[note.userInfo valueForKey:UIKeyboardFrameBeginUserInfoKey] getValue: &keyboardBounds];
+        CGFloat keyboardHeight = keyboardBounds.size.height;
+        if (keyboardIsShowing == NO && keyboardIsShowingFromSearchString == NO)
+        {
+            keyboardIsShowing = YES;
+            CGRect frame = self.tableView.frame;
+            frame.origin.y -= keyboardHeight - HEADER_HEIGHT;
+            
+            [UIView beginAnimations:nil context:NULL];
+            [UIView setAnimationBeginsFromCurrentState:YES];
+            [UIView setAnimationDuration:0.3f];
+            self.tableView.frame = frame;
+            [UIView commitAnimations];
+        }
     }
 }
 
 -(void) keyboardWillHide:(NSNotification *)note
 {
-    CGRect keyboardBounds;
-    [[note.userInfo valueForKey:UIKeyboardFrameBeginUserInfoKey] getValue: &keyboardBounds];
-    CGFloat keyboardHeight = keyboardBounds.size.height;
-    if (keyboardIsShowing == YES && keyboardIsShowingFromSearchString == NO)
-    {
-        keyboardIsShowing = NO;
-        CGRect frame = self.tableView.frame;
-        frame.origin.y += keyboardHeight - HEADER_HEIGHT;
-        
-        [UIView beginAnimations:nil context:NULL];
-        [UIView setAnimationBeginsFromCurrentState:YES];
-        [UIView setAnimationDuration:0.3f];
-        self.tableView.frame = frame;
-        [UIView commitAnimations];
-        
+    NSUInteger openedSection = sections.lastIndex;
+    BOOL isNecessaryToView = YES;
+    
+    if (openedSection != NSNotFound) {
+        CGRect position = [self.tableView rectForSection:openedSection];
+        mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+        if ([delegate isPad]) {
+            NSLog(@"iPad sectionFrame:%@",NSStringFromCGRect(position));
+            if (position.origin.y < 240) isNecessaryToView = NO;
+        } else {
+            NSLog(@"iPhone sectionFrame:%@",NSStringFromCGRect(position));
+            if (position.origin.y < 240) isNecessaryToView = NO;
+        }
     }
-
+    if (isNecessaryToView) {
+        
+        CGRect keyboardBounds;
+        [[note.userInfo valueForKey:UIKeyboardFrameBeginUserInfoKey] getValue: &keyboardBounds];
+        CGFloat keyboardHeight = keyboardBounds.size.height;
+        if (keyboardIsShowing == YES && keyboardIsShowingFromSearchString == NO)
+        {
+            keyboardIsShowing = NO;
+            CGRect frame = self.tableView.frame;
+            frame.origin.y += keyboardHeight - HEADER_HEIGHT;
+            
+            [UIView beginAnimations:nil context:NULL];
+            [UIView setAnimationBeginsFromCurrentState:YES];
+            [UIView setAnimationDuration:0.3f];
+            self.tableView.frame = frame;
+            [UIView commitAnimations];
+            
+        }
+    }
+    
 }
 
 -(NSArray *) indexForSectionIndexTitlesForEntity:(NSString *)entityName;
@@ -274,16 +307,22 @@
 //    if (!addRoutes) {
     CGFloat moveSearchAndAddRoutesTo = 0;
     if (isControllerStartedFromOutsideTabbar) moveSearchAndAddRoutesTo = 195;
-    else moveSearchAndAddRoutesTo = 270;
-
+    else moveSearchAndAddRoutesTo = 238;
+    
     if (!configureRoutesButton) { 
-        configureRoutesButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-        configureRoutesButton.frame = CGRectMake(configureRoutesButton.frame.origin.x + moveSearchAndAddRoutesTo, configureRoutesButton.frame.origin.y + 7, configureRoutesButton.frame.size.width, configureRoutesButton.frame.size.height);
+        //if (isControllerStartedFromOutsideTabbar)   configureRoutesButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 41, 20)];
+        //else 
+        configureRoutesButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 38, 30)];
+        //configureRoutesButton.frame = CGRectMake(configureRoutesButton.frame.origin.x, configureRoutesButton.frame.origin.y, configureRoutesButton.frame.size.width, configureRoutesButton.frame.size.height);
         
-        [configureRoutesButton setImage:[UIImage imageNamed:@"routesConfig.png"] forState:UIControlStateNormal];
+        [configureRoutesButton setImage:[UIImage imageNamed:@"destinatioControl.png"] forState:UIControlStateNormal];
         [configureRoutesButton addTarget:self action:@selector(didClickConfig:) forControlEvents:UIControlEventTouchUpInside];
+        UIBarButtonItem *configureRoutes = [[UIBarButtonItem alloc] initWithCustomView:configureRoutesButton];
+        
+        self.navigationItem.rightBarButtonItem = configureRoutes;
     }
-    [segmentedBlock addSubview:configureRoutesButton];
+    //}
+    //[segmentedBlock addSubview:configureRoutesButton];
         
 
 //        CGFloat moveSearchAndAddRoutesTo = 0;
@@ -446,6 +485,7 @@
             mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
             ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];            
             CompanyStuff *admin = [clientController authorization];
+
             NSSet *allCarriers = nil;
             if (selectedCarrierID) {
                 NSPredicate *predicate = [NSPredicate predicateWithFormat:@"objectID == %@",selectedCarrierID];
@@ -456,56 +496,76 @@
             if (lastFullUpdate != nil && -[lastFullUpdate timeIntervalSinceNow] < 36000) {
                 dateFrom = lastUpdate;//[NSDate dateWithTimeIntervalSinceNow:-36000];
                 dateTo = [NSDate date];
-                NSLog(@"DESTINATIONS LIST: using only last 10 hour period for update");
+                NSLog(@"DESTINATIONS LIST: using only last 10 hour period for current date:%@ and lastFullUpdate:%@",dateTo,lastFullUpdate);
             } else {
-                NSLog(@"DESTINATIONS LIST: FULL update");
+                NSLog(@"DESTINATIONS LIST: FULL update:%@",lastFullUpdateTimeKey);
                 [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:lastFullUpdateTimeKey];
             }
-            NSArray *allGUIDsCarriers = [clientController getAllObjectsListWithEntityForList:@"Carrier" withMainObjectGUID:admin.GUID withMainObjectEntity:@"CompanyStuff" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
-            NSSet *filteredCarriers = [allCarriers filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"GUID IN %@",allGUIDsCarriers]];
-            NSLog(@"DESTINATIONS LIST: using only last 10 hour period for update carriers count:%@",[NSNumber numberWithUnsignedInteger:filteredCarriers.count]);
+            NSMutableSet  *finalCarriersList = [NSMutableSet set];
+            NSSet *allCompanyUsers = admin.currentCompany.companyStuff;
+            [allCompanyUsers enumerateObjectsUsingBlock:^(CompanyStuff *user, BOOL *stop) {
+                NSString *guid = user.GUID;
+                
+                NSArray *allGUIDsCarriers = [clientController getAllObjectsListWithEntityForList:@"Carrier" withMainObjectGUID:guid withMainObjectEntity:@"CompanyStuff" withAdmin:user withDateFrom:dateFrom withDateTo:dateTo];
+
+                NSSet *filteredCarriers = [user.carrier filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"GUID IN %@",allGUIDsCarriers]];
+                [finalCarriersList unionSet:filteredCarriers];
+            }];
+            
+            NSLog(@"DESTINATIONS LIST: final update carriers count:%@",[NSNumber numberWithUnsignedInteger:finalCarriersList.count]);
+            //[clientControllerForAdmin release];
 
 
-            NSUInteger allCarriersCount = filteredCarriers.count;
+            NSUInteger allCarriersCount = finalCarriersList.count;
             __block NSUInteger idxCarriers = 0;
             
-            [filteredCarriers enumerateObjectsUsingBlock:^(Carrier *carrier, BOOL *stop) {
-                if (cancelAllUpdates == YES) *stop = YES;
-                NSString *carrierName = [NSString stringWithFormat:@"%@",carrier.name];
-                dispatch_async(dispatch_get_main_queue(), ^(void) {
-                    carriersProgressTitle.text = carrierName;
-                    NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idxCarriers] doubleValue] / [[NSNumber numberWithUnsignedInteger:allCarriersCount] doubleValue]];
-                    carriersProgress.progress = percentDone.floatValue;
-                    operationTitle.text = @"Download...";
-                });
-                idxCarriers++;
-                
-                NSArray *allGUIDsDestinations = [clientController getAllObjectsListWithEntityForList:entity withMainObjectGUID:carrier.GUID withMainObjectEntity:@"Carrier" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
-
-                NSArray *allObjectsForGUIDS = [clientController getAllObjectsWithGUIDs:allGUIDsDestinations withEntity:entity withAdmin:admin];
-                if (allGUIDsDestinations && allObjectsForGUIDS && allGUIDsDestinations.count > 0 && allObjectsForGUIDS > 0) {
+            [finalCarriersList enumerateObjectsUsingBlock:^(Carrier *carrier, BOOL *stop) {
+                @autoreleasepool {
                     
-                    NSArray *updatedDestinationsIDs = [clientController updateGraphForObjects:allObjectsForGUIDS withEntity:entity withAdmin:admin withRootObject:carrier isEveryTenPercentSave:YES isNecessaryToLocalRegister:YES];
-                    [clientController finalSave:clientController.moc];
-                    // remove objects which was not on server
-                    NSSet *allDestinations = nil;
-                    if (selectedSegmentIndex == 0) allDestinations = carrier.destinationsListForSale;
-                    if (selectedSegmentIndex == 1) allDestinations = carrier.destinationsListWeBuy;
-                    if (selectedSegmentIndex == 2) allDestinations = carrier.destinationsListPushList;
                     
-                    [allDestinations enumerateObjectsUsingBlock:^(NSManagedObject *destination, BOOL *stop) {
-                        if (cancelAllUpdates == YES) *stop = YES;
+                    if (cancelAllUpdates == YES) *stop = YES;
+                    NSString *carrierName = [NSString stringWithFormat:@"%@",carrier.name];
+                    dispatch_async(dispatch_get_main_queue(), ^(void) {
+                        carriersProgressTitle.text = carrierName;
+                        NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idxCarriers] doubleValue] / [[NSNumber numberWithUnsignedInteger:allCarriersCount] doubleValue]];
+                        carriersProgress.progress = percentDone.floatValue;
+                        operationTitle.text = @"Download...";
+                    });
+                    idxCarriers++;
+                    //ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];            
+                    //CompanyStuff *admin = [clientController authorization];
 
-                        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",[destination valueForKey:@"GUID"]];
-                        NSArray *filteredDestinationsIDs = [updatedDestinationsIDs filteredArrayUsingPredicate:predicate];
-                        if (filteredDestinationsIDs.count == 0) {
-                            [clientController.moc deleteObject:destination];
-                            NSLog(@"CLIENT CONTROLLER: object with entity %@ not on server and will removed",carrier.entity.name);
-                        }
-                    }];
-                    [clientController finalSave:clientController.moc];
+                    NSArray *allGUIDsDestinations = [clientController getAllObjectsListWithEntityForList:entity withMainObjectGUID:carrier.GUID withMainObjectEntity:@"Carrier" withAdmin:admin withDateFrom:dateFrom withDateTo:dateTo];
+                    
+                    NSArray *allObjectsForGUIDS = [clientController getAllObjectsWithGUIDs:allGUIDsDestinations withEntity:entity withAdmin:admin];
+                    if (allGUIDsDestinations && allObjectsForGUIDS && allGUIDsDestinations.count > 0 && allObjectsForGUIDS > 0) {
+
+                        NSArray *updatedDestinationsIDs = [clientController updateGraphForObjects:allObjectsForGUIDS withEntity:entity withAdmin:admin withRootObject:carrier isEveryTenPercentSave:YES isNecessaryToLocalRegister:YES];
+                        [clientController finalSave:clientController.moc];
+                        // remove objects which was not on server
+                        NSSet *allDestinations = nil;
+                        if (selectedSegmentIndex == 0) allDestinations = carrier.destinationsListForSale;
+                        if (selectedSegmentIndex == 1) allDestinations = carrier.destinationsListWeBuy;
+                        if (selectedSegmentIndex == 2) allDestinations = carrier.destinationsListPushList;
+                        
+                        [allDestinations enumerateObjectsUsingBlock:^(NSManagedObject *destination, BOOL *stop) {
+                            if (cancelAllUpdates == YES) *stop = YES;
+                            
+                            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",[destination valueForKey:@"GUID"]];
+                            NSArray *filteredDestinationsIDs = [updatedDestinationsIDs filteredArrayUsingPredicate:predicate];
+                            if (filteredDestinationsIDs.count == 0) {
+                                [clientController.moc deleteObject:destination];
+                                NSLog(@"CLIENT CONTROLLER: object with entity %@ not on server and will removed",carrier.entity.name);
+                            }
+                        }];
+                        [clientController finalSave:clientController.moc];
+                    }
+
                 }
             }];
+
+            [clientController release];
+            
             dispatch_async(dispatch_get_main_queue(), ^(void) {
                 operationProgress.hidden = YES;
                 carriersProgress.hidden = YES;
@@ -520,7 +580,6 @@
                 //[self.navigationController setToolbarHidden:YES animated:YES];
                 [self.tableView reloadData];
             });
-            [clientController release];
             NSError *error = nil;
             
             NSFetchRequest *request = [[NSFetchRequest alloc] init];
@@ -1423,6 +1482,7 @@
     // Edit the entity name as appropriate.
     NSEntityDescription *entity = nil;
     NSMutableArray *predicateArray = [NSMutableArray array];
+    NSMutableArray *predicateUsersArray = [NSMutableArray array];
     
     if (selectRoutes.selectedSegmentIndex == 0) { 
         entity = [NSEntityDescription entityForName:@"DestinationsListForSale" inManagedObjectContext:self.managedObjectContext];
@@ -1492,10 +1552,14 @@
 
         ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];            
         CompanyStuff *admin = [clientController authorization];
+        NSSet *allUsers = admin.currentCompany.companyStuff;
+        [allUsers enumerateObjectsUsingBlock:^(CompanyStuff *user, BOOL *stop) {
+            [predicateUsersArray addObject:[NSPredicate predicateWithFormat:@"carrier.companyStuff.GUID == %@",user.GUID]];
+            NSLog(@"DESTINATIONS VIEW:user allow to look:%@",user.email);
+        }];
 //        NSMutableArray *allCarriersPredicate = [NSMutableArray array];
 //        NSSet *allCarriers = admin.carrier;
 //        [allCarriers enumerateObjectsUsingBlock:^(Carrier *carrier, BOOL *stop) {
-            [predicateArray addObject:[NSPredicate predicateWithFormat:@"carrier.companyStuff.GUID == %@",admin.GUID]];
 //        }];
         
 //        filterPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:allCarriersPredicate];
@@ -1510,7 +1574,10 @@
 //    }
 //    else
 //    {
-        filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:predicateArray];
+    NSPredicate *filterPredicateForUsers = [NSCompoundPredicate orPredicateWithSubpredicates:predicateUsersArray];
+    
+    filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:predicateArray];
+    filterPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:[NSArray arrayWithObjects:filterPredicate, filterPredicateForUsers,nil]];
 //    }
     //NSLog(@"DESTIONATIONS PUSH LIST:final predicate in fetch:%@ entity name:%@ sort descriptors:%@",filterPredicate,entity.name,sortDescriptors);
     [fetchRequest setPredicate:filterPredicate];

@@ -19,5 +19,7 @@
 @property (retain, nonatomic) IBOutlet UILabel *priceCorrectionTitle;
 @property (retain, nonatomic) IBOutlet UILabel *priceCorrectionPercent;
 @property (retain, nonatomic) IBOutlet UIStepper *priceCorrectionStepper;
+@property (retain, nonatomic) IBOutlet UILabel *includeCountries;
+@property (retain, nonatomic) IBOutlet UILabel *headTitle;
 
 @end

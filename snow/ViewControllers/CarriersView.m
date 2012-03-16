@@ -25,6 +25,7 @@
 
 
 @implementation CarriersView
+@synthesize includeCountryListInTitle;
 @synthesize carrier;
 @synthesize twitterWebView,twitterController,linkedinController;
 @synthesize pin;
@@ -1147,6 +1148,9 @@
         if (!priceCorrection) priceCorrection = [NSNumber numberWithInt:0];
         messagePriceCorrectionPercentTitle.stringValue = [NSString stringWithFormat:@"Percent correction:%@%%",priceCorrection];
         [messageIncludePrice bind:@"value" toObject:self withKeyPath:@"messageIncludePriceValue" options:nil];
+        [messageIncludePrice setState:includeRates.boolValue];
+        [includeCountryListInTitle setState:includeRates.boolValue];
+        
     });
 
 }

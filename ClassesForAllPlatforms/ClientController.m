@@ -971,8 +971,8 @@ static char encodingTable[64] = {
         
         [companiesList enumerateObjectsUsingBlock:^(NSDictionary *companyInfo, NSUInteger idx, BOOL *stop) {
             NSString *objectGUID = [companyInfo valueForKey:@"GUID"];
-            NSDictionary *companyAdmin = [companyInfo valueForKey:@"companyStuff"];
-            NSString *adminGUID = [companyAdmin valueForKey:@"GUID"];
+            NSArray *companyStuff = [companyInfo valueForKey:@"companyStuff"];
+            //NSString *adminGUID = [companyAdmin valueForKey:@"GUID"];
             NSMutableDictionary *clearCompanyInfo = [NSMutableDictionary dictionaryWithDictionary:companyInfo];
             [clearCompanyInfo removeObjectForKey:@"companyStuff"];
             
@@ -1006,40 +1006,46 @@ static char encodingTable[64] = {
                 [self setValuesFromDictionary:clearCompanyInfo anObject:companyForChanges];
                 [allLocalCompanies removeObject:companyForChanges];
             };
-            if (![companyForChanges.GUID isEqualToString:currentAdmin.currentCompany.GUID]) {
+            //if (![companyForChanges.GUID isEqualToString:currentAdmin.currentCompany.GUID]) {
                 // all company list updates need only if company not current
-                
-                CompanyStuff *admin = nil;
-                entity = [NSEntityDescription entityForName:@"CompanyStuff" inManagedObjectContext:self.moc];
+            [companyStuff enumerateObjectsUsingBlock:^(NSDictionary *stuffDict, NSUInteger idx, BOOL *stop) {
+                NSString *guid = [stuffDict valueForKey:@"GUID"];
+             
+                CompanyStuff *stuff = nil;
+                NSEntityDescription *entity = [NSEntityDescription entityForName:@"CompanyStuff" inManagedObjectContext:self.moc];
                 [fetchRequest setEntity:entity];
-                predicate = [NSPredicate predicateWithFormat:@"(GUID == %@)",adminGUID];
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(GUID == %@)",guid];
                 [fetchRequest setPredicate:predicate];
-                fetchedObjects = [self.moc executeFetchRequest:fetchRequest error:&error];
-                if (fetchedObjects == nil)  NSLog(@"Failed to executeFetchRequest:%@ to data store: %@ in function:%@",fetchRequest, [error localizedDescription],NSStringFromSelector(_cmd));
+                NSArray *allLocalStuff = [self.moc executeFetchRequest:fetchRequest error:&error];
                 
-                if ([fetchedObjects count] == 0 && adminGUID) { 
-                    admin = (CompanyStuff *)[NSEntityDescription 
+                if ([allLocalStuff count] == 0 && guid) { 
+                    stuff = (CompanyStuff *)[NSEntityDescription 
                                              insertNewObjectForEntityForName:@"CompanyStuff" 
                                              inManagedObjectContext:self.moc];
                     
-                };
-                
-                if ([fetchedObjects count] == 1) { 
-                    admin = [fetchedObjects lastObject];
-                };
-                // don't update password to nil for current admin
-                if (admin && admin != currentAdmin) { 
-                    admin.currentCompany = companyForChanges;
-                    [self setValuesFromDictionary:companyAdmin anObject:admin];
-                    //NSLog(@"CLIENT CONTROLLER: admin with email:%@ was updated",admin.email);
-                    
+                } else {
+                    stuff = allLocalStuff.lastObject;
                 }
+                stuff.currentCompany = companyForChanges;
                 
+                [self setValuesFromDictionary:stuffDict anObject:stuff];
+
+//                if ([fetchedObjects count] == 1) { 
+//                    admin = [fetchedObjects lastObject];
+//                };
+//                // don't update password to nil for current admin
+//                if (admin && admin != currentAdmin) { 
+//                    admin.currentCompany = companyForChanges;
+//                    [self setValuesFromDictionary:companyAdmin anObject:admin];
+//                    //NSLog(@"CLIENT CONTROLLER: admin with email:%@ was updated",admin.email);
+//                    
+//                }
                 
+            }];  
                 // final updates for both objects
                 
                 //NSLog(@"status for company:%@",[[NSUserDefaults standardUserDefaults] objectForKey:companyForChanges.GUID]);
-            } else NSLog(@"Don't do updates for company:%@ and guid:%@",companyForChanges.name,companyForChanges.GUID);
+            //} else NSLog(@"Don't do updates for company:%@ and guid:%@",companyForChanges.name,companyForChanges.GUID);
             //NSLog(@"finalUpdateForCompany:%@ withAdmin:%@",companyForChanges,admin);
             //[fetchRequest release];
         }];
@@ -2209,7 +2215,7 @@ static char encodingTable[64] = {
      
     NSDictionary *receivedObject = nil;
     while (receivedObject == nil) {
-        receivedObject = [self getJSONAnswerForFunctionVersionTwo:@"GetObjectsList" withJSONRequest:prepeareForJSONRequest];
+        receivedObject = [self getJSONAnswerForFunction:@"GetObjectsList" withJSONRequest:prepeareForJSONRequest];
         if (!receivedObject) sleep(5);
     }
     NSString *error = [receivedObject valueForKey:@"error"];
@@ -2253,7 +2259,7 @@ static char encodingTable[64] = {
             //NSDictionary *receivedObject = nil;
             NSDictionary *receivedResult = nil;
             while (!receivedResult) {
-                receivedResult = [self getJSONAnswerForFunctionVersionTwo:@"GetObjectsWithGUIDs" withJSONRequest:prepeareForJSONRequest];
+                receivedResult = [self getJSONAnswerForFunction:@"GetObjectsWithGUIDs" withJSONRequest:prepeareForJSONRequest];
             }
             //[receivedObject setValuesForKeysWithDictionary:receivedResult];
 

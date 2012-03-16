@@ -351,7 +351,6 @@
     });
 
     
-    [progress startSync];
     NSError *error = nil;
     progress.objectsQuantity = [NSNumber numberWithUnsignedInteger:[carriersToExecute count]];
     [progress updateSystemMessage:[NSString stringWithFormat:@"Sync was started:%@ for number %@ carriers.",[NSDate date],[NSNumber numberWithUnsignedInteger:[carriersToExecute count]]]];
@@ -661,6 +660,8 @@
         cancelAllOperations = NO;
         ProgressUpdateController *progressForDaylySync = [[ProgressUpdateController alloc] initWithDelegate:delegate];
         progressForDaylySync.cycleSyncType = @"dayly";
+        [progressForDaylySync startSync];
+
         while (!cancelAllOperations) {
             for (int i = 86395;i != 0;i--) 
             {
@@ -689,6 +690,8 @@
                 }
             }
         }
+        [progressForDaylySync stopSync];
+
         [progressForDaylySync release];
         
     });

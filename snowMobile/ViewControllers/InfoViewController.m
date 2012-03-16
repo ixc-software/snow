@@ -164,6 +164,7 @@
         NSString *subTitle = nil;
         if ([admin.currentCompany.companyAdminGUID isEqualToString:admin.GUID]) subTitle = @"you are company admin of:";
         else subTitle = @"you are community part of the company:";
+        wellcomeSubTitle.text = subTitle;
         companyName.text = admin.currentCompany.name;
         NSString *totalProfit = [[NSUserDefaults standardUserDefaults] valueForKey:@"totalProfit"];
         NSString *totalIncome = [[NSUserDefaults standardUserDefaults] valueForKey:@"totalIncome"];

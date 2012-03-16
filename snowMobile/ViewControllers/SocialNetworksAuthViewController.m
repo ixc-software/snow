@@ -13,6 +13,7 @@
 #import "mobileAppDelegate.h"
 #import "DestinationsListPushList.h"
 #import "HelpForInfoView.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation SocialNetworksAuthViewController
 @synthesize groupsToMessage;
@@ -122,6 +123,7 @@
 {
     [super viewDidLoad];
     webView.delegate = self;
+    groupsList.rowHeight = 94;
     
     [authorize removeAllSegments];
     [authorize insertSegmentWithTitle:@"authorize" atIndex:0 animated:NO];
@@ -366,7 +368,7 @@
 - (IBAction)changeGroupsToPostToGroupsMessage:(id)sender {
     if (groupsToMessage.selectedSegmentIndex == 0) {
        // groups 
-        groupsList.rowHeight = 45;
+        groupsList.rowHeight = 94;
         isGroupToPostSelected = YES;
 
         [groupsList reloadData];
@@ -412,6 +414,7 @@
     [[NSUserDefaults standardUserDefaults] setValue:cell.bodyForEdit.text forKey:@"bodyForEdit"];
     [[NSUserDefaults standardUserDefaults] setValue:cell.signature.text forKey:@"signature"];
     [[NSUserDefaults standardUserDefaults] setValue:cell.postingTitle.text forKey:@"postingTitle"];
+    [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:cell.groupSwitch.on] forKey:@"includeCountriesInTitle"];
     [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:cell.includeRates.on] forKey:@"includeRates"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [sender setHidden:YES];
@@ -433,6 +436,16 @@
     
                                          
 }
+
+- (IBAction)includeCountriesInTitleChange:(id)sender {
+    if (groupsToMessage.selectedSegmentIndex == 1) {
+        LinkedinGroupsTableViewCell *cell = (LinkedinGroupsTableViewCell *)[groupsList cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:cell.groupSwitch.on] forKey:@"includeCountriesInTitle"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+
+    }
+}
+
 
 #pragma mark - Twitter controller delegates
 
@@ -638,8 +651,31 @@
 {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"enabled = %@",[NSNumber numberWithBool:YES]];
     NSArray *enabledGroups = [groupListObjects filteredArrayUsingPredicate:predicate];
-    NSString *postingTitle = [[NSUserDefaults standardUserDefaults] valueForKey:@"postingTitle"];
+    NSString *postingTitleSaved = [[NSUserDefaults standardUserDefaults] valueForKey:@"postingTitle"];
     NSNumber *includeRates = [[NSUserDefaults standardUserDefaults] valueForKey:@"includeRates"];
+    NSNumber *includeCountriesInTitle = [[NSUserDefaults standardUserDefaults] valueForKey:@"includeCountriesInTitle"];
+    NSString *postingTitle = nil;
+    if (includeCountriesInTitle.boolValue) {
+        mobileAppDelegate *delegate = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
+        NSManagedObjectContext *context = delegate.managedObjectContext;
+        NSMutableArray *uniqueCountries = [NSMutableArray array];
+        
+        [managedObjectIDs enumerateObjectsUsingBlock:^(NSManagedObjectID *objectID, NSUInteger idx, BOOL *stop) {
+            NSManagedObject *object = [context objectWithID:objectID];
+            NSString *country = [object valueForKey:@"country"];
+            NSString *specific = [object valueForKey:@"specific"];
+            NSString *finalCountrySpecific = nil;
+            NSLog(@">>>>>>> specific:%@",specific);
+            if ([specific rangeOfString:@"Mobile"].length > 0) {
+                finalCountrySpecific = [NSString stringWithFormat:@"%@ %@",country,@"Mobile"];
+            } else finalCountrySpecific = country;
+
+            if (![uniqueCountries containsObject:finalCountrySpecific]) [uniqueCountries addObject:finalCountrySpecific];
+        }];
+        postingTitle = [NSString stringWithFormat:@"%@ %@",postingTitleSaved,[uniqueCountries componentsJoinedByString:@","]];
+    } else {
+        postingTitle = postingTitleSaved;
+    }
     NSString *bodyForEdit = [[NSUserDefaults standardUserDefaults] valueForKey:@"bodyForEdit"];
     NSString *signature = [[NSUserDefaults standardUserDefaults] valueForKey:@"signature"];
 
@@ -660,7 +696,7 @@
 
         [linkedinText appendString:@"(posted from snow ixc)"];
 
-        NSLog(@"SOCIAL NETWORK CONTROLLER: linkedin message for group:%@ to post:%@",linkedinText,name);
+        NSLog(@"SOCIAL NETWORK CONTROLLER: linkedin message for group have title:%@ and body:%@ to post:%@",postingTitle,linkedinText,name);
 
         if (linkedinController.isAuthorized) [linkedinController postToGroupID:groupID withTitle:postingTitle withSummary:linkedinText];    
         [linkedinText release];
@@ -836,6 +872,11 @@
             }
         }
         cell.groupName.hidden = NO;
+        cell.groupSwitch.enabled = YES;
+
+        cell.groupSwitch.userInteractionEnabled = NO;
+
+        cell.headTitle.hidden = YES;
         cell.groupSwitch.hidden = NO;
         cell.bodyForEdit.hidden = YES;
         cell.signature.hidden = YES;
@@ -845,13 +886,25 @@
         cell.priceCorrectionTitle.hidden = YES;
         cell.priceCorrectionStepper.hidden = YES;
         cell.priceCorrectionPercent.hidden = YES;
-        
+        cell.includeCountries.hidden = YES;
+
 
     } else {
+        cell.headTitle.hidden = NO;
+        cell.groupSwitch.userInteractionEnabled = YES;
+
         cell.groupName.hidden = YES;
-        cell.groupSwitch.hidden = YES;
+        cell.groupSwitch.hidden = NO;
+        cell.groupSwitch.enabled = YES;
+        cell.includeCountries.hidden = NO;
         cell.bodyForEdit.hidden = NO;
+        cell.bodyForEdit.layer.cornerRadius = 5;
+        cell.bodyForEdit.clipsToBounds = YES;
+        
         cell.signature.hidden = NO;
+        cell.signature.layer.cornerRadius = 5;
+        cell.signature.clipsToBounds = YES;
+        
         cell.postingTitle.hidden = NO;
         cell.includeRates.hidden = NO;
         cell.routesList.hidden = NO;
@@ -865,14 +918,17 @@
         cell.priceCorrectionStepper.value = priceCorrection.doubleValue;
         
         cell.priceCorrectionPercent.hidden = NO;
+        if (!priceCorrection) priceCorrection = [NSNumber numberWithInt:0];
         cell.priceCorrectionPercent.text = [NSString stringWithFormat:@"%@%%",priceCorrection];
     }
     cell.backgroundColor = [UIColor colorWithRed:0.52 green:0.53 blue:0.68 alpha:1.0];
 
     return cell;
 }
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (groupsToMessage.selectedSegmentIndex == 1) return nil;
+    
     NSMutableDictionary *row = [groupListObjects objectAtIndex:indexPath.row];
     NSNumber *enabled = [row valueForKey:@"enabled"];
 //    LinkedinGroupsTableViewCell *cell = (LinkedinGroupsTableViewCell *)[groupsList cellForRowAtIndexPath:indexPath];
@@ -887,6 +943,6 @@
     [groupsList reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
     [[NSUserDefaults standardUserDefaults] setValue:self.groupListObjects forKey:@"allGroupList"];
     [[NSUserDefaults standardUserDefaults] synchronize];
-
+    return indexPath;
 }
 @end

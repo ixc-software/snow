@@ -138,7 +138,7 @@
 #pragma mark -
 #pragma mark CORE DATA methods
 - (void)importerDidSave:(NSNotification *)saveNotification {
-    //NSLog(@"MERGE in UserCompanyInfo controller");
+    NSLog(@"MERGE in UserCompanyInfo controller");
     if ([NSThread isMainThread]) {
 //        AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
         
@@ -1064,7 +1064,7 @@
     
     CompanyStuff *newStuff = (CompanyStuff *)[NSEntityDescription 
                                               insertNewObjectForEntityForName:@"CompanyStuff" 
-                                              inManagedObjectContext:moc];
+                                              inManagedObjectContext:currentCompany.managedObjectContext];
     
     newStuff.firstName = @"new user";
     CurrentCompany *selected = [[currentCompany selectedObjects] lastObject];
@@ -1783,7 +1783,7 @@
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-    //NSLog( @">>>> USER COMPANY INFO:Detected Change in keyPath: %@", keyPath );
+    NSLog( @">>>> USER COMPANY INFO:Detected Change in keyPath: %@", keyPath );
     
     // here is changes in company:
     if ([keyPath isEqual:@"name"] || [keyPath isEqual:@"url"]) {

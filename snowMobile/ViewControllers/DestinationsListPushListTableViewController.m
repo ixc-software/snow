@@ -1315,7 +1315,7 @@
 - (void)controller:(NSFetchedResultsController *)controller didChangeSection:(id <NSFetchedResultsSectionInfo>)sectionInfo
            atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type
 {
-    //NSLog(@"DESTINATIONS LIST:change sections");
+    NSLog(@"DESTINATIONS LIST:change sections");
 
     switch(type)
     {
@@ -1339,12 +1339,12 @@
     {
             
         case NSFetchedResultsChangeInsert:
-            //NSLog(@"DESTINATIONS LIST:INSERT to indexpath :%@",newIndexPath);
+            NSLog(@"DESTINATIONS LIST:INSERT to indexpath :%@",newIndexPath);
             [tableView insertSections:[NSIndexSet indexSetWithIndex:newIndexPath.row + 1] withRowAnimation:UITableViewRowAnimationTop];
             break;
             
         case NSFetchedResultsChangeDelete:
-            //NSLog(@"DESTINATIONS LIST: DELETE : %@",indexPath);
+            NSLog(@"DESTINATIONS LIST: DELETE : %@",indexPath);
             [sections removeIndex:indexPath.row];
             [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.row + 1] withRowAnimation:UITableViewRowAnimationFade];
             
@@ -1353,17 +1353,17 @@
             break;
             
         case NSFetchedResultsChangeUpdate:
-            //NSLog(@"DESTINATIONS LIST:UPDATE :%@",indexPath);
+            NSLog(@"DESTINATIONS LIST:UPDATE :%@",indexPath);
             [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.row + 1] withRowAnimation:UITableViewRowAnimationFade];
             //[self configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
             break;
             
         case NSFetchedResultsChangeMove:
         {
-            //NSLog(@"DESTINATIONS LIST:CHANGE MOVE from :%@ to %@ ",indexPath,newIndexPath);
+            NSLog(@"DESTINATIONS LIST:CHANGE MOVE from :%@ to %@ ",indexPath,newIndexPath);
             BOOL isOpened = [sections containsIndex:indexPath.row];
             if (isOpened) {
-                //NSLog(@"DESTINATIONS LIST:OPENED CHANGE MOVE from :%@ to %@ ",indexPath,newIndexPath);
+                NSLog(@"DESTINATIONS LIST:OPENED CHANGE MOVE from :%@ to %@ ",indexPath,newIndexPath);
 
                 [sections removeIndex:indexPath.row];
                 [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.row + 1] withRowAnimation:UITableViewRowAnimationTop];

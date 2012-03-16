@@ -191,6 +191,7 @@
 @property (assign) IBOutlet NSTextField *messagePriceCorrectionPercentTitle;
 @property (retain) NSNumber *messageIncludePriceValue;
 @property (retain) NSNumber *messagePriceCorrectionPercent;
+@property (assign) IBOutlet NSButton *includeCountryListInTitle;
 
 
 // error block

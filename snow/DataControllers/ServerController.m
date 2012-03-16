@@ -648,15 +648,25 @@ static char encodingTable[64] = {
             result = [self.moc countForFetchRequest:fetchRequest error:&error];
             currentCompanyObject.stuffCount = [NSNumber numberWithUnsignedInteger:result];
             
-            NSSet *companyStuff = currentCompanyObject.companyStuff;
-            NSString *currentCompanyAdminGUID = currentCompanyObject.companyAdminGUID;
+            NSSet *companyStuffList = currentCompanyObject.companyStuff;
+            NSMutableArray *companyStuff = [NSMutableArray array];
             
+            //NSString *currentCompanyAdminGUID = currentCompanyObject.companyAdminGUID;
+            [companyStuffList enumerateObjectsUsingBlock:^(CompanyStuff *stuff, BOOL *stop) {
+                NSMutableDictionary *stuffDict = [NSMutableDictionary dictionary];
+                NSArray *keys = [[[stuff entity] attributesByName] allKeys];
+                NSArray *keysFiltered = [keys filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != 'password'"]];
+                NSDictionary *dict = [stuff dictionaryWithValuesForKeys:keysFiltered];
+                [stuffDict addEntriesFromDictionary:[self clearNullKeysForDictionary:dict]];
+                [companyStuff addObject:stuffDict];
+                NSLog(@"SERVER CONTROLLER: user with email:%@ was ADD to company:%@",stuff.email,stuff.currentCompany.name);
+            }];
             
-            NSSet *filteredStuff = [companyStuff filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"GUID == %@",currentCompanyAdminGUID]];
-            CompanyStuff *admin = [filteredStuff anyObject];
-            if (!admin) {
+            //NSSet *filteredStuff = [companyStuff filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"GUID == %@",currentCompanyAdminGUID]];
+            //CompanyStuff *admin = [filteredStuff anyObject];
+            //if (!admin) {
                // NSLog(@"SERVER CONTROLLER: admin not found (can't add) for GUID:%@ and currentStuffs:%@",currentCompanyAdminGUID,companyStuff);
-            }
+            //}
             
             
             NSMutableDictionary *currentCompany = [NSMutableDictionary dictionary];
@@ -664,13 +674,13 @@ static char encodingTable[64] = {
 //            NSDictionary *dict = [currentCompanyObject dictionaryWithValuesForKeys:keys];
             [currentCompany addEntriesFromDictionary:[self clearNullKeysForDictionary:[self dictionaryFromObject:currentCompanyObject]]];
             
-            NSMutableDictionary *adminStuff = [NSMutableDictionary dictionary];
-            NSArray *keys = [[[admin entity] attributesByName] allKeys];
-            NSArray *keysFiltered = [keys filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != 'password'"]];
-            NSDictionary *dict = [admin dictionaryWithValuesForKeys:keysFiltered];
-            [adminStuff addEntriesFromDictionary:[self clearNullKeysForDictionary:dict]];
+//            NSMutableDictionary *adminStuff = [NSMutableDictionary dictionary];
+//            NSArray *keys = [[[admin entity] attributesByName] allKeys];
+//            NSArray *keysFiltered = [keys filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != 'password'"]];
+//            NSDictionary *dict = [admin dictionaryWithValuesForKeys:keysFiltered];
+//            [adminStuff addEntriesFromDictionary:[self clearNullKeysForDictionary:dict]];
             
-            [currentCompany setValue:adminStuff forKey:@"companyStuff"];
+            [currentCompany setValue:companyStuff forKey:@"companyStuff"];
             
             [clearedCurrentCompanyList addObject:currentCompany];
             

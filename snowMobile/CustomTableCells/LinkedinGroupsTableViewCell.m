@@ -18,6 +18,8 @@
 @synthesize priceCorrectionTitle;
 @synthesize priceCorrectionPercent;
 @synthesize priceCorrectionStepper;
+@synthesize includeCountries;
+@synthesize headTitle;
 @synthesize groupSwitch;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -48,6 +50,8 @@
     [priceCorrectionTitle release];
     [priceCorrectionPercent release];
     [priceCorrectionStepper release];
+    [includeCountries release];
+    [headTitle release];
     [super dealloc];
 }
 
