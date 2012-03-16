@@ -1135,6 +1135,8 @@
         
         if (!linkedinController.isAuthorized)[linkedinController startAuthorization:self];
         NSNumber *includeRates = [[NSUserDefaults standardUserDefaults] valueForKey:@"includeRates"];
+        NSNumber *includeCountriesInTitle = [[NSUserDefaults standardUserDefaults] valueForKey:@"includeCountriesInTitle"];
+
         messageIncludePriceValue = includeRates;
         NSNumber *priceCorrection = [[NSUserDefaults standardUserDefaults] valueForKey:@"priceCorrection"];
         messagePriceCorrectionPercent = priceCorrection;
@@ -1149,8 +1151,8 @@
         messagePriceCorrectionPercentTitle.stringValue = [NSString stringWithFormat:@"Percent correction:%@%%",priceCorrection];
         [messageIncludePrice bind:@"value" toObject:self withKeyPath:@"messageIncludePriceValue" options:nil];
         [messageIncludePrice setState:includeRates.boolValue];
-        [includeCountryListInTitle setState:includeRates.boolValue];
-        
+        [includeCountryListInTitle setState:includeCountriesInTitle.boolValue];
+        //includeCountriesInTitle
     });
 
 }
@@ -1392,11 +1394,34 @@
 {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"enabled = %@",[NSNumber numberWithBool:YES]];
     NSArray *enabledGroups = [groupsListController.arrangedObjects filteredArrayUsingPredicate:predicate];
-    NSString *postingTitle = [[NSUserDefaults standardUserDefaults] valueForKey:@"postingTitle"];
+    NSString *postingTitleSaved = [[NSUserDefaults standardUserDefaults] valueForKey:@"postingTitle"];
     NSNumber *includeRates = [[NSUserDefaults standardUserDefaults] valueForKey:@"includeRates"];
+    NSNumber *includeCountriesInTitle = [[NSUserDefaults standardUserDefaults] valueForKey:@"includeCountriesInTitle"];
+
     NSString *bodyForEdit = [[NSUserDefaults standardUserDefaults] valueForKey:@"bodyForEdit"];
     NSString *signature = [[NSUserDefaults standardUserDefaults] valueForKey:@"signature"];
-    
+    NSString *postingTitle = nil;
+    if (includeCountriesInTitle.boolValue) {
+        NSManagedObjectContext *context = delegate.managedObjectContext;
+        NSMutableArray *uniqueCountries = [NSMutableArray array];
+        
+        [managedObjectIDs enumerateObjectsUsingBlock:^(NSManagedObjectID *objectID, NSUInteger idx, BOOL *stop) {
+            NSManagedObject *object = [context objectWithID:objectID];
+            NSString *country = [object valueForKey:@"country"];
+            NSString *specific = [object valueForKey:@"specific"];
+            NSString *finalCountrySpecific = nil;
+            NSLog(@">>>>>>> specific:%@",specific);
+            if ([specific rangeOfString:@"Mobile"].length > 0) {
+                finalCountrySpecific = [NSString stringWithFormat:@"%@ %@",country,@"Mobile"];
+            } else finalCountrySpecific = country;
+            
+            if (![uniqueCountries containsObject:finalCountrySpecific]) [uniqueCountries addObject:finalCountrySpecific];
+        }];
+        postingTitle = [NSString stringWithFormat:@"%@ %@",postingTitleSaved,[uniqueCountries componentsJoinedByString:@","]];
+    } else {
+        postingTitle = postingTitleSaved;
+    }
+
     [enabledGroups enumerateObjectsUsingBlock:^(NSMutableDictionary *group, NSUInteger idx, BOOL *stop) {
         NSString *groupID = [group valueForKey:@"id"];
         NSString *name = [group valueForKey:@"name"];
@@ -1414,7 +1439,7 @@
         
         [linkedinText appendString:@"(posted from snow ixc)"];
         
-        NSLog(@"SOCIAL NETWORK CONTROLLER: linkedin message for group:%@ to post:%@",linkedinText,name);
+        NSLog(@"SOCIAL NETWORK CONTROLLER: linkedin message for group have title:%@ and body:%@ to post:%@",postingTitle,linkedinText,name);
         
         if (linkedinController.isAuthorized) [linkedinController postToGroupID:groupID withTitle:postingTitle withSummary:linkedinText];  
         [linkedinText release];
@@ -1426,6 +1451,15 @@
     
     [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:!includeRates.boolValue] forKey:@"includeRates"];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    //includeCountriesInTitle
+}
+
+- (IBAction)includeCountryListChanged:(id)sender {
+    NSNumber *includeCountriesInTitle = [[NSUserDefaults standardUserDefaults] valueForKey:@"includeCountriesInTitle"];
+    
+    [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:!includeCountriesInTitle.boolValue] forKey:@"includeCountriesInTitle"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
 }
 
 - (IBAction)priceCorrectionChange:(id)sender {

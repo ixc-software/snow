@@ -1650,8 +1650,28 @@
         //        //[userController release];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
             if (addedIDs) {
+                
                 //            AppDelegate *delegate = [[NSApplication sharedApplication] delegate];
                 ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[[delegate managedObjectContext] persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
+                [carrierListForAdd enumerateObjectsUsingBlock:^(NSDictionary *carrier, NSUInteger idx, BOOL *stop) {
+                    NSString *carrierGUID = [carrier valueForKey:@"GUID"];
+                    
+                    NSString *status = [clientController localStatusForObjectsWithRootGuid:carrierGUID];
+                    if (status && [status isEqualToString:@"registered"]) ;
+                    else { 
+                        NSError *error = nil; 
+
+                        NSFetchRequest *requestCarrier = [[[NSFetchRequest alloc] init] autorelease];
+                        [requestCarrier setEntity:[NSEntityDescription entityForName:@"Carrier" inManagedObjectContext:self.moc]];
+                        [requestCarrier setPredicate:[NSPredicate predicateWithFormat:@"(GUID == %@)",carrierGUID]];
+                        NSArray *carriersList = [moc executeFetchRequest:requestCarrier error:&error];
+                        NSManagedObjectID *carrierID = [carriersList.lastObject objectID];
+
+                        [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:carrierID] mustBeApproved:NO];
+                    }
+                }];
+                sleep(7);
+                
                 [clientController putObjectWithTimeoutWithIDs:addedIDs mustBeApproved:NO];
                 [clientController release];
             }

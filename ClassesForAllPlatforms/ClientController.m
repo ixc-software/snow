@@ -62,11 +62,12 @@ static char encodingTable[64] = {
  
 #if defined(SNOW_SERVER)
 
-        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
-#endif
+        mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
+#else
         
 #if defined (SNOW_CLIENT_APPSTORE)
         mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
+        //mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
 
 #else
         
@@ -78,8 +79,10 @@ static char encodingTable[64] = {
 
         
 #endif
-        
+     
+#endif
 //
+        
         
 //        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
 //        mainServer = [[NSURL alloc] initWithString:@"http://91.224.223.42:8081"];
@@ -956,7 +959,7 @@ static char encodingTable[64] = {
         
         NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"GetCompaniesList" withJSONRequest:prepeareForJSONRequest];
         
-    //NSLog(@"CLIENT CONTROLLER: get companies received:%@",receivedObject);
+        NSLog(@"CLIENT CONTROLLER: get companies received:%@",receivedObject);
         
         [self updateUIwithMessage:@"get companies processing" withObjectID:nil withLatestMessage:NO error:NO];
         
@@ -1008,7 +1011,7 @@ static char encodingTable[64] = {
             };
             //if (![companyForChanges.GUID isEqualToString:currentAdmin.currentCompany.GUID]) {
                 // all company list updates need only if company not current
-            [companyStuff enumerateObjectsUsingBlock:^(NSDictionary *stuffDict, NSUInteger idx, BOOL *stop) {
+            if ([[companyStuff class] isSubclassOfClass:[NSArray class]]) [companyStuff enumerateObjectsUsingBlock:^(NSDictionary *stuffDict, NSUInteger idx, BOOL *stop) {
                 NSString *guid = [stuffDict valueForKey:@"GUID"];
              
                 CompanyStuff *stuff = nil;
@@ -1042,6 +1045,29 @@ static char encodingTable[64] = {
 //                }
                 
             }];  
+            else {
+                NSString *guid = [companyStuff valueForKey:@"GUID"];
+                
+                CompanyStuff *stuff = nil;
+                NSEntityDescription *entity = [NSEntityDescription entityForName:@"CompanyStuff" inManagedObjectContext:self.moc];
+                [fetchRequest setEntity:entity];
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(GUID == %@)",guid];
+                [fetchRequest setPredicate:predicate];
+                NSArray *allLocalStuff = [self.moc executeFetchRequest:fetchRequest error:&error];
+                
+                if ([allLocalStuff count] == 0 && guid) { 
+                    stuff = (CompanyStuff *)[NSEntityDescription 
+                                             insertNewObjectForEntityForName:@"CompanyStuff" 
+                                             inManagedObjectContext:self.moc];
+                    
+                } else {
+                    stuff = allLocalStuff.lastObject;
+                }
+                stuff.currentCompany = companyForChanges;
+                
+                [self setValuesFromDictionary:(NSDictionary *)companyStuff anObject:stuff];
+
+            }
                 // final updates for both objects
                 
                 //NSLog(@"status for company:%@",[[NSUserDefaults standardUserDefaults] objectForKey:companyForChanges.GUID]);
@@ -2992,7 +3018,7 @@ static char encodingTable[64] = {
         return;
     }
     NSString *errorSerialization;
-    //NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",allObjects);
+    NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",allObjects);
 
     NSData *allArchivedObjects = [NSPropertyListSerialization dataFromPropertyList:allObjects format:NSPropertyListBinaryFormat_v1_0 errorDescription:&errorSerialization];
     if (errorSerialization) NSLog(@"CLIENT CONTRORLER: PUT OBJECT SerializationFailed:%@",errorSerialization);

@@ -143,7 +143,6 @@
 						<string key="NSFrame">{{554, 17}, {106, 25}}</string>
 						<reference key="NSSuperview" ref="984142148"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSViewLayerContentsRedrawPolicy">2</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="454469104">
@@ -197,7 +196,7 @@
 										<string key="NSFrameSize">{640, 14}</string>
 										<reference key="NSSuperview" ref="519827024"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView" ref="740525285"/>
+										<reference key="NSNextKeyView" ref="389630046"/>
 										<int key="NSViewLayerContentsRedrawPolicy">2</int>
 										<object class="NSTextContainer" key="NSTextContainer" id="1059355305">
 											<object class="NSLayoutManager" key="NSLayoutManager">
@@ -331,7 +330,7 @@ AAEAAQAAAT0AAwAAAAEAAgAAAVIAAwAAAAEAAQAAAVMAAwAAAAIAAQABAAAAAA</bytes>
 						<string key="NSFrame">{{20, 50}, {640, 357}}</string>
 						<reference key="NSSuperview" ref="984142148"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="389630046"/>
+						<reference key="NSNextKeyView" ref="519827024"/>
 						<int key="NSViewLayerContentsRedrawPolicy">2</int>
 						<int key="NSsFlags">133136</int>
 						<reference key="NSVScroller" ref="740525285"/>
@@ -385,7 +384,6 @@ AAEAAQAAAT0AAwAAAAEAAgAAAVIAAwAAAAEAAQAAAVMAAwAAAAIAAQABAAAAAA</bytes>
 						<string key="NSFrame">{{13, 50}, {660, 581}}</string>
 						<reference key="NSSuperview" ref="132665666"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="184745790"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<array class="NSMutableArray" key="NSTabViewItems">
 							<object class="NSTabViewItem" id="888714000">
@@ -1021,7 +1019,6 @@ AAEAAQAAAT0AAwAAAAEAAgAAAVIAAwAAAAEAAQAAAVMAAwAAAAIAAQABAAAAAA</bytes>
 						<string key="NSFrame">{{599, 18}, {73, 32}}</string>
 						<reference key="NSSuperview" ref="132665666"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="784756729">
@@ -2759,7 +2756,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 														<string key="NSFrameSize">{332, 538}</string>
 														<reference key="NSSuperview" ref="740859974"/>
 														<reference key="NSWindow"/>
-														<reference key="NSNextKeyView" ref="219465694"/>
+														<reference key="NSNextKeyView" ref="919834015"/>
 														<int key="NSViewLayerContentsRedrawPolicy">2</int>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSTableHeaderView" key="NSHeaderView" id="784011354">
@@ -2911,7 +2908,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 												<string key="NSFrame">{{1, 379}, {352, 15}}</string>
 												<reference key="NSSuperview" ref="947524342"/>
 												<reference key="NSWindow"/>
-												<reference key="NSNextKeyView"/>
 												<int key="NSViewLayerContentsRedrawPolicy">2</int>
 												<int key="NSsFlags">1</int>
 												<reference key="NSTarget" ref="947524342"/>
@@ -2936,7 +2932,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 										<string key="NSFrame">{{18, 10}, {332, 555}}</string>
 										<reference key="NSSuperview" ref="200221865"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView" ref="919834015"/>
+										<reference key="NSNextKeyView" ref="740859974"/>
 										<int key="NSViewLayerContentsRedrawPolicy">2</int>
 										<int key="NSsFlags">133680</int>
 										<reference key="NSVScroller" ref="219465694"/>
@@ -3982,6 +3978,14 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 						<reference key="destination" ref="289200888"/>
 					</object>
 					<int key="connectionID">844</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">includeCountryListChanged:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="289200888"/>
+					</object>
+					<int key="connectionID">845</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -6231,7 +6235,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">844</int>
+			<int key="maxID">845</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">

@@ -1567,7 +1567,7 @@ static char encodingTable[64] = {
 //            DestinationsListPushList *newDestination = (DestinationsListPushList *)[NSEntityDescription 
 //                                                                                    insertNewObjectForEntityForName:@"DestinationsListPushList" 
 //                                                                                    inManagedObjectContext:self.moc];
-            
+            if (rootObjectEntityName) {
             NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
             NSEntityDescription *entity = [NSEntityDescription entityForName:rootObjectEntityName inManagedObjectContext:self.moc];
             [fetchRequest setEntity:entity];
@@ -1593,7 +1593,8 @@ static char encodingTable[64] = {
                 } else return [NSDictionary dictionaryWithObjectsAndKeys:@"root carrier not found for new destination",@"result",objectGUID,@"objectGUID",nil];
             } 
             
-            return [NSDictionary dictionaryWithObjectsAndKeys:@"carrier for destination have more than 2 records",@"error",objectGUID,@"objectGUID",nil];;
+            return [NSDictionary dictionaryWithObjectsAndKeys:@"carrier for destination have more than 2 records",@"error",objectGUID,@"objectGUID",nil];
+            } else return [NSDictionary dictionaryWithObjectsAndKeys:@"root carrier not found",@"error",objectGUID,@"objectGUID",nil];
         }
         if ([fetchedObjects count] == 1) { 
             // UPDATED DESTINATION

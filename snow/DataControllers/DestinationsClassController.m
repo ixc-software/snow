@@ -1696,12 +1696,18 @@
 
     for (NSString *carrierGUID in self.carriers)
     {
+        NSFetchRequest *requestCarrier = [[[NSFetchRequest alloc] init] autorelease];
+        [requestCarrier setEntity:[NSEntityDescription entityForName:@"Carrier" inManagedObjectContext:self.moc]];
+        [requestCarrier setPredicate:[NSPredicate predicateWithFormat:@"(GUID == %@)",carrierGUID]];
+        NSArray *carriersList = [moc executeFetchRequest:requestCarrier error:&error];
+        NSManagedObjectID *carrierID = [carriersList.lastObject objectID];
+        
         //Carrier *carrier = 
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(carrier.GUID == %@)",carrierGUID];
-        NSArray *destinationsOfCarrier;
+        
         NSString *ips = nil;
         NSString *rateSheetName = nil;
-        Carrier *carrierObject = nil;
+//        Carrier *carrierObjectForGet = nil;
         
         NSFetchRequest *requestDestinations = [[[NSFetchRequest alloc] init] autorelease];
         if (destinationsListForSale) [requestDestinations setEntity:[NSEntityDescription entityForName:@"DestinationsListForSale" inManagedObjectContext:moc]];
@@ -1709,21 +1715,24 @@
         if (destinationsListPushList) [requestDestinations setEntity:[NSEntityDescription entityForName:@"DestinationsListPushList" inManagedObjectContext:moc]];
 
         [requestDestinations setPredicate:predicate];
-        destinationsOfCarrier = [moc executeFetchRequest:requestDestinations error:&error];
+        NSArray *destinationsOfCarrier = [moc executeFetchRequest:requestDestinations error:&error];
         if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd)); 
         if ([destinationsOfCarrier count] != 0) { 
-            carrierObject = [[destinationsOfCarrier lastObject] valueForKey:@"carrier"];
+//            carrierObjectForGet = [[destinationsOfCarrier lastObject] valueForKey:@"carrier"];
             if (destinationsListForSale)  ips = [[destinationsOfCarrier lastObject] valueForKey:@"ipAddressesList"];
             if (destinationsListForSale) rateSheetName = [[destinationsOfCarrier lastObject] valueForKey:@"rateSheet"];
-        } else
-        {
-            [requestDestinations setEntity:[NSEntityDescription entityForName:@"Carrier" inManagedObjectContext:moc]];
-            [requestDestinations setPredicate:[NSPredicate predicateWithFormat:@"(GUID == %@)",carrierGUID]];
-            carrierObject = [[moc executeFetchRequest:requestDestinations error:&error] lastObject];
-        }
+        } 
+//        else
+//        {
+//            [requestDestinations setEntity:[NSEntityDescription entityForName:@"Carrier" inManagedObjectContext:moc]];
+//            [requestDestinations setPredicate:[NSPredicate predicateWithFormat:@"(GUID == %@)",carrierGUID]];
+//            carrierObjectForGet = [[self.moc executeFetchRequest:requestDestinations error:&error] lastObject];
+//        }
+        //NSLog(@">>>>> moc first get:%@",carrierObjectForGet.managedObjectContext);
 
-    
-        
+        //Carrier *carrierObject = (Carrier *)[self.moc objectWithID:carrierObjectForGet.objectID];
+
+        //NSLog(@">>>>> moc second (from local)received:%@",carrierObject.managedObjectContext);
 
         for (NSDictionary *destination in self.destinations)
         {
@@ -1734,7 +1743,7 @@
             [rateSheetAndPrefix valueForKey:@"rateSheetID"],@"rateSheetID",
             rateForAdd,@"rate",groupsForAdd,@"groups",
             nil];*/
-            
+            Carrier *carrierObject = (Carrier *)[self.moc objectWithID:carrierID];
             NSString *countryName = [destination valueForKey:@"country"];
             NSString *specificName = [destination valueForKey:@"specific"];
             NSString *prefix = [destination valueForKey:@"prefix"];
@@ -1817,7 +1826,9 @@
                 //object.rateSheet = rateSheetName;
                 //object.ipAddressesList = ips;
                 //object.enabled = [NSNumber numberWithBool:YES];
+
                 object.rate = rate;
+
                 object.carrier = carrierObject;
                 NSArray *codesList = [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(country == %@) AND (specific == %@)",countryName,specificName]];
                 NSArray *codesListWithOutSpecific = [[codesList lastObject] valueForKey:@"code"];
@@ -1849,7 +1860,11 @@
                 //object.rateSheet = rateSheetName;
                 //object.ipAddressesList = ips;
                 //object.enabled = [NSNumber numberWithBool:YES];
+                //NSLog(@">>>>> moc third (created)received:%@",object.managedObjectContext);
+                //NSLog(@">>>>> moc fourth (relations)received:%@",carrierObject.managedObjectContext);
                 object.rate = rate;
+                //[carrierObject addDestinationsListPushListObject:object];
+
                 object.carrier = carrierObject;
                 NSArray *codesList = [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(country == %@) AND (specific == %@)",countryName,specificName]];
                 NSArray *codesListWithOutSpecific = [[codesList lastObject] valueForKey:@"code"];
@@ -1889,6 +1904,7 @@
 
         }
     }
+    [self safeSave];
     [numberTransfer release], numberTransfer = nil;
     NSArray *finalResult = [NSArray arrayWithArray:addedObjectIDS];
     return finalResult;

@@ -179,7 +179,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
     
 #ifdef SNOW_CLIENT_APPSTORE
     [self.window setTitle:@"snow IXC"];
-    [self.removeAllData setHidden:YES];
+    //[self.removeAllData setHidden:YES];
     [self.updateCalendars setHidden:YES];
 
 #endif
