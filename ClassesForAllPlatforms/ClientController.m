@@ -74,8 +74,8 @@ static char encodingTable[64] = {
         //        mainServer = [[NSURL alloc] initWithString:@"https://mac.ixcglobal.com:8081"];
         
         //        mainServer = [[NSURL alloc] initWithString:@"http://127.0.0.1:8081"];
-        mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
-        //        mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
+        //mainServer = [[NSURL alloc] initWithString:@"http://192.168.0.58:8081"];
+                mainServer = [[NSURL alloc] initWithString:@"http://mac1.ixcglobal.com:8081"];
 
         
 #endif
@@ -959,7 +959,7 @@ static char encodingTable[64] = {
         
         NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"GetCompaniesList" withJSONRequest:prepeareForJSONRequest];
         
-        NSLog(@"CLIENT CONTROLLER: get companies received:%@",receivedObject);
+        //NSLog(@"CLIENT CONTROLLER: get companies received:%@",receivedObject);
         
         [self updateUIwithMessage:@"get companies processing" withObjectID:nil withLatestMessage:NO error:NO];
         
@@ -2928,6 +2928,8 @@ static char encodingTable[64] = {
         [self updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:YES];
 
 #endif
+    [self updateUIwithMessage:@"done" withObjectID:nil withLatestMessage:YES error:NO];
+
     //} else [self updateUIwithMessage:@"please try in few seconds." withObjectID:nil withLatestMessage:YES error:YES];
     
 }
@@ -3018,7 +3020,7 @@ static char encodingTable[64] = {
         return;
     }
     NSString *errorSerialization;
-    NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",allObjects);
+    //NSLog(@"CLIENT CONTROLLER PutObject Sent:%@ ",allObjects);
 
     NSData *allArchivedObjects = [NSPropertyListSerialization dataFromPropertyList:allObjects format:NSPropertyListBinaryFormat_v1_0 errorDescription:&errorSerialization];
     if (errorSerialization) NSLog(@"CLIENT CONTRORLER: PUT OBJECT SerializationFailed:%@",errorSerialization);

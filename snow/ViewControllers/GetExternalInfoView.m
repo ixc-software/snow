@@ -27,6 +27,7 @@
 #import "ProgressUpdateController.h"
 #import "MySQLIXC.h"
 #import "UpdateDataController.h"
+#import "DestinationsClassController.h"
 
 @implementation GetExternalInfoView
 
@@ -432,6 +433,18 @@
     NSLock *subblocksLock = [[NSLock alloc] init];
 
     [carriersToExecute enumerateObjectsUsingBlock:^(NSManagedObjectID *carrierID, NSUInteger idx, BOOL *stop) {
+//        Carrier *necessaryCarrier = (Carrier *)[delegate.managedObjectContext objectWithID:carrierID];
+//                                     
+//        NSFetchRequest *requestCodesForSale = [[NSFetchRequest alloc] init];
+//        [requestCodesForSale setEntity:[NSEntityDescription entityForName:@"CodesvsDestinationsList"
+//                                                   inManagedObjectContext:delegate.managedObjectContext]];
+//        [requestCodesForSale setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.GUID == %@)",@"destinationsListWeBuy",necessaryCarrier.GUID]];
+//        NSError *error = nil; 
+//        NSInteger result = [delegate.managedObjectContext countForFetchRequest:requestCodesForSale error:&error];
+//        [requestCodesForSale release];
+//        
+//        NSLog(@"STAT:>>>>>>>>>>>>>>>Carrier %@  we buy codes:%@", necessaryCarrier.name,[NSNumber numberWithInteger:result]);
+
         sleep(1);
 #if defined (SNOW_SERVER)
         while (completedSubblocks.count > 3) {
@@ -514,6 +527,13 @@
     while (completedSubblocks.count > 0) {
         sleep(3);
     }
+    destinations = [self.moc executeFetchRequest:request error:&error]; 
+    if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
+    resultsDictionary = [destinations objectAtIndex:0];
+    totalProfitNumberForUsing = [resultsDictionary objectForKey:@"result"];
+    totalIncomeNumberForUsing = [resultsDictionary objectForKey:@"totalIncome"];
+    [delegate.totalProfit setTitle:[NSString stringWithFormat:@"Total income:$%@/profit:$%@ (%@%%)",totalIncomeNumberForUsing,totalProfitNumberForUsing,[formatter stringFromNumber:[NSNumber numberWithDouble:[totalProfitNumberForUsing doubleValue]/[totalIncomeNumberForUsing doubleValue]]]]];
+
     //NSLog(@"GET EXTERNAL INFO: >>>>>>>>>>> operation %@ FINISH, completedSubblocks %@",operationName, [NSNumber numberWithInteger:completedSubblocks.count]);
     
     [progress updateProgressIndicatorMessageGetExternalData:@""];
@@ -663,31 +683,40 @@
         [progressForDaylySync startSync];
 
         while (!cancelAllOperations) {
-            for (int i = 86395;i != 0;i--) 
+            for (int i = 360000;i != 0;i--) 
             {
-                
-                if (i == 86395) { 
+                if (i % 3600) { 
+                    NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
+//                    DestinationsClassController *destination = [[DestinationsClassController alloc] initWithMainMoc:[delegate managedObjectContext]];
+//                    [destination removeFromMainDatabaseDestinations24hStatisticForCarrierGUID:nil withEntityName:@"DestinationsListForSale"];
+//                    [destination removeFromMainDatabaseDestinations24hStatisticForCarrierGUID:nil withEntityName:@"DestinationsListWeBuy"];
+//                    [destination release];
+
+                    NSLog(@"GET EXTERNAL INFO VIEW:>>>>>>>>>>>>>>>>> every HOUR sync start"); 
+                    [self everyHourSync];
+                    NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
+                    
+                    [startCheckEveryDay release];
+                    
+                    NSLog(@"GET EXTERNAL INFO VIEW:>>>>>>>>>>>>>>>>> every HOUR sync stop. time was:%@ min",[NSNumber numberWithDouble:interval/60]);
+                }
+
+                if (i == 10) { 
                     NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
                     NSLog(@"GET EXTERNAL INFO VIEW:>>>>>>>>>>>>> every DAY sync start");    
+                    DestinationsClassController *destination = [[DestinationsClassController alloc] initWithMainMoc:[delegate managedObjectContext]];
+
+                    [destination removeFromMainDatabaseDestinations24hStatisticForCarrierGUID:nil withEntityName:@"DestinationsListForSale"];
+                    [destination removeFromMainDatabaseDestinations24hStatisticForCarrierGUID:nil withEntityName:@"DestinationsListWeBuy"];
+                    [destination release];
                     [self everyDaySync];
                     NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
                     NSLog(@"GET EXTERNAL INFO VIEW:every DAY sync stop time was:%@ min",[NSNumber numberWithDouble:interval/60]);
                     [startCheckEveryDay release];
                 }
-
-                sleep (1);
                 [progressForDaylySync cycleRemaindTime:[NSNumber numberWithInt:i]];
-                if (i % 3600) { 
-                        NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
-                        
-                        NSLog(@"GET EXTERNAL INFO VIEW:>>>>>>>>>>>>>>>>> every HOUR sync start"); 
-                        [self everyHourSync];
-                        NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
-                        
-                        [startCheckEveryDay release];
-                        
-                        NSLog(@"GET EXTERNAL INFO VIEW:>>>>>>>>>>>>>>>>> every HOUR sync stop. time was:%@ min",[NSNumber numberWithDouble:interval/60]);
-                }
+                sleep (1);
+                //
             }
         }
         [progressForDaylySync stopSync];

@@ -12,6 +12,9 @@
 #import "UpdateDataController.h"
 #import "GetExternalInfoView.h"
 #import "ClientController.h"
+#import "CodesvsDestinationsList.h"
+#import "DestinationsListWeBuy.h"
+#import "Carrier.h"
 
 @implementation GetExternalInfoOperation
 
@@ -73,13 +76,20 @@
     
     [progress updateCarrierName:carrierName];
     progress.operationName = operationName;
-    
-    //0 - dont need update 1 - destinationsListForSale 2 - destinationsListWeBuy 3 - both
-    
+    //NSNumber *countCodesWeBuy = [necessaryCarrier.destinationsListWeBuy.al valueForKeyPath:@"@count.destinationsListWeBuy.codesvsDestinationsList"];
+
+//    NSFetchRequest *requestCodesForSale = [[NSFetchRequest alloc] init];
+//    [requestCodesForSale setEntity:[NSEntityDescription entityForName:@"CodesvsDestinationsList"
+//                                               inManagedObjectContext:delegate.managedObjectContext]];
+//    [requestCodesForSale setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.GUID == %@)",@"destinationsListWeBuy",necessaryCarrier.GUID]];
+//    NSError *error = nil; 
+//     NSInteger result = [delegate.managedObjectContext countForFetchRequest:requestCodesForSale error:&error];
+//    [requestCodesForSale release];
     
 //    NSString *carrierGUID = [[NSString alloc] initWithString:necessaryCarrier.GUID];
 //    NSString *carrierName = [[NSString alloc] initWithString:necessaryCarrier.name];
     NSDate *startCheckRates = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
+    //0 - dont need update 1 - destinationsListForSale 2 - destinationsListWeBuy 3 - both
 
     NSNumber *updateRates = [update checkIfRatesWasUpdatedforCarrierGUID:carrierID andCarrierName:carrierName];
     NSTimeInterval interval = [startCheckRates timeIntervalSinceDate:[NSDate date]];
@@ -96,8 +106,15 @@
         outgoingDestinationsListIsEmpty = [update updateDestinationListforCarrier:carrierID destinationType:1 withProgressUpdateController:progress];
         NSTimeInterval interval = [startCheckRates timeIntervalSinceDate:[NSDate date]];
         NSNumber *updateTime = [NSNumber numberWithDouble:interval/60];
-        
-        NSLog(@"STAT:Carrier %@ rates was update time:%@ min ", carrierName,updateTime);
+//        NSFetchRequest *requestCodesForSale = [[NSFetchRequest alloc] init];
+//        [requestCodesForSale setEntity:[NSEntityDescription entityForName:@"CodesvsDestinationsList"
+//                                                   inManagedObjectContext:delegate.managedObjectContext]];
+//        [requestCodesForSale setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.GUID == %@)",@"destinationsListWeBuy",necessaryCarrier.GUID]];
+//        NSError *error = nil; 
+//        NSInteger result = [delegate.managedObjectContext countForFetchRequest:requestCodesForSale error:&error];
+//        [requestCodesForSale release];
+//
+        NSLog(@"STAT:Carrier %@ rates was update time:%@ min",carrierName,updateTime);//[NSNumber numberWithInteger:result]
 
         [startCheckRates release];
 

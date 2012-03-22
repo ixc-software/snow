@@ -679,7 +679,6 @@
     [rows release],rows = nil;
     [fields release],fields = nil;
     @synchronized (delegate) {
-        
         delegate.numberForSQLQueries -= 1;
         [globalUID release];
     }
@@ -828,7 +827,7 @@
                     
                     for (NSDictionary *currenPrice in queryResult)
                     {
-                        //@autoreleasepool {
+                        @autoreleasepool {
                             NSMutableDictionary *newPrice = [NSMutableDictionary dictionaryWithDictionary:currenPrice];
                             [newPrice setValue:prefixForThisRule  forKey:@"prefix"];
                             [newPrice setValue:[ruleSetAndPrefix valueForKey:@"enabled"]  forKey:@"yn"];
@@ -838,7 +837,7 @@
                             [newPrice setValue:ipStr forKey:@"ip"];
                             
                             [priceList addObject:newPrice];
-                        //}
+                        }
                     }
                     
                     //[currentPrices release];

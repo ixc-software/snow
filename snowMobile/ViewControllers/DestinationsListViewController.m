@@ -180,11 +180,11 @@
         CGRect position = [self.tableView rectForSection:openedSection];
         mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
         if ([delegate isPad]) {
-            NSLog(@"iPad sectionFrame:%@",NSStringFromCGRect(position));
+            //NSLog(@"iPad sectionFrame:%@",NSStringFromCGRect(position));
             if (position.origin.y < 240) isNecessaryToView = NO;
         } else {
-            NSLog(@"iPhone sectionFrame:%@",NSStringFromCGRect(position));
-            if (position.origin.y < 240) isNecessaryToView = NO;
+            //NSLog(@"iPhone sectionFrame:%@",NSStringFromCGRect(position));
+            if (position.origin.y < 10) isNecessaryToView = NO;
         }
     }
     if (isNecessaryToView) {
@@ -215,11 +215,11 @@
         CGRect position = [self.tableView rectForSection:openedSection];
         mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
         if ([delegate isPad]) {
-            NSLog(@"iPad sectionFrame:%@",NSStringFromCGRect(position));
+            //NSLog(@"iPad sectionFrame:%@",NSStringFromCGRect(position));
             if (position.origin.y < 240) isNecessaryToView = NO;
         } else {
-            NSLog(@"iPhone sectionFrame:%@",NSStringFromCGRect(position));
-            if (position.origin.y < 240) isNecessaryToView = NO;
+            //NSLog(@"iPhone sectionFrame:%@",NSStringFromCGRect(position));
+            if (position.origin.y < 10) isNecessaryToView = NO;
         }
     }
     if (isNecessaryToView) {
@@ -383,7 +383,7 @@
 -(void) updateDestinations;
 {
     NSUInteger selectedSegmentIndex = selectRoutes.selectedSegmentIndex;
-    NSLog(@"selected index:%u isRoutesForSaleListUpdated:%@ isRoutesWeBuyListUpdated:%@ isRoutesPushlistListUpdated:%@",selectedSegmentIndex,[NSNumber numberWithBool:isRoutesForSaleListUpdated],[NSNumber numberWithBool:isRoutesWeBuyListUpdated],[NSNumber numberWithBool:isRoutesPushlistListUpdated]); 
+    //NSLog(@"selected index:%u isRoutesForSaleListUpdated:%@ isRoutesWeBuyListUpdated:%@ isRoutesPushlistListUpdated:%@",selectedSegmentIndex,[NSNumber numberWithBool:isRoutesForSaleListUpdated],[NSNumber numberWithBool:isRoutesWeBuyListUpdated],[NSNumber numberWithBool:isRoutesPushlistListUpdated]); 
     if (isRoutesWeBuyListUpdated || isRoutesPushlistListUpdated || isRoutesForSaleListUpdated) return;
     
     
@@ -449,7 +449,7 @@
                 }
                 else if (selectedSegmentIndex == 2) { 
                     isRoutesPushlistListUpdated = YES;
-                    NSLog(@"isRoutesPushlistListUpdated = YES");
+                    //NSLog(@"isRoutesPushlistListUpdated = YES");
 
                     carriersProgress.hidden = NO;
                     carriersProgressTitle.hidden = NO;
@@ -635,16 +635,16 @@
 
             [[NSUserDefaults standardUserDefaults] synchronize];
             if (isRoutesForSaleListUpdated == YES) { 
-                NSLog(@"isRoutesForSaleListUpdated = NO");
+                //NSLog(@"isRoutesForSaleListUpdated = NO");
                 isRoutesForSaleListUpdated = NO;
             }
             if (isRoutesWeBuyListUpdated == YES) { 
-                NSLog(@"isRoutesWeBuyListUpdated = NO");
+                //NSLog(@"isRoutesWeBuyListUpdated = NO");
 
                 isRoutesWeBuyListUpdated = NO;
             }
             if (isRoutesPushlistListUpdated == YES) { 
-                NSLog(@"isRoutesPushlistListUpdated = NO");
+                //NSLog(@"isRoutesPushlistListUpdated = NO");
                 isRoutesPushlistListUpdated = NO;
             }
         }

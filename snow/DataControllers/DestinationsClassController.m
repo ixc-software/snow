@@ -272,7 +272,7 @@
             
             [fetchRequestForCode release];
             NSTimeInterval interval = [startCheckPresentedCodes timeIntervalSinceDate:[NSDate date]];
-            NSLog(@"DESTINATIONS CLASS time to check codes was:%@ sec, result:",[NSNumber numberWithDouble:interval]);
+            NSLog(@"DESTINATIONS CLASS time to check codes for carrier:%@ was:%@ sec, result:",carrier.name,[NSNumber numberWithDouble:interval]);
             [currentCarrierName appendString:carrier.name];
             self.currentCarrierID = [carrier objectID];
             NSMutableArray *destinationsForCheckingLater = [[NSMutableArray alloc] init];
@@ -548,8 +548,12 @@
                                     NSArray *keys = [[[object entity] attributesByName] allKeys];
                                     NSDictionary *objectFullInfo = [object dictionaryWithValuesForKeys:keys];
                                     [destinationsForCheckingLater addObject:objectFullInfo];
+                                    NSLog(@"DESTINATIONS LIST: CREATE code:%@  originalCode:%@ created for NEW destination FOR SALE country:%@ specific:%@",objectCode.code,objectCode.originalCode,objectCode.country,objectCode.specific);
+
                                 }
                                 else { 
+                                    //NSLog(@"DESTINATIONS LIST: code:%@  originalCode:%@ created for PRESENT destination FOR SALE country:%@ specific:%@",objectCode.code,objectCode.originalCode,objectCode.country,objectCode.specific);
+
                                     NSFetchRequest *fetchRequestForDestinationsListForSale = [[NSFetchRequest alloc] init];
                                     
                                     NSEntityDescription *entityForDestinationsListForSale = [NSEntityDescription entityForName:@"DestinationsListForSale"
@@ -624,7 +628,7 @@
                                     NSArray *keys = [[[object entity] attributesByName] allKeys];
                                     NSDictionary *objectFullInfo = [object dictionaryWithValuesForKeys:keys];
                                     [destinationsForCheckingLater addObject:objectFullInfo];
-                                    //NSLog(@"DESTINATIONS LIST: CREATE code:%@  originalCode:%@ created for NEW destination WE BUY country:%@ specific:%@",objectCode.code,objectCode.originalCode,objectCode.country,objectCode.specific);
+                                    NSLog(@"DESTINATIONS LIST: CREATE code:%@  originalCode:%@ created for NEW destination WE BUY country:%@ specific:%@",objectCode.code,objectCode.originalCode,objectCode.country,objectCode.specific);
 
                                     
                                 }
@@ -957,7 +961,9 @@
                                     currentCode.modificationDate = [NSDate date];
                                 }
                                 
-                                DestinationsListWeBuy *currentDestination = currentCode.destinationsListWeBuy;
+                                DestinationsListWeBuy *currentDestinationToGet = currentCode.destinationsListWeBuy;
+                                
+                                DestinationsListWeBuy *currentDestination = (DestinationsListWeBuy *)[self.moc objectWithID:currentDestinationToGet.objectID];
                                 if ([updatedDestinationsIDs containsObject:[currentDestination objectID]]) {
                                     // we already updated destination, do stuff for check code so... smoking and drink vodka :)
                                 } else {
@@ -965,10 +971,10 @@
                                     if ([currentDestination.rateSheet isEqualToString:rateSheetName] && [currentDestination.ipAddressesList isEqualToString:ip] && [currentDestination.enabled isEqualToNumber:enabled] && [currentDestination.rate isEqualToNumber:rate]) {
                                         // do nothing, destination is same
                                     } else {
-                                        //NSLog(@"Destination we buy:%@/%@ have update for code:%@ originalCode:%@ and rate:%@ ratesheet:%@ ip:%@ , enabled:%@",country,specific,code,originalCode,rate,rateSheetName,ip,enabled);
+//                                        NSLog(@"Destination we buy(total codes is:%@) :%@/%@ have update for code:%@ originalCode:%@ and rate:%@ ratesheet:%@ ip:%@ , enabled:%@",[NSNumber numberWithInteger:currentDestination.codesvsDestinationsList.count],country,specific,code,originalCode,rate,rateSheetName,ip,enabled);
                                         NSFetchRequest *fetchRequestWithUnickRate = [[NSFetchRequest alloc] init];
                                         
-                                        NSPredicate *predicateWithUnickRate = [NSPredicate predicateWithFormat:@"(destinationsListWeBuy == %@)",currentDestination];
+                                        NSPredicate *predicateWithUnickRate = [NSPredicate predicateWithFormat:@"(destinationsListWeBuy.GUID == %@)",currentDestination.GUID];
                                         NSEntityDescription *entityForCodesvsDestinationsList = [NSEntityDescription entityForName:@"CodesvsDestinationsList" inManagedObjectContext:self.moc];
                                         [fetchRequestWithUnickRate setEntity:entityForCodesvsDestinationsList];
                                         
@@ -985,26 +991,28 @@
                                         if ([codesWithUnickRate count] > 1) {
                                             
                                             NSMutableDictionary *rates = [NSMutableDictionary dictionaryWithCapacity:0];
-                                            if ([codesWithUnickRate count] != 1) [codesWithUnickRate enumerateObjectsWithOptions:NSSortStable usingBlock:^(NSDictionary *enumeratedCode, NSUInteger idx, BOOL *stop) {
-                                                NSNumber *uniqueRate = [enumeratedCode valueForKey:@"rate"];
-                                                
-                                                NSFetchRequest *fetchRequestForCodeCount = [[NSFetchRequest alloc] init];
-                                                
-                                                NSPredicate *predicateForCodeCount = [NSPredicate predicateWithFormat:@"(destinationsListWeBuy == %@) and (rate == %@)",currentDestination,uniqueRate];
-                                                [fetchRequestForCodeCount setPredicate:predicateForCodeCount];
-                                                [fetchRequestForCodeCount setResultType:NSManagedObjectIDResultType];
-                                                NSEntityDescription *entityForCodesvsDestinationsList = [NSEntityDescription entityForName:@"CodesvsDestinationsList" inManagedObjectContext:self.moc];
-                                                [fetchRequestForCodeCount setEntity:entityForCodesvsDestinationsList];
-                                                
-                                                NSArray *countCodesArray = [self.moc executeFetchRequest:fetchRequestForCodeCount error:nil];
-                                                NSUInteger countCodes = [countCodesArray count];
-                                                [fetchRequestForCodeCount release];
-                                                //                                            [fetchRequest setResultType:NSManagedObjectResultType];
-                                                
-                                                
-                                                // NSUInteger countCodes = [self.context countForFetchRequest:fetchRequest error:nil];
-                                                [rates setObject:[NSNumber numberWithUnsignedInteger:countCodes] forKey:uniqueRate];
-                                            }];
+                                            if ([codesWithUnickRate count] != 1) {
+                                                [codesWithUnickRate enumerateObjectsWithOptions:NSSortStable usingBlock:^(NSDictionary *enumeratedCode, NSUInteger idx, BOOL *stop) {
+                                                    NSNumber *uniqueRate = [enumeratedCode valueForKey:@"rate"];
+                                                    
+                                                    NSFetchRequest *fetchRequestForCodeCount = [[NSFetchRequest alloc] init];
+                                                    
+                                                    NSPredicate *predicateForCodeCount = [NSPredicate predicateWithFormat:@"(destinationsListWeBuy.GUID == %@) and (rate == %@)",currentDestination.GUID,uniqueRate];
+                                                    [fetchRequestForCodeCount setPredicate:predicateForCodeCount];
+                                                    [fetchRequestForCodeCount setResultType:NSManagedObjectIDResultType];
+                                                    NSEntityDescription *entityForCodesvsDestinationsList = [NSEntityDescription entityForName:@"CodesvsDestinationsList" inManagedObjectContext:self.moc];
+                                                    [fetchRequestForCodeCount setEntity:entityForCodesvsDestinationsList];
+                                                    
+                                                    NSArray *countCodesArray = [self.moc executeFetchRequest:fetchRequestForCodeCount error:nil];
+                                                    NSUInteger countCodes = [countCodesArray count];
+                                                    [fetchRequestForCodeCount release];
+                                                    //                                            [fetchRequest setResultType:NSManagedObjectResultType];
+                                                    
+                                                    
+                                                    // NSUInteger countCodes = [self.context countForFetchRequest:fetchRequest error:nil];
+                                                    [rates setObject:[NSNumber numberWithUnsignedInteger:countCodes] forKey:uniqueRate];
+                                                }];
+                                            }
                                             
                                             // winned must have less rate in same count issues 
                                             //[rates enumerateKeysAndObjectsUsingBlock:^(NSNumber *rateFromRatesList, NSNumber *count, BOOL *stop) {
@@ -1042,7 +1050,8 @@
                                         currentDestination.modificationDate = [NSDate date];
                                         
                                         [updatedDestinationsIDs addObject:[currentDestination objectID]];
-                                        
+                                        //NSLog(@"Destination we buy(total codes is:%@) :%@/%@ have update for code:%@ originalCode:%@ and rate:%@ ratesheet:%@ ip:%@ , enabled:%@",[NSNumber numberWithInteger:currentDestination.codesvsDestinationsList.count],country,specific,code,originalCode,rate,rateSheetName,ip,enabled);
+
                                     } 
                                 }
                                 
@@ -1100,9 +1109,10 @@
             }
             
             // final check for codes, which was untouch (don't need for targets
-            [allCarrierCodes enumerateObjectsUsingBlock:^(CodesvsDestinationsList *codeToRemove, NSUInteger idx, BOOL *stop) {
-                [self.moc deleteObject:codeToRemove];
-            }];
+//            [allCarrierCodes enumerateObjectsUsingBlock:^(CodesvsDestinationsList *codeToRemove, NSUInteger idx, BOOL *stop) {
+//
+//                [self.moc deleteObject:codeToRemove];
+//            }];
             [destinationsForCheckingLater release];
             [updatedDestinationsIDs release];
             //        [fetchRequest release];
@@ -1162,7 +1172,6 @@
         [globalUID release];
         
         //[insertedDestinationsIDs release];
-        [self safeSave];
         //    [insertedDestinationsIDs enumerateObjectsUsingBlock:^(NSManagedObject *destination, NSUInteger idx, BOOL *stop) {
         //        NSSet *codes = [destination valueForKey:@"codesvsDestinationsList"];
         //        [codes enumerateObjectsUsingBlock:^(CodesvsDestinationsList *code, BOOL *stop) {
@@ -1170,8 +1179,10 @@
         //        }];             
         //    }];
         //    [pool drain], pool = nil;
-    }
 
+    }
+    [self safeSave];
+    
     return NO;
 }
 
@@ -1293,336 +1304,342 @@
             // updated destinations collection for understand where we has updates, where no
             for (NSDictionary *usedCode in self.usedCodesWithStatistic)
             {
-                //            [pool drain], pool = nil;
-                //            pool = [[NSAutoreleasePool alloc] init];
-                
-                NSString *codeStr = [usedCode valueForKey:@"code"];
-                NSNumber *code = [numberTransfer numberFromString:codeStr];
-                NSString *rateSheetId = nil;
-                if ([usedCode valueForKey:@"id"]) rateSheetId = [usedCode valueForKey:@"id"];
-                else  rateSheetId = @"65535";       
-                
-                // prefix normalization, mix with realprefix
-                NSString *prefix = [usedCode valueForKey:@"prefix"];
-                NSString *realPrefix = [usedCode valueForKey:@"realPrefix"];
-                NSString *changedPrefix = nil;
-                
-                if ([realPrefix class] == [NSNull class]) realPrefix = @"";
-                if ([prefix class] == [NSNull class]) prefix = @"";
-                else 
-                { 
-                    if ([realPrefix length] != 0) changedPrefix = [prefix stringByReplacingOccurrencesOfString:realPrefix withString:@""];
-                    if (changedPrefix) prefix = [NSString stringWithString:changedPrefix];
-                    changedPrefix = nil;
-                }
-                if (!prefix) prefix = @"";
-                
-                NSArray *statistic = [usedCode valueForKey:@"statistic"];
-                NSString *count = [[statistic objectAtIndex:0] valueForKey:@"Count"];
-                NSString *minutes = [[statistic objectAtIndex:0] valueForKey:@"Minutes"];
-                NSString *profit = [[statistic objectAtIndex:0] valueForKey:@"Profit"];
-                NSString *asr = [[statistic objectAtIndex:0] valueForKey:@"ASR"];
-                
-                // get according destination based on code
-                NSString *relationShipName = nil;
-                if (destinationsListForSale) relationShipName = @"destinationsListForSale";            
-                if (destinationsListWeBuy) relationShipName = @"destinationsListWeBuy";
-                
-                NSFetchRequest *compareCode = [[NSFetchRequest alloc] init];
-                [compareCode setEntity:[NSEntityDescription entityForName:@"CodesvsDestinationsList"
-                                                   inManagedObjectContext:self.moc]];
-                [compareCode setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.GUID == %@) and ((code == %@) OR (originalCode == %@)) and (%K.prefix == %@) and (rateSheetID == %@)",relationShipName, carrierGUID,code,code, relationShipName, prefix,rateSheetId]];
-                [compareCode setIncludesSubentities:YES];
-                NSArray *codeAfterComparing = [self.moc executeFetchRequest:compareCode error:&error];
-                if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd)); 
-                
-                CodesvsDestinationsList *codeObject = [codeAfterComparing lastObject];
-                if (!codeObject) {
-                    NSLog(@"STAT: warning, we don't find according code with request:%@",compareCode);
+                @autoreleasepool {
+                    
+                    //            [pool drain], pool = nil;
+                    //            pool = [[NSAutoreleasePool alloc] init];
+                    
+                    NSString *codeStr = [usedCode valueForKey:@"code"];
+                    NSNumber *code = [numberTransfer numberFromString:codeStr];
+                    NSString *rateSheetId = nil;
+                    if ([usedCode valueForKey:@"id"]) rateSheetId = [usedCode valueForKey:@"id"];
+                    else  rateSheetId = @"65535";       
+                    
+                    // prefix normalization, mix with realprefix
+                    NSString *prefix = [usedCode valueForKey:@"prefix"];
+                    NSString *realPrefix = [usedCode valueForKey:@"realPrefix"];
+                    NSString *changedPrefix = nil;
+                    
+                    if ([realPrefix class] == [NSNull class]) realPrefix = @"";
+                    if ([prefix class] == [NSNull class]) prefix = @"";
+                    else 
+                    { 
+                        if ([realPrefix length] != 0) changedPrefix = [prefix stringByReplacingOccurrencesOfString:realPrefix withString:@""];
+                        if (changedPrefix) prefix = [NSString stringWithString:changedPrefix];
+                        changedPrefix = nil;
+                    }
+                    if (!prefix) prefix = @"";
+                    
+                    NSArray *statistic = [usedCode valueForKey:@"statistic"];
+                    NSString *count = [[statistic objectAtIndex:0] valueForKey:@"Count"];
+                    NSString *minutes = [[statistic objectAtIndex:0] valueForKey:@"Minutes"];
+                    NSString *profit = [[statistic objectAtIndex:0] valueForKey:@"Profit"];
+                    NSString *asr = [[statistic objectAtIndex:0] valueForKey:@"ASR"];
+                    
+                    // get according destination based on code
+                    NSString *relationShipName = nil;
+                    if (destinationsListForSale) relationShipName = @"destinationsListForSale";            
+                    if (destinationsListWeBuy) relationShipName = @"destinationsListWeBuy";
+                    
+                    NSFetchRequest *compareCode = [[NSFetchRequest alloc] init];
+                    [compareCode setEntity:[NSEntityDescription entityForName:@"CodesvsDestinationsList"
+                                                       inManagedObjectContext:self.moc]];
+                    [compareCode setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.GUID == %@) and ((code == %@) OR (originalCode == %@)) and (%K.prefix == %@) and (rateSheetID == %@)",relationShipName, carrierGUID,code,code, relationShipName, prefix,rateSheetId]];
+                    [compareCode setIncludesSubentities:YES];
+                    NSArray *codeAfterComparing = [self.moc executeFetchRequest:compareCode error:&error];
+                    if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd)); 
+                    
+                    CodesvsDestinationsList *codeObject = [codeAfterComparing lastObject];
+                    if (!codeObject) {
+                        NSLog(@"STAT: warning, we don't find according code with request:%@",compareCode);
+                        [compareCode release],compareCode = nil;
+                        continue;
+                        
+                    }
                     [compareCode release],compareCode = nil;
                     
-                    continue;
                     
-                }
-                [compareCode release],compareCode = nil;
-                
-                
-                // update accodring destination statistis
-                if (destinationsListForSale) {
-                    DestinationsListForSale *destination = (DestinationsListForSale *)codeObject.destinationsListForSale;
-                    // calculate new digits
-                    
-                    double lastUsedMinutesLenghtd = [destination.lastUsedMinutesLenght doubleValue];
-                    if ([minutes class] != [NSNull class]) lastUsedMinutesLenghtd = [[numberTransfer numberFromString:minutes] doubleValue] + lastUsedMinutesLenghtd;
-                    
-                    double lastUsedCallAttemptsd = [destination.lastUsedCallAttempts doubleValue];
-                    if ([count class] != [NSNull class]) lastUsedCallAttemptsd = [[numberTransfer numberFromString:count] doubleValue] + lastUsedCallAttemptsd;
-                    
-                    double lastUsedProfitd = [destination.lastUsedProfit doubleValue];
-                    if ([profit class] != [NSNull class]) lastUsedProfitd = [[numberTransfer numberFromString:profit] doubleValue] + lastUsedProfitd;
-                    
-                    double lastUsedSuccessCallsd = 0;
-                    if ([asr class] != [NSNull class])  lastUsedSuccessCallsd = lastUsedCallAttemptsd * [[numberTransfer numberFromString:asr] doubleValue];
-                    
-                    double lastUsedACDd;
-                    double lastUsedASRd;
-                    
-                    if (lastUsedSuccessCallsd != 0) {
-                        lastUsedACDd = lastUsedMinutesLenghtd / lastUsedSuccessCallsd;
-                        lastUsedASRd = lastUsedSuccessCallsd / lastUsedCallAttemptsd;
-                    } else 
-                    {
-                        // we are pickup old asr, * to old call attempts and devide to new call attempts - bingo, new asr when successeful calls = 0. acd keep same;
-                        lastUsedACDd = [destination.lastUsedACD doubleValue];
-                        lastUsedASRd = ([destination.lastUsedASR doubleValue] * [destination.lastUsedCallAttempts doubleValue]) /  lastUsedCallAttemptsd;
-                    }
-                    
-                    destination.lastUsedASR = [NSNumber numberWithDouble:lastUsedASRd];
-                    destination.lastUsedACD = [NSNumber numberWithDouble:lastUsedACDd];
-                    destination.lastUsedCallAttempts = [NSNumber numberWithDouble:lastUsedCallAttemptsd];
-                    destination.lastUsedMinutesLenght = [NSNumber numberWithDouble:lastUsedMinutesLenghtd];
-                    destination.lastUsedProfit = [NSNumber numberWithDouble:lastUsedProfitd];
-                    destination.lastUsedDate = [NSDate date];
-                    
-                    // insert per hour statistic
-                    //if ([updatedDestinations containsObject:destination]) destinationHaveUpdatedCode = YES;
-                    //else destinationHaveUpdatedCode = NO;
-                    
-                    NSArray *perHourStatistic =  [usedCode valueForKey:@"statisticPerHour"];
-                    NSDateFormatter *inputFormatter = [[NSDateFormatter alloc] init];
-                    //NSNumberFormatter *numberTransfer = [[NSNumberFormatter alloc] init];
-                    //[numberTransfer setDecimalSeparator:@"."];
-                    
-                    [perHourStatistic enumerateObjectsWithOptions:NSSortStable usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                        NSString *acd = [obj valueForKey:@"ACD"];
-                        NSString *count = [obj valueForKey:@"Count"];
-                        NSString *minutes = [obj valueForKey:@"Minutes"];
-                        NSString *profit = [obj valueForKey:@"Profit"];
-                        NSString *amount = [obj valueForKey:@"Amount"];
-                        NSString *asr = [obj valueForKey:@"ASR"];
-                        NSString *externalDate = [obj valueForKey:@"Date"];
+                    // update accodring destination statistis
+                    if (destinationsListForSale) {
+                        DestinationsListForSale *destination = (DestinationsListForSale *)codeObject.destinationsListForSale;
+                        // calculate new digits
                         
-                        [inputFormatter setDateFormat:@"yyyyMMddHH"];
-                        NSDate *externalDateFormatted = [inputFormatter dateFromString:externalDate];
+                        double lastUsedMinutesLenghtd = [destination.lastUsedMinutesLenght doubleValue];
+                        if ([minutes class] != [NSNull class]) lastUsedMinutesLenghtd = [[numberTransfer numberFromString:minutes] doubleValue] + lastUsedMinutesLenghtd;
                         
-                        // we have to update only per hour record, which we receive in this session. 
-                        // other records have to be same as was before.
-                        NSSet *perHourStatsFiltered = [destination.destinationPerHourStat filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"(externalDate == %@)",externalDate]];
-                        if ([perHourStatsFiltered count] >1) NSLog(@"STAT: warning, per hour stat have more than one choice. Result is: \n%@\n",perHourStatsFiltered);
-                        if ([perHourStatsFiltered count] == 0) {
-                            // destination was updated, code was matched, but we have another hour, which don't need to make summary, we need to add as new.
-                            destinationNeedNewStatisticForCode = YES;
-                            destinationNeedUpdateStatisticForCode = NO;
-                            //NSLog(@"STAT: warning, per hour stat don't have choice from :%@\n for date:%@\n",perHourStats,[countAsrAcdPerHour valueForKey:@"Date"]);
-                        } else
+                        double lastUsedCallAttemptsd = [destination.lastUsedCallAttempts doubleValue];
+                        if ([count class] != [NSNull class]) lastUsedCallAttemptsd = [[numberTransfer numberFromString:count] doubleValue] + lastUsedCallAttemptsd;
+                        
+                        double lastUsedProfitd = [destination.lastUsedProfit doubleValue];
+                        if ([profit class] != [NSNull class]) lastUsedProfitd = [[numberTransfer numberFromString:profit] doubleValue] + lastUsedProfitd;
+                        
+                        double lastUsedSuccessCallsd = 0;
+                        if ([asr class] != [NSNull class])  lastUsedSuccessCallsd = lastUsedCallAttemptsd * [[numberTransfer numberFromString:asr] doubleValue];
+                        
+                        double lastUsedACDd;
+                        double lastUsedASRd;
+                        
+                        if (lastUsedSuccessCallsd != 0) {
+                            lastUsedACDd = lastUsedMinutesLenghtd / lastUsedSuccessCallsd;
+                            lastUsedASRd = lastUsedSuccessCallsd / lastUsedCallAttemptsd;
+                        } else 
                         {
-                            if ([updatedDestinations containsObject:[destination objectID]]) destinationNeedUpdateStatisticForCode = YES;
-                            
-                            destinationNeedNewStatisticForCode = NO;
-                            
+                            // we are pickup old asr, * to old call attempts and devide to new call attempts - bingo, new asr when successeful calls = 0. acd keep same;
+                            lastUsedACDd = [destination.lastUsedACD doubleValue];
+                            lastUsedASRd = ([destination.lastUsedASR doubleValue] * [destination.lastUsedCallAttempts doubleValue]) /  lastUsedCallAttemptsd;
                         }
                         
+                        destination.lastUsedASR = [NSNumber numberWithDouble:lastUsedASRd];
+                        destination.lastUsedACD = [NSNumber numberWithDouble:lastUsedACDd];
+                        destination.lastUsedCallAttempts = [NSNumber numberWithDouble:lastUsedCallAttemptsd];
+                        destination.lastUsedMinutesLenght = [NSNumber numberWithDouble:lastUsedMinutesLenghtd];
+                        destination.lastUsedProfit = [NSNumber numberWithDouble:lastUsedProfitd];
+                        destination.lastUsedDate = [NSDate date];
                         
-                        if (destinationNeedUpdateStatisticForCode) {
-                            // must be just one
-                            DestinationPerHourStat *currentPerHourStat = [perHourStatsFiltered anyObject];
+                        // insert per hour statistic
+                        //if ([updatedDestinations containsObject:destination]) destinationHaveUpdatedCode = YES;
+                        //else destinationHaveUpdatedCode = NO;
+                        
+                        NSArray *perHourStatistic =  [usedCode valueForKey:@"statisticPerHour"];
+                        NSDateFormatter *inputFormatter = [[NSDateFormatter alloc] init];
+                        //NSNumberFormatter *numberTransfer = [[NSNumberFormatter alloc] init];
+                        //[numberTransfer setDecimalSeparator:@"."];
+                        
+                        [perHourStatistic enumerateObjectsWithOptions:NSSortStable usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                            NSString *acd = [obj valueForKey:@"ACD"];
+                            NSString *count = [obj valueForKey:@"Count"];
+                            NSString *minutes = [obj valueForKey:@"Minutes"];
+                            NSString *profit = [obj valueForKey:@"Profit"];
+                            NSString *amount = [obj valueForKey:@"Amount"];
+                            NSString *asr = [obj valueForKey:@"ASR"];
+                            NSString *externalDate = [obj valueForKey:@"Date"];
                             
-                            double newMinutesLenghtd = [currentPerHourStat.minutesLenght doubleValue];
-                            if ([minutes class] != [NSNull class]) newMinutesLenghtd = [[numberTransfer numberFromString:minutes] doubleValue] + newMinutesLenghtd;
+                            [inputFormatter setDateFormat:@"yyyyMMddHH"];
+                            NSDate *externalDateFormatted = [inputFormatter dateFromString:externalDate];
                             
-                            double newCallAttemptsd = [currentPerHourStat.callAttempts doubleValue];
-                            if ([count class] != [NSNull class]) newCallAttemptsd = [[numberTransfer numberFromString:count] doubleValue] + newCallAttemptsd;
-                            
-                            double newProfitd = [currentPerHourStat.profit doubleValue];
-                            if ([profit class] != [NSNull class]) newProfitd = [[numberTransfer numberFromString:profit] doubleValue] + newProfitd;
-                            
-                            double newAmountd = [currentPerHourStat.cashflow doubleValue];
-                            if ([amount class] != [NSNull class]) newAmountd = [[numberTransfer numberFromString:amount] doubleValue] + newAmountd;
-                            
-                            double newSuccessCallsd = 0;
-                            if ([asr class] != [NSNull class])  newSuccessCallsd = newCallAttemptsd * [[numberTransfer numberFromString:asr] doubleValue];
-                            
-                            double newACDd;
-                            double newASRd;
-                            if (newSuccessCallsd != 0) {
-                                newACDd = newMinutesLenghtd / newSuccessCallsd;
-                                newASRd= newSuccessCallsd / newCallAttemptsd;
+                            // we have to update only per hour record, which we receive in this session. 
+                            // other records have to be same as was before.
+                            NSSet *perHourStatsFiltered = [destination.destinationPerHourStat filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"(externalDate == %@)",externalDate]];
+                            if ([perHourStatsFiltered count] >1) NSLog(@"STAT: warning, per hour stat have more than one choice. Result is: \n%@\n",perHourStatsFiltered);
+                            if ([perHourStatsFiltered count] == 0) {
+                                // destination was updated, code was matched, but we have another hour, which don't need to make summary, we need to add as new.
+                                destinationNeedNewStatisticForCode = YES;
+                                destinationNeedUpdateStatisticForCode = NO;
+                                NSLog(@"STAT: warning, per hour stat don't have choice from :%@\n for date:%@\n",destination.destinationPerHourStat,[obj valueForKey:@"Date"]);
                             } else
                             {
-                                // we are pickup old asr, * to old call attempts and devide to new call attempts - bingo, new asr when successeful calls = 0. acd keep same;
-                                newACDd = [currentPerHourStat.acd doubleValue];
-                                newASRd = ([currentPerHourStat.asr doubleValue] * [currentPerHourStat.callAttempts doubleValue]) /  newCallAttemptsd;
+                                if ([updatedDestinations containsObject:[destination objectID]]) destinationNeedUpdateStatisticForCode = YES;
+                                
+                                destinationNeedNewStatisticForCode = NO;
+                                
                             }
-                            currentPerHourStat.asr = [NSNumber numberWithDouble:newASRd];
-                            currentPerHourStat.acd = [NSNumber numberWithDouble:newACDd];
-                            currentPerHourStat.callAttempts = [NSNumber numberWithDouble:newCallAttemptsd];
-                            currentPerHourStat.minutesLenght = [NSNumber numberWithDouble:newMinutesLenghtd];
-                            currentPerHourStat.profit = [NSNumber numberWithDouble:newProfitd];
-                            currentPerHourStat.cashflow = [NSNumber numberWithDouble:newAmountd];
                             
-                            //currentPerHourStat.externalDate = 
                             
-                        } 
-                        if (destinationNeedNewStatisticForCode)
-                        {
-                            DestinationPerHourStat *newPerHourStat = (DestinationPerHourStat *)[NSEntityDescription 
-                                                                                                insertNewObjectForEntityForName:@"DestinationPerHourStat"
-                                                                                                inManagedObjectContext:self.moc];
-                            newPerHourStat.date = externalDateFormatted;
-                            newPerHourStat.externalDate = externalDate;
-                            newPerHourStat.acd = [numberTransfer numberFromString:acd];
-                            newPerHourStat.asr = [numberTransfer numberFromString:asr];
-                            newPerHourStat.callAttempts = [numberTransfer numberFromString:count];
-                            newPerHourStat.minutesLenght = [numberTransfer numberFromString:minutes];
-                            newPerHourStat.profit = [numberTransfer numberFromString:profit];
-                            newPerHourStat.cashflow = [numberTransfer numberFromString:amount];
-                            newPerHourStat.destinationsListForSale = destination;
+                            if (destinationNeedUpdateStatisticForCode) {
+                                // must be just one
+                                DestinationPerHourStat *currentPerHourStat = [perHourStatsFiltered anyObject];
+                                
+                                double newMinutesLenghtd = [currentPerHourStat.minutesLenght doubleValue];
+                                if ([minutes class] != [NSNull class]) newMinutesLenghtd = [[numberTransfer numberFromString:minutes] doubleValue] + newMinutesLenghtd;
+                                
+                                double newCallAttemptsd = [currentPerHourStat.callAttempts doubleValue];
+                                if ([count class] != [NSNull class]) newCallAttemptsd = [[numberTransfer numberFromString:count] doubleValue] + newCallAttemptsd;
+                                
+                                double newProfitd = [currentPerHourStat.profit doubleValue];
+                                if ([profit class] != [NSNull class]) newProfitd = [[numberTransfer numberFromString:profit] doubleValue] + newProfitd;
+                                
+                                double newAmountd = [currentPerHourStat.cashflow doubleValue];
+                                if ([amount class] != [NSNull class]) newAmountd = [[numberTransfer numberFromString:amount] doubleValue] + newAmountd;
+                                
+                                double newSuccessCallsd = 0;
+                                if ([asr class] != [NSNull class])  newSuccessCallsd = newCallAttemptsd * [[numberTransfer numberFromString:asr] doubleValue];
+                                
+                                double newACDd;
+                                double newASRd;
+                                if (newSuccessCallsd != 0) {
+                                    newACDd = newMinutesLenghtd / newSuccessCallsd;
+                                    newASRd= newSuccessCallsd / newCallAttemptsd;
+                                } else
+                                {
+                                    // we are pickup old asr, * to old call attempts and devide to new call attempts - bingo, new asr when successeful calls = 0. acd keep same;
+                                    newACDd = [currentPerHourStat.acd doubleValue];
+                                    newASRd = ([currentPerHourStat.asr doubleValue] * [currentPerHourStat.callAttempts doubleValue]) /  newCallAttemptsd;
+                                }
+                                currentPerHourStat.asr = [NSNumber numberWithDouble:newASRd];
+                                currentPerHourStat.acd = [NSNumber numberWithDouble:newACDd];
+                                currentPerHourStat.callAttempts = [NSNumber numberWithDouble:newCallAttemptsd];
+                                currentPerHourStat.minutesLenght = [NSNumber numberWithDouble:newMinutesLenghtd];
+                                currentPerHourStat.profit = [NSNumber numberWithDouble:newProfitd];
+                                currentPerHourStat.cashflow = [NSNumber numberWithDouble:newAmountd];
+                                
+                                //currentPerHourStat.externalDate = 
+                                NSLog(@"STAT:added UPDATED per hour stat with date:%@\n to destination for sale:%@/%@\n",currentPerHourStat.date,destination.country,destination.specific);
+
+                            } 
+                            if (destinationNeedNewStatisticForCode)
+                            {
+                                DestinationPerHourStat *newPerHourStat = (DestinationPerHourStat *)[NSEntityDescription 
+                                                                                                    insertNewObjectForEntityForName:@"DestinationPerHourStat"
+                                                                                                    inManagedObjectContext:self.moc];
+                                newPerHourStat.date = externalDateFormatted;
+                                newPerHourStat.externalDate = externalDate;
+                                newPerHourStat.acd = [numberTransfer numberFromString:acd];
+                                newPerHourStat.asr = [numberTransfer numberFromString:asr];
+                                newPerHourStat.callAttempts = [numberTransfer numberFromString:count];
+                                newPerHourStat.minutesLenght = [numberTransfer numberFromString:minutes];
+                                newPerHourStat.profit = [numberTransfer numberFromString:profit];
+                                newPerHourStat.cashflow = [numberTransfer numberFromString:amount];
+                                newPerHourStat.destinationsListForSale = destination;
+                                
+                                if (![updatedDestinations containsObject:[destination objectID]]) [updatedDestinations addObject:[destination objectID]];
+                                NSLog(@"STAT:added new per hour stat with date:%@\n to destination for sale:%@/%@\n",newPerHourStat.date,destination.country,destination.specific);
+                            }
                             
-                            if (![updatedDestinations containsObject:[destination objectID]]) [updatedDestinations addObject:[destination objectID]];
-                            //NSLog(@"STAT:added new per hour stat:%@\n to destination:%@\n",newPerHourStat,destination);
-                        }
+                        }];
                         
-                    }];
-                    
-                    [inputFormatter release], inputFormatter = nil;
-                    //[numberTransfer release], numberTransfer = nil;
-                    
-                    
-                }
-                
-                if (destinationsListWeBuy) {
-                    DestinationsListWeBuy *destination = (DestinationsListWeBuy *)codeObject.destinationsListWeBuy;
-                    // calculate new digits
-                    
-                    double lastUsedMinutesLenghtd = [destination.lastUsedMinutesLenght doubleValue];
-                    if ([minutes class] != [NSNull class]) lastUsedMinutesLenghtd = [[numberTransfer numberFromString:minutes] doubleValue] + lastUsedMinutesLenghtd;
-                    
-                    double lastUsedCallAttemptsd = [destination.lastUsedCallAttempts doubleValue];
-                    if ([count class] != [NSNull class]) lastUsedCallAttemptsd = [[numberTransfer numberFromString:count] doubleValue] + lastUsedCallAttemptsd;
-                    
-                    double lastUsedProfitd = [destination.lastUsedProfit doubleValue];
-                    if ([profit class] != [NSNull class]) lastUsedProfitd = [[numberTransfer numberFromString:profit] doubleValue] + lastUsedProfitd;
-                    
-                    double lastUsedSuccessCallsd = 0;
-                    if ([asr class] != [NSNull class])  lastUsedSuccessCallsd = lastUsedCallAttemptsd * [[numberTransfer numberFromString:asr] doubleValue];
-                    
-                    double lastUsedACDd;
-                    double lastUsedASRd;
-                    
-                    if (lastUsedSuccessCallsd != 0) {
-                        lastUsedACDd = lastUsedMinutesLenghtd / lastUsedSuccessCallsd;
-                        lastUsedASRd = lastUsedSuccessCallsd / lastUsedCallAttemptsd;
-                    } else 
-                    {
-                        // we are pickup old asr, * to old call attempts and devide to new call attempts - bingo, new asr when successeful calls = 0. acd keep same;
-                        lastUsedACDd = [destination.lastUsedACD doubleValue];
-                        lastUsedASRd = ([destination.lastUsedASR doubleValue] * [destination.lastUsedCallAttempts doubleValue]) /  lastUsedCallAttemptsd;
+                        [inputFormatter release], inputFormatter = nil;
+                        //[numberTransfer release], numberTransfer = nil;
+                        
+                        
                     }
                     
-                    destination.lastUsedASR = [NSNumber numberWithDouble:lastUsedASRd];
-                    destination.lastUsedACD = [NSNumber numberWithDouble:lastUsedACDd];
-                    destination.lastUsedCallAttempts = [NSNumber numberWithDouble:lastUsedCallAttemptsd];
-                    destination.lastUsedMinutesLenght = [NSNumber numberWithDouble:lastUsedMinutesLenghtd];
-                    destination.lastUsedProfit = [NSNumber numberWithDouble:lastUsedProfitd];
-                    destination.lastUsedDate = [NSDate date];
-                    
-                    // insert per hour statistic
-                    //if ([updatedDestinations containsObject:destination]) destinationHaveUpdatedCode = YES;
-                    //else destinationHaveUpdatedCode = NO;
-                    
-                    NSArray *perHourStatistic =  [usedCode valueForKey:@"statisticPerHour"];
-                    NSDateFormatter *inputFormatter = [[NSDateFormatter alloc] init];
-                    //NSNumberFormatter *numberTransfer = [[NSNumberFormatter alloc] init];
-                    //[numberTransfer setDecimalSeparator:@"."];
-                    
-                    [perHourStatistic enumerateObjectsWithOptions:NSSortStable usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                        NSString *acd = [obj valueForKey:@"ACD"];
-                        NSString *count = [obj valueForKey:@"Count"];
-                        NSString *minutes = [obj valueForKey:@"Minutes"];
-                        NSString *profit = [obj valueForKey:@"Profit"];
-                        NSString *amount = [obj valueForKey:@"Amount"];
-                        NSString *asr = [obj valueForKey:@"ASR"];
-                        NSString *externalDate = [obj valueForKey:@"Date"];
+                    if (destinationsListWeBuy) {
+                        DestinationsListWeBuy *destination = (DestinationsListWeBuy *)codeObject.destinationsListWeBuy;
+                        // calculate new digits
                         
-                        [inputFormatter setDateFormat:@"yyyyMMddHH"];
-                        NSDate *externalDateFormatted = [inputFormatter dateFromString:externalDate];
+                        double lastUsedMinutesLenghtd = [destination.lastUsedMinutesLenght doubleValue];
+                        if ([minutes class] != [NSNull class]) lastUsedMinutesLenghtd = [[numberTransfer numberFromString:minutes] doubleValue] + lastUsedMinutesLenghtd;
                         
-                        // we have to update only per hour record, which we receive in this session. 
-                        // other records have to be same as was before.
-                        NSSet *perHourStatsFiltered = [destination.destinationPerHourStat filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"(externalDate == %@)",externalDate]];
-                        if ([perHourStatsFiltered count] >1) NSLog(@"STAT: warning, per hour stat have more than one choice. Result is: \n%@\n",perHourStatsFiltered);
-                        if ([perHourStatsFiltered count] == 0) {
-                            // destination was updated, code was matched, but we have another hour, which don't need to make summary, we need to add as new.
-                            destinationNeedNewStatisticForCode = YES;
-                            destinationNeedUpdateStatisticForCode = NO;
-                            //NSLog(@"STAT: warning, per hour stat don't have choice from :%@\n for date:%@\n",perHourStats,[countAsrAcdPerHour valueForKey:@"Date"]);
-                        } else
+                        double lastUsedCallAttemptsd = [destination.lastUsedCallAttempts doubleValue];
+                        if ([count class] != [NSNull class]) lastUsedCallAttemptsd = [[numberTransfer numberFromString:count] doubleValue] + lastUsedCallAttemptsd;
+                        
+                        double lastUsedProfitd = [destination.lastUsedProfit doubleValue];
+                        if ([profit class] != [NSNull class]) lastUsedProfitd = [[numberTransfer numberFromString:profit] doubleValue] + lastUsedProfitd;
+                        
+                        double lastUsedSuccessCallsd = 0;
+                        if ([asr class] != [NSNull class])  lastUsedSuccessCallsd = lastUsedCallAttemptsd * [[numberTransfer numberFromString:asr] doubleValue];
+                        
+                        double lastUsedACDd;
+                        double lastUsedASRd;
+                        
+                        if (lastUsedSuccessCallsd != 0) {
+                            lastUsedACDd = lastUsedMinutesLenghtd / lastUsedSuccessCallsd;
+                            lastUsedASRd = lastUsedSuccessCallsd / lastUsedCallAttemptsd;
+                        } else 
                         {
-                            if ([updatedDestinations containsObject:[destination objectID]]) destinationNeedUpdateStatisticForCode = YES;
-                            destinationNeedNewStatisticForCode = NO;
+                            // we are pickup old asr, * to old call attempts and devide to new call attempts - bingo, new asr when successeful calls = 0. acd keep same;
+                            lastUsedACDd = [destination.lastUsedACD doubleValue];
+                            lastUsedASRd = ([destination.lastUsedASR doubleValue] * [destination.lastUsedCallAttempts doubleValue]) /  lastUsedCallAttemptsd;
                         }
                         
+                        destination.lastUsedASR = [NSNumber numberWithDouble:lastUsedASRd];
+                        destination.lastUsedACD = [NSNumber numberWithDouble:lastUsedACDd];
+                        destination.lastUsedCallAttempts = [NSNumber numberWithDouble:lastUsedCallAttemptsd];
+                        destination.lastUsedMinutesLenght = [NSNumber numberWithDouble:lastUsedMinutesLenghtd];
+                        destination.lastUsedProfit = [NSNumber numberWithDouble:lastUsedProfitd];
+                        destination.lastUsedDate = [NSDate date];
                         
-                        if (destinationNeedUpdateStatisticForCode) {
-                            // must be just one
-                            DestinationPerHourStat *currentPerHourStat = [perHourStatsFiltered anyObject];
+                        // insert per hour statistic
+                        //if ([updatedDestinations containsObject:destination]) destinationHaveUpdatedCode = YES;
+                        //else destinationHaveUpdatedCode = NO;
+                        
+                        NSArray *perHourStatistic =  [usedCode valueForKey:@"statisticPerHour"];
+                        NSDateFormatter *inputFormatter = [[NSDateFormatter alloc] init];
+                        //NSNumberFormatter *numberTransfer = [[NSNumberFormatter alloc] init];
+                        //[numberTransfer setDecimalSeparator:@"."];
+                        
+                        [perHourStatistic enumerateObjectsWithOptions:NSSortStable usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                            NSString *acd = [obj valueForKey:@"ACD"];
+                            NSString *count = [obj valueForKey:@"Count"];
+                            NSString *minutes = [obj valueForKey:@"Minutes"];
+                            NSString *profit = [obj valueForKey:@"Profit"];
+                            NSString *amount = [obj valueForKey:@"Amount"];
+                            NSString *asr = [obj valueForKey:@"ASR"];
+                            NSString *externalDate = [obj valueForKey:@"Date"];
                             
-                            double newMinutesLenghtd = [currentPerHourStat.minutesLenght doubleValue];
-                            if ([minutes class] != [NSNull class]) newMinutesLenghtd = [[numberTransfer numberFromString:minutes] doubleValue] + newMinutesLenghtd;
+                            [inputFormatter setDateFormat:@"yyyyMMddHH"];
+                            NSDate *externalDateFormatted = [inputFormatter dateFromString:externalDate];
                             
-                            double newCallAttemptsd = [currentPerHourStat.callAttempts doubleValue];
-                            if ([count class] != [NSNull class]) newCallAttemptsd = [[numberTransfer numberFromString:count] doubleValue] + newCallAttemptsd;
-                            
-                            double newProfitd = [currentPerHourStat.profit doubleValue];
-                            if ([profit class] != [NSNull class]) newProfitd = [[numberTransfer numberFromString:profit] doubleValue] + newProfitd;
-                            
-                            double newAmountd = [currentPerHourStat.cashflow doubleValue];
-                            if ([amount class] != [NSNull class]) newAmountd = [[numberTransfer numberFromString:amount] doubleValue] + newAmountd;
-                            
-                            double newSuccessCallsd = 0;
-                            if ([asr class] != [NSNull class])  newSuccessCallsd = newCallAttemptsd * [[numberTransfer numberFromString:asr] doubleValue];
-                            
-                            double newACDd;
-                            double newASRd;
-                            if (newSuccessCallsd != 0) {
-                                newACDd = newMinutesLenghtd / newSuccessCallsd;
-                                newASRd= newSuccessCallsd / newCallAttemptsd;
+                            // we have to update only per hour record, which we receive in this session. 
+                            // other records have to be same as was before.
+                            NSSet *perHourStatsFiltered = [destination.destinationPerHourStat filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"(externalDate == %@)",externalDate]];
+                            if ([perHourStatsFiltered count] >1) NSLog(@"STAT: warning, per hour stat have more than one choice. Result is: \n%@\n",perHourStatsFiltered);
+                            if ([perHourStatsFiltered count] == 0) {
+                                // destination was updated, code was matched, but we have another hour, which don't need to make summary, we need to add as new.
+                                destinationNeedNewStatisticForCode = YES;
+                                destinationNeedUpdateStatisticForCode = NO;
+                                NSLog(@"STAT: warning, per hour stat don't have choice from :%@\n for date:%@\n",destination.destinationPerHourStat,[obj valueForKey:@"Date"]);
                             } else
                             {
-                                // we are pickup old asr, * to old call attempts and devide to new call attempts - bingo, new asr when successeful calls = 0. acd keep same;
-                                newACDd = [currentPerHourStat.acd doubleValue];
-                                newASRd = ([currentPerHourStat.asr doubleValue] * [currentPerHourStat.callAttempts doubleValue]) /  newCallAttemptsd;
+                                if ([updatedDestinations containsObject:[destination objectID]]) destinationNeedUpdateStatisticForCode = YES;
+                                destinationNeedNewStatisticForCode = NO;
                             }
-                            currentPerHourStat.asr = [NSNumber numberWithDouble:newASRd];
-                            currentPerHourStat.acd = [NSNumber numberWithDouble:newACDd];
-                            currentPerHourStat.callAttempts = [NSNumber numberWithDouble:newCallAttemptsd];
-                            currentPerHourStat.minutesLenght = [NSNumber numberWithDouble:newMinutesLenghtd];
-                            currentPerHourStat.profit = [NSNumber numberWithDouble:newProfitd];
-                            currentPerHourStat.cashflow = [NSNumber numberWithDouble:newAmountd];
                             
-                            //currentPerHourStat.externalDate = 
                             
-                        } 
-                        if (destinationNeedNewStatisticForCode)
-                        {
-                            DestinationPerHourStat *newPerHourStat = (DestinationPerHourStat *)[NSEntityDescription 
-                                                                                                insertNewObjectForEntityForName:@"DestinationPerHourStat"
-                                                                                                inManagedObjectContext:self.moc];
-                            newPerHourStat.date = externalDateFormatted;
-                            newPerHourStat.externalDate = externalDate;
-                            newPerHourStat.acd = [numberTransfer numberFromString:acd];
-                            newPerHourStat.asr = [numberTransfer numberFromString:asr];
-                            newPerHourStat.callAttempts = [numberTransfer numberFromString:count];
-                            newPerHourStat.minutesLenght = [numberTransfer numberFromString:minutes];
-                            newPerHourStat.profit = [numberTransfer numberFromString:profit];
-                            newPerHourStat.destinationsListWeBuy = destination;
+                            if (destinationNeedUpdateStatisticForCode) {
+                                // must be just one
+                                DestinationPerHourStat *currentPerHourStat = [perHourStatsFiltered anyObject];
+                                
+                                double newMinutesLenghtd = [currentPerHourStat.minutesLenght doubleValue];
+                                if ([minutes class] != [NSNull class]) newMinutesLenghtd = [[numberTransfer numberFromString:minutes] doubleValue] + newMinutesLenghtd;
+                                
+                                double newCallAttemptsd = [currentPerHourStat.callAttempts doubleValue];
+                                if ([count class] != [NSNull class]) newCallAttemptsd = [[numberTransfer numberFromString:count] doubleValue] + newCallAttemptsd;
+                                
+                                double newProfitd = [currentPerHourStat.profit doubleValue];
+                                if ([profit class] != [NSNull class]) newProfitd = [[numberTransfer numberFromString:profit] doubleValue] + newProfitd;
+                                
+                                double newAmountd = [currentPerHourStat.cashflow doubleValue];
+                                if ([amount class] != [NSNull class]) newAmountd = [[numberTransfer numberFromString:amount] doubleValue] + newAmountd;
+                                
+                                double newSuccessCallsd = 0;
+                                if ([asr class] != [NSNull class])  newSuccessCallsd = newCallAttemptsd * [[numberTransfer numberFromString:asr] doubleValue];
+                                
+                                double newACDd;
+                                double newASRd;
+                                if (newSuccessCallsd != 0) {
+                                    newACDd = newMinutesLenghtd / newSuccessCallsd;
+                                    newASRd= newSuccessCallsd / newCallAttemptsd;
+                                } else
+                                {
+                                    // we are pickup old asr, * to old call attempts and devide to new call attempts - bingo, new asr when successeful calls = 0. acd keep same;
+                                    newACDd = [currentPerHourStat.acd doubleValue];
+                                    newASRd = ([currentPerHourStat.asr doubleValue] * [currentPerHourStat.callAttempts doubleValue]) /  newCallAttemptsd;
+                                }
+                                currentPerHourStat.asr = [NSNumber numberWithDouble:newASRd];
+                                currentPerHourStat.acd = [NSNumber numberWithDouble:newACDd];
+                                currentPerHourStat.callAttempts = [NSNumber numberWithDouble:newCallAttemptsd];
+                                currentPerHourStat.minutesLenght = [NSNumber numberWithDouble:newMinutesLenghtd];
+                                currentPerHourStat.profit = [NSNumber numberWithDouble:newProfitd];
+                                currentPerHourStat.cashflow = [NSNumber numberWithDouble:newAmountd];
+                                
+                                //currentPerHourStat.externalDate = 
+                                NSLog(@"STAT:added UPDATED per hour stat with date:%@\n to destination we buy:%@/%@\n",currentPerHourStat.date,destination.country,destination.specific);
+
+                            } 
+                            if (destinationNeedNewStatisticForCode)
+                            {
+                                DestinationPerHourStat *newPerHourStat = (DestinationPerHourStat *)[NSEntityDescription 
+                                                                                                    insertNewObjectForEntityForName:@"DestinationPerHourStat"
+                                                                                                    inManagedObjectContext:self.moc];
+                                newPerHourStat.date = externalDateFormatted;
+                                newPerHourStat.externalDate = externalDate;
+                                newPerHourStat.acd = [numberTransfer numberFromString:acd];
+                                newPerHourStat.asr = [numberTransfer numberFromString:asr];
+                                newPerHourStat.callAttempts = [numberTransfer numberFromString:count];
+                                newPerHourStat.minutesLenght = [numberTransfer numberFromString:minutes];
+                                newPerHourStat.profit = [numberTransfer numberFromString:profit];
+                                newPerHourStat.destinationsListWeBuy = destination;
+                                
+                                [updatedDestinations addObject:[destination objectID]];
+                                NSLog(@"STAT:added new per hour stat with date:%@\n to destination we buy:%@/%@\n",newPerHourStat.date,destination.country,destination.specific);
+
+                            }
                             
-                            [updatedDestinations addObject:[destination objectID]];
-                        }
+                        }];
                         
-                    }];
-                    
-                    [inputFormatter release], inputFormatter = nil;
+                        [inputFormatter release], inputFormatter = nil;
+                    }
                 }
             }
         }
@@ -1639,36 +1656,50 @@
 - (void) removeFromMainDatabaseDestinations24hStatisticForCarrierGUID:(NSString *)carrierGUID 
                                                        withEntityName:(NSString *)entityName //withMoc:(NSManagedObjectContext *)moc;
 {
-    
-    NSError *error = nil;
-    NSFetchRequest *requestDestinations = [[NSFetchRequest alloc] init];
-    [requestDestinations setEntity:[NSEntityDescription entityForName:entityName inManagedObjectContext:self.moc]];
-    //[requestDestinations setPredicate:[NSPredicate predicateWithFormat:@"(carrier.GUID == %@)", carrierGUID]];
-    if ([entityName isEqualToString:@"DestinationsListForSale"]) [requestDestinations setPredicate:[NSPredicate predicateWithFormat:@"(carrier.GUID == %@) AND (lastUsedACD > 0 OR lastUsedASR > 0 OR lastUsedCallAttempts > 0 OR lastUsedIncome > 0 OR lastUsedMinutesLenght > 0 OR lastUsedMinutesLenght > 0)",carrierGUID]];
-    if ([entityName isEqualToString:@"DestinationsListWeBuy"]) [requestDestinations setPredicate:[NSPredicate predicateWithFormat:@"(carrier.GUID == %@) AND (lastUsedACD > 0 OR lastUsedASR > 0 OR lastUsedCallAttempts > 0 OR lastUsedMinutesLenght > 0 OR lastUsedMinutesLenght > 0)",carrierGUID]];
+    @autoreleasepool {
+        // if carride guis nil remove all stat
+        NSLog( @"DESTINATION CONTROLLER: statistic for carrier:%@ will removed",carrierGUID);
+        NSError *error = nil;
+        NSFetchRequest *requestDestinations = [[NSFetchRequest alloc] init];
+        [requestDestinations setEntity:[NSEntityDescription entityForName:entityName inManagedObjectContext:self.moc]];
+        //[requestDestinations setPredicate:[NSPredicate predicateWithFormat:@"(carrier.GUID == %@)", carrierGUID]];
+        NSPredicate *finalPredicate = nil;
+        
+        if (carrierGUID) {
+            
+            if ([entityName isEqualToString:@"DestinationsListForSale"]) finalPredicate = [NSPredicate predicateWithFormat:@"(carrier.GUID == %@) AND (lastUsedACD > 0 OR lastUsedASR > 0 OR lastUsedCallAttempts > 0 OR lastUsedIncome > 0 OR lastUsedMinutesLenght > 0 OR lastUsedMinutesLenght > 0)",carrierGUID];
+            if ([entityName isEqualToString:@"DestinationsListWeBuy"])  finalPredicate = [NSPredicate predicateWithFormat:@"(carrier.GUID == %@) AND (lastUsedACD > 0 OR lastUsedASR > 0 OR lastUsedCallAttempts > 0 OR lastUsedMinutesLenght > 0 OR lastUsedMinutesLenght > 0)",carrierGUID];
+        } else {
+            if ([entityName isEqualToString:@"DestinationsListForSale"]) finalPredicate = [NSPredicate predicateWithFormat:@"(lastUsedACD > 0 OR lastUsedASR > 0 OR lastUsedCallAttempts > 0 OR lastUsedIncome > 0 OR lastUsedMinutesLenght > 0 OR lastUsedMinutesLenght > 0)",carrierGUID];
+            if ([entityName isEqualToString:@"DestinationsListWeBuy"])  finalPredicate = [NSPredicate predicateWithFormat:@"(lastUsedACD > 0 OR lastUsedASR > 0 OR lastUsedCallAttempts > 0 OR lastUsedMinutesLenght > 0 OR lastUsedMinutesLenght > 0)",carrierGUID];
 
-    [requestDestinations setResultType:NSManagedObjectIDResultType];
-    NSArray *destinationsIDs = [self.moc executeFetchRequest:requestDestinations error:&error];
-    if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd)); 
-    
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    for (NSManagedObjectID *destination in destinationsIDs)
-    {
-        NSManagedObject *dest = [self.moc objectWithID:destination];
-        [dest setValue:nil forKey:@"lastUsedACD"];
-        [dest setValue:nil forKey:@"lastUsedASR"];
-        [dest setValue:nil forKey:@"lastUsedCallAttempts"];
-        [dest setValue:nil forKey:@"lastUsedDate"];
-        [dest setValue:nil forKey:@"lastUsedMinutesLenght"];
-        [dest setValue:nil forKey:@"lastUsedProfit"];
-        if ([entityName isEqualToString:@"DestinationsListForSale"]) [dest setValue:nil forKey:@"lastUsedIncome"];
-        [dest setValue:[NSDate date] forKey:@"modificationDate"];
-        [pool drain],pool = nil;
-        pool = [[NSAutoreleasePool alloc] init];
+        }
+        
+        [requestDestinations setPredicate:finalPredicate];
+        
+        [requestDestinations setResultType:NSManagedObjectIDResultType];
+        NSArray *destinationsIDs = [self.moc executeFetchRequest:requestDestinations error:&error];
+        if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd)); 
+        
+        //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        for (NSManagedObjectID *destination in destinationsIDs)
+        {
+            @autoreleasepool {
+                NSManagedObject *dest = [self.moc objectWithID:destination];
+                [dest setValue:nil forKey:@"lastUsedACD"];
+                [dest setValue:nil forKey:@"lastUsedASR"];
+                [dest setValue:nil forKey:@"lastUsedCallAttempts"];
+                [dest setValue:nil forKey:@"lastUsedDate"];
+                [dest setValue:nil forKey:@"lastUsedMinutesLenght"];
+                [dest setValue:nil forKey:@"lastUsedProfit"];
+                if ([entityName isEqualToString:@"DestinationsListForSale"]) [dest setValue:nil forKey:@"lastUsedIncome"];
+                [dest setValue:[NSDate date] forKey:@"modificationDate"];
+            }
+        }
+        //[pool drain],pool = nil;
+        
+        [requestDestinations release], requestDestinations = nil;
     }
-    [pool drain],pool = nil;
-
-    [requestDestinations release], requestDestinations = nil;
     [self safeSave];
     return;
 }

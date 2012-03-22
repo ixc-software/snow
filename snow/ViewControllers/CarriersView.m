@@ -605,6 +605,7 @@
     } else [self showErrorBoxWithText:@"Please register yourself,changes was not uploaded. For registration you can just change default email and company name."];
     
     [clientController release];
+    [self sortCarrierForCurrentUserAndUpdate];
 #endif
     
 }
@@ -1275,7 +1276,7 @@
         twitterEnabled.image = [NSImage imageNamed:@"enabledPoint.png"];
         [twitterWebView setHidden:YES];
         [[delegate.destinationsView.twitIt layer] setOpacity:1.0];
-        [delegate.destinationsView.twitIt setEnabled:YES];
+        [delegate.destinationsView.twitIt setHidden:NO];
 
     });
 }
@@ -1317,7 +1318,7 @@
         [networksUpdateProgress stopAnimation:self];
         [linkedinWebView setHidden:YES];
         ////[[delegate.destinationsView.linkedinIn layer] setOpacity:1.0];
-        [delegate.destinationsView.linkedinIn setEnabled:YES];
+        [delegate.destinationsView.linkedinIn setHidden:NO];
     });
     NSDate *lastUpdate = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastLinedinGroupsUpdatingTime"];
     if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 86400)  [linkedinController getGroupsStart:0 count:10];

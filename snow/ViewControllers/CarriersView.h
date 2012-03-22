@@ -110,6 +110,7 @@
     NSMutableArray *groupListObjects;
     NSNumber *messageIncludePriceValue;
     NSNumber *messagePriceCorrectionPercent;
+    IBOutlet NSButton *includeCountryListInTitle;
 }
 @property (assign) desctopAppDelegate *delegate;
 @property (assign) NSManagedObjectContext *moc;

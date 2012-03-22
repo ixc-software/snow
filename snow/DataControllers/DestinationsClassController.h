@@ -101,5 +101,7 @@
 - (BOOL) updateStatisticForEntity:(NSString *)entity;
 - (NSArray *) insertDestinationsForEntity:(NSString *)entity;
 - (id)initWithMainMoc:(NSManagedObjectContext *)itsMainMoc;
+- (void) removeFromMainDatabaseDestinations24hStatisticForCarrierGUID:(NSString *)carrierGUID 
+                                                       withEntityName:(NSString *)entityName; //withMoc:(NSManagedObjectContext *)moc;
 
 @end

@@ -736,8 +736,8 @@
             UINavigationController *info = [viewControllers objectAtIndex:0];
             InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
 
-            infoObject.operation.hidden = NO;
-            infoObject.operationProgress.hidden = NO;
+            infoObject.operation.hidden = YES;
+            infoObject.operationProgress.hidden = YES;
 
             loginActivity.hidden = YES;
             [loginActivity stopAnimating];

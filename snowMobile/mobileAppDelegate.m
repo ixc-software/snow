@@ -53,11 +53,11 @@
     [self.window addSubview:firstPage.view];
     
     [self.window makeKeyAndVisible];
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:@"isCurrentUpdateProcessing"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
         dispatch_async(dispatch_get_main_queue(), ^(void) { 
             UIImageView *reachabilityView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"stop-32.png"]];
+            [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:@"isCurrentUpdateProcessing"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
             
             self.reachabilityImageView = reachabilityView;
             [reachabilityView release];
@@ -511,7 +511,7 @@
     {
         statusString= [NSString stringWithFormat: @"%@, Connection Required", statusString];
     }
-    NSLog(@"REACHABILITY:%@",statusString);
+    //NSLog(@"REACHABILITY:%@",statusString);
     
 }
 
@@ -533,7 +533,7 @@
         {
             baseLabel=  @"Cellular data network is active.\n  Internet traffic will be routed through it.";
         }
-        NSLog(@"REACHABILITY:%@",baseLabel);
+        //NSLog(@"REACHABILITY:%@",baseLabel);
     }
 	if(curReach == internetReach)
 	{	
@@ -645,6 +645,8 @@
     //info.navigationItem.title = @"test";
     InfoViewController *infoObject = [info.viewControllers objectAtIndex:0];
     [infoObject.operationProgress setHidden:YES]; 
+    [infoObject.operation setHidden:YES]; 
+
     //NSLog(@"progess hidden from delegate");
 //    UINavigationController *routes = [viewControllers objectAtIndex:2];
     
@@ -752,6 +754,8 @@
     infoObject.operation.text = [array objectAtIndex:0];
     if ([array count] == 2) { 
         [infoObject.operationProgress setHidden:NO]; 
+        [infoObject.operation setHidden:NO]; 
+
         NSNumber *progress = [array objectAtIndex:1];
         [infoObject.operationProgress setProgress:[progress floatValue]];
         //[infoObject.operationProgress setTintColor:[UIColor colorWithRed:0.20 green:0.20 blue:0.52 alpha:1.0]];

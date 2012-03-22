@@ -617,6 +617,7 @@
 		FAD0656E1505675300847AA9 /* LinkedinUpdateDataController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAD0656C1505675300847AA9 /* LinkedinUpdateDataController.m */; };
 		FAD0656F1505675300847AA9 /* LinkedinUpdateDataController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAD0656C1505675300847AA9 /* LinkedinUpdateDataController.m */; };
 		FAD065701505675300847AA9 /* LinkedinUpdateDataController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAD0656C1505675300847AA9 /* LinkedinUpdateDataController.m */; };
+		FAE8221C1514643E0091AE41 /* snowLogoMain.tiff in Resources */ = {isa = PBXBuildFile; fileRef = FAE8221B1514643E0091AE41 /* snowLogoMain.tiff */; };
 		FAFB878414FE25A900E22734 /* 1277121629_ko.png in Resources */ = {isa = PBXBuildFile; fileRef = FAFB878314FE25A900E22734 /* 1277121629_ko.png */; };
 		FAFB878714FE262200E22734 /* delete-icon-md.png in Resources */ = {isa = PBXBuildFile; fileRef = FAFB878614FE262200E22734 /* delete-icon-md.png */; };
 		FAFEF9EE14F7E1270096A8A4 /* DDData.m in Sources */ = {isa = PBXBuildFile; fileRef = FAFEF8E614F7E1270096A8A4 /* DDData.m */; };
@@ -1131,6 +1132,7 @@
 		FACE80C514F8D96500AD9981 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		FAD0656B1505675300847AA9 /* LinkedinUpdateDataController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkedinUpdateDataController.h; sourceTree = "<group>"; };
 		FAD0656C1505675300847AA9 /* LinkedinUpdateDataController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LinkedinUpdateDataController.m; sourceTree = "<group>"; };
+		FAE8221B1514643E0091AE41 /* snowLogoMain.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = snowLogoMain.tiff; sourceTree = "<group>"; };
 		FAFB878314FE25A900E22734 /* 1277121629_ko.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1277121629_ko.png; sourceTree = "<group>"; };
 		FAFB878614FE262200E22734 /* delete-icon-md.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "delete-icon-md.png"; sourceTree = "<group>"; };
 		FAFEF8E514F7E1270096A8A4 /* DDData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDData.h; sourceTree = "<group>"; };
@@ -1699,6 +1701,7 @@
 			children = (
 				FA9989551512398600F9F97D /* 42-info.png */,
 				FA1CA2521513406400D38424 /* destinationControl.png */,
+				FAE8221B1514643E0091AE41 /* snowLogoMain.tiff */,
 				FA99896C1512598600F9F97D /* 01-refresh.png */,
 				FA99896D1512598600F9F97D /* 01-refresh@2x.png */,
 				FA9989561512398600F9F97D /* 42-info@2x.png */,
@@ -2350,6 +2353,7 @@
 				FA1CA25115133DCC00D38424 /* destinationsControl.png in Resources */,
 				FA1CA2531513406400D38424 /* destinationControl.png in Resources */,
 				FA1CA2551513421E00D38424 /* destinatioControl.png in Resources */,
+				FAE8221C1514643E0091AE41 /* snowLogoMain.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3136,7 +3140,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
@@ -3164,7 +3168,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",

@@ -646,7 +646,7 @@
 -(void)updateUIWithData:(NSArray *)data;
 {
     //sleep(5);
-    NSLog(@"FIRST AUTHORIZATION SETUP: data:%@",data);
+    //NSLog(@"FIRST AUTHORIZATION SETUP: data:%@",data);
     NSString *status = [data objectAtIndex:0];
     //NSNumber *progress = [data objectAtIndex:1];
     NSNumber *isItLatestMessage = [data objectAtIndex:2];
@@ -672,7 +672,7 @@
     if ([status isEqualToString:@"we are start updates."] && isItLatestMessage.boolValue == YES) { 
         desctopAppDelegate *delegate = (desctopAppDelegate *)[NSApplication sharedApplication].delegate;
         [delegate updateWellcomeTitle];
-//        [delegate.carriersView sortCarrierForCurrentUserAndUpdate];
+        [delegate.carriersView sortCarrierForCurrentUserAndUpdate];
 //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
 //            desctopAppDelegate *delegate = (desctopAppDelegate *)[NSApplication sharedApplication].delegate;
 //            ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];

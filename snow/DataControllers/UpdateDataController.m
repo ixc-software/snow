@@ -543,7 +543,7 @@
 
     [progress updateOperationNameForMsyqlQueryFinish];
     
-    if ([usedCodesWithStatistic count] != 0) {
+    //if ([usedCodesWithStatistic count] != 0) {
 //        AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
         DestinationsClassController *destination = [[DestinationsClassController alloc] initWithMainMoc:[delegate managedObjectContext]];
         destination.carriers = [NSArray arrayWithObject:carrierGUID];
@@ -553,7 +553,7 @@
         usedCodesWithStatistic = nil;
         
         [destination release],destination = nil;
-    }
+    //}
     [pool drain],pool = nil;
     return;
 }
@@ -594,15 +594,15 @@
 
     [progress updateOperationNameForMsyqlQueryFinish];
 
-    if ([usedCodesWithStatistic count] != 0) {
+    //if ([usedCodesWithStatistic count] != 0) {
 //        AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
         DestinationsClassController *destination = [[DestinationsClassController alloc] initWithMainMoc:[delegate managedObjectContext]];
         destination.carriers = [NSArray arrayWithObject:carrierGUID];
         destination.usedCodesWithStatistic = usedCodesWithStatistic;
         destination.progress = progress;
-        [destination updateEntity:entityName];
+        [destination updateStatisticForEntity:entityName];
         [destination release];
-    }
+    //}
     [self finalSave];
     
 }
@@ -889,7 +889,6 @@
     [expressionDescription release];
 //    [maxSalaryExpression release];
     [requestCodesForSale setResultType:NSDictionaryResultType];
-    //NSLog(@"UPDATE DATA CONTROLLER: >>>>>>>>>> get max date start");
     NSArray *result = [self.moc executeFetchRequest:requestCodesForSale error:&error];
     if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd)); 
     NSDate *maxExternalChangedDate = result.lastObject;
@@ -1051,142 +1050,16 @@
 
         [progress updateOperationNameForMsyqlQueryFinish];
     }
-    /*NSUInteger count = [externalDestinationsList count];
-    if (count > 10000) {
-        __block NSUInteger quarter = count/4;
-        //[self finalSave];
-        // first quater
-        NSRange rangeForFirstQuarter = NSMakeRange(0,quarter);
-        NSArray *firstQuarter = [externalDestinationsList objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:rangeForFirstQuarter]];
-        NSRange rangeForSecondQuarter = NSMakeRange(quarter,quarter);
-        NSArray *secondQuarter = [externalDestinationsList objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:rangeForSecondQuarter]];
-        NSRange rangeForThirdQuarter = NSMakeRange(quarter*2,quarter);
-        NSArray *thirdQuarter = [externalDestinationsList objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:rangeForThirdQuarter]];
-        NSRange rangeForFourthQuarter = NSMakeRange(quarter+quarter*2,quarter-1);
-        NSArray *fourthQuarter = [externalDestinationsList objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:rangeForFourthQuarter]];
-        externalDestinationsList = nil;
-        
-        *NSManagedObjectContext *mocForFirstQuarter = [[NSManagedObjectContext alloc] init];
-        [mocForFirstQuarter setPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]];
-        [mocForFirstQuarter setUndoManager:nil];
-        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter]; 
-        [nc addObserver:self
-               selector:@selector(mergeChanges:) 
-                   name:NSManagedObjectContextDidSaveNotification
-                 object:mocForFirstQuarter];*
-
-        DestinationsClassController *destinationForFirstQuarter = [[DestinationsClassController alloc] init];
-        destinationForFirstQuarter.carriers = [NSArray arrayWithObject:carrierName];
-        //destinationForFirstQuarter.context = mocForFirstQuarter;
-        destinationForFirstQuarter.externalDataCodes = firstQuarter;
-        destinationForFirstQuarter.additionalMessageForUser = @"1/4";
-        destinationForFirstQuarter.progress = progress;
-        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-
-        [destinationForFirstQuarter updateEntity:destinationTypeString];
-        firstQuarter = nil;
-        destinationForFirstQuarter.externalDataCodes = nil;
-        
-        //NSError *error = nil;
-
-        //if (![mocForFirstQuarter save: &error]) NSLog(@"Failed to save to data store: %@", [error localizedDescription]);
-        //});
-        [destinationForFirstQuarter release],destinationForFirstQuarter = nil;
   
-        // second quater
-        *NSManagedObjectContext *mocForSecondQuarter = [[NSManagedObjectContext alloc] init];
-        [mocForSecondQuarter setPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]];
-        [mocForSecondQuarter setUndoManager:nil];
-        //NSNotificationCenter *nc = [NSNotificationCenter defaultCenter]; 
-        [nc addObserver:self
-               selector:@selector(mergeChanges:) 
-                   name:NSManagedObjectContextDidSaveNotification
-                 object:mocForSecondQuarter];*
-
-        DestinationsClassController *destinationForSecondQuarter = [[DestinationsClassController alloc] init];
-        destinationForSecondQuarter.carriers = [NSArray arrayWithObject:carrierName];
-        //destinationForSecondQuarter.context = mocForSecondQuarter;
-        destinationForSecondQuarter.externalDataCodes = secondQuarter;
-        destinationForSecondQuarter.additionalMessageForUser = @"2/4";
-        destinationForSecondQuarter.progress = progress;
-        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-
-        [destinationForSecondQuarter updateEntity:destinationTypeString];
-        secondQuarter = nil;
-        destinationForSecondQuarter.externalDataCodes = nil;
-        
-        //NSError *error = nil;
-
-        //if (![mocForSecondQuarter save: &error]) NSLog(@"Failed to save to data store: %@", [error localizedDescription]);
-        //});
-        [destinationForSecondQuarter release],destinationForSecondQuarter = nil;
-        // third quater
-        *NSManagedObjectContext *mocForThirdQuarter = [[NSManagedObjectContext alloc] init];
-        [mocForThirdQuarter setPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]];
-        [mocForThirdQuarter setUndoManager:nil];
-        //NSNotificationCenter *nc = [NSNotificationCenter defaultCenter]; 
-        [nc addObserver:self
-               selector:@selector(mergeChanges:) 
-                   name:NSManagedObjectContextDidSaveNotification
-                 object:mocForThirdQuarter];*
-
-        DestinationsClassController *destinationForThirdQuarter = [[DestinationsClassController alloc] init];
-        destinationForThirdQuarter.carriers = [NSArray arrayWithObject:carrierName];
-        //destinationForThirdQuarter.context = mocForThirdQuarter;
-        destinationForThirdQuarter.externalDataCodes = thirdQuarter;
-        destinationForThirdQuarter.additionalMessageForUser = @"3/4";
-        destinationForThirdQuarter.progress = progress;
-        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-
-        [destinationForThirdQuarter updateEntity:destinationTypeString];
-        thirdQuarter = nil;
-        destinationForThirdQuarter.externalDataCodes = nil;
-        
-        //if (![mocForThirdQuarter save: &error]) NSLog(@"Failed to save to data store: %@", [error localizedDescription]);
-        [destinationForThirdQuarter release],destinationForThirdQuarter = nil;
-       // NSError *error = nil;
-
-       //     if (![mocForThirdQuarter save: &error]) NSLog(@"Failed to save to data store: %@", [error localizedDescription]);
-       // });
-
-        // fourth quater
-        NSManagedObjectContext *mocForFourthQuarter = [[NSManagedObjectContext alloc] init];
-        [mocForFourthQuarter setPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]];
-        [mocForFourthQuarter setUndoManager:nil];
-        //NSNotificationCenter *nc = [NSNotificationCenter defaultCenter]; 
-        *[nc addObserver:self
-               selector:@selector(mergeChanges:) 
-                   name:NSManagedObjectContextDidSaveNotification
-                 object:mocForFourthQuarter];*
-
-        DestinationsClassController *destinationForFourthQuarter = [[DestinationsClassController alloc] init];
-        destinationForFourthQuarter.carriers = [NSArray arrayWithObject:carrierName];
-        //destinationForFourthQuarter.context = mocForFourthQuarter;
-        destinationForFourthQuarter.externalDataCodes = fourthQuarter;
-        destinationForFourthQuarter.additionalMessageForUser = @"4/4";
-        destinationForFourthQuarter.progress = progress;
-        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-
-        [destinationForFourthQuarter updateEntity:destinationTypeString];
-        fourthQuarter = nil;
-        destinationForFourthQuarter.externalDataCodes = nil;
-        
-        //if (![mocForFourthQuarter save: &error]) NSLog(@"Failed to save to data store: %@", [error localizedDescription]);
-        //});
-        [destinationForFourthQuarter release],destinationForFourthQuarter = nil;
-        externalDestinationsList = nil;
-        
-    } else {*/
     BOOL result= YES;
     if ([externalDestinationsList count] != 0) {
-//        AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
         DestinationsClassController *destination = [[DestinationsClassController alloc] initWithMainMoc:[delegate managedObjectContext]];
         destination.carriers = [NSArray arrayWithObject:carrierGUID];
         destination.externalDataCodes = externalDestinationsList;
         destination.progress = progress;
         result = [destination updateEntity:destinationTypeString];
         externalDestinationsList = nil;
-        [destination release],destination = nil;
+        [destination release];//,destination = nil;
     }
     return result;
 }
