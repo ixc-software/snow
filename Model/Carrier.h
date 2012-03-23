@@ -2,7 +2,7 @@
 //  Carrier.h
 //  snow
 //
-//  Created by Oleksii Vynogradov on 2/24/12.
+//  Created by Oleksii Vynogradov on 3/22/12.
 //  Copyright (c) 2012 IXC-USA Corp. All rights reserved.
 //
 
@@ -24,6 +24,7 @@
 @property (nonatomic, retain) NSString * phoneList;
 @property (nonatomic, retain) NSString * ratesEmail;
 @property (nonatomic, retain) NSString * url;
+@property (nonatomic, retain) NSString * externalID;
 @property (nonatomic, retain) NSSet *carrierStuff;
 @property (nonatomic, retain) CompanyStuff *companyStuff;
 @property (nonatomic, retain) NSSet *destinationsListForSale;

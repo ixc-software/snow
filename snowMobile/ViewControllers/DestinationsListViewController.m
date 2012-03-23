@@ -9,6 +9,7 @@
 #import "DestinationsListViewController.h"
 #import "AddRoutesTableViewController.h"
 #import "DestinationPushListHeaderView.h"
+#import "DestinationsHeaderView.h"
 #import "Carrier.h"
 #import "CompanyStuff.h"
 #import "CurrentCompany.h"
@@ -700,7 +701,7 @@
     self.bar.showsCancelButton = NO;
     self.bar.autocorrectionType = UITextAutocorrectionTypeNo;
     self.bar.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    self.bar.placeholder = @"country,specific";
+    self.bar.placeholder = @"country,specific or carrier name";
     self.tableView.tableHeaderView = self.bar;
     [self.bar sizeToFit];
 
@@ -753,7 +754,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
         sleep(5);
         dispatch_async(dispatch_get_main_queue(), ^(void) {
-            self.bar.placeholder = @"country,specific";});
+            self.bar.placeholder = @"country,specific or carrier name";});
     });
     HelpForInfoView *helpView = [[HelpForInfoView alloc] init];
     if (isControllerStartedFromOutsideTabbar) { 
@@ -821,7 +822,7 @@
     //NSArray *fetchedObjects = [[self fetchedResultsControllerForTableView:tableView] fetchedObjects];
     //NSLog(@"%@",[fetchedObjects lastObject]);
     NSInteger count = [[[self fetchedResultsController] fetchedObjects] count];
-    //NSLog(@"Number of sections:%@",[NSNumber numberWithUnsignedInteger:count]);
+    NSLog(@"Number of sections:%@",[NSNumber numberWithUnsignedInteger:count]);
     return count;
 }
 
@@ -970,7 +971,7 @@
     return cell;
 }
 
--(UIView*)tableView:(UITableView*)tableView viewForHeaderInSection:(NSInteger)section {
+-(UIView *)tableView:(UITableView*)tableView viewForHeaderInSection:(NSInteger)section {
     BOOL isOpened = NO;
     //if (section == 0) return self.bar;
     
@@ -979,19 +980,21 @@
     NSFetchedResultsController *fetchController = [self fetchedResultsController];
     //NSIndexPath *new = [NSIndexPath indexPathForRow:section - 1 inSection:0];
     NSManagedObject *managedObject = [fetchController objectAtIndexPath:[NSIndexPath indexPathForRow:section inSection:0]];
-    NSNumber *sectionNumber = [NSNumber numberWithInteger:section];
+//    NSNumber *sectionNumber = [NSNumber numberWithInteger:section];
     //    if (openedIndexPath && openedIndexPath.section == section) isOpened = YES;
     
     //if (section < 6) NSLog(@"sections view for country/specific:%@/%@ for section:%@",[managedObject valueForKey:@"country"],[managedObject valueForKey:@"specific"],[NSNumber numberWithInteger:section]); 
-    DestinationPushListHeaderView *sectionView = nil;
+    DestinationsHeaderView *sectionView = [[DestinationsHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT)];
+    NSLog(@"section view:%@",sectionView);
     
+    /*
     if ([[managedObject class] isSubclassOfClass:[DestinationsListPushList class]]) {
-        sectionView = [[[DestinationPushListHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:nil withACD:nil withObjectID:managedObject.objectID section:sectionNumber isOpened:[NSNumber numberWithBool:isOpened] delegate:self isDestinationsPushList:YES] autorelease];
+        sectionView = [[[DestinationPushListHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:nil withACD:nil withObjectID:managedObject.objectID section:section isOpened:isOpened delegate:self isDestinationsPushList:YES testing:6] autorelease];
     }
     
     if ([[managedObject class] isSubclassOfClass:[DestinationsListForSale class]] || [[managedObject class] isSubclassOfClass:[DestinationsListWeBuy class]]) {
-        sectionView = [[[DestinationPushListHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:[managedObject valueForKey:@"lastUsedMinutesLenght"] withACD:[managedObject valueForKey:@"lastUsedACD"] withObjectID:managedObject.objectID section:sectionNumber isOpened:[NSNumber numberWithBool:isOpened] delegate:self isDestinationsPushList:NO] autorelease];
-    }
+        sectionView = [[[DestinationPushListHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:[managedObject valueForKey:@"lastUsedMinutesLenght"] withACD:[managedObject valueForKey:@"lastUsedACD"] withObjectID:managedObject.objectID section:section isOpened:isOpened delegate:self isDestinationsPushList:NO testing:6] autorelease];
+    }*/
 
     
     //NSLog(@"sections view for country/specific:%@/%@ for section:%@ isOpened:%@",managedObject.country,managedObject.specific,[NSNumber numberWithInteger:section],managedObject.opened); 
@@ -1039,7 +1042,7 @@
 
 #pragma mark Section header delegate
 -(void)sectionHeaderView:(DestinationPushListHeaderView *)sectionHeaderView 
-           sectionOpened:(NSNumber *)sectionOpened 
+           sectionOpened:(NSUInteger)sectionOpened 
 {
     [self.bar resignFirstResponder];
     keyboardIsShowingFromSearchString = NO;
@@ -1052,7 +1055,7 @@
         NSUInteger animationDelete = 0;
         NSUInteger animationInsert = 0;
         
-        if (previousOpenedSection > sectionOpened.unsignedIntegerValue){  
+        if (previousOpenedSection > sectionOpened){  
             animationDelete = UITableViewRowAnimationBottom;
             animationInsert = UITableViewRowAnimationTop;
         } else { 
@@ -1065,15 +1068,15 @@
         [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:previousOpenedSection]] withRowAnimation:animationDelete];
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:previousOpenedSection] withRowAnimation:UITableViewRowAnimationNone];
         [sections removeAllIndexes];
-        [sections addIndex:sectionOpened.unsignedIntegerValue];
-        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]] withRowAnimation:animationInsert];
+        [sections addIndex:sectionOpened];
+        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionOpened]] withRowAnimation:animationInsert];
         //NSLog(@"DESTINATIONS LIST: OPENED:%@",[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]);
 
     } else {
-        [sections addIndex:sectionOpened.unsignedIntegerValue];
+        [sections addIndex:sectionOpened];
         //NSLog(@"DESTINATIONS LIST: OPENED:%@",[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]);
 
-        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]] withRowAnimation:UITableViewRowAnimationTop];
+        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionOpened]] withRowAnimation:UITableViewRowAnimationTop];
     }
     [self.tableView endUpdates];
     
@@ -1081,18 +1084,18 @@
 }
 
 -(void)sectionHeaderView:(DestinationPushListHeaderView*)sectionHeaderView 
-           sectionClosed:(NSNumber *)sectionClosed  
+           sectionClosed:(NSUInteger)sectionClosed  
 {
     [self.bar resignFirstResponder];
     keyboardIsShowingFromSearchString = NO;
 
     sectionHeaderView.isOpened = NO;
     
-    if ([sections containsIndex:sectionClosed.unsignedIntegerValue]) {
+    if ([sections containsIndex:sectionClosed]) {
         
         [self.tableView beginUpdates];
-        [sections removeIndex:sectionClosed.unsignedIntegerValue];
-        [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionClosed.unsignedIntegerValue]] withRowAnimation:UITableViewRowAnimationTop];
+        [sections removeIndex:sectionClosed];
+        [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionClosed]] withRowAnimation:UITableViewRowAnimationTop];
         [self.tableView endUpdates];
     } else NSLog(@"DESTINATIONS LIST: warning, section for close already closed  do nothing");
     //    DestinationsListPushList *destination = (DestinationsListPushList *)[self.managedObjectContext objectWithID:sectionHeaderView.objectID];
@@ -1516,9 +1519,21 @@
     
     
     if(searchString && searchString.length) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(country CONTAINS[cd] %@) OR (specific CONTAINS[cd] %@)", searchString,searchString,searchString];
-        [predicateArray addObject:predicate];
+        if (selectRoutes.selectedSegmentIndex == 0) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(country CONTAINS[cd] %@) OR (specific CONTAINS[cd] %@) and (destinationsListForSale.carrier.name contains[cd] %@)", searchString,searchString,searchString];
+            [predicateArray addObject:predicate];
+        }
+
+        if (selectRoutes.selectedSegmentIndex == 1) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(country CONTAINS[cd] %@) OR (specific CONTAINS[cd] %@) OR (destinationsListWeBuy.carrier.name contains[cd] %@)", searchString,searchString,searchString];
+            [predicateArray addObject:predicate];
+        }
+
         
+        if (selectRoutes.selectedSegmentIndex == 2) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(country CONTAINS[cd] %@) OR (specific CONTAINS[cd] %@)", searchString,searchString];
+            [predicateArray addObject:predicate];
+        }
 
 //        if(filterPredicate)
 //        {

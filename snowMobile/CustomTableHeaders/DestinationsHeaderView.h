@@ -1,21 +1,22 @@
 //
-//  DestinationPushListHeaderView.h
+//  DestinationsHeaderView.h
 //  snow
 //
-//  Created by Oleksii Vynogradov on 30.04.11.
-//  Copyright 2011 IXC-USA Corp. All rights reserved.
+//  Created by Oleksii Vynogradov on 3/23/12.
+//  Copyright (c) 2012 IXC-USA Corp. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 #import "DestinationsListPushList.h"
 
-@protocol DestinationPushListHeaderViewDelegate;
+@protocol DestinationsHeaderViewDelegate;
 
+@interface DestinationsHeaderView : UIView
+{
+    UIView *view;
 
-@interface DestinationPushListHeaderView : UIView {
-    
-    
 }
+@property (nonatomic, retain) IBOutlet UIView *view;
 
 @property (nonatomic, retain) UILabel *country;
 @property (nonatomic, retain) UILabel *specific;
@@ -33,7 +34,7 @@
 
 @property (nonatomic, assign) NSUInteger section;
 @property (nonatomic, assign) BOOL isOpened;
-@property (nonatomic, assign) id <DestinationPushListHeaderViewDelegate> delegate;
+@property (nonatomic, assign) id <DestinationsHeaderViewDelegate> delegate;
 
 -(id)initWithFrame:(CGRect)frame 
        withCountry:(NSString *)countryForHeader 
@@ -44,22 +45,22 @@
       withObjectID:(NSManagedObjectID *)objectIDexternal 
            section:(NSUInteger)sectionNumber 
           isOpened:(BOOL)isOpenedForHeader
-          delegate:(id <DestinationPushListHeaderViewDelegate>)aDelegate
+          delegate:(id <DestinationsHeaderViewDelegate>)aDelegate
 isDestinationsPushList:(BOOL)isDestinationsPushListEntity
            testing:(NSUInteger)testingFlow; 
 
 -(void)toggleOpenWithUserAction:(BOOL)userAction;
-                   //withLocation:(CGPoint)location;
+//withLocation:(CGPoint)location;
 
 
 @end
 
-@protocol DestinationPushListHeaderViewDelegate <NSObject>
+@protocol DestinationsHeaderViewDelegate <NSObject>
 
 @optional
--(void)sectionHeaderView:(DestinationPushListHeaderView*)sectionHeaderView 
+-(void)sectionHeaderView:(DestinationsHeaderView *)sectionHeaderView 
            sectionOpened:(NSUInteger)sectionOpened;
--(void)sectionHeaderView:(DestinationPushListHeaderView*)sectionHeaderView 
+-(void)sectionHeaderView:(DestinationsHeaderView *)sectionHeaderView 
            sectionClosed:(NSUInteger)sectionClosed;
 -(void) sectionOpenTodgeStatus;
 

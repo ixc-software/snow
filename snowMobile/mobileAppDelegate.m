@@ -760,7 +760,11 @@
         [infoObject.operationProgress setProgress:[progress floatValue]];
         //[infoObject.operationProgress setTintColor:[UIColor colorWithRed:0.20 green:0.20 blue:0.52 alpha:1.0]];
     }
-    else [infoObject.operationProgress setHidden:YES]; 
+    else { 
+        [infoObject.operationProgress setHidden:YES]; 
+        NSLog(@">>>>>>>>>>>>>>>>>>>>progess hidden");
+
+    }
 }
 
 - (void)countWasUpdateWithResult:(DownloadOperation *)importer;
@@ -769,7 +773,7 @@
     [formatter setNumberStyle:NSNumberFormatterPercentStyle];
     NSString *text = nil;
     NSNumber *percentDone = importer.percentDone;
-    if (percentDone && [percentDone doubleValue] != 0)
+    if (percentDone)
     {
         text = [NSString stringWithFormat:@"%@, completed:%@%",importer.operationName,[formatter stringFromNumber:importer.percentDone]];
         
