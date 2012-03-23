@@ -178,7 +178,7 @@
         [self.navigationController.view addSubview:helpView.view];
     } else { 
         [helpView release];
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+        /* dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
             NSDate *lastUpdate = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastCarriersUpdatingTime"];
             if (lastUpdate == nil || -[lastUpdate timeIntervalSinceNow] > 60 ) {
                 if (isCarriersUpdating == YES) { NSLog(@"CARRIER LIST: carrier updating is still continue, sync not started");return;}
@@ -228,7 +228,7 @@
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 isCarriersUpdating = NO;
             } else NSLog(@"CARRIER LIST: carrier updating was less than 60 sec ago, sync not started");
-        });
+        });*/
     }
 }
 

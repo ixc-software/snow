@@ -12,7 +12,7 @@
 
 @implementation DestinationPushListHeaderView
 
-@synthesize country,specific,rate,delegate,section,disclosureButton,isOpened,objectID,lastUsedACD,lastUsedMinutesLenght;
+@synthesize country,specific,rate,delegate,section,disclosureButton,isOpened,objectID,lastUsedACD,lastUsedMinutesLenght,testingButton;
 
 + (Class)layerClass {
     
@@ -27,15 +27,23 @@
        withMinutes:(NSNumber *)minutes 
            withACD:(NSNumber *)acd 
       withObjectID:(NSManagedObjectID *)objectIDexternal 
-           section:(NSNumber *)sectionNumber 
-          isOpened:(NSNumber *)isOpenedForHeader
+           section:(NSUInteger)sectionNumber 
+          isOpened:(BOOL)isOpenedForHeader
           delegate:(id <DestinationPushListHeaderViewDelegate>)aDelegate
-isDestinationsPushList:(BOOL)isDestinationsPushListEntity;
+isDestinationsPushList:(BOOL)isDestinationsPushListEntity
+           testing:(NSUInteger)testingFlow; 
+
 {
     self = [super initWithFrame:frame];
     
     if (self != nil) {
-        
+        // testing flow:
+        // 0 - no tests
+        // 1 - processed
+        // 3 - result failed no success calls
+        // 4 - result faile FAS
+        // >> 4 - result success, mean ASR 
+
         // Set up the tap gesture recognizer.
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleOpen:)];
         [self addGestureRecognizer:tapGesture];
@@ -99,21 +107,25 @@ isDestinationsPushList:(BOOL)isDestinationsPushListEntity;
             titleLabelFrame.origin.x -= 40.0;
             titleLabelFrame.origin.y -= 20.0;
             
-            lastUsedACD = [[UILabel alloc] initWithFrame:titleLabelFrame];
-            [formatter setMaximumFractionDigits:1];
-            [formatter setNumberStyle:NSNumberFormatterNoStyle];
-            lastUsedACD.text = [NSString stringWithFormat:@"ACD:%@",[formatter stringFromNumber:acd]];
-            lastUsedACD.font = [UIFont systemFontOfSize:13.0];
-            lastUsedACD.textColor = [UIColor whiteColor];
-            lastUsedACD.backgroundColor = [UIColor clearColor];
-            lastUsedACD.shadowColor = [UIColor blackColor];
-            lastUsedACD.shadowOffset = CGSizeMake(2, 2);
-            [self addSubview:lastUsedACD];
-            
+            if (acd.doubleValue != 0) {
+                lastUsedACD = [[UILabel alloc] initWithFrame:titleLabelFrame];
+                [formatter setMaximumFractionDigits:1];
+                [formatter setNumberStyle:NSNumberFormatterNoStyle];
+                lastUsedACD.text = [NSString stringWithFormat:@"ACD:%@",[formatter stringFromNumber:acd]];
+                lastUsedACD.font = [UIFont systemFontOfSize:13.0];
+                lastUsedACD.textColor = [UIColor whiteColor];
+                lastUsedACD.backgroundColor = [UIColor clearColor];
+                lastUsedACD.shadowColor = [UIColor blackColor];
+                lastUsedACD.shadowOffset = CGSizeMake(2, 2);
+                [self addSubview:lastUsedACD];
+            }
             titleLabelFrame.origin.x += 60.0;
             //        titleLabelFrame.origin.y -= 10.0;
             
+            if (minutes.doubleValue != 0) {
+
             lastUsedMinutesLenght = [[UILabel alloc] initWithFrame:titleLabelFrame];
+            
             [formatter setMaximumFractionDigits:0];
             [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
             lastUsedMinutesLenght.text = [NSString stringWithFormat:@"Minutes:%@",[formatter stringFromNumber:minutes]];        
@@ -123,8 +135,14 @@ isDestinationsPushList:(BOOL)isDestinationsPushListEntity;
             lastUsedMinutesLenght.shadowColor = [UIColor blackColor];
             lastUsedMinutesLenght.shadowOffset = CGSizeMake(2, 2);
             [self addSubview:lastUsedMinutesLenght];
+            }
         }
         [formatter release], formatter = nil;
+        self.testingButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        testingButton.frame = CGRectMake(100.0, 100.0, 45.0, 45.0);
+        [disclosureButton setImage:[UIImage imageNamed:@"carat.png"] forState:UIControlStateNormal];
+        [disclosureButton setImage:[UIImage imageNamed:@"carat-open.png"] forState:UIControlStateSelected];
+        [disclosureButton addTarget:self action:@selector(toggleOpen:) forControlEvents:UIControlEventTouchUpInside];
 
         
         self.disclosureButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -132,8 +150,8 @@ isDestinationsPushList:(BOOL)isDestinationsPushListEntity;
         [disclosureButton setImage:[UIImage imageNamed:@"carat.png"] forState:UIControlStateNormal];
         [disclosureButton setImage:[UIImage imageNamed:@"carat-open.png"] forState:UIControlStateSelected];
         [disclosureButton addTarget:self action:@selector(toggleOpen:) forControlEvents:UIControlEventTouchUpInside];
-        disclosureButton.selected = [isOpenedForHeader boolValue];
-        isOpened = [isOpenedForHeader boolValue];
+        disclosureButton.selected = isOpenedForHeader;
+        isOpened = isOpenedForHeader;
         //disclosureButton.selected = [object.opened boolValue];
         [self addSubview:disclosureButton];
         

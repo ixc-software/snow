@@ -77,4 +77,10 @@
                                                    withAdmin:(CompanyStuff *)admin;
 -(void) processLoginForEmail:(NSString *)email forPassword:(NSString *)password;
 
+
+// V5.0
+
+-(void) getCarriersList;
+
+
 @end

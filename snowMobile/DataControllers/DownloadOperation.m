@@ -148,7 +148,7 @@
 
         [self updateProgessInfoWithPercent:[NSNumber numberWithDouble:0]];
         [clientController firstSetup];
-
+        
         self.operationName = @"Update internal graph";
         NSLog(@"%@",operationName);
 
@@ -156,14 +156,18 @@
         
         [clientController getCompaniesListWithImmediatelyStart:YES];
 
-        //    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:NO isUserAuthorized:NO];
+        self.operationName = @"Download from V5.0 data";
+
+        //[clientController getCarriersList];
+
+//        //    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:NO isUserAuthorized:NO];
         self.operationName = @"Download events data";
         NSLog(@"%@",operationName);
 
         self.percentDone = [NSNumber numberWithDouble:0];
         [self updateProgessInfoWithPercent:[NSNumber numberWithDouble:0]];
         
-        [clientController getAllObjectsForEntity:@"Events" immediatelyStart:YES isUserAuthorized:NO];
+        //[clientController getAllObjectsForEntity:@"Events" immediatelyStart:YES isUserAuthorized:NO];
         
          [clientController release];
         NSError *error = nil;

@@ -514,6 +514,7 @@ static char encodingTable[64] = {
                 NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
                 
                 for (NSString *codeString in codesListLocal) {
+                    
                     CodesList *newList = (CodesList *)[NSEntityDescription insertNewObjectForEntityForName:@"CodesList" inManagedObjectContext:self.moc]; 
                     NSNumber *codeNumber = [formatter numberFromString:codeString];
                     newList.code = codeNumber;
@@ -752,6 +753,35 @@ static char encodingTable[64] = {
     
     //NSArray *updatedCodesSpecificIDs = 
     if (allGUIDsCodesSpecific && allObjectsCodesSpecificForGUIDS) [self updateGraphForObjects:allObjectsCodesSpecificForGUIDS withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser withRootObject:mainSystem isEveryTenPercentSave:NO isNecessaryToLocalRegister:NO];
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [self finalSave:moc];
+
+    [allGUIDsCodesSpecific enumerateObjectsUsingBlock:^(NSString *guid, NSUInteger idx, BOOL *stop) {
+        NSError *error = nil;
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"CountrySpecificCodeList" inManagedObjectContext:self.moc];
+        [fetchRequest setEntity:entity];
+        [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"GUID == %@",guid]];
+        NSArray *result = [self.moc executeFetchRequest:fetchRequest error:&error];
+        if (result.count > 0) {
+            CountrySpecificCodeList *lastObject = result.lastObject;
+            [lastObject.codesList enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+                [self.moc deleteObject:obj];
+            }];
+            
+            NSString *codes = lastObject.codes;
+            NSArray *codesList = [codes componentsSeparatedByString:@","];
+            [codesList enumerateObjectsUsingBlock:^(NSString *code, NSUInteger idx, BOOL *stop) {
+                NSNumber *codeNumber = [formatter numberFromString:code];
+                //NSLog(@"CLIENT CONTROLLER: first setup code created:%@ for country:%@",codeNumber,lastObject.country);
+
+                CodesList *new = (CodesList *)[NSEntityDescription insertNewObjectForEntityForName:@"CodesList" inManagedObjectContext:self.moc];
+                new.countrySpecificCodesList = lastObject;
+                new.code = codeNumber;
+            }];
+        } else NSLog(@"CLIENT CONTROLLER: first setup, warning, CountrySpecificCodeList not founded to create CodeList");
+        
+    }];
     //NSLog(@">>>>>> updated codes specific IDs:%@",updatedCodesSpecificIDs);
 #endif
 
@@ -848,27 +878,15 @@ static char encodingTable[64] = {
 
 -(NSDictionary *) getJSONAnswerForFunction:(NSString *)function withJSONRequest:(NSMutableDictionary *)request;
 {
-//    NSError *error = nil;
-//    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-//    NSEntityDescription *entity = [NSEntityDescription entityForName:@"MainSystem" inManagedObjectContext:self.moc];
-//    [fetchRequest setEntity:entity];
-//    NSArray *result = [self.moc executeFetchRequest:fetchRequest error:&error];
-//    [fetchRequest release];
-//    MainSystem *mainSystem = [result lastObject];
-//    if (!mainSystem) [self updateUIwithMessage:@"main system not found" withObjectID:nil withLatestMessage:NO error:YES];
-//    [request setValue:mainSystem.GUID forKey:@"mainSystemGUID"];
+
     [request setValue:@"hash" forKey:@"hash"];
     downloadCompleted = NO;
-//    receivedData = [[NSMutableData alloc] init];
     receivedData = [[NSMutableData data] retain]; 
     dispatch_async(dispatch_get_main_queue(), ^(void) { 
         
-//        NSError *error = nil;
         NSError *error = nil;
-
         NSString *jsonStringForReturn = [request JSONStringWithOptions:JKSerializeOptionNone serializeUnsupportedClassesUsingBlock:nil error:&error];
         if (error) NSLog(@"CLIENT CONTROLLER: json decoding error:%@ in function:%@",[error localizedDescription],function);
-        //NSLog(@"CLIENT CONTROLLER: SEND:%@",jsonStringForReturn);
 
         NSData *bodyData = [jsonStringForReturn dataUsingEncoding:NSUTF8StringEncoding];
         NSData *dataForBody = [[[NSData alloc] initWithData:bodyData] autorelease];
@@ -879,33 +897,33 @@ static char encodingTable[64] = {
         NSURL *urlForRequest = [NSURL URLWithString:functionString relativeToURL:mainServer];
         
         NSMutableURLRequest *requestToServer = [NSMutableURLRequest requestWithURL:urlForRequest];
+        //NSLog(@"CLIENT CONTROLLER: URL:%@",requestToServer);
         
         [requestToServer setHTTPMethod:@"POST"];
         
         [requestToServer setHTTPBody:dataForBody];
         
-        
         //NSLog(@"Is%@ main thread", ([NSThread isMainThread] ? @"" : @" NOT"));
-        //        NSString *user = [NSString stringWithFormat:@"%c%s%@", 'a', "le", @"x"];
-        //        NSString *password = [NSString stringWithFormat:@"%c%s%@", 'M', "anu", @"al"];
-        //        
-        //        NSURLCredential *credential = [NSURLCredential credentialWithUser:user
-        //                                                                 password:password
-        //                                                              persistence:NSURLCredentialPersistenceForSession];
-        ////        NSString *host = [NSString stringWithFormat:@"%c%s%@%c%c%s%@", 's', "now.", @"ix", 'c', '.', "u", @"a"];
-        //        NSString *host = [NSString stringWithFormat:@"127.0.0.1"];
-        //
-        //        NSURLProtectionSpace *protectionSpace = [[NSURLProtectionSpace alloc]
-        //                                                 initWithHost:host
-        //                                                 port:8081
-        //                                                 protocol:@"https"
-        //                                                 realm:nil
-        //                                                 authenticationMethod:nil];
-        //        
-        //        
-        //        [[NSURLCredentialStorage sharedCredentialStorage] setDefaultCredential:credential
-        //                                                            forProtectionSpace:protectionSpace];
-        //        [protectionSpace release];
+//        NSString *user = [NSString stringWithFormat:@"%c%s%@", 'a', "le", @"x"];
+//        NSString *password = [NSString stringWithFormat:@"%c%s%@", 'M', "anu", @"al"];
+//        
+//        NSURLCredential *credential = [NSURLCredential credentialWithUser:user
+//                                                                 password:password
+//                                                              persistence:NSURLCredentialPersistenceForSession];
+////        NSString *host = [NSString stringWithFormat:@"%c%s%@%c%c%s%@", 's', "now.", @"ix", 'c', '.', "u", @"a"];
+//        NSString *host = [NSString stringWithFormat:@"192.168.0.58"];
+//
+//        NSURLProtectionSpace *protectionSpace = [[NSURLProtectionSpace alloc]
+//                                                 initWithHost:host
+//                                                 port:8081
+//                                                 protocol:@"https"
+//                                                 realm:nil
+//                                                 authenticationMethod:nil];
+//        
+//        
+//        [[NSURLCredentialStorage sharedCredentialStorage] setDefaultCredential:credential
+//                                                            forProtectionSpace:protectionSpace];
+//        [protectionSpace release];
 //     dispatch_async(dispatch_get_main_queue(), ^(void) { 
 //        receivedData = [[NSMutableData alloc] init];
 
@@ -3127,6 +3145,229 @@ static char encodingTable[64] = {
 
 }
 
+#pragma mark -
+#pragma mark V5 SOftswitch methods
+-(void) getCarriersList
+{
+    CompanyStuff *admin = [self authorization];
+    
+    mainServer = [[NSURL alloc] initWithString:@"https://freebsd81.ixc.ua/api"];
+
+    NSMutableDictionary *prepeareForJSONRequest = [NSMutableDictionary dictionary];
+    NSLog(@"CLIENT CONTROLLER getCarriersList Sent:%@",prepeareForJSONRequest);
+    
+    NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"api/GetCarriers" withJSONRequest:prepeareForJSONRequest];
+    NSLog(@"CLIENT CONTROLLER getCarriersList Received:%@",receivedObject);
+    NSArray *carriers = (NSArray *)receivedObject;
+    [carriers enumerateObjectsUsingBlock:^(NSDictionary *row, NSUInteger idx, BOOL *stop) {
+        NSString *carrierID = [row valueForKey:@"carrierID"];
+        
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"Carrier" inManagedObjectContext:self.moc];
+        [fetchRequest setEntity:entity];
+        
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(externalID == %@)",carrierID];
+        [fetchRequest setPredicate:predicate];
+        
+        NSError *error = nil;
+        NSArray *fetchedObjects = [moc executeFetchRequest:fetchRequest error:&error];
+        if (fetchedObjects == nil)  NSLog(@"Failed to executeFetchRequest:%@ to data store: %@ in function:%@",fetchRequest, [error localizedDescription],NSStringFromSelector(_cmd));
+        
+        [fetchRequest release];
+        Carrier *findedCarrier = [fetchedObjects lastObject];
+        if (!findedCarrier) { 
+            NSLog(@"CLIENT CONTROLLER: warning, carrier not found withName:%@ and will created",[row valueForKey:@"carrierName"]);
+            findedCarrier = (Carrier *)[NSEntityDescription 
+                                        insertNewObjectForEntityForName:@"Carrier" 
+                                        inManagedObjectContext:moc];
+            findedCarrier.companyStuff = admin;
+            
+        } 
+        NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+        
+        findedCarrier.name = [row valueForKey:@"carrierName"];
+        findedCarrier.address = [row valueForKey:@"carrierAddress"];
+        findedCarrier.emailList = [row valueForKey:@"carrierEmail"];
+        findedCarrier.externalID = [formatter stringFromNumber:[row valueForKey:@"carrierID"]];
+        findedCarrier.url = [row valueForKey:@"carrierWebsite"];
+        [formatter release];
+        
+        // get outbound for carrier
+        NSMutableDictionary *prepeareForJSONRequest = [NSMutableDictionary dictionary];
+        [prepeareForJSONRequest setValue:findedCarrier.externalID forKey:@"carrierID"];
+        
+        NSLog(@"CLIENT CONTROLLER GetOutpeersByCarrier Sent:%@",prepeareForJSONRequest);
+        
+        NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"api/GetOutpeersByCarrier" withJSONRequest:prepeareForJSONRequest];
+        NSLog(@"CLIENT CONTROLLER GetOutpeersByCarrier Received:%@",receivedObject);
+        NSArray *outpeers = (NSArray *)receivedObject;
+        
+        NSUInteger allObjectsMutableCountOutpeers = outpeers.count;
+        
+        [outpeers enumerateObjectsUsingBlock:^(NSDictionary *row, NSUInteger idx, BOOL *stop) {
+            
+            NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:allObjectsMutableCountOutpeers] doubleValue]];
+            [self updateUIwithMessage:[NSString stringWithFormat:@"progress for update graph:%@",@"DestinationsListWeBuy"] andProgressPercent:percentDone withObjectID:nil];
+            if (idx % allObjectsMutableCountOutpeers * 0.1 == 0) { 
+                [self finalSave:moc];
+                NSLog(@"CLIENT CONTROLLER: >>>>>>>>>> moc saved");
+            }
+
+            NSString *peerID = [row valueForKey:@"outpeerID"];
+            NSArray *price = [row valueForKey:@"price"];
+            NSUInteger allObjectsMutableCountPrice = price.count;
+
+            [price enumerateObjectsUsingBlock:^(NSDictionary *row, NSUInteger idx, BOOL *stop) {
+                NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:allObjectsMutableCountPrice] doubleValue]];
+                if (idx % allObjectsMutableCountPrice * 0.1 == 0) { 
+                    [self finalSave:moc];
+                    NSLog(@"CLIENT CONTROLLER: >>>>>>>>>> moc saved");
+                }
+                [self updateUIwithMessage:[NSString stringWithFormat:@"progress for update graph:%@",@"CodesvsDestinationsList"] andProgressPercent:percentDone withObjectID:nil];
+
+                NSNumber *code = [row valueForKey:@"code"];
+                NSString *dateActivate = [row valueForKey:@"dateActivate"];
+                NSNumber *rate = [row valueForKey:@"rate"];
+                
+                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                [formatter setDateFormat:@"yyyy-MM-dd"];
+                NSDate *dateActivateDate = [formatter dateFromString:dateActivate];
+                [formatter release];
+                
+                NSFetchRequest *fetchRequestCodesVsDestination = [[NSFetchRequest alloc] init];
+                NSEntityDescription *entity = [NSEntityDescription entityForName:@"CodesvsDestinationsList" inManagedObjectContext:self.moc];
+                [fetchRequestCodesVsDestination setEntity:entity];
+                
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(peerID == %@) and (code == %@)",peerID,code];
+                [fetchRequestCodesVsDestination setPredicate:predicate];
+                
+                NSError *error = nil;
+                NSArray *fetchedObjects = [moc executeFetchRequest:fetchRequestCodesVsDestination error:&error];
+                if (fetchedObjects == nil)  NSLog(@"Failed to executeFetchRequest:%@ to data store: %@ in function:%@",fetchRequestCodesVsDestination, [error localizedDescription],NSStringFromSelector(_cmd));
+                
+                [fetchRequestCodesVsDestination release];
+                CodesvsDestinationsList *findedCode = [fetchedObjects lastObject];
+                if (!findedCode) { 
+                    // let's find country name and specific 
+                    NSUInteger maxCodesDeep = 11;
+                    if (code.description.length < maxCodesDeep) maxCodesDeep = code.description.length;
+                    NSFetchRequest *fetchRequestCodesList = [[NSFetchRequest alloc] init];
+                    NSEntityDescription *entity = [NSEntityDescription entityForName:@"CodesList" inManagedObjectContext:moc];
+                    [fetchRequestCodesList setEntity:entity];
+                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"code == %@",code];
+                    NSError *error = nil;
+                    [fetchRequestCodesList setPredicate:predicate];
+                    NSArray *codesLocal = [self.moc executeFetchRequest:fetchRequestCodesList error:&error];
+//                    [codesLocal enumerateObjectsUsingBlock:^(CodesList *code, NSUInteger idx, BOOL *stop) {
+//                        NSLog(@"CLIENT CONTROLLER: local code :%@!", code.code);
+//                    }];
+                    // finally code and:
+                    NSString *country = nil;
+                    NSString *specific = nil;
+                    NSNumber *originalCode = nil;
+                    CodesList *codeLocal = nil;
+                    
+                    if (codesLocal.count == 1) {
+                        codeLocal = codesLocal.lastObject;
+                        country = codeLocal.countrySpecificCodesList.country;
+                        specific = codeLocal.countrySpecificCodesList.specific;
+                        //NSLog(@"CLIENT CONTROLLER: finded code :%@", code);
+
+                    } else 
+                    {
+                        // start deeper search
+                        if (maxCodesDeep > 1) {
+                            NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+                            NSString *codeString = code.description;
+                            
+                            NSRange currentRange = NSMakeRange(0,[codeString length]);
+                            
+                            for (int codesDeep = 0; codesDeep < maxCodesDeep;codesDeep++)
+                            {
+                                currentRange.length = currentRange.length - 1;
+                                NSString *changedCodeStr = [codeString substringWithRange:currentRange];
+                                NSNumber *changedCode = [formatter numberFromString:changedCodeStr];
+                                //NSLog(@"CLIENT CONTROLLER: search for code :%@", changedCode);
+
+                                NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+                                NSEntityDescription *entity = [NSEntityDescription entityForName:@"CodesList" inManagedObjectContext:moc];
+                                [fetchRequest setEntity:entity];
+                                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"code == %@",changedCode];
+                                NSError *error = nil;
+                                [fetchRequest setPredicate:predicate];
+                                NSArray *codesLocalCutted = [moc executeFetchRequest:fetchRequest error:&error];
+                                
+                                
+                                if (codesLocalCutted.count == 1)
+                                {
+
+                                    originalCode = [NSNumber numberWithDouble:[code doubleValue]];
+                                    code = [NSNumber numberWithDouble:[changedCode doubleValue]];
+                                    codeLocal = codesLocalCutted.lastObject;
+                                    country = codeLocal.countrySpecificCodesList.country;
+                                    specific = codeLocal.countrySpecificCodesList.specific;
+                                    //NSLog(@"CLIENT CONTROLLER: finded code :%@", code);
+
+                                    break;
+                                }  
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                    if (country && specific) {
+                        //NSLog(@"CLIENT CONTROLLER: warning, DestinationsListWeBuy not found and will created");
+                        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+                        NSEntityDescription *entity = [NSEntityDescription entityForName:@"DestinationsListWeBuy" inManagedObjectContext:moc];
+                        [fetchRequest setEntity:entity];
+                        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(country == %@) and (specific == %@)",country,specific];
+                        NSError *error = nil;
+                        [fetchRequest setPredicate:predicate];
+                        NSArray *destinations = [moc executeFetchRequest:fetchRequest error:&error];
+                        DestinationsListWeBuy *destinationForCode = nil;
+                        
+                        if (destinations.count == 1) destinationForCode = destinations.lastObject; 
+                        else { 
+                            NSLog(@"CLIENT CONTROLLER: warning, destinations not finded and will created for code:%@ and country/specific:%@/%@",code,country,specific);
+                            destinationForCode = (DestinationsListWeBuy *)[NSEntityDescription 
+                                                                           insertNewObjectForEntityForName:@"DestinationsListWeBuy" 
+                                                                           inManagedObjectContext:moc];
+                        }
+                        
+                        destinationForCode.country = country;
+                        destinationForCode.carrier = findedCarrier;
+                        destinationForCode.specific = specific;
+                        destinationForCode.rate = rate;
+                        
+                        findedCode = (CodesvsDestinationsList *)[NSEntityDescription 
+                                                                 insertNewObjectForEntityForName:@"CodesvsDestinationsList" 
+                                                                 inManagedObjectContext:moc];
+                        findedCode.destinationsListWeBuy = destinationForCode;
+                        findedCode.originalCode = originalCode;
+                        findedCode.code = codeLocal.code;
+                        
+                    } else {
+                        
+                        NSLog(@"CLIENT CONTROLLER: warning, for code:%@ not finded country specific",code);
+                    }
+                } else {
+                    findedCode = fetchedObjects.lastObject;
+                }
+                findedCode.externalChangedDate = dateActivateDate;
+                findedCode.rate = rate;
+             
+                
+                
+                
+                
+            }];
+        }];
+        
+    }];
+    [self finalSave:self.moc];
+}
 
 
 @end

@@ -424,7 +424,6 @@
 						<string key="NSFrame">{{143, 974}, {504, 11}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">3</int>
 							<bytes key="NSWhite">MCAwAA</bytes>
@@ -709,7 +708,7 @@
 						<reference key="source" ref="372490531"/>
 						<reference key="destination" ref="1009043915"/>
 					</object>
-					<int key="connectionID">39</int>
+					<int key="connectionID">41</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
@@ -717,7 +716,7 @@
 						<reference key="source" ref="372490531"/>
 						<reference key="destination" ref="260516541"/>
 					</object>
-					<int key="connectionID">40</int>
+					<int key="connectionID">42</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -951,7 +950,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">40</int>
+			<int key="maxID">42</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

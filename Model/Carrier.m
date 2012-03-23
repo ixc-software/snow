@@ -2,7 +2,7 @@
 //  Carrier.m
 //  snow
 //
-//  Created by Oleksii Vynogradov on 2/24/12.
+//  Created by Oleksii Vynogradov on 3/22/12.
 //  Copyright (c) 2012 IXC-USA Corp. All rights reserved.
 //
 
@@ -29,6 +29,7 @@
 @dynamic phoneList;
 @dynamic ratesEmail;
 @dynamic url;
+@dynamic externalID;
 @dynamic carrierStuff;
 @dynamic companyStuff;
 @dynamic destinationsListForSale;
@@ -62,5 +63,7 @@
         }
     }
 }
+
+
 
 @end
