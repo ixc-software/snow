@@ -879,6 +879,7 @@
 -(NSArray *) outStatUsedCodesWithStatisticForCarrier:(NSString *)carrier day:(NSString *)day;
 {
     NSArray *usedCodes = [self outStatUsedCodes:carrier day:day];
+    NSLog(@"MYSQL: used OUT codes:%@",usedCodes);
     NSMutableArray *finalusedCodesWithStatistic = [NSMutableArray arrayWithCapacity:0];
     [usedCodes enumerateObjectsWithOptions:NSSortStable usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         NSString *prefix = [obj valueForKey:@"prefix"];
@@ -902,6 +903,8 @@
 -(NSArray *) inStatUsedCodesWithStatisticForCarrier:(NSString *)carrier day:(NSString *)day;
 {
     NSArray *usedCodes = [self inStatUsedCodes:carrier day:day];
+    NSLog(@"MYSQL: used IN codes:%@",usedCodes);
+
     NSMutableArray *finalusedCodesWithStatistic = [NSMutableArray arrayWithCapacity:0];
 
     [usedCodes enumerateObjectsWithOptions:NSSortStable usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -926,6 +929,7 @@
 {
     NSString *query = [NSString stringWithFormat:@"select InPeers.ruleSet,code, InIPAddresses.prefix, InIPAddresses.realPrefix from FinReportInCache left join InPeers on peerId = InPeers.id left join Users using ( uname ) left join InIPAddresses on InIPAddresses.uid = InPeers.id where company = '%@' and day > %@ group by code,InPeers.ruleSet",carrier,day];
     NSArray *result = [self fetchNamedAllWith:query];
+    NSLog(@"MYSQL: in stat usedCodes:%@",result);
     NSMutableArray *resultForOut = [NSMutableArray arrayWithCapacity:0];
     for (NSDictionary *resultDict in result)
     {   
@@ -950,7 +954,8 @@
 {
     NSString *query = [NSString stringWithFormat:@"select OutPeers.ruleSet,OutPeers.prefix,OutPeers.realPrefix, code from FinReportOutCache left join OutPeers on peerId = OutPeers.id left join Users using ( uname ) where company = '%@' and day > %@ group by code,OutPeers.ruleSet",carrier,day];
     NSArray *result = [self fetchNamedAllWith:query];
-    
+    NSLog(@"MYSQL: out stat usedCodes:%@",result);
+
     NSMutableArray *resultForOut = [NSMutableArray arrayWithCapacity:0];
     for (NSDictionary *resultDict in result)
     {   

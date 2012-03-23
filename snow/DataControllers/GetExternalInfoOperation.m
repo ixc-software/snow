@@ -91,7 +91,7 @@
     NSDate *startCheckRates = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
     //0 - dont need update 1 - destinationsListForSale 2 - destinationsListWeBuy 3 - both
 
-    NSNumber *updateRates = [update checkIfRatesWasUpdatedforCarrierGUID:carrierID andCarrierName:carrierName];
+    NSNumber *updateRates = [NSNumber numberWithInt:0];//[update checkIfRatesWasUpdatedforCarrierGUID:carrierID andCarrierName:carrierName];
     NSTimeInterval interval = [startCheckRates timeIntervalSinceDate:[NSDate date]];
     [startCheckRates release];
     //[NSNumber numberWithInt:3];//[update checkIfRatesWasUpdatedforCarrierGUID:carrierGUID andCarrierName:carrierName];

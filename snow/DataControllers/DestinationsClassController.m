@@ -483,7 +483,15 @@
                             predicateForCurrentCodes = [NSPredicate predicateWithFormat:@"(code == %@ AND originalCode == %@)",code,originalCode];
                         }
                         
-                        NSArray *codesFilteredFirstStep = [allCarrierCodes filteredArrayUsingPredicate:predicateForCurrentCodes];
+                        NSEntityDescription *entityForCode = [NSEntityDescription entityForName:@"CodesvsDestinationsList" inManagedObjectContext:self.moc];
+
+                        NSFetchRequest *fetchRequestForCode = [[NSFetchRequest alloc] init];
+                        [fetchRequestForCode setPredicate:predicateForCurrentCodes];
+                        [fetchRequestForCode setEntity:entityForCode];
+                        NSArray *codesFilteredFirstStep = [self.moc executeFetchRequest:fetchRequestForCode error:&error];
+                        [fetchRequestForCode release];
+                        
+                        //NSArray *codesFilteredFirstStep = [allCarrierCodes filteredArrayUsingPredicate:predicateForCurrentCodes];
                         NSMutableArray *codesFilteredFirstStepMutable = [NSMutableArray arrayWithArray:codesFilteredFirstStep];
 
                         if ([codesFilteredFirstStepMutable count] > 1) { 
@@ -1395,7 +1403,7 @@
                         destination.lastUsedMinutesLenght = [NSNumber numberWithDouble:lastUsedMinutesLenghtd];
                         destination.lastUsedProfit = [NSNumber numberWithDouble:lastUsedProfitd];
                         destination.lastUsedDate = [NSDate date];
-                        
+                        NSLog(@"DESTINATION CLASS: destination FOR SALE:%@/%@ have new stat:ASR:%@ ACD:%@ CALLS:%@",destination.country,destination.specific,destination.lastUsedASR,destination.lastUsedACD,destination.lastUsedCallAttempts);
                         // insert per hour statistic
                         //if ([updatedDestinations containsObject:destination]) destinationHaveUpdatedCode = YES;
                         //else destinationHaveUpdatedCode = NO;
@@ -1425,7 +1433,7 @@
                                 // destination was updated, code was matched, but we have another hour, which don't need to make summary, we need to add as new.
                                 destinationNeedNewStatisticForCode = YES;
                                 destinationNeedUpdateStatisticForCode = NO;
-                                NSLog(@"STAT: warning, per hour stat don't have choice from :%@\n for date:%@\n",destination.destinationPerHourStat,[obj valueForKey:@"Date"]);
+                                //NSLog(@"STAT: warning, per hour stat don't have choice from :%@\n for date:%@\n",destination.destinationPerHourStat,[obj valueForKey:@"Date"]);
                             } else
                             {
                                 if ([updatedDestinations containsObject:[destination objectID]]) destinationNeedUpdateStatisticForCode = YES;
@@ -1538,7 +1546,8 @@
                         destination.lastUsedMinutesLenght = [NSNumber numberWithDouble:lastUsedMinutesLenghtd];
                         destination.lastUsedProfit = [NSNumber numberWithDouble:lastUsedProfitd];
                         destination.lastUsedDate = [NSDate date];
-                        
+                        NSLog(@"DESTINATION CLASS: destination WE BUY:%@/%@ have new stat:ASR:%@ ACD:%@ CALLS:%@",destination.country,destination.specific,destination.lastUsedASR,destination.lastUsedACD,destination.lastUsedCallAttempts);
+
                         // insert per hour statistic
                         //if ([updatedDestinations containsObject:destination]) destinationHaveUpdatedCode = YES;
                         //else destinationHaveUpdatedCode = NO;
@@ -1568,7 +1577,7 @@
                                 // destination was updated, code was matched, but we have another hour, which don't need to make summary, we need to add as new.
                                 destinationNeedNewStatisticForCode = YES;
                                 destinationNeedUpdateStatisticForCode = NO;
-                                NSLog(@"STAT: warning, per hour stat don't have choice from :%@\n for date:%@\n",destination.destinationPerHourStat,[obj valueForKey:@"Date"]);
+                                //NSLog(@"STAT: warning, per hour stat don't have choice from :%@\n for date:%@\n",destination.destinationPerHourStat,[obj valueForKey:@"Date"]);
                             } else
                             {
                                 if ([updatedDestinations containsObject:[destination objectID]]) destinationNeedUpdateStatisticForCode = YES;

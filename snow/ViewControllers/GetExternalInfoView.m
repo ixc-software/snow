@@ -341,22 +341,10 @@
 
 #pragma mark - internal methods
 
-- (void) startUserChoiceSyncForCarriers:(NSArray *)carriersToExecute 
-                           withProgress:(ProgressUpdateController *)progress 
-                      withOperationName:(NSString *)operationName;
+-(NSNumber *) updateProfitTitle;
 {
-    dispatch_async(dispatch_get_main_queue(), ^(void) { 
-        
-        [delegate.getExternalInfoProgress setHidden:NO];
-        [delegate.getExternalInfoProgress startAnimation:self];
-    });
-
-    
     NSError *error = nil;
-    progress.objectsQuantity = [NSNumber numberWithUnsignedInteger:[carriersToExecute count]];
-    [progress updateSystemMessage:[NSString stringWithFormat:@"Sync was started:%@ for number %@ carriers.",[NSDate date],[NSNumber numberWithUnsignedInteger:[carriersToExecute count]]]];
-    [progress updateProgressIndicatorMessageGetExternalData:@"Update carriers"];
-    
+
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     [request setEntity:[NSEntityDescription entityForName:@"DestinationsListForSale"
                                    inManagedObjectContext:self.moc]];
@@ -374,16 +362,16 @@
     companyGUID = selectedCompany.GUID;
     
 #else 
-
+    
     ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
     CompanyStuff *stuff = [clientController authorization];
     [clientController release];
     companyGUID = stuff.currentCompany.GUID;
-
-#endif
     
-    NSPredicate *predicateLastUsedProfit = [NSPredicate predicateWithFormat:@"(lastUsedProfit != 0) AND (carrier.companyStuff.currentCompany.GUID == %@)",companyGUID];
+#endif
 
+    NSPredicate *predicateLastUsedProfit = [NSPredicate predicateWithFormat:@"(lastUsedProfit != 0) AND (carrier.companyStuff.currentCompany.GUID == %@)",companyGUID];
+    
     NSExpression *ex = [NSExpression expressionForFunction:@"sum:" 
                                                  arguments:[NSArray arrayWithObject:[NSExpression expressionForKeyPath:@"lastUsedProfit"]]];
     
@@ -407,7 +395,7 @@
     [request setResultType:NSDictionaryResultType];
     [request setPredicate:predicateLastUsedProfit];
     
-    NSArray *destinations = [self.moc executeFetchRequest:request error:&error]; 
+    NSArray *destinations = [[self.moc executeFetchRequest:request error:&error] retain]; 
     if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
     NSDictionary *resultsDictionary = [destinations objectAtIndex:0];
     NSNumber *totalProfitNumberForUsing = [resultsDictionary objectForKey:@"result"];
@@ -424,6 +412,26 @@
     [request release];
     NSLog(@"Total profit (24h) is:%@ total income is:%@",totalProfitNumberForUsing,totalIncomeNumberForUsing);
     //[totalProfitNumber release];
+    return totalProfitNumberForUsing;
+    
+}
+
+- (void) startUserChoiceSyncForCarriers:(NSArray *)carriersToExecute 
+                           withProgress:(ProgressUpdateController *)progress 
+                      withOperationName:(NSString *)operationName;
+{
+    dispatch_async(dispatch_get_main_queue(), ^(void) { 
+        
+        [delegate.getExternalInfoProgress setHidden:NO];
+        [delegate.getExternalInfoProgress startAnimation:self];
+    });
+    NSNumber *totalProfitNumberForUsing = [self updateProfitTitle];
+    
+    progress.objectsQuantity = [NSNumber numberWithUnsignedInteger:[carriersToExecute count]];
+    [progress updateSystemMessage:[NSString stringWithFormat:@"Sync was started:%@ for number %@ carriers.",[NSDate date],[NSNumber numberWithUnsignedInteger:[carriersToExecute count]]]];
+    [progress updateProgressIndicatorMessageGetExternalData:@"Update carriers"];
+    
+    
     
     progress.objectsCount = [NSNumber numberWithInt:0];
     progress.percentDone = [NSNumber numberWithInt:0];
@@ -433,29 +441,16 @@
     NSLock *subblocksLock = [[NSLock alloc] init];
 
     [carriersToExecute enumerateObjectsUsingBlock:^(NSManagedObjectID *carrierID, NSUInteger idx, BOOL *stop) {
-//        Carrier *necessaryCarrier = (Carrier *)[delegate.managedObjectContext objectWithID:carrierID];
-//                                     
-//        NSFetchRequest *requestCodesForSale = [[NSFetchRequest alloc] init];
-//        [requestCodesForSale setEntity:[NSEntityDescription entityForName:@"CodesvsDestinationsList"
-//                                                   inManagedObjectContext:delegate.managedObjectContext]];
-//        [requestCodesForSale setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.GUID == %@)",@"destinationsListWeBuy",necessaryCarrier.GUID]];
-//        NSError *error = nil; 
-//        NSInteger result = [delegate.managedObjectContext countForFetchRequest:requestCodesForSale error:&error];
-//        [requestCodesForSale release];
-//        
-//        NSLog(@"STAT:>>>>>>>>>>>>>>>Carrier %@  we buy codes:%@", necessaryCarrier.name,[NSNumber numberWithInteger:result]);
 
         sleep(1);
 #if defined (SNOW_SERVER)
         while (completedSubblocks.count > 3) {
             sleep(3);
         }
-        
 #else 
         while (completedSubblocks.count > 3) {
             sleep(3);
         }
-        
 #endif
         [subblocksLock lock];
         NSNumber *idxNumber = [[NSNumber alloc] initWithUnsignedInteger:idx];
@@ -527,14 +522,7 @@
     while (completedSubblocks.count > 0) {
         sleep(3);
     }
-    destinations = [self.moc executeFetchRequest:request error:&error]; 
-    if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-    resultsDictionary = [destinations objectAtIndex:0];
-    totalProfitNumberForUsing = [resultsDictionary objectForKey:@"result"];
-    totalIncomeNumberForUsing = [resultsDictionary objectForKey:@"totalIncome"];
-    [delegate.totalProfit setTitle:[NSString stringWithFormat:@"Total income:$%@/profit:$%@ (%@%%)",totalIncomeNumberForUsing,totalProfitNumberForUsing,[formatter stringFromNumber:[NSNumber numberWithDouble:[totalProfitNumberForUsing doubleValue]/[totalIncomeNumberForUsing doubleValue]]]]];
-
-    //NSLog(@"GET EXTERNAL INFO: >>>>>>>>>>> operation %@ FINISH, completedSubblocks %@",operationName, [NSNumber numberWithInteger:completedSubblocks.count]);
+    [self updateProfitTitle];
     
     [progress updateProgressIndicatorMessageGetExternalData:@""];
     delegate.queueForUpdatesBusy = NO;
@@ -639,7 +627,9 @@
     necessaryCompany = authorizedUser.currentCompany;
 #endif
 
-    [request setPredicate:[NSPredicate predicateWithFormat:@"(financialRate == 0) or (financialRate == nil) AND (companyStuff.currentCompany.GUID == %@)",necessaryCompany.GUID]];
+    //[request setPredicate:[NSPredicate predicateWithFormat:@"(financialRate == 0) or (financialRate == nil) AND (companyStuff.currentCompany.GUID == %@)",necessaryCompany.GUID]];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"(companyStuff.currentCompany.GUID == %@)",necessaryCompany.GUID]];
+
     NSArray *carriers = [self.moc executeFetchRequest:request error:&error];
     if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd)); 
 
@@ -687,10 +677,6 @@
             {
                 if (i % 3600) { 
                     NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
-//                    DestinationsClassController *destination = [[DestinationsClassController alloc] initWithMainMoc:[delegate managedObjectContext]];
-//                    [destination removeFromMainDatabaseDestinations24hStatisticForCarrierGUID:nil withEntityName:@"DestinationsListForSale"];
-//                    [destination removeFromMainDatabaseDestinations24hStatisticForCarrierGUID:nil withEntityName:@"DestinationsListWeBuy"];
-//                    [destination release];
 
                     NSLog(@"GET EXTERNAL INFO VIEW:>>>>>>>>>>>>>>>>> every HOUR sync start"); 
                     [self everyHourSync];
@@ -701,14 +687,9 @@
                     NSLog(@"GET EXTERNAL INFO VIEW:>>>>>>>>>>>>>>>>> every HOUR sync stop. time was:%@ min",[NSNumber numberWithDouble:interval/60]);
                 }
 
-                if (i == 10) { 
+                if (i % 18000) { 
                     NSDate *startCheckEveryDay = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
                     NSLog(@"GET EXTERNAL INFO VIEW:>>>>>>>>>>>>> every DAY sync start");    
-                    DestinationsClassController *destination = [[DestinationsClassController alloc] initWithMainMoc:[delegate managedObjectContext]];
-
-                    [destination removeFromMainDatabaseDestinations24hStatisticForCarrierGUID:nil withEntityName:@"DestinationsListForSale"];
-                    [destination removeFromMainDatabaseDestinations24hStatisticForCarrierGUID:nil withEntityName:@"DestinationsListWeBuy"];
-                    [destination release];
                     [self everyDaySync];
                     NSTimeInterval interval = [startCheckEveryDay timeIntervalSinceDate:[NSDate date]];
                     NSLog(@"GET EXTERNAL INFO VIEW:every DAY sync stop time was:%@ min",[NSNumber numberWithDouble:interval/60]);
