@@ -753,10 +753,7 @@
             [getCarriersList setEnabled:YES];
             [startSync setEnabled:YES];
         });
-        //[pool drain];
     });
-    //[pool drain];
-    
 }
 
 -(IBAction) getCarriersListFromEnterpriseServer;

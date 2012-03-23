@@ -83,7 +83,7 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
+    // Release any retained subviews of t==he main view.
     // e.g. self.myOutlet = nil;
 }
 

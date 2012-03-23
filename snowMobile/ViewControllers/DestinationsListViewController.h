@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "DestinationPushListHeaderView.h"
+#import "DestinationsHeaderView.h"
 #import "AddRoutesTableViewController.h"
 #import <MessageUI/MessageUI.h>
 
@@ -16,7 +16,7 @@
 
 @class AddRoutesTableViewController;
 
-@interface DestinationsListViewController : UIViewController <NSFetchedResultsControllerDelegate, MFMailComposeViewControllerDelegate, UISearchBarDelegate,  DestinationPushListHeaderViewDelegate,UIActionSheetDelegate,DestinationsPushListTableViewDelegate>
+@interface DestinationsListViewController : UIViewController <NSFetchedResultsControllerDelegate, MFMailComposeViewControllerDelegate, UISearchBarDelegate,  DestinationsHeaderViewDelegate,UIActionSheetDelegate,DestinationsPushListTableViewDelegate>
 {
     NSMutableArray *changedDestinationsIDs;
 

@@ -19,6 +19,8 @@
 #import "mobileAppDelegate.h"
 #import "ClientController.h"
 #import "HelpForInfoView.h"
+#import "TestsResultsController.h"
+
 #import <QuartzCore/QuartzCore.h>
 #pragma mark -
 #pragma mark EmailMenuItem
@@ -663,6 +665,7 @@
 {
     [super viewDidLoad];
     shouldBeginEditing = YES;
+    self.title = @"Routes";
     
     changedDestinationsIDs = [[NSMutableArray alloc] initWithCapacity:0];
     
@@ -984,21 +987,39 @@
     //    if (openedIndexPath && openedIndexPath.section == section) isOpened = YES;
     
     //if (section < 6) NSLog(@"sections view for country/specific:%@/%@ for section:%@",[managedObject valueForKey:@"country"],[managedObject valueForKey:@"specific"],[NSNumber numberWithInteger:section]); 
-    DestinationsHeaderView *sectionView = [[DestinationsHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT)];
+    DestinationsHeaderView *sectionView = nil;//[[DestinationsHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT)];
     NSLog(@"section view:%@",sectionView);
+    //UIView *container = [[[UIView alloc] initWithFrame:CGRectMake(0,0,360,35)] autorelease];
+
     
-    /*
     if ([[managedObject class] isSubclassOfClass:[DestinationsListPushList class]]) {
-        sectionView = [[[DestinationPushListHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:nil withACD:nil withObjectID:managedObject.objectID section:section isOpened:isOpened delegate:self isDestinationsPushList:YES testing:6] autorelease];
+        sectionView = [[[DestinationsHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:nil withACD:nil withObjectID:managedObject.objectID section:section isOpened:isOpened delegate:self isDestinationsPushList:YES testing:6] autorelease];
     }
     
     if ([[managedObject class] isSubclassOfClass:[DestinationsListForSale class]] || [[managedObject class] isSubclassOfClass:[DestinationsListWeBuy class]]) {
-        sectionView = [[[DestinationPushListHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:[managedObject valueForKey:@"lastUsedMinutesLenght"] withACD:[managedObject valueForKey:@"lastUsedACD"] withObjectID:managedObject.objectID section:section isOpened:isOpened delegate:self isDestinationsPushList:NO testing:6] autorelease];
-    }*/
+        sectionView = [[[DestinationsHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:[managedObject valueForKey:@"lastUsedMinutesLenght"] withACD:[managedObject valueForKey:@"lastUsedACD"] withObjectID:managedObject.objectID section:section isOpened:isOpened delegate:self isDestinationsPushList:NO testing:6] autorelease];
+    }
 
-    
-    //NSLog(@"sections view for country/specific:%@/%@ for section:%@ isOpened:%@",managedObject.country,managedObject.specific,[NSNumber numberWithInteger:section],managedObject.opened); 
-    
+//    CAGradientLayer *gradient = [CAGradientLayer layer];
+//    gradient.frame = sectionView.bounds;
+//
+//    //NSLog(@"sections view for country/specific:%@/%@ for section:%@ isOpened:%@",managedObject.country,managedObject.specific,[NSNumber numberWithInteger:section],managedObject.opened); 
+//    static NSMutableArray *colors = nil;
+//    if (colors == nil) {
+//        colors = [[NSMutableArray alloc] initWithCapacity:3];
+//        UIColor *color = nil;
+//        color = [UIColor colorWithRed:0.82 green:0.84 blue:0.87 alpha:1.0];
+//        [colors addObject:(id)[color CGColor]];
+//        color = [UIColor colorWithRed:0.15 green:0.15 blue:0.49 alpha:1.0];
+//        [colors addObject:(id)[color CGColor]];
+//        color = [UIColor colorWithRed:0.15 green:0.15 blue:0.49 alpha:1.0];
+//        [colors addObject:(id)[color CGColor]];
+//    }
+//    [gradient setColors:colors];
+//    [gradient setLocations:[NSArray arrayWithObjects:[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:0.91], [NSNumber numberWithFloat:1.0], nil]];
+//    [container.layer addSublayer:gradient];
+//    [container.layer addSublayer:sectionView.layer];
+
     
     
     return sectionView;
@@ -1041,7 +1062,7 @@
 }
 
 #pragma mark Section header delegate
--(void)sectionHeaderView:(DestinationPushListHeaderView *)sectionHeaderView 
+-(void)sectionHeaderView:(DestinationsHeaderView *)sectionHeaderView 
            sectionOpened:(NSUInteger)sectionOpened 
 {
     [self.bar resignFirstResponder];
@@ -1083,7 +1104,7 @@
     
 }
 
--(void)sectionHeaderView:(DestinationPushListHeaderView*)sectionHeaderView 
+-(void)sectionHeaderView:(DestinationsHeaderView*)sectionHeaderView 
            sectionClosed:(NSUInteger)sectionClosed  
 {
     [self.bar resignFirstResponder];
@@ -1098,23 +1119,24 @@
         [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionClosed]] withRowAnimation:UITableViewRowAnimationTop];
         [self.tableView endUpdates];
     } else NSLog(@"DESTINATIONS LIST: warning, section for close already closed  do nothing");
-    //    DestinationsListPushList *destination = (DestinationsListPushList *)[self.managedObjectContext objectWithID:sectionHeaderView.objectID];
-    //    
-    //    if ([destination.opened boolValue]) {
-    //        // section not opened, we do all 
-    //        destination.opened = [NSNumber numberWithBool:NO];
-    //        sectionHeaderView.isOpened = NO;
-    //
-    //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-    //            [self safeSave];
-    //            
-    //            ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[self.managedObjectContext persistentStoreCoordinator]withSender:self withMainMoc:self.managedObjectContext];
-    //            [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[destination objectID]] mustBeApproved:NO];
-    //            [clientController release];
-    //        });
-    //        
-    //    } else NSLog(@"DESTINATIONS LIST: warning, section for close already closed  do nothing");
+}
+
+-(void)sectionHeaderView:(DestinationsHeaderView*)sectionHeaderView 
+           openTestingResults:(NSUInteger)sectionTestingResults  
+{
+    [self sectionHeaderView:sectionHeaderView sectionClosed:sectionTestingResults];
     
+    mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+
+    TestsResultsController *testsViewController = nil;
+    if ([delegate isPad]) testsViewController =[[TestsResultsController alloc] initWithNibName:@"TestsResultsControllerIPad" bundle:nil];
+    else testsViewController =[[TestsResultsController alloc] initWithNibName:@"TestsResultsController" bundle:nil];
+
+    
+    
+    [self.navigationController pushViewController:testsViewController animated:YES];
+    [testsViewController release];
+
 }
 #pragma mark Handling pinches
 

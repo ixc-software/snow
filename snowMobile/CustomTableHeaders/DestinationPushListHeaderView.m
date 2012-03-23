@@ -177,36 +177,16 @@ isDestinationsPushList:(BOOL)isDestinationsPushListEntity
 }
 
 -(IBAction)toggleOpen:(id)sender {
-//    UITableView *delegateTableView = [delegate currentTableView];
-//    CGPoint pinchLocation = [sender locationInView:delegateTableView];
-    //NSIndexPath *newPinchedIndexPath = [delegateTableView indexPathForRowAtPoint:pinchLocation];
-    
     [self toggleOpenWithUserAction:YES];
-    
 }
 
 
 -(void)toggleOpenWithUserAction:(BOOL)userAction;
-//                   withLocation:(CGPoint)location;
 {
-    
-//    if ([delegate respondsToSelector:@selector(sectionHeaderView:sectionClosed:withLocation:)]) {
-//        [delegate sectionOpenTodgeStatus];
-//    }
-//    dispatch_async(dispatch_get_main_queue(), ^(void) { 
-        
-        //BOOL currentState = isOpened;
-        
-//        self.isOpened = !self.isOpened;
-
-    //dispatch_async(dispatch_get_main_queue(), ^(void) {
     //NSLog(@">>>  state was :%@",[NSNumber numberWithBool:isOpened]);
-
-        self.isOpened = !self.isOpened;
-        self.disclosureButton.selected = isOpened;
-        //NSLog(@">>> todge to state :%@ section:%@",[NSNumber numberWithBool:isOpened],section);
-    //});
     
+    self.isOpened = !self.isOpened;
+    self.disclosureButton.selected = isOpened;
     if (isOpened) {
         if ([delegate respondsToSelector:@selector(sectionHeaderView:sectionOpened:)]) {
             [delegate sectionHeaderView:self 
@@ -214,37 +194,12 @@ isDestinationsPushList:(BOOL)isDestinationsPushListEntity
         }
     } else {
         if ([delegate respondsToSelector:@selector(sectionHeaderView:sectionClosed:)]) {
-
-                [delegate sectionHeaderView:self 
-                              sectionClosed:section];
+            
+            [delegate sectionHeaderView:self 
+                          sectionClosed:section];
         }
     }
 
-//    });
-    
-    // If this was a user action, send the delegate the appropriate message.
-//    if (userAction) {
-//        if (disclosureButton.selected) {
-//            if ([delegate respondsToSelector:@selector(sectionHeaderView:sectionOpened:withLocation:)]) {
-//                [delegate sectionHeaderView:self 
-//                              sectionOpened:section 
-//                               withLocation:location];
-//            }
-//        }
-//        else {
-//            if ([delegate respondsToSelector:@selector(sectionHeaderView:sectionClosed:withLocation:)]) {
-//                [delegate sectionHeaderView:self 
-//                              sectionClosed:section 
-//                               withLocation:location];
-//            }
-//        }
-//    } 
-//    
-//    if ([delegate respondsToSelector:@selector(sectionHeaderView:sectionClosed:withLocation:)]) {
-//        [delegate sectionOpenTodgeStatus];
-//    }
-//
-    
 }
 
 

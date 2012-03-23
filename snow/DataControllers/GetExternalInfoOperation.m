@@ -53,18 +53,12 @@
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.25]];
      
     desctopAppDelegate *delegate = (desctopAppDelegate *)[[NSApplication sharedApplication] delegate];
-//    Carrier *necessaryCarrier = (Carrier *)[delegate.managedObjectContext objectWithID:carrierID];
-//    progress = [[ProgressUpdateController alloc]  
-//                                          initWithDelegate:delegate 
-//                                          withQueuePosition:queuePosition 
-//                                          withIndexOfUpdatedObject:index];
     
     MySQLIXC *databaseForUsing = [[MySQLIXC alloc] initWithQuene:index.unsignedIntegerValue 
                                                       andCarrier:carrierID 
                                                     withProgress:progress 
                                                     withDelegate:nil];
     
-    //[self setDatabase:databaseForUsing];
     
     UpdateDataController *update = [[UpdateDataController alloc] initWithDatabase:databaseForUsing];
     
@@ -76,18 +70,6 @@
     
     [progress updateCarrierName:carrierName];
     progress.operationName = operationName;
-    //NSNumber *countCodesWeBuy = [necessaryCarrier.destinationsListWeBuy.al valueForKeyPath:@"@count.destinationsListWeBuy.codesvsDestinationsList"];
-
-//    NSFetchRequest *requestCodesForSale = [[NSFetchRequest alloc] init];
-//    [requestCodesForSale setEntity:[NSEntityDescription entityForName:@"CodesvsDestinationsList"
-//                                               inManagedObjectContext:delegate.managedObjectContext]];
-//    [requestCodesForSale setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.GUID == %@)",@"destinationsListWeBuy",necessaryCarrier.GUID]];
-//    NSError *error = nil; 
-//     NSInteger result = [delegate.managedObjectContext countForFetchRequest:requestCodesForSale error:&error];
-//    [requestCodesForSale release];
-    
-//    NSString *carrierGUID = [[NSString alloc] initWithString:necessaryCarrier.GUID];
-//    NSString *carrierName = [[NSString alloc] initWithString:necessaryCarrier.name];
     NSDate *startCheckRates = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
     //0 - dont need update 1 - destinationsListForSale 2 - destinationsListWeBuy 3 - both
 
@@ -106,49 +88,42 @@
         outgoingDestinationsListIsEmpty = [update updateDestinationListforCarrier:carrierID destinationType:1 withProgressUpdateController:progress];
         NSTimeInterval interval = [startCheckRates timeIntervalSinceDate:[NSDate date]];
         NSNumber *updateTime = [NSNumber numberWithDouble:interval/60];
-//        NSFetchRequest *requestCodesForSale = [[NSFetchRequest alloc] init];
-//        [requestCodesForSale setEntity:[NSEntityDescription entityForName:@"CodesvsDestinationsList"
-//                                                   inManagedObjectContext:delegate.managedObjectContext]];
-//        [requestCodesForSale setPredicate:[NSPredicate predicateWithFormat:@"(%K.carrier.GUID == %@)",@"destinationsListWeBuy",necessaryCarrier.GUID]];
-//        NSError *error = nil; 
-//        NSInteger result = [delegate.managedObjectContext countForFetchRequest:requestCodesForSale error:&error];
-//        [requestCodesForSale release];
-//
         NSLog(@"STAT:Carrier %@ rates was update time:%@ min",carrierName,updateTime);//[NSNumber numberWithInteger:result]
 
         [startCheckRates release];
 
     }
-        if ([operationName isEqualToString:@"Every hour sync"]) {
-            if (!incomingDestinationsListIsEmpty) { 
-                NSLog(@"STAT:Carrier %@ per hour incoming stat will update", carrierName);
-                
-                [update updatePerHourStatisticforCarrierGUID:carrierGUID carrierName:carrierName destinationType:0 withProgressUpdateController:progress];
-            }
-            if (!outgoingDestinationsListIsEmpty) { 
-                NSLog(@"STAT:Carrier %@ per hour outgoing stat will update", carrierName);
-                
-                [update updatePerHourStatisticforCarrierGUID:carrierGUID carrierName:carrierName destinationType:1 withProgressUpdateController:progress];
-            }
+    
+    if ([operationName isEqualToString:@"Every hour sync"]) {
+        if (!incomingDestinationsListIsEmpty) { 
+            NSLog(@"STAT:Carrier %@ per hour incoming stat will update", carrierName);
             
-        } else {
-            NSDate *startCheckRates = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
-            
-
-            if (!incomingDestinationsListIsEmpty) { 
-                
-                [update updateStatisticforCarrierGUID:carrierGUID andCarrierName:carrierName destinationType:0 withProgressUpdateController:progress];
-                
-            }
-            if (!outgoingDestinationsListIsEmpty) { 
-                [update updateStatisticforCarrierGUID:carrierGUID andCarrierName:carrierName destinationType:1 withProgressUpdateController:progress];
-            }
-            NSTimeInterval interval = [startCheckRates timeIntervalSinceDate:[NSDate date]];
-
-            NSLog(@"STAT:Carrier %@ pre dayly outgoing stat was update time:%@ min", carrierName,[NSNumber numberWithDouble:interval/60]);
-            [startCheckRates release];
-
+            [update updatePerHourStatisticforCarrierGUID:carrierGUID carrierName:carrierName destinationType:0 withProgressUpdateController:progress];
         }
+        if (!outgoingDestinationsListIsEmpty) { 
+            NSLog(@"STAT:Carrier %@ per hour outgoing stat will update", carrierName);
+            
+            [update updatePerHourStatisticforCarrierGUID:carrierGUID carrierName:carrierName destinationType:1 withProgressUpdateController:progress];
+        }
+        
+    } else {
+        NSDate *startCheckRates = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
+        
+        
+        if (!incomingDestinationsListIsEmpty) { 
+            
+            [update updateStatisticforCarrierGUID:carrierGUID andCarrierName:carrierName destinationType:0 withProgressUpdateController:progress];
+            
+        }
+        if (!outgoingDestinationsListIsEmpty) { 
+            [update updateStatisticforCarrierGUID:carrierGUID andCarrierName:carrierName destinationType:1 withProgressUpdateController:progress];
+        }
+        NSTimeInterval interval = [startCheckRates timeIntervalSinceDate:[NSDate date]];
+        
+        NSLog(@"STAT:Carrier %@ pre dayly outgoing stat was update time:%@ min", carrierName,[NSNumber numberWithDouble:interval/60]);
+        [startCheckRates release];
+        
+    }
     NSDate *startFinancialRatingAndInvoices = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
     
     [update updateCarriersFinancialRatingAndLastUpdatedTimeForCarrierGUID:carrierID withTotalProfit:self.totalProfit];

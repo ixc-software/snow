@@ -11,23 +11,25 @@
 
 @protocol DestinationsHeaderViewDelegate;
 
-@interface DestinationsHeaderView : UIView
+@interface DestinationsHeaderView : UIView <UIGestureRecognizerDelegate>
 {
     UIView *view;
 
 }
 @property (nonatomic, retain) IBOutlet UIView *view;
 
-@property (nonatomic, retain) UILabel *country;
-@property (nonatomic, retain) UILabel *specific;
-@property (nonatomic, retain) UILabel *rate;
-@property (nonatomic, retain) UILabel *lastUsedMinutesLenght;
-@property (nonatomic, retain) UILabel *lastUsedACD;
+@property (nonatomic, retain) IBOutlet UILabel *country;
+@property (nonatomic, retain) IBOutlet UILabel *specific;
+@property (nonatomic, retain) IBOutlet UILabel *rate;
+@property (nonatomic, retain) IBOutlet UILabel *lastUsedMinutesLenght;
+@property (nonatomic, retain) IBOutlet UILabel *lastUsedACD;
 
 
 
-@property (nonatomic, retain) UIButton *disclosureButton;
-@property (nonatomic, retain) UIButton *testingButton;
+@property (nonatomic, retain) IBOutlet UIButton *disclosureButton;
+@property (nonatomic, retain) IBOutlet UIButton *testingButton;
+@property (retain, nonatomic) IBOutlet UILabel *testingResults;
+@property (retain, nonatomic) IBOutlet UILabel *testingTitle;
 
 //@property (nonatomic, assign) DestinationsListPushList *object;
 @property (nonatomic, retain) NSManagedObjectID *objectID;
@@ -62,6 +64,9 @@ isDestinationsPushList:(BOOL)isDestinationsPushListEntity
            sectionOpened:(NSUInteger)sectionOpened;
 -(void)sectionHeaderView:(DestinationsHeaderView *)sectionHeaderView 
            sectionClosed:(NSUInteger)sectionClosed;
+-(void)sectionHeaderView:(DestinationsHeaderView *)sectionHeaderView 
+      openTestingResults:(NSUInteger)sectionTestingResults;
+
 -(void) sectionOpenTodgeStatus;
 
 -(UITableView *)currentTableView;
