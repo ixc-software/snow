@@ -95,7 +95,12 @@
     return cell;
 }
 
+#pragma mark - action methods
+- (IBAction)play:(id)sender {
+}
 
+- (IBAction)markFas:(id)sender {
+}
 
 - (void)dealloc {
     [tableView release];

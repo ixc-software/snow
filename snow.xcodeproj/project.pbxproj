@@ -610,6 +610,14 @@
 		FACC6878151C5874001D275E /* DestinationsHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = FACC6877151C5874001D275E /* DestinationsHeaderView.m */; };
 		FACC687A151C58A0001D275E /* DestinationsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FACC6879151C58A0001D275E /* DestinationsHeaderView.xib */; };
 		FACC687C151C5A83001D275E /* DestinationsHeaderViewIPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = FACC687B151C5A83001D275E /* DestinationsHeaderViewIPad.xib */; };
+		FACC6893151C983F001D275E /* pause.png in Resources */ = {isa = PBXBuildFile; fileRef = FACC6891151C983F001D275E /* pause.png */; };
+		FACC6894151C983F001D275E /* play.png in Resources */ = {isa = PBXBuildFile; fileRef = FACC6892151C983F001D275E /* play.png */; };
+		FACC68A0151C9D64001D275E /* markFAS.png in Resources */ = {isa = PBXBuildFile; fileRef = FACC689E151C9D64001D275E /* markFAS.png */; };
+		FACC68A1151C9D64001D275E /* unmarkFAS.png in Resources */ = {isa = PBXBuildFile; fileRef = FACC689F151C9D64001D275E /* unmarkFAS.png */; };
+		FACC68A5151C9F79001D275E /* stopNew.png in Resources */ = {isa = PBXBuildFile; fileRef = FACC68A3151C9F79001D275E /* stopNew.png */; };
+		FACC68A6151C9F79001D275E /* playNew.png in Resources */ = {isa = PBXBuildFile; fileRef = FACC68A4151C9F79001D275E /* playNew.png */; };
+		FACC68A9151CA39D001D275E /* unmarkAsFas.png in Resources */ = {isa = PBXBuildFile; fileRef = FACC68A7151CA39D001D275E /* unmarkAsFas.png */; };
+		FACC68AA151CA39D001D275E /* markAsFas.png in Resources */ = {isa = PBXBuildFile; fileRef = FACC68A8151CA39D001D275E /* markAsFas.png */; };
 		FACE80B814F8D63F00AD9981 /* snowServer.icns in Resources */ = {isa = PBXBuildFile; fileRef = FACE80B714F8D63F00AD9981 /* snowServer.icns */; };
 		FACE80BA14F8D65700AD9981 /* snowClientEnterprise.icns in Resources */ = {isa = PBXBuildFile; fileRef = FACE80B914F8D65700AD9981 /* snowClientEnterprise.icns */; };
 		FACE80BC14F8D66B00AD9981 /* snowClientAppstore.icns in Resources */ = {isa = PBXBuildFile; fileRef = FACE80BB14F8D66B00AD9981 /* snowClientAppstore.icns */; };
@@ -1142,6 +1150,14 @@
 		FACC6877151C5874001D275E /* DestinationsHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DestinationsHeaderView.m; sourceTree = "<group>"; };
 		FACC6879151C58A0001D275E /* DestinationsHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DestinationsHeaderView.xib; sourceTree = "<group>"; };
 		FACC687B151C5A83001D275E /* DestinationsHeaderViewIPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DestinationsHeaderViewIPad.xib; sourceTree = "<group>"; };
+		FACC6891151C983F001D275E /* pause.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause.png; sourceTree = "<group>"; };
+		FACC6892151C983F001D275E /* play.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = play.png; sourceTree = "<group>"; };
+		FACC689E151C9D64001D275E /* markFAS.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = markFAS.png; sourceTree = "<group>"; };
+		FACC689F151C9D64001D275E /* unmarkFAS.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unmarkFAS.png; sourceTree = "<group>"; };
+		FACC68A3151C9F79001D275E /* stopNew.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stopNew.png; sourceTree = "<group>"; };
+		FACC68A4151C9F79001D275E /* playNew.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = playNew.png; sourceTree = "<group>"; };
+		FACC68A7151CA39D001D275E /* unmarkAsFas.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unmarkAsFas.png; sourceTree = "<group>"; };
+		FACC68A8151CA39D001D275E /* markAsFas.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = markAsFas.png; sourceTree = "<group>"; };
 		FACE80B714F8D63F00AD9981 /* snowServer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = snowServer.icns; path = MediaLibrary/snowServer.icns; sourceTree = "<group>"; };
 		FACE80B914F8D65700AD9981 /* snowClientEnterprise.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = snowClientEnterprise.icns; path = MediaLibrary/snowClientEnterprise.icns; sourceTree = "<group>"; };
 		FACE80BB14F8D66B00AD9981 /* snowClientAppstore.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = snowClientAppstore.icns; path = MediaLibrary/snowClientAppstore.icns; sourceTree = "<group>"; };
@@ -1739,9 +1755,17 @@
 			isa = PBXGroup;
 			children = (
 				FA9989551512398600F9F97D /* 42-info.png */,
+				FACC68A3151C9F79001D275E /* stopNew.png */,
+				FACC68A7151CA39D001D275E /* unmarkAsFas.png */,
+				FACC68A8151CA39D001D275E /* markAsFas.png */,
+				FACC68A4151C9F79001D275E /* playNew.png */,
+				FACC689E151C9D64001D275E /* markFAS.png */,
+				FACC689F151C9D64001D275E /* unmarkFAS.png */,
 				FA1CA2521513406400D38424 /* destinationControl.png */,
 				FAE8221B1514643E0091AE41 /* snowLogoMain.tiff */,
 				FAF4FCE2151C802F00F7125E /* testingClear.png */,
+				FACC6891151C983F001D275E /* pause.png */,
+				FACC6892151C983F001D275E /* play.png */,
 				FA99896C1512598600F9F97D /* 01-refresh.png */,
 				FACC6872151C50E8001D275E /* testingProcessedButton.png */,
 				FACC6873151C50E8001D275E /* testingResult.png */,
@@ -2405,6 +2429,14 @@
 				FAF4FCEB151C859E00F7125E /* TestsResultsControllerIPad.xib in Resources */,
 				FAF4FCF0151C8F5700F7125E /* TestingResultsTableViewCell.xib in Resources */,
 				FAF4FCF2151C8F6B00F7125E /* TestingResultsTableViewCellIPad.xib in Resources */,
+				FACC6893151C983F001D275E /* pause.png in Resources */,
+				FACC6894151C983F001D275E /* play.png in Resources */,
+				FACC68A0151C9D64001D275E /* markFAS.png in Resources */,
+				FACC68A1151C9D64001D275E /* unmarkFAS.png in Resources */,
+				FACC68A5151C9F79001D275E /* stopNew.png in Resources */,
+				FACC68A6151C9F79001D275E /* playNew.png in Resources */,
+				FACC68A9151CA39D001D275E /* unmarkAsFas.png in Resources */,
+				FACC68AA151CA39D001D275E /* markAsFas.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

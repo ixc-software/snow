@@ -9,6 +9,15 @@
 #import "TestingResultsTableViewCell.h"
 
 @implementation TestingResultsTableViewCell
+@synthesize number;
+@synthesize inputPackets;
+@synthesize outputPackets;
+@synthesize playButton;
+@synthesize setupConnectTime;
+@synthesize pddTime;
+@synthesize callTime;
+@synthesize fasReason;
+@synthesize markFasButton;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -26,4 +35,16 @@
     // Configure the view for the selected state
 }
 
+- (void)dealloc {
+    [number release];
+    [inputPackets release];
+    [outputPackets release];
+    [playButton release];
+    [setupConnectTime release];
+    [pddTime release];
+    [callTime release];
+    [fasReason release];
+    [markFasButton release];
+    [super dealloc];
+}
 @end
