@@ -2,7 +2,7 @@
 //  DestinationsListWeBuyResults.h
 //  snow
 //
-//  Created by Oleksii Vynogradov on 2/24/12.
+//  Created by Oleksii Vynogradov on 3/25/12.
 //  Copyright (c) 2012 IXC-USA Corp. All rights reserved.
 //
 
@@ -37,6 +37,20 @@
 @property (nonatomic, retain) NSNumber * ts_release;
 @property (nonatomic, retain) NSNumber * ts_ringing;
 @property (nonatomic, retain) NSNumber * ts_trying;
+@property (nonatomic, retain) NSString * numberB;
+@property (nonatomic, retain) NSNumber * inputPackets;
+@property (nonatomic, retain) NSNumber * outputPackets;
+@property (nonatomic, retain) NSDate * timeInvite;
+@property (nonatomic, retain) NSDate * timeOk;
+@property (nonatomic, retain) NSDate * timeRelease;
+@property (nonatomic, retain) NSDate * timeRinging;
+@property (nonatomic, retain) NSDate * timeTrying;
+@property (nonatomic, retain) NSString * numberA;
+@property (nonatomic, retain) NSData * ringMP3;
+@property (nonatomic, retain) NSData * callMP3;
+@property (nonatomic, retain) NSNumber * isFAS;
+@property (nonatomic, retain) NSString * fasReason;
+@property (nonatomic, retain) NSDate * timeSetup;
 @property (nonatomic, retain) DestinationsListWeBuyTesting *destinationsListWeBuyTesting;
 
 @end

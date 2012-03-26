@@ -3190,7 +3190,6 @@ static char encodingTable[64] = {
         findedCarrier.emailList = [row valueForKey:@"carrierEmail"];
         findedCarrier.externalID = [formatter stringFromNumber:[row valueForKey:@"carrierID"]];
         findedCarrier.url = [row valueForKey:@"carrierWebsite"];
-        [formatter release];
         
         // get outbound for carrier
         NSMutableDictionary *prepeareForJSONRequest = [NSMutableDictionary dictionary];
@@ -3229,10 +3228,10 @@ static char encodingTable[64] = {
                 NSString *dateActivate = [row valueForKey:@"dateActivate"];
                 NSNumber *rate = [row valueForKey:@"rate"];
                 
-                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-                [formatter setDateFormat:@"yyyy-MM-dd"];
-                NSDate *dateActivateDate = [formatter dateFromString:dateActivate];
-                [formatter release];
+                NSDateFormatter *formatterDate = [[NSDateFormatter alloc] init];
+                [formatterDate setDateFormat:@"yyyy-MM-dd"];
+                NSDate *dateActivateDate = [formatterDate dateFromString:dateActivate];
+                [formatterDate release];
                 
                 NSFetchRequest *fetchRequestCodesVsDestination = [[NSFetchRequest alloc] init];
                 NSEntityDescription *entity = [NSEntityDescription entityForName:@"CodesvsDestinationsList" inManagedObjectContext:self.moc];
@@ -3357,17 +3356,80 @@ static char encodingTable[64] = {
                 }
                 findedCode.externalChangedDate = dateActivateDate;
                 findedCode.rate = rate;
-             
-                
-                
-                
-                
+                findedCode.peerID = [formatter numberFromString:peerID];
             }];
         }];
-        
+        [formatter release];
+
     }];
     [self finalSave:self.moc];
 }
 
+-(void) startTestingForDestinationsWeBuyID:(NSManagedObjectID *)destinationID forNumbers:(NSArray *)numbers;
+{
+    DestinationsListWeBuy *destinationForTests = (DestinationsListWeBuy *)[self.moc objectWithID:destinationID];
+    if (destinationForTests) {
+        NSSet *allCodes = destinationForTests.codesvsDestinationsList;
+        NSSet *allUniqueCodes = [allCodes valueForKeyPath:@"@distinctUnionOfObjects.code"];
+        CodesvsDestinationsList *anyCode = allCodes.anyObject;
+        NSNumber *peerID = anyCode.peerID;
+        mainServer = [[NSURL alloc] initWithString:@"https://freebsd81.ixc.ua/api"];
+        
+        NSMutableDictionary *prepeareForJSONRequest = [NSMutableDictionary dictionary];
+        //[prepeareForJSONRequest setValue:allUniqueCodes forKey:@"codes"];
+        [prepeareForJSONRequest setValue:allUniqueCodes.anyObject forKey:@"code"];
+        [prepeareForJSONRequest setValue:peerID forKey:@"outpeerID"];
+        if (numbers) [prepeareForJSONRequest setValue:numbers forKey:@"numbers"];
+        
+        NSLog(@"CLIENT CONTROLLER startTesting StartTesting Sent:%@",prepeareForJSONRequest);
+        
+        NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"api/StartTesting" withJSONRequest:prepeareForJSONRequest];
+        NSLog(@"CLIENT CONTROLLER startTesting StartTesting Received:%@",receivedObject);
+        
+        NSString *error = [receivedObject valueForKey:@"error"];
+        if (error) {
+            [self updateUIwithMessage:@"no numbers found" withObjectID:destinationID withLatestMessage:YES error:YES];
+            return;
+        } else {
+            NSString *key = [receivedObject valueForKey:@"key"];
+            if (key) {
+                BOOL isTestingCompleete = NO;
+                BOOL isTestingCreated = NO;
+                
+                while (!isTestingCompleete) {
+                    NSMutableDictionary *prepeareForJSONRequest = [NSMutableDictionary dictionary];
+                    [prepeareForJSONRequest setValue:key forKey:@"key"];
+                    
+                    NSLog(@"CLIENT CONTROLLER startTesting TestingResults Sent:%@",prepeareForJSONRequest);
+                    
+                    NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"api/TestingResults" withJSONRequest:prepeareForJSONRequest];
+                    NSLog(@"CLIENT CONTROLLER startTesting TestingResults stage Received:%@",receivedObject);
+                    
+                    NSString *processing = [receivedObject valueForKey:@"processing"];
+                    if (processing.boolValue) {
+                        if (!isTestingCreated) {
+                            DestinationsListWeBuyTesting *newTesting = (DestinationsListWeBuyTesting *)[NSEntityDescription insertNewObjectForEntityForName:@"DestinationsListWeBuyTesting" inManagedObjectContext:self.moc];
+                            newTesting.date = [NSDate date];
+                            newTesting.destinationsListWeBuy = destinationForTests;
+                            [self finalSave:self.moc];
+                            [self updateUIwithMessage:@"processing tests:start testing" withObjectID:nil withLatestMessage:YES error:YES];
+                            isTestingCreated = YES;
+                        }  
+
+                    } else {
+                        // ok we have results
+                        
+                    }
+                    NSLog(@"CLIENT CONTROLLER: testing processed.");
+
+                }
+            } else {
+                NSLog(@"CLIENT CONTROLLER: warning, key was not received");
+            }
+
+        }
+
+    } else [self updateUIwithMessage:@"object not found" withObjectID:nil withLatestMessage:YES error:YES];
+}
 
 @end

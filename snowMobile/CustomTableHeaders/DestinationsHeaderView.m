@@ -11,6 +11,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 @implementation DestinationsHeaderView
+@synthesize testingProgress;
 @synthesize testingResults;
 @synthesize testingTitle;
 @synthesize view;
@@ -30,7 +31,7 @@
            section:(NSUInteger)sectionNumber 
           isOpened:(BOOL)isOpenedForHeader
           delegate:(id <DestinationsHeaderViewDelegate>)aDelegate
-isDestinationsPushList:(BOOL)isDestinationsPushListEntity
+  isTestingResults:(BOOL)isTestingResults
            testing:(NSUInteger)testingFlow; 
 {
     self = [super initWithFrame:frame];
@@ -41,6 +42,7 @@ isDestinationsPushList:(BOOL)isDestinationsPushListEntity
         // 3 - result failed no success calls
         // 4 - result faile FAS
         // >> 4 - result success, mean ASR 
+       
         CAGradientLayer *gradient = [CAGradientLayer layer];
         gradient.frame = self.bounds;
         static NSMutableArray *colors = nil;
@@ -82,36 +84,52 @@ isDestinationsPushList:(BOOL)isDestinationsPushListEntity
         [formatter setNumberStyle:NSNumberFormatterCurrencyStyle];
         [formatter setCurrencySymbol:@"$"];
         rate.text = [formatter stringFromNumber:price];
-
-        //if (!isDestinationsPushListEntity) {
+        
+        if (acd.doubleValue != 0) {
+            lastUsedACD.hidden = NO;
+            [formatter setMaximumFractionDigits:1];
+            [formatter setNumberStyle:NSNumberFormatterNoStyle];
+            lastUsedACD.text = [NSString stringWithFormat:@"ACD:%@",[formatter stringFromNumber:acd]];
             
-            if (acd.doubleValue != 0) {
-                lastUsedACD.hidden = NO;
-                [formatter setMaximumFractionDigits:1];
-                [formatter setNumberStyle:NSNumberFormatterNoStyle];
-                lastUsedACD.text = [NSString stringWithFormat:@"ACD:%@",[formatter stringFromNumber:acd]];
-                
-            } else lastUsedACD.hidden = YES;
+        } else lastUsedACD.hidden = YES;
+        
+        if (minutes.doubleValue != 0) {
+            lastUsedMinutesLenght.hidden = NO;
             
-            if (minutes.doubleValue != 0) {
-                lastUsedMinutesLenght.hidden = NO;
-
-                [formatter setMaximumFractionDigits:0];
-                [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-                lastUsedMinutesLenght.text = [NSString stringWithFormat:@"Minutes:%@",[formatter stringFromNumber:minutes]];        
-            } else lastUsedMinutesLenght.hidden = YES;
-            
-        //} else {
-            
-        //}
+            [formatter setMaximumFractionDigits:0];
+            [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+            lastUsedMinutesLenght.text = [NSString stringWithFormat:@"Minutes:%@",[formatter stringFromNumber:minutes]];        
+        } else lastUsedMinutesLenght.hidden = YES;
         
         [formatter release], formatter = nil;
+        
+        if (!isTestingResults) {
+            testingResults.hidden = YES;
+            testingButton.hidden = YES;
+            testingTitle.hidden = YES;
+            
+            rate.frame = CGRectMake(rate.frame.origin.x + 75, rate.frame.origin.y, rate.frame.size.width, rate.frame.size.height);
+            lastUsedMinutesLenght.frame = CGRectMake(lastUsedMinutesLenght.frame.origin.x + 75, lastUsedMinutesLenght.frame.origin.y, lastUsedMinutesLenght.frame.size.width, lastUsedMinutesLenght.frame.size.height);
+            lastUsedACD.frame = CGRectMake(lastUsedACD.frame.origin.x + 75, lastUsedACD.frame.origin.y, lastUsedACD.frame.size.width, lastUsedACD.frame.size.height);
+        }    
+
+        
         [disclosureButton addTarget:self action:@selector(toggleOpen:) forControlEvents:UIControlEventTouchUpInside];
         disclosureButton.selected = isOpenedForHeader;
         isOpened = isOpenedForHeader;
 
         [testingButton addTarget:self action:@selector(testResultViewOpen:) forControlEvents:UIControlEventTouchUpInside];
 
+        testingProgress.hidden = YES;
+        
+        if (testingFlow == 1) {
+            testingTitle.text = @"Testing processing...";
+            testingProgress.hidden = NO;
+            [testingProgress startAnimating];
+        } else {
+            testingTitle.text = @"Testing results.";
+        }
+        
     }
     return self;
 }
@@ -155,7 +173,7 @@ isDestinationsPushList:(BOOL)isDestinationsPushListEntity
     if (self.superview != nil) {
         NSLog(@"superview not nil..");
 
-        if ([touch.view isDescendantOfView:testingButton]) {
+        if ([touch.view isDescendantOfView:testingButton] && testingButton.hidden != YES) {
             // we touched our control surface
             NSLog(@"ignore the touch");
 
@@ -187,6 +205,7 @@ isDestinationsPushList:(BOOL)isDestinationsPushListEntity
 
     [testingResults release];
     [testingTitle release];
+    [testingProgress release];
     [super dealloc];
 }
 @end

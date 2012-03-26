@@ -81,6 +81,7 @@
 // V5.0
 
 -(void) getCarriersList;
+-(void) startTestingForDestinationsWeBuyID:(NSManagedObjectID *)destinationID forNumbers:(NSArray *)numbers;
 
 
 @end

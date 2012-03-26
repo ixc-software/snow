@@ -158,7 +158,7 @@
 
         self.operationName = @"Download from V5.0 data";
 
-        //[clientController getCarriersList];
+        [clientController getCarriersList];
 
 //        //    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:NO isUserAuthorized:NO];
         self.operationName = @"Download events data";
