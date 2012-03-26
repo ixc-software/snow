@@ -989,6 +989,34 @@
     NSString *relationShipName = nil;
     NSArray *selectedDestinations = nil;
     
+#if defined(SNOW_CLIENT_APPSTORE)
+
+    if ([selectedLabel  isEqualToString:@"Pushlist"]){
+        relationShipName = @"destinationsListPushList";
+        selectedDestinations = [delegate.destinationsView.destinationsListPushList selectedObjects];
+        [delegate.destinationsView.destinationsListPushList setSelectedObjects:nil];
+        for (DestinationsListPushList *destinationsPushList in selectedDestinations) if (![carriers containsObject:destinationsPushList.carrier]) [carriers addObject:destinationsPushList.carrier];
+        NSDictionary *selectionChoices = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:0],@"selectionChoices", nil];
+        [importRatesSelectionList setContent:[NSArray arrayWithObject:selectionChoices]];
+        [importRatesViewController setTitle:@"import push list"];
+        chooseDestinationsType.selectedSegment = 2;
+        
+        
+    }
+#else 
+    if ([selectedLabel  isEqualToString:@"Pushlist"]){
+        relationShipName = @"destinationsListPushList";
+        selectedDestinations = [delegate.destinationsView.destinationsListPushList selectedObjects];
+        [delegate.destinationsView.destinationsListPushList setSelectedObjects:nil];
+        for (DestinationsListPushList *destinationsPushList in selectedDestinations) if (![carriers containsObject:destinationsPushList.carrier]) [carriers addObject:destinationsPushList.carrier];
+        NSDictionary *selectionChoices = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:0],@"selectionChoices", nil];
+        [importRatesSelectionList setContent:[NSArray arrayWithObject:selectionChoices]];
+        [importRatesViewController setTitle:@"import push list"];
+        chooseDestinationsType.selectedSegment = 2;
+        
+        
+    }
+
     if ([selectedLabel isEqualToString:@"Targets"]){
         relationShipName = @"destinationsListTargets";
         selectedDestinations = [delegate.destinationsView.destinationsListTargets selectedObjects];
@@ -1012,18 +1040,7 @@
         chooseDestinationsType.selectedSegment = 0;
 
     }
-    if ([selectedLabel  isEqualToString:@"Pushlist"]){
-        relationShipName = @"destinationsListPushList";
-        selectedDestinations = [delegate.destinationsView.destinationsListPushList selectedObjects];
-        [delegate.destinationsView.destinationsListPushList setSelectedObjects:nil];
-        for (DestinationsListPushList *destinationsPushList in selectedDestinations) if (![carriers containsObject:destinationsPushList.carrier]) [carriers addObject:destinationsPushList.carrier];
-        NSDictionary *selectionChoices = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:0],@"selectionChoices", nil];
-        [importRatesSelectionList setContent:[NSArray arrayWithObject:selectionChoices]];
-        [importRatesViewController setTitle:@"import push list"];
-        chooseDestinationsType.selectedSegment = 2;
-
-        
-    }
+#endif
     
     for (Carrier *carrier in [delegate.carriersView.carrier selectedObjects]) if (![carriers containsObject:carrier]) [carriers addObject:carrier];
     

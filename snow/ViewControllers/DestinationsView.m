@@ -1706,10 +1706,9 @@
 
         NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
         NSEntityDescription *entity = [NSEntityDescription entityForName:@"CountrySpecificCodeList"
-                                                  inManagedObjectContext:moc];
+                                                  inManagedObjectContext:self.moc];
         [fetchRequest setEntity:entity];
-        NSArray *fetchedObjects = [moc executeFetchRequest:fetchRequest error:&error];
-        [fetchRequest release];
+        NSArray *fetchedObjects = [self.moc executeFetchRequest:fetchRequest error:&error];
         
 //        NSArray *ethalonDestinationsList = [NSArray arrayWithArray:fetchedObjects];
         
@@ -1723,7 +1722,8 @@
             [row setValue:countryLine.specific forKey:@"specific"];
             [finalDestinationsList addObject:row];
         }];
-        
+        [fetchRequest release];
+
         
         NSMutableArray *carriersWithSelectedDestinationCarrier = [NSMutableArray array];
         NSArray *carriers = [NSArray arrayWithArray:[delegate.carriersView.carrier selectedObjects]];

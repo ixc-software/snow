@@ -502,11 +502,13 @@
 #pragma mark  STATISTIC methods
 
 
--(void)  updateStatisticforCarrierGUID:(NSString *)carrierGUID 
+-(BOOL)  updateStatisticforCarrierGUID:(NSString *)carrierGUID 
                         andCarrierName:(NSString *)carrierName
                    destinationType:(NSInteger)destinationType
       withProgressUpdateController:(ProgressUpdateController *)progress;
 {
+    BOOL isCodesWasMissed = NO;
+
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     NSMutableArray *usedCodesWithStatistic = [NSMutableArray arrayWithCapacity:0];
@@ -543,26 +545,29 @@
 
     [progress updateOperationNameForMsyqlQueryFinish];
     
-    //if ([usedCodesWithStatistic count] != 0) {
+    if ([usedCodesWithStatistic count] != 0) {
 //        AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
-        DestinationsClassController *destination = [[DestinationsClassController alloc] initWithMainMoc:[delegate managedObjectContext]];
+    
+    DestinationsClassController *destination = [[DestinationsClassController alloc] initWithMainMoc:[delegate managedObjectContext]];
         destination.carriers = [NSArray arrayWithObject:carrierGUID];
         destination.usedCodesWithStatistic = [NSArray arrayWithArray:usedCodesWithStatistic];
         destination.progress = progress;
-        [destination updateStatisticForEntity:entityName];
+        isCodesWasMissed = [destination updateStatisticForEntity:entityName];
         usedCodesWithStatistic = nil;
         
         [destination release],destination = nil;
-    //}
+    }
     [pool drain],pool = nil;
-    return;
+    return isCodesWasMissed;
 }
 
--(void)  updatePerHourStatisticforCarrierGUID:(NSString *)carrierGUID
+-(BOOL)  updatePerHourStatisticforCarrierGUID:(NSString *)carrierGUID
                                   carrierName:(NSString *)carrierName
-                          destinationType:(NSInteger)destinationType
-             withProgressUpdateController:(ProgressUpdateController *)progress;
+                              destinationType:(NSInteger)destinationType
+                 withProgressUpdateController:(ProgressUpdateController *)progress;
 {
+    BOOL isCodesWasMissed = NO;
+
     NSArray *usedCodesWithStatistic = nil;
     NSString *entityName = nil;
     
@@ -594,17 +599,18 @@
 
     [progress updateOperationNameForMsyqlQueryFinish];
 
-    //if ([usedCodesWithStatistic count] != 0) {
+    if ([usedCodesWithStatistic count] != 0) {
 //        AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
         DestinationsClassController *destination = [[DestinationsClassController alloc] initWithMainMoc:[delegate managedObjectContext]];
         destination.carriers = [NSArray arrayWithObject:carrierGUID];
         destination.usedCodesWithStatistic = usedCodesWithStatistic;
         destination.progress = progress;
-        [destination updateStatisticForEntity:entityName];
+        isCodesWasMissed = [destination updateStatisticForEntity:entityName];
         [destination release];
-    //}
+    }
     [self finalSave];
-    
+    return isCodesWasMissed;
+
 }
 
 #pragma mark -

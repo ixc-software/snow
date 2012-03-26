@@ -582,9 +582,9 @@
     progress.cycleSyncType = @"per hour";
     
     if (carriersToExecute.count > 0) {
+        [self startUserChoiceSyncForCarriers:carriersToExecute withProgress:progress withOperationName:@"Every hour sync"];
 
     }
-    [self startUserChoiceSyncForCarriers:carriersToExecute withProgress:progress withOperationName:@"Every hour sync"];
     [progress release];
     dispatch_async(dispatch_get_main_queue(), ^(void) { 
         [delegate.getExternalInfoProgress setHidden:YES];
@@ -596,11 +596,11 @@
 
 - (void) everyDaySync;
 {
-    while (delegate.queueForUpdatesBusy)
-    {
-        sleep (5); 
-        //NSLog (@"CYCLE UPDATES: operation every day sync - waiting for empty queue");  
-    }
+//    while (delegate.queueForUpdatesBusy)
+//    {
+//        sleep (5); 
+//        //NSLog (@"CYCLE UPDATES: operation every day sync - waiting for empty queue");  
+//    }
     ProgressUpdateController *progress = [[ProgressUpdateController alloc] initWithDelegate:delegate];
     progress.cycleSyncType = @"dayly";
     delegate.queueForUpdatesBusy = YES;

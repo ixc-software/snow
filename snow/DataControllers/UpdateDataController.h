@@ -54,12 +54,12 @@
                          destinationType:(NSInteger)destinationType
             withProgressUpdateController:(ProgressUpdateController *)progress;
 
--(void)  updateStatisticforCarrierGUID:(NSString *)carrierGUID 
+-(BOOL)  updateStatisticforCarrierGUID:(NSString *)carrierGUID 
                         andCarrierName:(NSString *)carrierName
                        destinationType:(NSInteger)destinationType
           withProgressUpdateController:(ProgressUpdateController *)progress;
 
--(void)  updatePerHourStatisticforCarrierGUID:(NSString *)carrierGUID
+-(BOOL)  updatePerHourStatisticforCarrierGUID:(NSString *)carrierGUID
                                   carrierName:(NSString *)carrierName
                               destinationType:(NSInteger)destinationType
                  withProgressUpdateController:(ProgressUpdateController *)progress;

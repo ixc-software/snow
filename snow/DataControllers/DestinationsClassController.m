@@ -1284,6 +1284,8 @@
 
 - (BOOL) updateStatisticForEntity:(NSString *)entity;
 {
+    BOOL isCodesWasMissed = NO;
+    
 //    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     @autoreleasepool {
         
@@ -1361,6 +1363,7 @@
                     if (!codeObject) {
                         NSLog(@"STAT: warning, we don't find according code with request:%@",compareCode);
                         [compareCode release],compareCode = nil;
+                        isCodesWasMissed = YES;
                         continue;
                         
                     }
@@ -1403,7 +1406,7 @@
                         destination.lastUsedMinutesLenght = [NSNumber numberWithDouble:lastUsedMinutesLenghtd];
                         destination.lastUsedProfit = [NSNumber numberWithDouble:lastUsedProfitd];
                         destination.lastUsedDate = [NSDate date];
-                        NSLog(@"DESTINATION CLASS: destination FOR SALE:%@/%@ have new stat:ASR:%@ ACD:%@ CALLS:%@",destination.country,destination.specific,destination.lastUsedASR,destination.lastUsedACD,destination.lastUsedCallAttempts);
+                        //NSLog(@"DESTINATION CLASS: destination FOR SALE:%@/%@ have new stat:ASR:%@ ACD:%@ CALLS:%@",destination.country,destination.specific,destination.lastUsedASR,destination.lastUsedACD,destination.lastUsedCallAttempts);
                         // insert per hour statistic
                         //if ([updatedDestinations containsObject:destination]) destinationHaveUpdatedCode = YES;
                         //else destinationHaveUpdatedCode = NO;
@@ -1481,7 +1484,7 @@
                                 currentPerHourStat.cashflow = [NSNumber numberWithDouble:newAmountd];
                                 
                                 //currentPerHourStat.externalDate = 
-                                NSLog(@"STAT:added UPDATED per hour stat with date:%@\n to destination for sale:%@/%@\n",currentPerHourStat.date,destination.country,destination.specific);
+                                //NSLog(@"STAT:added UPDATED per hour stat with date:%@\n to destination for sale:%@/%@\n",currentPerHourStat.date,destination.country,destination.specific);
 
                             } 
                             if (destinationNeedNewStatisticForCode)
@@ -1500,7 +1503,7 @@
                                 newPerHourStat.destinationsListForSale = destination;
                                 
                                 if (![updatedDestinations containsObject:[destination objectID]]) [updatedDestinations addObject:[destination objectID]];
-                                NSLog(@"STAT:added new per hour stat with date:%@\n to destination for sale:%@/%@\n",newPerHourStat.date,destination.country,destination.specific);
+                                //NSLog(@"STAT:added new per hour stat with date:%@\n to destination for sale:%@/%@\n",newPerHourStat.date,destination.country,destination.specific);
                             }
                             
                         }];
@@ -1546,7 +1549,7 @@
                         destination.lastUsedMinutesLenght = [NSNumber numberWithDouble:lastUsedMinutesLenghtd];
                         destination.lastUsedProfit = [NSNumber numberWithDouble:lastUsedProfitd];
                         destination.lastUsedDate = [NSDate date];
-                        NSLog(@"DESTINATION CLASS: destination WE BUY:%@/%@ have new stat:ASR:%@ ACD:%@ CALLS:%@",destination.country,destination.specific,destination.lastUsedASR,destination.lastUsedACD,destination.lastUsedCallAttempts);
+                        //NSLog(@"DESTINATION CLASS: destination WE BUY:%@/%@ have new stat:ASR:%@ ACD:%@ CALLS:%@",destination.country,destination.specific,destination.lastUsedASR,destination.lastUsedACD,destination.lastUsedCallAttempts);
 
                         // insert per hour statistic
                         //if ([updatedDestinations containsObject:destination]) destinationHaveUpdatedCode = YES;
@@ -1623,7 +1626,7 @@
                                 currentPerHourStat.cashflow = [NSNumber numberWithDouble:newAmountd];
                                 
                                 //currentPerHourStat.externalDate = 
-                                NSLog(@"STAT:added UPDATED per hour stat with date:%@\n to destination we buy:%@/%@\n",currentPerHourStat.date,destination.country,destination.specific);
+                                //NSLog(@"STAT:added UPDATED per hour stat with date:%@\n to destination we buy:%@/%@\n",currentPerHourStat.date,destination.country,destination.specific);
 
                             } 
                             if (destinationNeedNewStatisticForCode)
@@ -1641,7 +1644,7 @@
                                 newPerHourStat.destinationsListWeBuy = destination;
                                 
                                 [updatedDestinations addObject:[destination objectID]];
-                                NSLog(@"STAT:added new per hour stat with date:%@\n to destination we buy:%@/%@\n",newPerHourStat.date,destination.country,destination.specific);
+                                //NSLog(@"STAT:added new per hour stat with date:%@\n to destination we buy:%@/%@\n",newPerHourStat.date,destination.country,destination.specific);
 
                             }
                             
@@ -1659,7 +1662,7 @@
         //    [pool drain], pool = nil;
         
     }
-    return YES;
+    return isCodesWasMissed;
 }
 
 - (void) removeFromMainDatabaseDestinations24hStatisticForCarrierGUID:(NSString *)carrierGUID 

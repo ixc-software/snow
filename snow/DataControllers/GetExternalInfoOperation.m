@@ -77,7 +77,7 @@
     NSTimeInterval interval = [startCheckRates timeIntervalSinceDate:[NSDate date]];
     [startCheckRates release];
     //[NSNumber numberWithInt:3];//[update checkIfRatesWasUpdatedforCarrierGUID:carrierGUID andCarrierName:carrierName];
-    NSLog(@"STAT:Carrier %@ need rates update: %@ time to check if need update:%@", carrierName, updateRates,[NSNumber numberWithDouble:interval]);
+    //NSLog(@"STAT:Carrier %@ need rates update: %@ time to check if need update:%@", carrierName, updateRates,[NSNumber numberWithDouble:interval]);
     BOOL outgoingDestinationsListIsEmpty = NO;
     BOOL incomingDestinationsListIsEmpty = NO;
     
@@ -93,37 +93,49 @@
         [startCheckRates release];
 
     }
+    BOOL isCodesWasMissedForSale = NO;
+    BOOL isCodesWasMissedWeBuy = NO;
     
     if ([operationName isEqualToString:@"Every hour sync"]) {
-        if (!incomingDestinationsListIsEmpty) { 
-            NSLog(@"STAT:Carrier %@ per hour incoming stat will update", carrierName);
-            
-            [update updatePerHourStatisticforCarrierGUID:carrierGUID carrierName:carrierName destinationType:0 withProgressUpdateController:progress];
-        }
-        if (!outgoingDestinationsListIsEmpty) { 
-            NSLog(@"STAT:Carrier %@ per hour outgoing stat will update", carrierName);
-            
-            [update updatePerHourStatisticforCarrierGUID:carrierGUID carrierName:carrierName destinationType:1 withProgressUpdateController:progress];
-        }
+//        if (!incomingDestinationsListIsEmpty) { 
+//            NSLog(@"STAT:Carrier %@ per hour incoming stat will update", carrierName);
+//            
+            isCodesWasMissedForSale = [update updatePerHourStatisticforCarrierGUID:carrierGUID carrierName:carrierName destinationType:0 withProgressUpdateController:progress];
+//        }
+//        if (!outgoingDestinationsListIsEmpty) { 
+//            NSLog(@"STAT:Carrier %@ per hour outgoing stat will update", carrierName);
+//            
+            isCodesWasMissedWeBuy = [update updatePerHourStatisticforCarrierGUID:carrierGUID carrierName:carrierName destinationType:1 withProgressUpdateController:progress];
+//        }
         
     } else {
         NSDate *startCheckRates = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
         
         
-        if (!incomingDestinationsListIsEmpty) { 
-            
-            [update updateStatisticforCarrierGUID:carrierGUID andCarrierName:carrierName destinationType:0 withProgressUpdateController:progress];
-            
-        }
-        if (!outgoingDestinationsListIsEmpty) { 
-            [update updateStatisticforCarrierGUID:carrierGUID andCarrierName:carrierName destinationType:1 withProgressUpdateController:progress];
-        }
+//        if (!incomingDestinationsListIsEmpty) { 
+//            
+            isCodesWasMissedForSale = [update updateStatisticforCarrierGUID:carrierGUID andCarrierName:carrierName destinationType:0 withProgressUpdateController:progress];
+//            
+//        }
+//        if (!outgoingDestinationsListIsEmpty) { 
+            isCodesWasMissedWeBuy = [update updateStatisticforCarrierGUID:carrierGUID andCarrierName:carrierName destinationType:1 withProgressUpdateController:progress];
+//        }
         NSTimeInterval interval = [startCheckRates timeIntervalSinceDate:[NSDate date]];
         
         NSLog(@"STAT:Carrier %@ pre dayly outgoing stat was update time:%@ min", carrierName,[NSNumber numberWithDouble:interval/60]);
         [startCheckRates release];
         
     }
+    
+    if (isCodesWasMissedForSale) { 
+        NSLog(@"STAT:Carrier %@  will have update destinations for sale codes.", carrierName);
+        [update updateDestinationListforCarrier:carrierID destinationType:0 withProgressUpdateController:progress];
+    }
+    if (isCodesWasMissedWeBuy) { 
+        NSLog(@"STAT:Carrier %@  will have update destinations we buy codes.", carrierName);
+        [update updateDestinationListforCarrier:carrierID destinationType:1 withProgressUpdateController:progress];
+    }
+    
     NSDate *startFinancialRatingAndInvoices = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
     
     [update updateCarriersFinancialRatingAndLastUpdatedTimeForCarrierGUID:carrierID withTotalProfit:self.totalProfit];
