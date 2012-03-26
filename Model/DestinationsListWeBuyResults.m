@@ -2,7 +2,7 @@
 //  DestinationsListWeBuyResults.m
 //  snow
 //
-//  Created by Oleksii Vynogradov on 2/24/12.
+//  Created by Oleksii Vynogradov on 3/25/12.
 //  Copyright (c) 2012 IXC-USA Corp. All rights reserved.
 //
 
@@ -36,6 +36,20 @@
 @dynamic ts_release;
 @dynamic ts_ringing;
 @dynamic ts_trying;
+@dynamic numberB;
+@dynamic inputPackets;
+@dynamic outputPackets;
+@dynamic timeInvite;
+@dynamic timeOk;
+@dynamic timeRelease;
+@dynamic timeRinging;
+@dynamic timeTrying;
+@dynamic numberA;
+@dynamic ringMP3;
+@dynamic callMP3;
+@dynamic isFAS;
+@dynamic fasReason;
+@dynamic timeSetup;
 @dynamic destinationsListWeBuyTesting;
 - (void)awakeFromInsert {
     NSDate *now = [NSDate date];

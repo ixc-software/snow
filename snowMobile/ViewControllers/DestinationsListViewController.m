@@ -16,6 +16,9 @@
 #import "DestinationsListPushList.h"
 #import "DestinationsListWeBuy.h"
 #import "DestinationsListForSale.h"
+#import "DestinationsListWeBuyResults.h"
+#import "DestinationsListWeBuyTesting.h"
+
 #import "mobileAppDelegate.h"
 #import "ClientController.h"
 #import "HelpForInfoView.h"
@@ -981,47 +984,60 @@
     if ([sections containsIndex:section]) isOpened = YES;
     
     NSFetchedResultsController *fetchController = [self fetchedResultsController];
-    //NSIndexPath *new = [NSIndexPath indexPathForRow:section - 1 inSection:0];
     NSManagedObject *managedObject = [fetchController objectAtIndexPath:[NSIndexPath indexPathForRow:section inSection:0]];
-//    NSNumber *sectionNumber = [NSNumber numberWithInteger:section];
-    //    if (openedIndexPath && openedIndexPath.section == section) isOpened = YES;
-    
-    //if (section < 6) NSLog(@"sections view for country/specific:%@/%@ for section:%@",[managedObject valueForKey:@"country"],[managedObject valueForKey:@"specific"],[NSNumber numberWithInteger:section]); 
-    DestinationsHeaderView *sectionView = nil;//[[DestinationsHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT)];
-    NSLog(@"section view:%@",sectionView);
-    //UIView *container = [[[UIView alloc] initWithFrame:CGRectMake(0,0,360,35)] autorelease];
 
+    //if (section < 6) NSLog(@"sections view for country/specific:%@/%@ for section:%@",[managedObject valueForKey:@"country"],[managedObject valueForKey:@"specific"],[NSNumber numberWithInteger:section]); 
+
+    BOOL isTestingResults = NO;
+    NSNumber *minutes = nil;
+    NSNumber *acd = nil;
+    NSUInteger testingProcess = 0;
+    
+    if ([[managedObject class] isSubclassOfClass:[DestinationsListWeBuy class]]) { 
+        
+        NSSet *destinationsListWeBuyTesting = [managedObject valueForKeyPath:@"destinationsListWeBuyTesting"];
+        if (destinationsListWeBuyTesting.count > 0) { 
+            isTestingResults = YES;
+            NSDate *maxDate = [destinationsListWeBuyTesting valueForKeyPath:@"@max.date"];
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(date == %@) and (destinationsListWeBuy.GUID == %@)",maxDate,[managedObject valueForKey:@"GUID"]];
+            NSSet *destinationsListWeBuyTestingFiltered = [destinationsListWeBuyTesting filteredSetUsingPredicate:predicate];
+            if (destinationsListWeBuyTestingFiltered.count > 0) {
+                DestinationsListWeBuyTesting *findedTesting = destinationsListWeBuyTestingFiltered.anyObject;
+                if (findedTesting) {
+                    NSSet *results = findedTesting.destinationsListWeBuyResults;
+                    
+                    // if testing have results, we have results, if no, spin started and progress showing
+                    // testing flow:
+                    // 0 - no tests
+                    // 1 - processing
+                    // 3 - result failed no success calls
+                    // 4 - result failed FAS
+                    // >> 4 - result success, mean ASR 
+
+                    if (results.count > 0) {
+                        
+                    } else testingProcess = 1;
+                }
+            } else NSLog(@"DESTINATIONS LIST: warning, with max date:%@ destinationsListWeBuyTesting not found",maxDate);
+            
+        }
+        minutes = [managedObject valueForKey:@"lastUsedMinutesLenght"];
+        acd = [managedObject valueForKey:@"lastUsedACD"];
+
+    }
+    
+    if ([[managedObject class] isSubclassOfClass:[DestinationsListForSale class]]) {
+        minutes = [managedObject valueForKey:@"lastUsedMinutesLenght"];
+        acd = [managedObject valueForKey:@"lastUsedACD"];
+    }
     
     if ([[managedObject class] isSubclassOfClass:[DestinationsListPushList class]]) {
-        sectionView = [[[DestinationsHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:nil withACD:nil withObjectID:managedObject.objectID section:section isOpened:isOpened delegate:self isDestinationsPushList:YES testing:6] autorelease];
-    }
-    
-    if ([[managedObject class] isSubclassOfClass:[DestinationsListForSale class]] || [[managedObject class] isSubclassOfClass:[DestinationsListWeBuy class]]) {
-        sectionView = [[[DestinationsHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:[managedObject valueForKey:@"lastUsedMinutesLenght"] withACD:[managedObject valueForKey:@"lastUsedACD"] withObjectID:managedObject.objectID section:section isOpened:isOpened delegate:self isDestinationsPushList:NO testing:6] autorelease];
+        minutes = [managedObject valueForKey:@"minutesLenght"];
+        acd = [managedObject valueForKey:@"acd"];
     }
 
-//    CAGradientLayer *gradient = [CAGradientLayer layer];
-//    gradient.frame = sectionView.bounds;
-//
-//    //NSLog(@"sections view for country/specific:%@/%@ for section:%@ isOpened:%@",managedObject.country,managedObject.specific,[NSNumber numberWithInteger:section],managedObject.opened); 
-//    static NSMutableArray *colors = nil;
-//    if (colors == nil) {
-//        colors = [[NSMutableArray alloc] initWithCapacity:3];
-//        UIColor *color = nil;
-//        color = [UIColor colorWithRed:0.82 green:0.84 blue:0.87 alpha:1.0];
-//        [colors addObject:(id)[color CGColor]];
-//        color = [UIColor colorWithRed:0.15 green:0.15 blue:0.49 alpha:1.0];
-//        [colors addObject:(id)[color CGColor]];
-//        color = [UIColor colorWithRed:0.15 green:0.15 blue:0.49 alpha:1.0];
-//        [colors addObject:(id)[color CGColor]];
-//    }
-//    [gradient setColors:colors];
-//    [gradient setLocations:[NSArray arrayWithObjects:[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:0.91], [NSNumber numberWithFloat:1.0], nil]];
-//    [container.layer addSublayer:gradient];
-//    [container.layer addSublayer:sectionView.layer];
-
-    
-    
+    DestinationsHeaderView *sectionView = [[[DestinationsHeaderView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.tableView.bounds.size.width, HEADER_HEIGHT) withCountry:[managedObject valueForKey:@"country"] withSpecific:[managedObject valueForKey:@"specific"]  withPrice:[managedObject valueForKey:@"rate"] withMinutes:minutes withACD:acd withObjectID:managedObject.objectID section:section isOpened:isOpened delegate:self isTestingResults:isTestingResults testing:testingProcess] autorelease];
+    //sectionView.testingProgress.hidden = YES;
     return sectionView;
 }
 
@@ -1101,7 +1117,48 @@
     }
     [self.tableView endUpdates];
     
-    
+    NSUInteger selectedSegmentIndex = selectRoutes.selectedSegmentIndex;
+
+    if (selectedSegmentIndex == 1) { 
+        /*
+        NSManagedObjectID *objectID = sectionHeaderView.objectID;
+        
+        NSManagedObject *destination = [self.managedObjectContext objectWithID:objectID];
+        
+        if ([destination.entity.name isEqualToString:@"DestinationsListWeBuy"]) {
+            DestinationsListWeBuyTesting *newTesting = (DestinationsListWeBuyTesting *)[NSEntityDescription insertNewObjectForEntityForName:@"DestinationsListWeBuyTesting" inManagedObjectContext:destination.managedObjectContext];
+            newTesting.destinationsListWeBuy = (DestinationsListWeBuy *)destination;
+            newTesting.date = [NSDate date];
+            
+            DestinationsListWeBuyResults *newResult = (DestinationsListWeBuyResults *)[NSEntityDescription insertNewObjectForEntityForName:@"DestinationsListWeBuyResults" inManagedObjectContext:destination.managedObjectContext];
+            newResult.destinationsListWeBuyTesting = newTesting;
+            newResult.numberB = @"380674878717";
+            newResult.numberA = @"380674878717";
+            newResult.timeRelease = [NSDate date];
+            newResult.timeOk = [NSDate dateWithTimeIntervalSinceNow:-40];
+            newResult.timeRinging = [NSDate dateWithTimeIntervalSinceNow:-80];
+            newResult.timeTrying = [NSDate dateWithTimeIntervalSinceNow:-90];
+            newResult.timeInvite = [NSDate dateWithTimeIntervalSinceNow:-100];
+            
+            
+            DestinationsListWeBuyResults *newResult2 = (DestinationsListWeBuyResults *)[NSEntityDescription insertNewObjectForEntityForName:@"DestinationsListWeBuyResults" inManagedObjectContext:destination.managedObjectContext];
+            newResult2.destinationsListWeBuyTesting = newTesting;
+            newResult2.numberB = @"380442399740";
+            newResult2.timeRelease = [NSDate date];
+            newResult2.timeOk = [NSDate dateWithTimeIntervalSinceNow:-40];
+            newResult2.timeRinging = [NSDate dateWithTimeIntervalSinceNow:-80];
+            newResult2.timeTrying = [NSDate dateWithTimeIntervalSinceNow:-90];
+            newResult2.timeInvite = [NSDate dateWithTimeIntervalSinceNow:-100];
+
+            NSError *error = nil;
+            
+            [self.managedObjectContext save:&error];
+            
+            if (error) NSLog(@"TEST RESULTS: error save:%@",[error localizedDescription]);
+            NSLog(@">>>>>>>>>>>>>>>> destination testing created for destination guid:%@",[destination valueForKey:@"GUID"]);
+        } else NSLog(@">>>>>>>>>>>>>>>> destination testing not created, destination entity:%@",destination.entity.name);*/
+        
+    }    
 }
 
 -(void)sectionHeaderView:(DestinationsHeaderView*)sectionHeaderView 
@@ -1129,8 +1186,10 @@
     mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
 
     TestsResultsController *testsViewController = nil;
-    if ([delegate isPad]) testsViewController =[[TestsResultsController alloc] initWithNibName:@"TestsResultsControllerIPad" bundle:nil];
-    else testsViewController =[[TestsResultsController alloc] initWithNibName:@"TestsResultsController" bundle:nil];
+    NSManagedObject *destinationMain = [self.managedObjectContext objectWithID:sectionHeaderView.objectID];
+    
+    if ([delegate isPad]) testsViewController =[[TestsResultsController alloc] initWithNibName:@"TestsResultsControllerIPad" bundle:nil withMoc:self.managedObjectContext withDestinationMain:destinationMain];
+    else testsViewController =[[TestsResultsController alloc] initWithNibName:@"TestsResultsController" bundle:nil withMoc:self.managedObjectContext withDestinationMain:destinationMain];
 
     
     
@@ -1162,11 +1221,12 @@
         
 		self.pinchedIndexPath = newPinchedIndexPath;
         
-        DestinationsListPushList *object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:newPinchedIndexPath.section inSection:0]];
+        NSManagedObject *object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:newPinchedIndexPath.section inSection:0]];
         //if (!searchIsActive)  object = [[self fetchedResultsControllerForTableView:currentTableView] objectAtIndexPath:[NSIndexPath indexPathForRow:newPinchedIndexPath.section inSection:0]];
         //if (searchIsActive) object = [[self fetchedResultsControllerForTableView:currentTableView] objectAtIndexPath:[NSIndexPath indexPathForRow:newPinchedIndexPath.section inSection:0]];
-        
-        self.initialPinchHeight = [object.rowHeight floatValue];
+        NSNumber *rowHeight = [object valueForKey:@"rowHeight"];
+        if (rowHeight) self.initialPinchHeight = [rowHeight floatValue];
+        else self.initialPinchHeight = DEFAULT_ROW_HEIGHT;
         // Alternatively, set initialPinchHeight = uniformRowHeight.
         
         [self updateForPinchScale:pinchRecognizer.scale atIndexPath:newPinchedIndexPath];
@@ -1278,14 +1338,26 @@
             EmailMenuItemFor *menuItemRemove = [[EmailMenuItemFor alloc] initWithTitle:@"Remove" action:@selector(removeDestinationButtonPressed:)];
             menuItemRemove.indexPath = pressedIndexPath;
             [menuItems addObject:menuItemRemove];
+            
+            
+            NSManagedObject *object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:pressedIndexPath.section inSection:0]];
 
             
-            if (isCarriersHaveRegisteredJustOne && !isControllerStartedFromOutsideTabbar) {
+            if (isCarriersHaveRegisteredJustOne && !isControllerStartedFromOutsideTabbar && [object.entity.name isEqualToString:@"DestinationsListPushList"]) {
                 EmailMenuItemFor *menuItem = [[EmailMenuItemFor alloc] initWithTitle:@"Change carrier" action:@selector(changeCarrierButtonPressed:)];
                 menuItem.indexPath = pressedIndexPath;
                 [menuItems addObject:menuItem];
                 [menuItem release];
+            } else {
+                if ([object.entity.name isEqualToString:@"DestinationsListWeBuy"]) {
+                    EmailMenuItemFor *menuItem = [[EmailMenuItemFor alloc] initWithTitle:@"Test it." action:@selector(testButtonPressed:)];
+                    menuItem.indexPath = pressedIndexPath;
+                    [menuItems addObject:menuItem];
+                    [menuItem release];
+                }
             }
+            
+
 //            [menuItemTwit release];
 //            [menuItemLinkedin release];
 //            [menuItemRemove release];
@@ -1299,7 +1371,21 @@
         }
     }
 }
-
+-(void)testButtonPressed:(UIMenuController*)menuController {
+    
+    EmailMenuItemFor *menuItem = [[[UIMenuController sharedMenuController] menuItems] objectAtIndex:3];
+    if (menuItem.indexPath) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+            
+            DestinationsListWeBuy *object = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:menuItem.indexPath.row inSection:0]];
+            mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+            
+            ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate.managedObjectContext persistentStoreCoordinator] withSender:self withMainMoc:delegate.managedObjectContext];
+            [clientController startTestingForDestinationsWeBuyID:object.objectID forNumbers:nil];
+            [clientController release];
+        });
+    }
+}
 
 -(void)changeCarrierButtonPressed:(UIMenuController*)menuController {
     
@@ -2006,6 +2092,7 @@
     
     if ([isItLatestMessage boolValue] || [isError boolValue]) {    
         dispatch_async(dispatch_get_main_queue(), ^(void) { 
+            NSLog(@"DESTINSTIONS:error %@",status);
         });
         
     } else {

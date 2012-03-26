@@ -143,22 +143,28 @@
         }
         mobileAppDelegate *delegateShared = (mobileAppDelegate *)[[UIApplication sharedApplication] delegate];
         ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[insertionContext persistentStoreCoordinator] withSender:self withMainMoc:[delegateShared managedObjectContext]];
-        self.operationName = @"Update destinations";
+        self.operationName = @"Frst setup";
         NSLog(@"%@",operationName);
 
         [self updateProgessInfoWithPercent:[NSNumber numberWithDouble:0]];
         [clientController firstSetup];
         
-        self.operationName = @"Update internal graph";
+        self.operationName = @"Get companies list.";
         NSLog(@"%@",operationName);
 
         [self updateProgessInfoWithPercent:[NSNumber numberWithDouble:0]];
         
         [clientController getCompaniesListWithImmediatelyStart:YES];
 
+        self.operationName = @"Update internal codes";
+
+        NSLog(@"%@",operationName);
+
+        [clientController updateInternalCountryCodesList];
+
         self.operationName = @"Download from V5.0 data";
 
-        //[clientController getCarriersList];
+        [clientController getCarriersList];
 
 //        //    [clientController getAllObjectsForEntity:@"CurrentCompany" immediatelyStart:NO isUserAuthorized:NO];
         self.operationName = @"Download events data";

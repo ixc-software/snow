@@ -23,6 +23,7 @@
 @property (nonatomic, retain) IBOutlet UILabel *rate;
 @property (nonatomic, retain) IBOutlet UILabel *lastUsedMinutesLenght;
 @property (nonatomic, retain) IBOutlet UILabel *lastUsedACD;
+@property (retain, nonatomic) IBOutlet UIActivityIndicatorView *testingProgress;
 
 
 
@@ -48,7 +49,7 @@
            section:(NSUInteger)sectionNumber 
           isOpened:(BOOL)isOpenedForHeader
           delegate:(id <DestinationsHeaderViewDelegate>)aDelegate
-isDestinationsPushList:(BOOL)isDestinationsPushListEntity
+  isTestingResults:(BOOL)isTestingResults
            testing:(NSUInteger)testingFlow; 
 
 -(void)toggleOpenWithUserAction:(BOOL)userAction;

@@ -580,7 +580,69 @@ static char encodingTable[64] = {
     return mainSystem;
 }
 
+-(void) updateInternalCountryCodesList;
+{
+#if defined(SNOW_SERVER)
+    
+    [self createCountrySpecificCodesInCoreDataForMainSystem:mainSystem];
+    [self finalSave:moc];
+    
+#else
+    NSError *error = nil;
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
 
+    [fetchRequest setEntity:[NSEntityDescription entityForName:@"MainSystem" inManagedObjectContext:self.moc]];
+    [fetchRequest setPredicate:nil];
+
+    CompanyStuff *authorizedUser = [self authorization];
+    NSArray *allGUIDsMainSystem = [self getAllObjectsListWithEntityForList:@"MainSystem" withMainObjectGUID:nil withMainObjectEntity:nil withAdmin:authorizedUser withDateFrom:nil withDateTo:nil];
+    NSArray *allObjectsForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsMainSystem withEntity:@"MainSystem" withAdmin:authorizedUser];
+    [self updateGraphForObjects:allObjectsForGUIDS withEntity:@"MainSystem" withAdmin:authorizedUser withRootObject:nil isEveryTenPercentSave:NO isNecessaryToLocalRegister:NO];
+    NSArray *result = [self.moc executeFetchRequest:fetchRequest error:&error];
+    MainSystem *mainSystem = result.lastObject;
+    NSArray *allGUIDsCodesSpecific = [self getAllObjectsListWithEntityForList:@"CountrySpecificCodeList" withMainObjectGUID:mainSystem.GUID withMainObjectEntity:@"MainSystem" withAdmin:authorizedUser withDateFrom:nil withDateTo:nil];
+    NSArray *allObjectsCodesSpecificForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsCodesSpecific withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser];
+    
+    //NSArray *updatedCodesSpecificIDs = 
+    if (allGUIDsCodesSpecific && allObjectsCodesSpecificForGUIDS) [self updateGraphForObjects:allObjectsCodesSpecificForGUIDS withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser withRootObject:mainSystem isEveryTenPercentSave:NO isNecessaryToLocalRegister:NO];
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [self finalSave:moc];
+    
+    [allGUIDsCodesSpecific enumerateObjectsUsingBlock:^(NSString *guid, NSUInteger idx, BOOL *stop) {
+        NSError *error = nil;
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"CountrySpecificCodeList" inManagedObjectContext:self.moc];
+        [fetchRequest setEntity:entity];
+        [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"GUID == %@",guid]];
+        NSArray *result = [self.moc executeFetchRequest:fetchRequest error:&error];
+        if (result.count > 0) {
+            CountrySpecificCodeList *lastObject = result.lastObject;
+            [lastObject.codesList enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+                [self.moc deleteObject:obj];
+            }];
+            
+            NSString *codes = lastObject.codes;
+            NSArray *codesList = [codes componentsSeparatedByString:@","];
+            [codesList enumerateObjectsUsingBlock:^(NSString *code, NSUInteger idx, BOOL *stop) {
+                NSNumber *codeNumber = [formatter numberFromString:code];
+                //NSLog(@"CLIENT CONTROLLER: first setup code created:%@ for country:%@",codeNumber,lastObject.country);
+                
+                CodesList *new = (CodesList *)[NSEntityDescription insertNewObjectForEntityForName:@"CodesList" inManagedObjectContext:self.moc];
+                new.countrySpecificCodesList = lastObject;
+                new.code = codeNumber;
+            }];
+        } else NSLog(@"CLIENT CONTROLLER: first setup, warning, CountrySpecificCodeList not founded to create CodeList");
+        
+    }];
+    //NSLog(@">>>>>> updated codes specific IDs:%@",updatedCodesSpecificIDs);
+    [self finalSave:moc];
+
+#endif
+    
+
+}
+
+#pragma mark TODO move codes chanking to another function to avoid waiting companies list
 - (MainSystem *) firstSetup;
 {
     
@@ -748,40 +810,40 @@ static char encodingTable[64] = {
     [self finalSave:moc];
     
 #else
-    NSArray *allGUIDsCodesSpecific = [self getAllObjectsListWithEntityForList:@"CountrySpecificCodeList" withMainObjectGUID:mainSystem.GUID withMainObjectEntity:@"MainSystem" withAdmin:authorizedUser withDateFrom:nil withDateTo:nil];
-    NSArray *allObjectsCodesSpecificForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsCodesSpecific withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser];
-    
-    //NSArray *updatedCodesSpecificIDs = 
-    if (allGUIDsCodesSpecific && allObjectsCodesSpecificForGUIDS) [self updateGraphForObjects:allObjectsCodesSpecificForGUIDS withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser withRootObject:mainSystem isEveryTenPercentSave:NO isNecessaryToLocalRegister:NO];
-    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [self finalSave:moc];
-
-    [allGUIDsCodesSpecific enumerateObjectsUsingBlock:^(NSString *guid, NSUInteger idx, BOOL *stop) {
-        NSError *error = nil;
-        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-        NSEntityDescription *entity = [NSEntityDescription entityForName:@"CountrySpecificCodeList" inManagedObjectContext:self.moc];
-        [fetchRequest setEntity:entity];
-        [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"GUID == %@",guid]];
-        NSArray *result = [self.moc executeFetchRequest:fetchRequest error:&error];
-        if (result.count > 0) {
-            CountrySpecificCodeList *lastObject = result.lastObject;
-            [lastObject.codesList enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
-                [self.moc deleteObject:obj];
-            }];
-            
-            NSString *codes = lastObject.codes;
-            NSArray *codesList = [codes componentsSeparatedByString:@","];
-            [codesList enumerateObjectsUsingBlock:^(NSString *code, NSUInteger idx, BOOL *stop) {
-                NSNumber *codeNumber = [formatter numberFromString:code];
-                //NSLog(@"CLIENT CONTROLLER: first setup code created:%@ for country:%@",codeNumber,lastObject.country);
-
-                CodesList *new = (CodesList *)[NSEntityDescription insertNewObjectForEntityForName:@"CodesList" inManagedObjectContext:self.moc];
-                new.countrySpecificCodesList = lastObject;
-                new.code = codeNumber;
-            }];
-        } else NSLog(@"CLIENT CONTROLLER: first setup, warning, CountrySpecificCodeList not founded to create CodeList");
-        
-    }];
+//    NSArray *allGUIDsCodesSpecific = [self getAllObjectsListWithEntityForList:@"CountrySpecificCodeList" withMainObjectGUID:mainSystem.GUID withMainObjectEntity:@"MainSystem" withAdmin:authorizedUser withDateFrom:nil withDateTo:nil];
+//    NSArray *allObjectsCodesSpecificForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsCodesSpecific withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser];
+//    
+//    //NSArray *updatedCodesSpecificIDs = 
+//    if (allGUIDsCodesSpecific && allObjectsCodesSpecificForGUIDS) [self updateGraphForObjects:allObjectsCodesSpecificForGUIDS withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser withRootObject:mainSystem isEveryTenPercentSave:NO isNecessaryToLocalRegister:NO];
+//    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+//    [self finalSave:moc];
+//
+//    [allGUIDsCodesSpecific enumerateObjectsUsingBlock:^(NSString *guid, NSUInteger idx, BOOL *stop) {
+//        NSError *error = nil;
+//        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+//        NSEntityDescription *entity = [NSEntityDescription entityForName:@"CountrySpecificCodeList" inManagedObjectContext:self.moc];
+//        [fetchRequest setEntity:entity];
+//        [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"GUID == %@",guid]];
+//        NSArray *result = [self.moc executeFetchRequest:fetchRequest error:&error];
+//        if (result.count > 0) {
+//            CountrySpecificCodeList *lastObject = result.lastObject;
+//            [lastObject.codesList enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+//                [self.moc deleteObject:obj];
+//            }];
+//            
+//            NSString *codes = lastObject.codes;
+//            NSArray *codesList = [codes componentsSeparatedByString:@","];
+//            [codesList enumerateObjectsUsingBlock:^(NSString *code, NSUInteger idx, BOOL *stop) {
+//                NSNumber *codeNumber = [formatter numberFromString:code];
+//                //NSLog(@"CLIENT CONTROLLER: first setup code created:%@ for country:%@",codeNumber,lastObject.country);
+//
+//                CodesList *new = (CodesList *)[NSEntityDescription insertNewObjectForEntityForName:@"CodesList" inManagedObjectContext:self.moc];
+//                new.countrySpecificCodesList = lastObject;
+//                new.code = codeNumber;
+//            }];
+//        } else NSLog(@"CLIENT CONTROLLER: first setup, warning, CountrySpecificCodeList not founded to create CodeList");
+//        
+//    }];
     //NSLog(@">>>>>> updated codes specific IDs:%@",updatedCodesSpecificIDs);
 #endif
 
@@ -1107,13 +1169,13 @@ static char encodingTable[64] = {
             [self.moc deleteObject:[self.moc objectWithID:idForRemove]];
         }];
         
-        
+        NSLog(@"CLIENT CONTROLLER: get companies finish.");
         [self finalSave:self.moc];
         [self updateUIwithMessage:@"get companies finish" withObjectID:nil withLatestMessage:YES error:YES];
         [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"lastGraphUpdatingTime"];
         [[NSUserDefaults standardUserDefaults] synchronize];
         
-    }
+    } else NSLog(@"CLIENT CONTROLLER: warning, get companies list not started");
 }
 #pragma mark -
 #pragma mark GetObjects methods
@@ -3190,7 +3252,6 @@ static char encodingTable[64] = {
         findedCarrier.emailList = [row valueForKey:@"carrierEmail"];
         findedCarrier.externalID = [formatter stringFromNumber:[row valueForKey:@"carrierID"]];
         findedCarrier.url = [row valueForKey:@"carrierWebsite"];
-        [formatter release];
         
         // get outbound for carrier
         NSMutableDictionary *prepeareForJSONRequest = [NSMutableDictionary dictionary];
@@ -3229,10 +3290,10 @@ static char encodingTable[64] = {
                 NSString *dateActivate = [row valueForKey:@"dateActivate"];
                 NSNumber *rate = [row valueForKey:@"rate"];
                 
-                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-                [formatter setDateFormat:@"yyyy-MM-dd"];
-                NSDate *dateActivateDate = [formatter dateFromString:dateActivate];
-                [formatter release];
+                NSDateFormatter *formatterDate = [[NSDateFormatter alloc] init];
+                [formatterDate setDateFormat:@"yyyy-MM-dd"];
+                NSDate *dateActivateDate = [formatterDate dateFromString:dateActivate];
+                [formatterDate release];
                 
                 NSFetchRequest *fetchRequestCodesVsDestination = [[NSFetchRequest alloc] init];
                 NSEntityDescription *entity = [NSEntityDescription entityForName:@"CodesvsDestinationsList" inManagedObjectContext:self.moc];
@@ -3357,17 +3418,80 @@ static char encodingTable[64] = {
                 }
                 findedCode.externalChangedDate = dateActivateDate;
                 findedCode.rate = rate;
-             
-                
-                
-                
-                
+                findedCode.peerID = [formatter numberFromString:peerID];
             }];
         }];
-        
+        [formatter release];
+
     }];
     [self finalSave:self.moc];
 }
 
+-(void) startTestingForDestinationsWeBuyID:(NSManagedObjectID *)destinationID forNumbers:(NSArray *)numbers;
+{
+    DestinationsListWeBuy *destinationForTests = (DestinationsListWeBuy *)[self.moc objectWithID:destinationID];
+    if (destinationForTests) {
+        NSSet *allCodes = destinationForTests.codesvsDestinationsList;
+        NSSet *allUniqueCodes = [allCodes valueForKeyPath:@"@distinctUnionOfObjects.code"];
+        CodesvsDestinationsList *anyCode = allCodes.anyObject;
+        NSNumber *peerID = anyCode.peerID;
+        mainServer = [[NSURL alloc] initWithString:@"https://freebsd81.ixc.ua/api"];
+        
+        NSMutableDictionary *prepeareForJSONRequest = [NSMutableDictionary dictionary];
+        //[prepeareForJSONRequest setValue:allUniqueCodes forKey:@"codes"];
+        [prepeareForJSONRequest setValue:allUniqueCodes.anyObject forKey:@"code"];
+        [prepeareForJSONRequest setValue:peerID forKey:@"outpeerID"];
+        if (numbers) [prepeareForJSONRequest setValue:numbers forKey:@"numbers"];
+        
+        NSLog(@"CLIENT CONTROLLER startTesting StartTesting Sent:%@",prepeareForJSONRequest);
+        
+        NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"api/StartTesting" withJSONRequest:prepeareForJSONRequest];
+        NSLog(@"CLIENT CONTROLLER startTesting StartTesting Received:%@",receivedObject);
+        
+        NSString *error = [receivedObject valueForKey:@"error"];
+        if (error) {
+            [self updateUIwithMessage:@"no numbers found" withObjectID:destinationID withLatestMessage:YES error:YES];
+            return;
+        } else {
+            NSString *key = [receivedObject valueForKey:@"key"];
+            if (key) {
+                BOOL isTestingCompleete = NO;
+                BOOL isTestingCreated = NO;
+                
+                while (!isTestingCompleete) {
+                    NSMutableDictionary *prepeareForJSONRequest = [NSMutableDictionary dictionary];
+                    [prepeareForJSONRequest setValue:key forKey:@"key"];
+                    
+                    NSLog(@"CLIENT CONTROLLER startTesting TestingResults Sent:%@",prepeareForJSONRequest);
+                    
+                    NSDictionary *receivedObject = [self getJSONAnswerForFunction:@"api/TestingResults" withJSONRequest:prepeareForJSONRequest];
+                    NSLog(@"CLIENT CONTROLLER startTesting TestingResults stage Received:%@",receivedObject);
+                    
+                    NSString *processing = [receivedObject valueForKey:@"processing"];
+                    if (processing.boolValue) {
+                        if (!isTestingCreated) {
+                            DestinationsListWeBuyTesting *newTesting = (DestinationsListWeBuyTesting *)[NSEntityDescription insertNewObjectForEntityForName:@"DestinationsListWeBuyTesting" inManagedObjectContext:self.moc];
+                            newTesting.date = [NSDate date];
+                            newTesting.destinationsListWeBuy = destinationForTests;
+                            [self finalSave:self.moc];
+                            [self updateUIwithMessage:@"processing tests:start testing" withObjectID:nil withLatestMessage:YES error:YES];
+                            isTestingCreated = YES;
+                        }  
+
+                    } else {
+                        // ok we have results
+                        
+                    }
+                    NSLog(@"CLIENT CONTROLLER: testing processed.");
+
+                }
+            } else {
+                NSLog(@"CLIENT CONTROLLER: warning, key was not received");
+            }
+
+        }
+
+    } else [self updateUIwithMessage:@"object not found" withObjectID:nil withLatestMessage:YES error:YES];
+}
 
 @end

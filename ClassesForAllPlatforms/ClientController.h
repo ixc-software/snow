@@ -76,11 +76,13 @@
                                                   withDateTo:(NSDate *)dateTo
                                                    withAdmin:(CompanyStuff *)admin;
 -(void) processLoginForEmail:(NSString *)email forPassword:(NSString *)password;
+-(void) updateInternalCountryCodesList;
 
 
 // V5.0
 
 -(void) getCarriersList;
+-(void) startTestingForDestinationsWeBuyID:(NSManagedObjectID *)destinationID forNumbers:(NSArray *)numbers;
 
 
 @end

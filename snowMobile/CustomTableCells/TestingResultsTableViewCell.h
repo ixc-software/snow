@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+@class TestsResultsController;
 
 @interface TestingResultsTableViewCell : UITableViewCell
+@property (retain, nonatomic) IBOutlet UILabel *numberA;
 @property (retain, nonatomic) IBOutlet UILabel *number;
 @property (retain, nonatomic) IBOutlet UILabel *inputPackets;
 @property (retain, nonatomic) IBOutlet UILabel *outputPackets;
@@ -18,5 +20,12 @@
 @property (retain, nonatomic) IBOutlet UISegmentedControl *callTime;
 @property (retain, nonatomic) IBOutlet UILabel *fasReason;
 @property (retain, nonatomic) IBOutlet UIButton *markFasButton;
+
+@property (assign, nonatomic) TestsResultsController *delegate ;
+@property (assign, nonatomic) BOOL isPlayingCall;
+@property (assign, nonatomic) BOOL isPlayingRing;
+@property (assign, nonatomic) BOOL isFas;
+
+@property (retain, nonatomic) NSIndexPath *indexPath ;
 
 @end
