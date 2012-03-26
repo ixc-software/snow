@@ -163,6 +163,7 @@
         [clientController updateInternalCountryCodesList];
 
         self.operationName = @"Download from V5.0 data";
+        NSLog(@"%@",operationName);
 
         [clientController getCarriersList];
 

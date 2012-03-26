@@ -579,6 +579,7 @@ static char encodingTable[64] = {
     [fetchRequest release];
     return mainSystem;
 }
+#pragma mark TODO - change server to send codes list too;
 
 -(void) updateInternalCountryCodesList;
 {
@@ -604,11 +605,15 @@ static char encodingTable[64] = {
     NSArray *allObjectsCodesSpecificForGUIDS = [self getAllObjectsWithGUIDs:allGUIDsCodesSpecific withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser];
     
     //NSArray *updatedCodesSpecificIDs = 
-    if (allGUIDsCodesSpecific && allObjectsCodesSpecificForGUIDS) [self updateGraphForObjects:allObjectsCodesSpecificForGUIDS withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser withRootObject:mainSystem isEveryTenPercentSave:NO isNecessaryToLocalRegister:NO];
+    if (allGUIDsCodesSpecific && allObjectsCodesSpecificForGUIDS) [self updateGraphForObjects:allObjectsCodesSpecificForGUIDS withEntity:@"CountrySpecificCodeList" withAdmin:authorizedUser withRootObject:mainSystem isEveryTenPercentSave:YES isNecessaryToLocalRegister:NO];
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [self finalSave:moc];
-    
+    [self finalSave:self.moc];
+    NSUInteger countForCodes = allGUIDsCodesSpecific.count;
+
     [allGUIDsCodesSpecific enumerateObjectsUsingBlock:^(NSString *guid, NSUInteger idx, BOOL *stop) {
+        NSNumber *percentDone = [NSNumber numberWithDouble:[[NSNumber numberWithUnsignedInteger:idx] doubleValue] / [[NSNumber numberWithUnsignedInteger:countForCodes] doubleValue]];
+        [self updateUIwithMessage:@"Parse internal codes list.." andProgressPercent:percentDone withObjectID:nil];
+
         NSError *error = nil;
         NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
         NSEntityDescription *entity = [NSEntityDescription entityForName:@"CountrySpecificCodeList" inManagedObjectContext:self.moc];
@@ -620,7 +625,7 @@ static char encodingTable[64] = {
             [lastObject.codesList enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
                 [self.moc deleteObject:obj];
             }];
-            
+
             NSString *codes = lastObject.codes;
             NSArray *codesList = [codes componentsSeparatedByString:@","];
             [codesList enumerateObjectsUsingBlock:^(NSString *code, NSUInteger idx, BOOL *stop) {
@@ -631,11 +636,14 @@ static char encodingTable[64] = {
                 new.countrySpecificCodesList = lastObject;
                 new.code = codeNumber;
             }];
+            [self finalSave:self.moc];
+
         } else NSLog(@"CLIENT CONTROLLER: first setup, warning, CountrySpecificCodeList not founded to create CodeList");
-        
+        //if ((idx % countForCodes * 0.1 == 0)) [self finalSave:self.moc];//,NSLog(@">>>>>>>updateGraphForObjects SAVED");
+
     }];
     //NSLog(@">>>>>> updated codes specific IDs:%@",updatedCodesSpecificIDs);
-    [self finalSave:moc];
+    //[self finalSave:self.moc];
 
 #endif
     
@@ -3002,10 +3010,12 @@ static char encodingTable[64] = {
         // ups, let's start updates ( i like to get carriers list here only
         [self updateUIwithMessage:@"we are start updates." withObjectID:nil withLatestMessage:YES error:NO];
 #if defined(SNOW_CLIENT_ENTERPRISE)
-
+        
         [self updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:NO];
 #else
+    NSLog(@"CLIENT CONTROLLER: >>>>>>>>> update graph started");
         [self updateLocalGraphFromSnowEnterpriseServerWithDateFrom:nil withDateTo:nil withIncludeCarrierSubentities:YES];
+    NSLog(@"CLIENT CONTROLLER: >>>>>>>>> update graph finished");
 
 #endif
     [self updateUIwithMessage:@"done" withObjectID:nil withLatestMessage:YES error:NO];
