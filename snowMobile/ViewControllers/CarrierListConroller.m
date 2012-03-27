@@ -306,7 +306,7 @@
         //NSLog(@"display cell at index:%@ with carrier:%@",indexPath,carrier.name);
         cellLocal.name.text = carrier.name;
         cellLocal.responsibleFirstAndLastName.text = [NSString stringWithFormat:@"%@ %@",carrier.companyStuff.firstName,carrier.companyStuff.lastName];
-        cellLocal.destinations.text = [NSString stringWithFormat:@"Destinations: %@",[NSNumber numberWithUnsignedInteger:carrier.destinationsListPushList.count]];
+        cellLocal.destinations.text = [NSString stringWithFormat:@"for sale:%@ we buy:%@ pushlist:%@",[NSNumber numberWithUnsignedInteger:carrier.destinationsListForSale.count],[NSNumber numberWithUnsignedInteger:carrier.destinationsListWeBuy.count],[NSNumber numberWithUnsignedInteger:carrier.destinationsListPushList.count]];
         
         //NSString *objectGUID = [objects valueForKey:@"rootObjectGUID"];
         NSDictionary *objectStatus =[[NSUserDefaults standardUserDefaults] objectForKey:carrier.GUID];

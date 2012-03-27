@@ -23,6 +23,7 @@
 #import "ClientController.h"
 #import "HelpForInfoView.h"
 #import "TestsResultsController.h"
+#import "TestingNumbersInputController.h"
 
 #import <QuartzCore/QuartzCore.h>
 #pragma mark -
@@ -1098,8 +1099,12 @@
         } else { 
             animationDelete = UITableViewRowAnimationTop;
             animationInsert = UITableViewRowAnimationBottom;
-            
         }
+        NSArray *visibleCells = [self.tableView visibleCells];
+        [visibleCells enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            NSLog(@"DESTINATIONS LIST: [sections count] > 0 >>>>>>:%@",[self.tableView indexPathForCell:obj]);
+        }];
+
         //NSLog(@"DESTINATIONS LIST: PREVIOUS OPENED:%@",[NSIndexPath indexPathForRow:0 inSection:previousOpenedSection]);
 
         [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:previousOpenedSection]] withRowAnimation:animationDelete];
@@ -1112,15 +1117,20 @@
     } else {
         [sections addIndex:sectionOpened];
         //NSLog(@"DESTINATIONS LIST: OPENED:%@",[NSIndexPath indexPathForRow:0 inSection:sectionOpened.unsignedIntegerValue]);
+        NSArray *visibleCells = [self.tableView visibleCells];
+        [visibleCells enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            NSLog(@"DESTINATIONS LIST: [sections count] == 0 >>>>>>:%@",[self.tableView indexPathForCell:obj]);
+        }];
 
         [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sectionOpened]] withRowAnimation:UITableViewRowAnimationTop];
     }
     [self.tableView endUpdates];
-    
+
+    /*
     NSUInteger selectedSegmentIndex = selectRoutes.selectedSegmentIndex;
 
-    if (selectedSegmentIndex == 1) { 
-        /*
+     if (selectedSegmentIndex == 1) { 
+        
         NSManagedObjectID *objectID = sectionHeaderView.objectID;
         
         NSManagedObject *destination = [self.managedObjectContext objectWithID:objectID];
@@ -1139,6 +1149,7 @@
             newResult.timeRinging = [NSDate dateWithTimeIntervalSinceNow:-80];
             newResult.timeTrying = [NSDate dateWithTimeIntervalSinceNow:-90];
             newResult.timeInvite = [NSDate dateWithTimeIntervalSinceNow:-100];
+            newResult.timeSetup = [NSDate dateWithTimeIntervalSinceNow:-100];
             
             
             DestinationsListWeBuyResults *newResult2 = (DestinationsListWeBuyResults *)[NSEntityDescription insertNewObjectForEntityForName:@"DestinationsListWeBuyResults" inManagedObjectContext:destination.managedObjectContext];
@@ -1149,6 +1160,7 @@
             newResult2.timeRinging = [NSDate dateWithTimeIntervalSinceNow:-80];
             newResult2.timeTrying = [NSDate dateWithTimeIntervalSinceNow:-90];
             newResult2.timeInvite = [NSDate dateWithTimeIntervalSinceNow:-100];
+            newResult2.timeSetup = [NSDate dateWithTimeIntervalSinceNow:-100];
 
             NSError *error = nil;
             
@@ -1156,9 +1168,9 @@
             
             if (error) NSLog(@"TEST RESULTS: error save:%@",[error localizedDescription]);
             NSLog(@">>>>>>>>>>>>>>>> destination testing created for destination guid:%@",[destination valueForKey:@"GUID"]);
-        } else NSLog(@">>>>>>>>>>>>>>>> destination testing not created, destination entity:%@",destination.entity.name);*/
+        } else NSLog(@">>>>>>>>>>>>>>>> destination testing not created, destination entity:%@",destination.entity.name);
         
-    }    
+    }    */
 }
 
 -(void)sectionHeaderView:(DestinationsHeaderView*)sectionHeaderView 
@@ -1582,7 +1594,7 @@
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"country" ascending:YES];
     NSMutableArray *sortDescriptors = [[NSMutableArray alloc] init];//]WithObjects:sortDescriptor, nil];
                                         
-    NSPredicate *filterPredicate = nil;
+    __block NSPredicate *filterPredicate = nil;
     
     /*
      Set up the fetched results controller.
@@ -1593,12 +1605,14 @@
     // Edit the entity name as appropriate.
     NSEntityDescription *entity = nil;
     NSMutableArray *predicateArray = [NSMutableArray array];
-    NSMutableArray *predicateUsersArray = [NSMutableArray array];
+    //NSMutableArray *predicateUsersArray = [NSMutableArray array];
     
     if (selectRoutes.selectedSegmentIndex == 0) { 
         entity = [NSEntityDescription entityForName:@"DestinationsListForSale" inManagedObjectContext:self.managedObjectContext];
         if (routesChangeFilterWithOrWithoutTraffic.selectedSegmentIndex == 0) { 
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(lastUsedMinutesLenght > 0)"];
+            //filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObject:predicate]];
+
             [predicateArray addObject:predicate];
             NSSortDescriptor *lastUsedMinutesLenghtDescriptor = [[NSSortDescriptor alloc] initWithKey:@"lastUsedMinutesLenght" ascending:NO];
             [sortDescriptors addObject:lastUsedMinutesLenghtDescriptor];
@@ -1612,6 +1626,8 @@
         entity = [NSEntityDescription entityForName:@"DestinationsListWeBuy" inManagedObjectContext:self.managedObjectContext];
         if (routesChangeFilterWithOrWithoutTraffic.selectedSegmentIndex == 0) { 
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(lastUsedMinutesLenght > 0)"];
+            //filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObject:predicate]];
+
             [predicateArray addObject:predicate];
             NSSortDescriptor *lastUsedMinutesLenghtDescriptor = [[NSSortDescriptor alloc] initWithKey:@"lastUsedMinutesLenght" ascending:NO];
             [sortDescriptors addObject:lastUsedMinutesLenghtDescriptor];
@@ -1627,46 +1643,34 @@
     
     
     if(searchString && searchString.length) {
-        if (selectRoutes.selectedSegmentIndex == 0) {
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(country CONTAINS[cd] %@) OR (specific CONTAINS[cd] %@) and (destinationsListForSale.carrier.name contains[cd] %@)", searchString,searchString,searchString];
-            [predicateArray addObject:predicate];
+        if (selectRoutes.selectedSegmentIndex == 0 || selectRoutes.selectedSegmentIndex == 1) {
+            NSArray *separatedSearchString = [searchString componentsSeparatedByString:@" "];
+            [separatedSearchString enumerateObjectsUsingBlock:^(NSString *stringForSearch, NSUInteger idx, BOOL *stop) {
+                if (stringForSearch.length > 0) {
+                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(country CONTAINS[cd] %@) OR (specific CONTAINS[cd] %@) OR (carrier.name CONTAINS[cd] %@) OR (carrier.name CONTAINS[cd] %@) OR (ANY codesvsDestinationsList.code == %@)", stringForSearch,stringForSearch,stringForSearch,stringForSearch,stringForSearch];
+                    //filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObject:predicate]];
+
+                    [predicateArray addObject:predicate];
+                    NSLog(@"DESTINATIONS LIST: add to search:%@",stringForSearch);
+                }
+
+            }];
         }
 
-        if (selectRoutes.selectedSegmentIndex == 1) {
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(country CONTAINS[cd] %@) OR (specific CONTAINS[cd] %@) OR (destinationsListWeBuy.carrier.name contains[cd] %@)", searchString,searchString,searchString];
-            [predicateArray addObject:predicate];
-        }
-
-        
         if (selectRoutes.selectedSegmentIndex == 2) {
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(country CONTAINS[cd] %@) OR (specific CONTAINS[cd] %@)", searchString,searchString];
+            //filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObject:predicate]];
+
             [predicateArray addObject:predicate];
         }
-
-//        if(filterPredicate)
-//        {
-//            filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:filterPredicate, [NSCompoundPredicate orPredicateWithSubpredicates:predicateArray], nil]];
-//        }
-//        else
-//        {
-//            filterPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:predicateArray];
-//        }
     }
     
     if (isControllerStartedFromOutsideTabbar && selectedCarrierID) {
         Carrier *selectedCarrier = (Carrier *)[self.managedObjectContext objectWithID:selectedCarrierID];
         if (selectedCarrier) { 
-//            if(filterPredicate)
-//            {
-//                filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:filterPredicate, [NSCompoundPredicate orPredicateWithSubpredicates:predicateArray], nil]];
-//            }
-//            else
-//            {
-//                filterPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:predicateArray];
-//            }
-            [predicateArray addObject:[NSPredicate predicateWithFormat:@"carrier.GUID == %@",selectedCarrier.GUID]];
+            //filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObject:[NSPredicate predicateWithFormat:@"carrier.GUID == %@",selectedCarrier.GUID]]];
 
-//            filterPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:[NSArray arrayWithObject:[NSPredicate predicateWithFormat:@"carrier.GUID == %@",selectedCarrier.GUID]]];
+            [predicateArray addObject:[NSPredicate predicateWithFormat:@"carrier.GUID == %@",selectedCarrier.GUID]];
         }
         else NSLog(@"DESTIONATIONS PUSH LIST:warning carrier not found to make predicate in fetch");
         //NSLog(@"%@",selectedCarrier.destinationsListWeBuy);
@@ -1677,32 +1681,19 @@
         CompanyStuff *admin = [clientController authorization];
         NSSet *allUsers = admin.currentCompany.companyStuff;
         [allUsers enumerateObjectsUsingBlock:^(CompanyStuff *user, BOOL *stop) {
-            [predicateUsersArray addObject:[NSPredicate predicateWithFormat:@"carrier.companyStuff.GUID == %@",user.GUID]];
+            //filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObject:[NSPredicate predicateWithFormat:@"carrier.companyStuff.GUID == %@",user.GUID]]];
+
+            [predicateArray addObject:[NSPredicate predicateWithFormat:@"carrier.companyStuff.GUID == %@",user.GUID]];
             NSLog(@"DESTINATIONS VIEW:user allow to look:%@",user.email);
         }];
-//        NSMutableArray *allCarriersPredicate = [NSMutableArray array];
-//        NSSet *allCarriers = admin.carrier;
-//        [allCarriers enumerateObjectsUsingBlock:^(Carrier *carrier, BOOL *stop) {
-//        }];
-        
-//        filterPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:allCarriersPredicate];
         [clientController release];
-
     }
-    
-    
-//    if(filterPredicate)
-//    {
-//        filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:filterPredicate, [NSCompoundPredicate orPredicateWithSubpredicates:predicateArray], nil]];
-//    }
-//    else
-//    {
-    NSPredicate *filterPredicateForUsers = [NSCompoundPredicate orPredicateWithSubpredicates:predicateUsersArray];
+
+    //NSPredicate *filterPredicateForUsers = [NSCompoundPredicate orPredicateWithSubpredicates:predicateUsersArray];
     
     filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:predicateArray];
-    filterPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:[NSArray arrayWithObjects:filterPredicate, filterPredicateForUsers,nil]];
-//    }
-    //NSLog(@"DESTIONATIONS PUSH LIST:final predicate in fetch:%@ entity name:%@ sort descriptors:%@",filterPredicate,entity.name,sortDescriptors);
+    //filterPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:[NSArray arrayWithObjects:filterPredicate, filterPredicateForUsers,nil]];
+    NSLog(@"DESTIONATIONS LIST:final predicate in fetch:%@ entity name:%@ sort descriptors:%@",filterPredicate,entity.name,sortDescriptors);
     [fetchRequest setPredicate:filterPredicate];
     
     // Set the batch size to a suitable number.
@@ -1753,7 +1744,7 @@
 - (void)controller:(NSFetchedResultsController *)controller didChangeSection:(id <NSFetchedResultsSectionInfo>)sectionInfo
            atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type
 {
-    //NSLog(@"DESTINATIONS LIST:change sections");
+    NSLog(@"DESTINATIONS LIST:change sections");
     
     switch(type)
     {
@@ -1777,12 +1768,12 @@
     {
             
         case NSFetchedResultsChangeInsert:
-            //NSLog(@"DESTINATIONS LIST:INSERT to indexpath :%@",newIndexPath);
+            NSLog(@"DESTINATIONS LIST:INSERT to indexpath :%@",newIndexPath);
             [tableView insertSections:[NSIndexSet indexSetWithIndex:newIndexPath.row] withRowAnimation:UITableViewRowAnimationTop];
             break;
             
         case NSFetchedResultsChangeDelete:
-            //NSLog(@"DESTINATIONS LIST: DELETE : %@",indexPath);
+            NSLog(@"DESTINATIONS LIST: DELETE : %@",indexPath);
             [sections removeIndex:indexPath.row];
             [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.row] withRowAnimation:UITableViewRowAnimationFade];
             
@@ -1791,17 +1782,16 @@
             break;
             
         case NSFetchedResultsChangeUpdate:
-            //NSLog(@"DESTINATIONS LIST:UPDATE :%@",indexPath);
+            NSLog(@"DESTINATIONS LIST:UPDATE :%@",indexPath);
             [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.row] withRowAnimation:UITableViewRowAnimationFade];
             //[self configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
             break;
             
         case NSFetchedResultsChangeMove:
         {
-            //NSLog(@"DESTINATIONS LIST:CHANGE MOVE from :%@ to %@ ",indexPath,newIndexPath);
             BOOL isOpened = [sections containsIndex:indexPath.row];
             if (isOpened) {
-                //NSLog(@"DESTINATIONS LIST:OPENED CHANGE MOVE from :%@ to %@ ",indexPath,newIndexPath);
+                NSLog(@"DESTINATIONS LIST:OPENED CHANGE MOVE from :%@ to %@ ",indexPath,newIndexPath);
                 
                 [sections removeIndex:indexPath.row];
                 [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.row] withRowAnimation:UITableViewRowAnimationTop];
@@ -1811,9 +1801,11 @@
                 [tableView reloadSections:[NSIndexSet indexSetWithIndex:newIndexPath.row] withRowAnimation:UITableViewRowAnimationFade];
 
             } else { 
+                NSLog(@"DESTINATIONS LIST:CHANGE MOVE from :%@ to %@ ",indexPath,newIndexPath);
+
                 [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.row] withRowAnimation:UITableViewRowAnimationFade];
                 [tableView insertSections:[NSIndexSet indexSetWithIndex:newIndexPath.row] withRowAnimation:UITableViewRowAnimationFade]; 
-                [tableView reloadSections:[NSIndexSet indexSetWithIndex:newIndexPath.row] withRowAnimation:UITableViewRowAnimationFade];
+                //[tableView reloadSections:[NSIndexSet indexSetWithIndex:newIndexPath.row] withRowAnimation:UITableViewRowAnimationFade];
 
             }
             break;
@@ -2077,7 +2069,7 @@
 -(void)updateUIWithData:(NSArray *)data;
 {
     NSString *status = [data objectAtIndex:0];
-    //NSLog(@"DESTINATIONS LIST: updated UI: status is:%@",status);
+    NSLog(@"DESTINATIONS LIST: updated UI: status is:%@",status);
     
     //NSNumber *progress = [data objectAtIndex:1];
     NSNumber *isItLatestMessage = [data objectAtIndex:2];
@@ -2093,6 +2085,43 @@
     if ([isItLatestMessage boolValue] || [isError boolValue]) {    
         dispatch_async(dispatch_get_main_queue(), ^(void) { 
             NSLog(@"DESTINSTIONS:error %@",status);
+            
+            if ([status isEqualToString:@"processing tests:no numbers found"]) {
+                mobileAppDelegate *delegate = (mobileAppDelegate *)[UIApplication sharedApplication].delegate;
+                
+                TestingNumbersInputController *testsViewController = nil;
+                NSManagedObject *destinationMain = [self.managedObjectContext objectWithID:objectID];
+                
+                if ([delegate isPad]) testsViewController =[[TestingNumbersInputController alloc] initWithNibName:@"TestingNumbersInputControllerIPad" bundle:nil withMoc:self.managedObjectContext withDestinationMain:destinationMain];
+                else testsViewController =[[TestingNumbersInputController alloc] initWithNibName:@"TestingNumbersInputController" bundle:nil withMoc:self.managedObjectContext withDestinationMain:destinationMain];
+                
+                
+                testsViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+
+                [self.navigationController pushViewController:testsViewController animated:YES];
+                [testsViewController release];
+            }
+            
+            if ([status isEqualToString:@"processing tests:start testing"]) {
+                
+                NSManagedObject *destinationMain = [self.managedObjectContext objectWithID:objectID];
+                NSIndexPath *objectIndexPath = [self.fetchedResultsController indexPathForObject:destinationMain];
+                DestinationsPushListCell *cell = (DestinationsPushListCell *)[self.tableView cellForRowAtIndexPath:objectIndexPath];
+                NSLog(@"DESTINATIONS LIST: start testing for objectIndexPath:%@ cell:%@",objectIndexPath,cell);
+    
+            }
+            
+            if ([status isEqualToString:@"processing tests:finish testing"]) {
+                NSManagedObject *destinationMain = [self.managedObjectContext objectWithID:objectID];
+                NSIndexPath *objectIndexPath = [self.fetchedResultsController indexPathForObject:destinationMain];
+                DestinationsPushListCell *cell = (DestinationsPushListCell *)[self.tableView cellForRowAtIndexPath:objectIndexPath];
+
+                NSLog(@"DESTINATIONS LIST: finish testing for objectIndexPath:%@ cell:%@",objectIndexPath,cell);
+
+            }
+
+
+
         });
         
     } else {
@@ -2116,6 +2145,7 @@
                 operationProgress.progress = progress.floatValue;
                 operationProgress.hidden = NO;            
             }
+
         });
         
     }
@@ -2126,35 +2156,36 @@
         dispatch_async(dispatch_get_main_queue(), ^(void) { 
             
             if ([[[updatedDestination entity] name] isEqualToString:@"DestinationsListPushList"]) {
-            }
-            
-            DestinationsPushListCell *cell = (DestinationsPushListCell *)[self.tableView cellForRowAtIndexPath:objectIndexPath];
-            if (![isItLatestMessage boolValue]) {
-                [cell.activity startAnimating];
-                cell.activity.hidden = NO;
-                [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:objectIndexPath.row] withRowAnimation:UITableViewRowAnimationFade];
-                //[self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:1 inSection:objectIndexPath.row]] withRowAnimation:UITableViewRowAnimationFade];
                 
-                [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-            } else {
-                [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-                carriersProgress.hidden = YES;
-                carriersProgressTitle.hidden = YES;
-                operationTitle.hidden = YES;
-                operationProgress.hidden = YES;
-                routesChangeFilterWithOrWithoutTraffic.hidden = NO;
-                //NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
-
-                [cell.activity stopAnimating];
-                cell.activity.hidden = YES;
-                
-                if ([status isEqualToString:@"remove object finish"] || [status isEqualToString:@"destination for removing not found"]) { 
-                    [self.managedObjectContext deleteObject:updatedDestination];
-                    [self safeSave];
-                    [self.tableView reloadData];
+                DestinationsPushListCell *cell = (DestinationsPushListCell *)[self.tableView cellForRowAtIndexPath:objectIndexPath];
+                if (![isItLatestMessage boolValue]) {
+                    [cell.activity startAnimating];
+                    cell.activity.hidden = NO;
+                    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:objectIndexPath.row] withRowAnimation:UITableViewRowAnimationFade];
+                    //[self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:1 inSection:objectIndexPath.row]] withRowAnimation:UITableViewRowAnimationFade];
+                    
+                    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+                } else {
+                    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+                    carriersProgress.hidden = YES;
+                    carriersProgressTitle.hidden = YES;
+                    operationTitle.hidden = YES;
+                    operationProgress.hidden = YES;
+                    routesChangeFilterWithOrWithoutTraffic.hidden = NO;
+                    //NSLog(@"routesChangeFilterWithOrWithoutTraffic.hidden = NO;");
+                    
+                    [cell.activity stopAnimating];
+                    cell.activity.hidden = YES;
+                    
+                    if ([status isEqualToString:@"remove object finish"] || [status isEqualToString:@"destination for removing not found"]) { 
+                        [self.managedObjectContext deleteObject:updatedDestination];
+                        [self safeSave];
+                        [self.tableView reloadData];
+                    }
+                    
                 }
-                
             }
+
             
         });
     }

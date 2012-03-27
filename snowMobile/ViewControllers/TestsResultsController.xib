@@ -42,7 +42,6 @@
 						<string key="NSFrame">{{0, 44}, {320, 416}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">3</int>
@@ -62,7 +61,7 @@
 					<object class="IBUISegmentedControl" id="105557464">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{0, 7}, {320, 30}}</string>
+						<string key="NSFrame">{{20, 7}, {280, 30}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="481705282"/>
@@ -278,6 +277,40 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">TestsResultsController</string>
 					<string key="superclassName">UIViewController</string>
+					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="markAsFasForIndexPath:">NSIndexPath</string>
+						<string key="playCallForIndexPath:">NSIndexPath</string>
+						<string key="playRingForIndexPath:">NSIndexPath</string>
+						<string key="stopPlayCallForIndexPath:">NSIndexPath</string>
+						<string key="stopPlayRingForIndexPath:">NSIndexPath</string>
+						<string key="unmarkAsFasForIndexPath:">NSIndexPath</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="markAsFasForIndexPath:">
+							<string key="name">markAsFasForIndexPath:</string>
+							<string key="candidateClassName">NSIndexPath</string>
+						</object>
+						<object class="IBActionInfo" key="playCallForIndexPath:">
+							<string key="name">playCallForIndexPath:</string>
+							<string key="candidateClassName">NSIndexPath</string>
+						</object>
+						<object class="IBActionInfo" key="playRingForIndexPath:">
+							<string key="name">playRingForIndexPath:</string>
+							<string key="candidateClassName">NSIndexPath</string>
+						</object>
+						<object class="IBActionInfo" key="stopPlayCallForIndexPath:">
+							<string key="name">stopPlayCallForIndexPath:</string>
+							<string key="candidateClassName">NSIndexPath</string>
+						</object>
+						<object class="IBActionInfo" key="stopPlayRingForIndexPath:">
+							<string key="name">stopPlayRingForIndexPath:</string>
+							<string key="candidateClassName">NSIndexPath</string>
+						</object>
+						<object class="IBActionInfo" key="unmarkAsFasForIndexPath:">
+							<string key="name">unmarkAsFasForIndexPath:</string>
+							<string key="candidateClassName">NSIndexPath</string>
+						</object>
+					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="resultCell">TestingResultsTableViewCell</string>
 						<string key="tableView">UITableView</string>
