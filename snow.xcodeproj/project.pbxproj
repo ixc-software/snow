@@ -631,6 +631,7 @@
 		FAD0656E1505675300847AA9 /* LinkedinUpdateDataController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAD0656C1505675300847AA9 /* LinkedinUpdateDataController.m */; };
 		FAD0656F1505675300847AA9 /* LinkedinUpdateDataController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAD0656C1505675300847AA9 /* LinkedinUpdateDataController.m */; };
 		FAD065701505675300847AA9 /* LinkedinUpdateDataController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAD0656C1505675300847AA9 /* LinkedinUpdateDataController.m */; };
+		FADDC0BC1523154300E8FBA5 /* snow.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = FAC4AB7C1520722A0087C82F /* snow.xcdatamodeld */; };
 		FAE8221C1514643E0091AE41 /* snowLogoMain.tiff in Resources */ = {isa = PBXBuildFile; fileRef = FAE8221B1514643E0091AE41 /* snowLogoMain.tiff */; };
 		FAF4FCE3151C802F00F7125E /* testingClear.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF4FCE2151C802F00F7125E /* testingClear.png */; };
 		FAF4FCE8151C857B00F7125E /* TestsResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAF4FCE6151C857B00F7125E /* TestsResultsController.m */; };
@@ -2306,6 +2307,7 @@
 				FA10FC6314F8468D0014C545 /* README.md in Resources */,
 				FA10FC6414F8468D0014C545 /* FirstAuthorizationSetup.xib in Resources */,
 				FA10FC6514F8468D0014C545 /* FirstAuthorizationSetupCompaniesList.xib in Resources */,
+				FADDC0BC1523154300E8FBA5 /* snow.xcdatamodeld in Resources */,
 				FA10FC6614F8468D0014C545 /* snowLogo.tiff in Resources */,
 				FA10FC6714F8468D0014C545 /* DestinationsView.xib in Resources */,
 				FA10FC6814F8468D0014C545 /* FinancialView.xib in Resources */,

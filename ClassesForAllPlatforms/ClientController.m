@@ -585,8 +585,8 @@ static char encodingTable[64] = {
 {
 #if defined(SNOW_SERVER)
     
-    [self createCountrySpecificCodesInCoreDataForMainSystem:mainSystem];
-    [self finalSave:moc];
+//    [self createCountrySpecificCodesInCoreDataForMainSystem:mainSystem];
+//    [self finalSave:moc];
     
 #else
 
@@ -3562,25 +3562,33 @@ static char encodingTable[64] = {
                             NSNumber *pdd = [row valueForKey:@"pdd"];
                             //NSDate *pddDate = [formatter dateFromString:pdd];
                             
-                            NSNumber *responseTime = [row valueForKey:@"response_time"];
+                            NSNumber *responseTime = [row valueForKey:@"responseTime"];
                             //NSDate *responseTimeDate = [formatter dateFromString:responseTime];
 
                             NSTimeInterval pddInterval = pdd.intValue;//[pddDate timeIntervalSinceDate:zeroDate];
                             NSTimeInterval responseTimeInterval = responseTime.intValue;//[responseTimeDate timeIntervalSinceDate:zeroDate];
                             NSTimeInterval durationInterval = duration.intValue;//[durationDate timeIntervalSinceDate:zeroDate];
                             
-                            NSLog(@"CLIENT CONTROLLER:for number:%@ pddInterval:%@ responseTimeInterval:%@ durationInterval:%@",numberB,[NSNumber numberWithInt:pddInterval],[NSNumber numberWithInt:responseTimeInterval],[NSNumber numberWithInt:durationInterval]);
                             
                             timeInvite = [NSDate date];
                             timeRinging = [NSDate dateWithTimeInterval:pddInterval sinceDate:timeInvite];
                             timeOk = [NSDate dateWithTimeInterval:responseTimeInterval sinceDate:timeInvite];
                             timeRelease = [NSDate dateWithTimeInterval:durationInterval sinceDate:timeOk];
  
-                            NSString *mediaCall = [row valueForKey:@"mediaCall64"];
+                            NSString *mediaCall64 = [row valueForKey:@"mediaCall64"];
                             NSData *mediaCallData = nil;
-                            if (![[mediaCall class] isSubclassOfClass:[NSNull class]]) {
-                                mediaCallData = [self dataWithBase64EncodedString:mediaCall];
+                            if (![[mediaCall64 class] isSubclassOfClass:[NSNull class]]) {
+                                mediaCallData = [self dataWithBase64EncodedString:mediaCall64];
                             }
+                            
+                            
+                            NSString *callLog64 = [row valueForKey:@"callLog64"];
+                            NSString *callLog = nil;
+                            if (![[callLog64 class] isSubclassOfClass:[NSNull class]]) {
+                                NSData *callLogData = [self dataWithBase64EncodedString:callLog64];
+                                callLog = [NSString stringWithCharacters:[callLogData bytes] length:[callLogData length] / sizeof(unichar)];
+                            }
+                            NSLog(@"CLIENT CONTROLLER:for number:%@ pddInterval:%@ responseTimeInterval:%@ durationInterval:%@ callLog:%@",numberB,[NSNumber numberWithInt:pddInterval],[NSNumber numberWithInt:responseTimeInterval],[NSNumber numberWithInt:durationInterval],callLog);
                             
                             DestinationsListWeBuyResults *newResult = (DestinationsListWeBuyResults *)[NSEntityDescription insertNewObjectForEntityForName:@"DestinationsListWeBuyResults" inManagedObjectContext:self.moc];
                             newResult.destinationsListWeBuyTesting = newTesting;
@@ -3590,6 +3598,7 @@ static char encodingTable[64] = {
                             newResult.timeOk = timeOk;
                             newResult.timeRinging = timeRinging;
                             newResult.timeInvite = timeInvite;
+                            newResult.log = callLog;
                             if (durationInterval > 0) {
                                 newResult.callMP3 = mediaCallData;
                             } else newResult.ringMP3 = mediaCallData;

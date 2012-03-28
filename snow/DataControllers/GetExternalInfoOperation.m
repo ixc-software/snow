@@ -61,7 +61,6 @@
     
     
     UpdateDataController *update = [[UpdateDataController alloc] initWithDatabase:databaseForUsing];
-    
     databaseForUsing.connections = delegate.getExternalInfoView.databaseConnections.arrangedObjects;
     //[databaseForUsing release];
     Carrier *necessaryCarrier = (Carrier *)[update.moc objectWithID:carrierID];
@@ -70,12 +69,12 @@
     
     [progress updateCarrierName:carrierName];
     progress.operationName = operationName;
-    NSDate *startCheckRates = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
+    //NSDate *startCheckRates = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
     //0 - dont need update 1 - destinationsListForSale 2 - destinationsListWeBuy 3 - both
 
     NSNumber *updateRates = [NSNumber numberWithInt:0];//[update checkIfRatesWasUpdatedforCarrierGUID:carrierID andCarrierName:carrierName];
-    NSTimeInterval interval = [startCheckRates timeIntervalSinceDate:[NSDate date]];
-    [startCheckRates release];
+    //NSTimeInterval interval = [startCheckRates timeIntervalSinceDate:[NSDate date]];
+    //[startCheckRates release];
     //[NSNumber numberWithInt:3];//[update checkIfRatesWasUpdatedforCarrierGUID:carrierGUID andCarrierName:carrierName];
     //NSLog(@"STAT:Carrier %@ need rates update: %@ time to check if need update:%@", carrierName, updateRates,[NSNumber numberWithDouble:interval]);
     BOOL outgoingDestinationsListIsEmpty = NO;
@@ -130,10 +129,24 @@
     if (isCodesWasMissedForSale) { 
         NSLog(@"STAT:Carrier %@  will have update destinations for sale codes.", carrierName);
         [update updateDestinationListforCarrier:carrierID destinationType:0 withProgressUpdateController:progress];
+        
+        UpdateDataController *updateNew = [[UpdateDataController alloc] initWithDatabase:databaseForUsing];
+
+        isCodesWasMissedForSale = [updateNew updateStatisticforCarrierGUID:carrierGUID andCarrierName:carrierName destinationType:0 withProgressUpdateController:progress];
+        if (isCodesWasMissedForSale) NSLog(@"GET EXTERNAL DATA: >>>>>>> warning Carrier %@  still have missed codes FOR SALE after codes update.", carrierName);
+        [updateNew release];
+
     }
     if (isCodesWasMissedWeBuy) { 
         NSLog(@"STAT:Carrier %@  will have update destinations we buy codes.", carrierName);
         [update updateDestinationListforCarrier:carrierID destinationType:1 withProgressUpdateController:progress];
+        
+        UpdateDataController *updateNew = [[UpdateDataController alloc] initWithDatabase:databaseForUsing];
+
+        isCodesWasMissedWeBuy = [updateNew updateStatisticforCarrierGUID:carrierGUID andCarrierName:carrierName destinationType:1 withProgressUpdateController:progress];
+        if (isCodesWasMissedWeBuy) NSLog(@"GET EXTERNAL DATA: >>>>>>> warning Carrier %@  still have missed codes WE BUY after codes update.", carrierName);
+        [updateNew release];
+
     }
     
     NSDate *startFinancialRatingAndInvoices = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
