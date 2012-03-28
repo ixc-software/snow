@@ -53,6 +53,7 @@
 						<int key="IBUIStyle">1</int>
 						<int key="IBUISeparatorStyle">2</int>
 						<int key="IBUISectionIndexMinimumDisplayRowCount">0</int>
+						<bool key="IBUIAllowsSelection">NO</bool>
 						<bool key="IBUIShowsSelectionImmediatelyOnTouchBegin">YES</bool>
 						<float key="IBUIRowHeight">195</float>
 						<float key="IBUISectionHeaderHeight">10</float>
@@ -225,7 +226,7 @@
 						<string key="outputPackets">UILabel</string>
 						<string key="pddTime">UISegmentedControl</string>
 						<string key="playButton">UIButton</string>
-						<string key="setupConnectTime">UISegmentedControl</string>
+						<string key="responseTime">UISegmentedControl</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="callTime">
@@ -264,8 +265,8 @@
 							<string key="name">playButton</string>
 							<string key="candidateClassName">UIButton</string>
 						</object>
-						<object class="IBToOneOutletInfo" key="setupConnectTime">
-							<string key="name">setupConnectTime</string>
+						<object class="IBToOneOutletInfo" key="responseTime">
+							<string key="name">responseTime</string>
 							<string key="candidateClassName">UISegmentedControl</string>
 						</object>
 					</dictionary>

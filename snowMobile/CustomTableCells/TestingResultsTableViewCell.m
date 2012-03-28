@@ -15,7 +15,7 @@
 @synthesize inputPackets;
 @synthesize outputPackets;
 @synthesize playButton;
-@synthesize setupConnectTime;
+@synthesize responseTime;
 @synthesize pddTime;
 @synthesize callTime;
 @synthesize fasReason;
@@ -124,7 +124,7 @@
     [inputPackets release];
     [outputPackets release];
     [playButton release];
-    [setupConnectTime release];
+    [responseTime release];
     [pddTime release];
     [callTime release];
     [fasReason release];

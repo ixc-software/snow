@@ -1647,7 +1647,7 @@
             NSArray *separatedSearchString = [searchString componentsSeparatedByString:@" "];
             [separatedSearchString enumerateObjectsUsingBlock:^(NSString *stringForSearch, NSUInteger idx, BOOL *stop) {
                 if (stringForSearch.length > 0) {
-                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(country CONTAINS[cd] %@) OR (specific CONTAINS[cd] %@) OR (carrier.name CONTAINS[cd] %@) OR (carrier.name CONTAINS[cd] %@) OR (ANY codesvsDestinationsList.code == %@)", stringForSearch,stringForSearch,stringForSearch,stringForSearch,stringForSearch];
+                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(country CONTAINS[cd] %@) OR (specific CONTAINS[cd] %@) OR (carrier.name CONTAINS[cd] %@) OR (carrier.name CONTAINS[cd] %@)", stringForSearch,stringForSearch,stringForSearch,stringForSearch];
                     //filterPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObject:predicate]];
 
                     [predicateArray addObject:predicate];

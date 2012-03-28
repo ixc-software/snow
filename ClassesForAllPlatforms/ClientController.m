@@ -3540,8 +3540,8 @@ static char encodingTable[64] = {
 
                     } else {
                         // ok we have results
-                        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-                        [formatter setDateFormat:@"hh:mm:ss:SSS"];
+//                        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+//                        [formatter setDateFormat:@"hh:mm:ss:SSS"];
                         NSArray *result = [receivedObject valueForKey:@"result"];
                         [result enumerateObjectsUsingBlock:^(NSDictionary *row, NSUInteger idx, BOOL *stop) {
                             NSDate * timeInvite;
@@ -3550,23 +3550,24 @@ static char encodingTable[64] = {
                             NSDate * timeRinging;
                             //NSDate * timeTrying;
                             
-                            NSString *zeroDateString = [NSString stringWithFormat:@"00:00:00:000"];
-                            NSDate *zeroDate = [formatter dateFromString:zeroDateString];
+                            //NSString *zeroDateString = [NSString stringWithFormat:@"00:00:00:000"];
+                            //NSDate *zeroDate = [formatter dateFromString:zeroDateString];
                             
-                            NSString *numberB = [row valueForKey:@"destinationNumber"];
+                            NSNumber *numberB = [row valueForKey:@"destinationNumber"];
+                            NSNumber *numberA = [row valueForKey:@"aNumber"];
                             
-                            NSString *duration = [row valueForKey:@"duration"];
-                            NSDate *durationDate = [formatter dateFromString:duration];
+                            NSNumber *duration = [row valueForKey:@"duration"];
+                            //NSDate *durationDate = [formatter dateFromString:duration];
                             
-                            NSString *pdd = [row valueForKey:@"pdd"];
-                            NSDate *pddDate = [formatter dateFromString:pdd];
+                            NSNumber *pdd = [row valueForKey:@"pdd"];
+                            //NSDate *pddDate = [formatter dateFromString:pdd];
                             
-                            NSString *responseTime = [row valueForKey:@"response_time"];
-                            NSDate *responseTimeDate = [formatter dateFromString:responseTime];
+                            NSNumber *responseTime = [row valueForKey:@"response_time"];
+                            //NSDate *responseTimeDate = [formatter dateFromString:responseTime];
 
-                            NSTimeInterval pddInterval = [pddDate timeIntervalSinceDate:zeroDate];
-                            NSTimeInterval responseTimeInterval = [responseTimeDate timeIntervalSinceDate:zeroDate];
-                            NSTimeInterval durationInterval = [durationDate timeIntervalSinceDate:zeroDate];
+                            NSTimeInterval pddInterval = pdd.intValue;//[pddDate timeIntervalSinceDate:zeroDate];
+                            NSTimeInterval responseTimeInterval = responseTime.intValue;//[responseTimeDate timeIntervalSinceDate:zeroDate];
+                            NSTimeInterval durationInterval = duration.intValue;//[durationDate timeIntervalSinceDate:zeroDate];
                             
                             NSLog(@"CLIENT CONTROLLER:for number:%@ pddInterval:%@ responseTimeInterval:%@ durationInterval:%@",numberB,[NSNumber numberWithInt:pddInterval],[NSNumber numberWithInt:responseTimeInterval],[NSNumber numberWithInt:durationInterval]);
                             
@@ -3575,7 +3576,7 @@ static char encodingTable[64] = {
                             timeOk = [NSDate dateWithTimeInterval:responseTimeInterval sinceDate:timeInvite];
                             timeRelease = [NSDate dateWithTimeInterval:durationInterval sinceDate:timeOk];
  
-                            NSString *mediaCall = [row valueForKey:@"mediaCall"];
+                            NSString *mediaCall = [row valueForKey:@"mediaCall64"];
                             NSData *mediaCallData = nil;
                             if (![[mediaCall class] isSubclassOfClass:[NSNull class]]) {
                                 mediaCallData = [self dataWithBase64EncodedString:mediaCall];
@@ -3583,8 +3584,8 @@ static char encodingTable[64] = {
                             
                             DestinationsListWeBuyResults *newResult = (DestinationsListWeBuyResults *)[NSEntityDescription insertNewObjectForEntityForName:@"DestinationsListWeBuyResults" inManagedObjectContext:self.moc];
                             newResult.destinationsListWeBuyTesting = newTesting;
-                            newResult.numberB = numberB;
-                            newResult.numberA = @"380442399740";
+                            newResult.numberB = numberB.description;
+                            newResult.numberA = numberA.description;
                             newResult.timeRelease = timeRelease;
                             newResult.timeOk = timeOk;
                             newResult.timeRinging = timeRinging;
@@ -3594,7 +3595,7 @@ static char encodingTable[64] = {
                             } else newResult.ringMP3 = mediaCallData;
                             newResult.destinationsListWeBuyTesting = newTesting;
                         }];   
-                        [formatter release];
+                        //[formatter release];
                         [self finalSave:self.moc];
                         isTestingCompleete = YES;
                         [self updateUIwithMessage:@"processing tests:finish testing" withObjectID:destinationID withLatestMessage:YES error:NO];

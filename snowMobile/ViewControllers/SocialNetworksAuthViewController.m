@@ -684,14 +684,14 @@
         NSString *name = [group valueForKey:@"name"];
 
         NSMutableString *linkedinText = [[NSMutableString alloc] initWithCapacity:0];
-        [linkedinText appendString:bodyForEdit];
+        if (bodyForEdit) [linkedinText appendString:bodyForEdit];
         [linkedinText appendString:@"\n"];
         NSMutableString *finalDestinationsListString = [self stringFromObjectIDs:managedObjectIDs includeRates:includeRates.boolValue];
-        [linkedinText appendString:finalDestinationsListString];
+        if (finalDestinationsListString) [linkedinText appendString:finalDestinationsListString];
         [linkedinText appendString:@"\n"];
         [linkedinText appendString:@"\n"];
 
-        [linkedinText appendString:signature];
+        if (finalDestinationsListString) [linkedinText appendString:signature];
         [linkedinText appendString:@"\n"];
 
         [linkedinText appendString:@"(posted from snow ixc)"];

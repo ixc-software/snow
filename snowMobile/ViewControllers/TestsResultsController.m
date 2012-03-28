@@ -20,6 +20,7 @@
 @synthesize tableView;
 @synthesize destination,resultCell;
 @synthesize managedObjectContext;
+@synthesize player;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withMoc:(NSManagedObjectContext *)moc withDestinationMain:(NSManagedObject *)destinationMain;
 {
@@ -118,21 +119,19 @@
     cell.numberA.text = [NSString stringWithFormat:@"from +%@",result.numberA];
 
     NSDate *timeInvite = result.timeInvite;
-    NSDate *timeRinging = result.timeRinging;
-
-    NSTimeInterval inviteRingingInterval = [timeRinging timeIntervalSinceDate:timeInvite];
-    [cell.setupConnectTime removeAllSegments];
-    [cell.setupConnectTime insertSegmentWithTitle:[NSString stringWithFormat:@"%@ sec",[NSNumber numberWithInt:inviteRingingInterval]] atIndex:0 animated:NO];
-    
-    NSDate *timeSetup = result.timeSetup;
     NSDate *timeOk = result.timeOk;
-    
-    NSTimeInterval ringingOkInterval = [timeOk timeIntervalSinceDate:timeSetup];
-    [cell.pddTime removeAllSegments];
-    [cell.pddTime insertSegmentWithTitle:[NSString stringWithFormat:@"%@ sec",[NSNumber numberWithInt:ringingOkInterval]] atIndex:0 animated:NO];
-    
-    
+    NSDate *timeRinging = result.timeRinging;
     NSDate *timeRelease = result.timeRelease;
+
+    NSTimeInterval inviteToRingingInterval = [timeRinging timeIntervalSinceDate:timeInvite];
+    [cell.pddTime removeAllSegments];
+    [cell.pddTime insertSegmentWithTitle:[NSString stringWithFormat:@"%@ sec",[NSNumber numberWithInt:inviteToRingingInterval]] atIndex:0 animated:NO];
+    
+    NSTimeInterval inviteOkInterval = [timeOk timeIntervalSinceDate:timeInvite];
+
+    [cell.responseTime removeAllSegments];
+    [cell.responseTime insertSegmentWithTitle:[NSString stringWithFormat:@"%@ sec",[NSNumber numberWithInt:inviteOkInterval]] atIndex:0 animated:NO];
+    
     
     NSTimeInterval okReleaseInterval = [timeRelease timeIntervalSinceDate:timeOk];
     [cell.callTime removeAllSegments];
@@ -161,29 +160,21 @@
     }  else {
         cell.fasReason.hidden = YES;
         cell.markFasButton.hidden = YES;
+        cell.playButton.hidden = YES;
     }
+    
     cell.playButton.enabled = NO;
 
     if (result.ringMP3 && result.ringMP3.length > 0) {
         cell.playButton.enabled = YES;
         [cell.markFasButton addTarget:cell action:@selector(playRing:) forControlEvents:UIControlEventTouchUpInside];
-
     }
 
-    //if (result.ringMP3 && result.ringMP3.length > 0) {
-//    if (cell.isPlayingCall) {
-//        cell.playButton.enabled = YES;
-//        [cell.playButton addTarget:cell action:@selector(stopPlayCall:) forControlEvents:UIControlEventTouchUpInside];
-//        NSLog(@">>>>>>>>>>>stopPlayCall:");
-//
-//    } else {
+    if (result.callMP3 && result.callMP3.length > 0) {
         
         cell.playButton.enabled = YES;
         [cell.playButton addTarget:cell action:@selector(playCall:) forControlEvents:UIControlEventTouchUpInside];
-        //NSLog(@">>>>>>>>>>>playCall:");
-
-//    }
-    //}
+    }
 
     /*@dynamic numberB;
     @dynamic inputPackets;
@@ -253,11 +244,27 @@
 - (IBAction)playCallForIndexPath:(NSIndexPath *)indexPath;
 {
     NSLog(@"playCallForIndexPath:%@",indexPath);
+    DestinationsListWeBuyResults *selectedObject = [[self fetchedResultsController] objectAtIndexPath:indexPath];
+    NSData *callMP3 = selectedObject.callMP3;
+    NSError *error = nil;
+    if (!player) player = [[AVAudioPlayer alloc] initWithData:callMP3 error:&error];
+    else { 
+        [player stop];
+        [player release],player = nil;
+        player = [[AVAudioPlayer alloc] initWithData:callMP3 error:&error];
+    }
+    //player.numberOfLoops= -1;
+
+    if (error) NSLog(@"TEST RESULTS: error play:%@",[error localizedDescription]);
+    player.delegate = self;
+    [player play];
+
 
 }
 - (IBAction)stopPlayCallForIndexPath:(NSIndexPath *)indexPath;
 {
     NSLog(@"stopPlayCallForIndexPath:%@",indexPath);
+    if (player) [player stop];
 }
 
 - (IBAction)unmarkAsFasForIndexPath:(NSIndexPath *)indexPath;

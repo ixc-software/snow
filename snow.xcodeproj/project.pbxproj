@@ -470,6 +470,7 @@
 		FA6675931520BC17000C2E04 /* TestingNumbersInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6675911520BC17000C2E04 /* TestingNumbersInputController.m */; };
 		FA6675941520BC17000C2E04 /* TestingNumbersInputController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA6675921520BC17000C2E04 /* TestingNumbersInputController.xib */; };
 		FA6675961520C09D000C2E04 /* TestingNumbersInputControllerIPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA6675951520C09D000C2E04 /* TestingNumbersInputControllerIPad.xib */; };
+		FA6675A015222BBB000C2E04 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA66759F15222BBB000C2E04 /* AVFoundation.framework */; };
 		FA6DBAFD150E6B9D0090BDA4 /* user-group-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = FA6DBAFB150E6B9D0090BDA4 /* user-group-icon.png */; };
 		FA6DBAFF150E6C0C0090BDA4 /* myRoutes.png in Resources */ = {isa = PBXBuildFile; fileRef = FA6DBAFE150E6C0C0090BDA4 /* myRoutes.png */; };
 		FA6DBB01150E6D1A0090BDA4 /* profit-3.png in Resources */ = {isa = PBXBuildFile; fileRef = FA6DBB00150E6D1A0090BDA4 /* profit-3.png */; };
@@ -1042,6 +1043,7 @@
 		FA6675911520BC17000C2E04 /* TestingNumbersInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestingNumbersInputController.m; sourceTree = "<group>"; };
 		FA6675921520BC17000C2E04 /* TestingNumbersInputController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TestingNumbersInputController.xib; sourceTree = "<group>"; };
 		FA6675951520C09D000C2E04 /* TestingNumbersInputControllerIPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TestingNumbersInputControllerIPad.xib; sourceTree = "<group>"; };
+		FA66759F15222BBB000C2E04 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		FA6DBAFB150E6B9D0090BDA4 /* user-group-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "user-group-icon.png"; sourceTree = "<group>"; };
 		FA6DBAFE150E6C0C0090BDA4 /* myRoutes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = myRoutes.png; sourceTree = "<group>"; };
 		FA6DBB00150E6D1A0090BDA4 /* profit-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profit-3.png"; sourceTree = "<group>"; };
@@ -1305,6 +1307,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA6675A015222BBB000C2E04 /* AVFoundation.framework in Frameworks */,
 				FA4D905614F8BC6800C90E2E /* CoreData.framework in Frameworks */,
 				FA4D905414F8BC5900C90E2E /* UIKit.framework in Frameworks */,
 				FA4D905214F8BC4F00C90E2E /* Security.framework in Frameworks */,
@@ -1502,6 +1505,7 @@
 		FA3CE30614F7DE3800E3AF17 = {
 			isa = PBXGroup;
 			children = (
+				FA66759F15222BBB000C2E04 /* AVFoundation.framework */,
 				FAAAA3A515111F8400040C9B /* snowLogoServer.icns */,
 				FAAAA3A315111F6500040C9B /* snowLogoEnterprise.icns */,
 				FAAAA3A115111F2C00040C9B /* snowLogo.icns */,

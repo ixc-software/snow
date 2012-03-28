@@ -15,7 +15,7 @@
 @property (retain, nonatomic) IBOutlet UILabel *inputPackets;
 @property (retain, nonatomic) IBOutlet UILabel *outputPackets;
 @property (retain, nonatomic) IBOutlet UIButton *playButton;
-@property (retain, nonatomic) IBOutlet UISegmentedControl *setupConnectTime;
+@property (retain, nonatomic) IBOutlet UISegmentedControl *responseTime;
 @property (retain, nonatomic) IBOutlet UISegmentedControl *pddTime;
 @property (retain, nonatomic) IBOutlet UISegmentedControl *callTime;
 @property (retain, nonatomic) IBOutlet UILabel *fasReason;

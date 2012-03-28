@@ -8,9 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "TestingResultsTableViewCell.h"
+#import <AVFoundation/AVFoundation.h>
 
-@interface TestsResultsController : UIViewController <NSFetchedResultsControllerDelegate>
+@interface TestsResultsController : UIViewController <NSFetchedResultsControllerDelegate,AVAudioPlayerDelegate>
 @property (nonatomic, retain) NSManagedObject *destination;
+@property (nonatomic, retain) AVAudioPlayer *player;
 
 @property (nonatomic, retain) IBOutlet TestingResultsTableViewCell *resultCell;
 

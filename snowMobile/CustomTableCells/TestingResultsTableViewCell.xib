@@ -107,7 +107,7 @@
 							<object class="IBUILabel" id="605884084">
 								<reference key="NSNextResponder" ref="143855964"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{7, 33}, {200, 22}}</string>
+								<string key="NSFrame">{{7, 30}, {200, 22}}</string>
 								<reference key="NSSuperview" ref="143855964"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="834758780"/>
@@ -187,7 +187,7 @@
 								<int key="IBUIContentMode">7</int>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-								<string key="IBUIText">SETUP -&gt; CONNECT</string>
+								<string key="IBUIText">INVITE -&gt; OK</string>
 								<object class="NSColor" key="IBUITextColor">
 									<int key="NSColorSpace">2</int>
 									<bytes key="NSRGB">MC4zODAzOTIxOTM4IDAuMzkyMTU2ODk5IDAuNTgwMzkyMTgxOQA</bytes>
@@ -229,7 +229,6 @@
 								<string key="NSFrame">{{190, 156}, {105, 38}}</string>
 								<reference key="NSSuperview" ref="143855964"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -258,7 +257,7 @@
 							</object>
 							<object class="IBUILabel" id="567922745">
 								<reference key="NSNextResponder" ref="143855964"/>
-								<int key="NSvFlags">292</int>
+								<int key="NSvFlags">-2147483356</int>
 								<string key="NSFrame">{{75, 20}, {61, 13}}</string>
 								<reference key="NSSuperview" ref="143855964"/>
 								<reference key="NSWindow"/>
@@ -291,7 +290,7 @@
 							</object>
 							<object class="IBUILabel" id="87085246">
 								<reference key="NSNextResponder" ref="143855964"/>
-								<int key="NSvFlags">292</int>
+								<int key="NSvFlags">-2147483356</int>
 								<string key="NSFrame">{{140, 20}, {61, 13}}</string>
 								<reference key="NSSuperview" ref="143855964"/>
 								<reference key="NSWindow"/>
@@ -317,7 +316,7 @@
 							</object>
 							<object class="IBUILabel" id="201186956">
 								<reference key="NSNextResponder" ref="143855964"/>
-								<int key="NSvFlags">292</int>
+								<int key="NSvFlags">-2147483356</int>
 								<string key="NSFrame">{{7, 20}, {62, 13}}</string>
 								<reference key="NSSuperview" ref="143855964"/>
 								<reference key="NSWindow"/>
@@ -377,7 +376,7 @@
 							<object class="IBUISegmentedControl" id="180506766">
 								<reference key="NSNextResponder" ref="143855964"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{7, 82}, {61, 30}}</string>
+								<string key="NSFrame">{{8, 119}, {61, 30}}</string>
 								<reference key="NSSuperview" ref="143855964"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="259344515"/>
@@ -418,7 +417,7 @@
 							<object class="IBUISegmentedControl" id="259344515">
 								<reference key="NSNextResponder" ref="143855964"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{7, 119}, {61, 30}}</string>
+								<string key="NSFrame">{{7, 82}, {61, 30}}</string>
 								<reference key="NSSuperview" ref="143855964"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="263978768"/>
@@ -577,14 +576,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">setupConnectTime</string>
-						<reference key="source" ref="36448136"/>
-						<reference key="destination" ref="180506766"/>
-					</object>
-					<int key="connectionID">25</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">pddTime</string>
 						<reference key="source" ref="36448136"/>
 						<reference key="destination" ref="259344515"/>
@@ -623,6 +614,14 @@
 					</object>
 					<int key="connectionID">33</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">responseTime</string>
+						<reference key="source" ref="36448136"/>
+						<reference key="destination" ref="180506766"/>
+					</object>
+					<int key="connectionID">35</int>
+				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<array key="orderedObjects">
@@ -649,18 +648,18 @@
 						<array class="NSMutableArray" key="children">
 							<reference ref="258201896"/>
 							<reference ref="367328949"/>
-							<reference ref="180506766"/>
-							<reference ref="259344515"/>
 							<reference ref="183087663"/>
 							<reference ref="222485734"/>
 							<reference ref="777217377"/>
 							<reference ref="263978768"/>
-							<reference ref="605884084"/>
 							<reference ref="834758780"/>
 							<reference ref="567922745"/>
 							<reference ref="87085246"/>
 							<reference ref="201186956"/>
 							<reference ref="724783293"/>
+							<reference ref="259344515"/>
+							<reference ref="180506766"/>
+							<reference ref="605884084"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -762,7 +761,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">34</int>
+			<int key="maxID">35</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -779,7 +778,7 @@
 						<string key="outputPackets">UILabel</string>
 						<string key="pddTime">UISegmentedControl</string>
 						<string key="playButton">UIButton</string>
-						<string key="setupConnectTime">UISegmentedControl</string>
+						<string key="responseTime">UISegmentedControl</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="callTime">
@@ -818,8 +817,8 @@
 							<string key="name">playButton</string>
 							<string key="candidateClassName">UIButton</string>
 						</object>
-						<object class="IBToOneOutletInfo" key="setupConnectTime">
-							<string key="name">setupConnectTime</string>
+						<object class="IBToOneOutletInfo" key="responseTime">
+							<string key="name">responseTime</string>
 							<string key="candidateClassName">UISegmentedControl</string>
 						</object>
 					</dictionary>
@@ -835,6 +834,7 @@
 						<string key="markAsFasForIndexPath:">NSIndexPath</string>
 						<string key="playCallForIndexPath:">NSIndexPath</string>
 						<string key="playRingForIndexPath:">NSIndexPath</string>
+						<string key="stopPlayCallForIndexPath:">NSIndexPath</string>
 						<string key="stopPlayRingForIndexPath:">NSIndexPath</string>
 						<string key="unmarkAsFasForIndexPath:">NSIndexPath</string>
 					</dictionary>
@@ -849,6 +849,10 @@
 						</object>
 						<object class="IBActionInfo" key="playRingForIndexPath:">
 							<string key="name">playRingForIndexPath:</string>
+							<string key="candidateClassName">NSIndexPath</string>
+						</object>
+						<object class="IBActionInfo" key="stopPlayCallForIndexPath:">
+							<string key="name">stopPlayCallForIndexPath:</string>
 							<string key="candidateClassName">NSIndexPath</string>
 						</object>
 						<object class="IBActionInfo" key="stopPlayRingForIndexPath:">
