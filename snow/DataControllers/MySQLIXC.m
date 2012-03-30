@@ -691,7 +691,7 @@
 -(NSArray *) carriersList;
 {
     NSMutableArray *carriers = [NSMutableArray arrayWithCapacity:0];
-    NSArray *companies = [self fetchNamedAllWith:@"select * from Users where rname = '7/7' or rname = '7/15' or rname = '15/15' or rname = '15/7' or rname = '30/15' or rname = '30/30' or rname = '7/3' or rname = '7/5' or rname = 'sv' or rname = '1/1EMS' or rname = 'druzhyni' or rname = 'minasyan'"]; 
+    NSArray *companies = [self fetchNamedAllWith:@"select * from Users where rname = '7/7' or rname = '7/15' or rname = '15/15' or rname = '15/7' or rname = '30/15' or rname = '30/30' or rname = '7/3' or rname = '7/5' or rname = 'sv' or rname = 'iva' or rname = '1/1EMS' or rname = 'druzhyni' or rname = 'minasyan'"]; 
     for (NSDictionary *company in companies)
     {
         NSString *companyName = [company valueForKey:@"company"];
@@ -879,7 +879,7 @@
 -(NSArray *) outStatUsedCodesWithStatisticForCarrier:(NSString *)carrier day:(NSString *)day;
 {
     NSArray *usedCodes = [self outStatUsedCodes:carrier day:day];
-    NSLog(@"MYSQL: used OUT codes:%@",usedCodes);
+    //NSLog(@"MYSQL: used OUT codes:%@",usedCodes);
     NSMutableArray *finalusedCodesWithStatistic = [NSMutableArray arrayWithCapacity:0];
     [usedCodes enumerateObjectsWithOptions:NSSortStable usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         NSString *prefix = [obj valueForKey:@"prefix"];
@@ -927,7 +927,7 @@
 
 -(NSArray *) inStatUsedCodes:(NSString *)carrier day:(NSString *)day;
 {
-    NSString *query = [NSString stringWithFormat:@"select InPeers.ruleSet,code, InIPAddresses.prefix, InIPAddresses.realPrefix from FinReportInCache left join InPeers on peerId = InPeers.id left join Users using ( uname ) left join InIPAddresses on InIPAddresses.uid = InPeers.id where company = '%@' and day > %@ group by code,InPeers.ruleSet",carrier,day];
+    NSString *query = [NSString stringWithFormat:@"select InPeers.ruleSet,code, InIPAddresses.prefix, InIPAddresses.realPrefix from FinReportInCache left join InPeers on peerId = InPeers.id left join Users using ( uname ) left join InIPAddresses on InIPAddresses.uid = InPeers.id where company = '%@' and day > '%@' group by code,InPeers.ruleSet",carrier,day];
     NSArray *result = [self fetchNamedAllWith:query];
     NSLog(@"MYSQL: in stat usedCodes:%@",result);
     NSMutableArray *resultForOut = [NSMutableArray arrayWithCapacity:0];
@@ -952,7 +952,7 @@
 
 -(NSArray *) outStatUsedCodes:(NSString *)carrier day:(NSString *)day;
 {
-    NSString *query = [NSString stringWithFormat:@"select OutPeers.ruleSet,OutPeers.prefix,OutPeers.realPrefix, code from FinReportOutCache left join OutPeers on peerId = OutPeers.id left join Users using ( uname ) where company = '%@' and day > %@ group by code,OutPeers.ruleSet",carrier,day];
+    NSString *query = [NSString stringWithFormat:@"select OutPeers.ruleSet,OutPeers.prefix,OutPeers.realPrefix, code from FinReportOutCache left join OutPeers on peerId = OutPeers.id left join Users using ( uname ) where company = '%@' and day > '%@' group by code,OutPeers.ruleSet",carrier,day];
     NSArray *result = [self fetchNamedAllWith:query];
     NSLog(@"MYSQL: out stat usedCodes:%@",result);
 
@@ -1306,17 +1306,48 @@
         return nil; 
     }
     
-    result = [self insertWithQuery:[NSString stringWithFormat:@"insert into InPeers set name='%@', uname='%@', ruleSet = %@, allRoutes = '%@', minDigits = %@, maxDigits = %@, sigOptions = %@, tag = '%@', profitOptionsClass = %@,aNumReplaceClass = %@, yn = 'y'",inPeerName,uname,ruleSetsId,@"n",@"1",@"25",@"12",tag,@"2",anumReplaceClassId]];
+    result = [self insertWithQuery:[NSString stringWithFormat:@"insert into InPeers set name='%@', uname='%@', ruleSet = %@, allRoutes = '%@', minDigits = %@, maxDigits = %@, sigOptions = %@, codec = 1, tag = '%@', profitOptionsClass = %@,aNumReplaceClass = %@, yn = 'y'",inPeerName,uname,ruleSetsId,@"n",@"1",@"25",@"12",tag,@"2",anumReplaceClassId]];
     NSNumber *inPeerID = [result objectAtIndex:0];
+    
     NSString *inPeerIDStr = nil;
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 
     if ([inPeerID intValue] == 0) {
         // maybe inpeer is already there? :
         NSArray *inpeers = [self fetchNamedAllWith:[NSString stringWithFormat:@"select id from InPeers where name='%@'",inPeerName]];
+        [inpeers enumerateObjectsUsingBlock:^(NSDictionary *inpeer, NSUInteger idx, BOOL *stop) {
+            NSString *inPeerID = [inpeer valueForKey:@"id"];
+            [formatter setDateFormat:@"SSS-ss-mm-HH-MM-dd-yyyy"];
+            NSString *newName = [formatter stringFromDate:[NSDate date]];
+            NSArray *resultQuery = [self insertWithQuery:[NSString stringWithFormat:@"update InPeers set name='%@' where id = %@",newName,inPeerID]];
+            if ([[resultQuery objectAtIndex:1] intValue] == 0) NSLog(@"MYSQL:cant update inpeer for id:%@",inPeerIDStr);
+        }];
+        // we are rename all peers so insert new
+        NSString *queryToInsert = [NSString stringWithFormat:@"insert into InPeers set name='%@', uname='%@', ruleSet = %@, allRoutes = '%@', minDigits = %@, maxDigits = %@, sigOptions = %@, codec = 1, tag = '%@', profitOptionsClass = %@,aNumReplaceClass = %@, yn = 'y'",inPeerName,uname,ruleSetsId,@"n",@"1",@"25",@"12",tag,@"2",anumReplaceClassId];
         
-        inPeerIDStr = [[inpeers lastObject] valueForKey:@"id"];
+        result = [self insertWithQuery:queryToInsert];
+        inPeerID = [result objectAtIndex:0];
+        if ([inPeerID intValue] == 0) {
+            [formatter release];
+            NSLog(@"MYSQL: insert new inpeer was failed for carrier:%@ with query:%@ result:%@",carrier,queryToInsert,result); 
+            
+            return nil;
+        }// so attempt was wrong, please check
+        else {
+            NSNumberFormatter *inPeerIDFormatterForRepeat = [[NSNumberFormatter alloc] init];
+            [inPeerIDFormatterForRepeat setFormat:@"#"];
+            inPeerIDStr = [inPeerIDFormatterForRepeat stringFromNumber:inPeerID];
+            [inPeerIDFormatterForRepeat release], inPeerIDFormatterForRepeat = nil;
+        }
+        NSLog(@"MYSQL: 2 >>>>>>> inPeerIDStr:%@",inPeerIDStr);
+        NSArray *inpeersToCheck = [self fetchNamedAllWith:[NSString stringWithFormat:@"select * from InPeers where name='%@'",inPeerName]];
+        NSLog(@"MYSQL: 2 >>>>>>> inpeers:%@",inpeersToCheck);
+
+        //inPeerIDStr = [[inpeers lastObject] valueForKey:@"id"];
+        NSLog(@"MYSQL: 1 >>>>>>> inPeerIDStr:%@ tag:%@",inPeerIDStr,tag);
+
         
+        /*
         if ([inPeerIDStr length] != 0) {
             //ok, some inpeer already there
             //rename it
@@ -1330,11 +1361,14 @@
             // delete previous ips 
             //[self deleteWithQuery:[NSString stringWithFormat:@"delete from InPeerGWS where peer = %@",inPeerIDStr]];
             //[self deleteWithQuery:[NSString stringWithFormat:@"delete from AllowedGroups where ip = %@ and prefix = %@",inPeerIDStr]];
-            result = [self insertWithQuery:[NSString stringWithFormat:@"insert into InPeers set name='%@', uname='%@', ruleSet = %@, allRoutes = '%@', minDigits = %@, maxDigits = %@, sigOptions = %@, tag = '%@', profitOptionsClass = %@,aNumReplaceClass = %@, yn = 'y'",inPeerName,uname,ruleSetsId,@"n",@"1",@"25",@"12",tag,@"2",anumReplaceClassId]];
+            NSString *queryToInsert = [NSString stringWithFormat:@"insert into InPeers set name='%@', uname='%@', ruleSet = %@, allRoutes = '%@', minDigits = %@, maxDigits = %@, sigOptions = %@, tag = '%@', profitOptionsClass = %@,aNumReplaceClass = %@, yn = 'y'",inPeerName,uname,ruleSetsId,@"n",@"1",@"25",@"12",tag,@"2",anumReplaceClassId];
+            
+            result = [self insertWithQuery:queryToInsert];
             inPeerID = [result objectAtIndex:0];
             if ([inPeerID intValue] == 0) {
                 [formatter release];
-     
+                NSLog(@"MYSQL: insert new inpeer was failed for carrier:%@ with query:%@ result:%@",carrier,queryToInsert,result); 
+
                 return nil;
             }// so attempt was wrong, please check
             else {
@@ -1343,13 +1377,19 @@
                 inPeerIDStr = [inPeerIDFormatterForRepeat stringFromNumber:inPeerID];
                 [inPeerIDFormatterForRepeat release], inPeerIDFormatterForRepeat = nil;
             }
+            NSLog(@"MYSQL: 2 >>>>>>> inPeerIDStr:%@",inPeerIDStr);
+            NSArray *inpeers = [self fetchNamedAllWith:[NSString stringWithFormat:@"select * from InPeers where name='%@'",inPeerName]];
+            NSLog(@"MYSQL: 2 >>>>>>> inpeers:%@",inpeers);
+
         }
         // something wrong not based on inpeer duplicate
         
         else { 
             [formatter release];
             return nil;
-        }
+        }*/
+        
+        
     } else {
     
         NSNumberFormatter *inPeerIDFormatter = [[NSNumberFormatter alloc] init];
@@ -1357,6 +1397,8 @@
         inPeerIDStr = [inPeerIDFormatter stringFromNumber:inPeerID];
         [inPeerIDFormatter release], inPeerIDFormatter = nil;
     }
+    
+    NSLog(@"MYSQL: 3 >>>>>>> inPeerIDStr:%@",inPeerIDStr);
     
     // insert NAS
     NSArray *gws = [self fetchNamedAllWith:[NSString stringWithFormat:@"select id from gws"]];
@@ -1374,13 +1416,20 @@
         for (NSString *code in codesList)
         {
             NSString *realPrefix = [prefix stringByAppendingString:code];
-            NSArray *ipAddressInsert = [self insertWithQuery:[NSString stringWithFormat:@"insert into InIPAddresses set uid='%@', ip='%@', prefix='%@', realPrefix='%@';",inPeerIDStr,ipAddress,code,realPrefix]];
+//            NSArray *currenIPs = [self fetchNamedAllWith:[NSString stringWithFormat:@"select * InIPAddresses set uid='%@', ip='%@', prefix='%@', realPrefix='%@';",inPeerIDStr,ipAddress,realPrefix,code]];
+//            [currenIPs enumerateObjectsUsingBlock:^(NSDictionary *row, NSUInteger idx, BOOL *stop) {
+//                
+//                [self deleteWithQuery:[NSString stringWithFormat:@"delete from InIPAddresses where ip='%@' and prefix='%@';",ipAddress,code]];
+//
+//            }];
+//            
+            NSArray *ipAddressInsert = [self insertWithQuery:[NSString stringWithFormat:@"insert into InIPAddresses set uid='%@', ip='%@', prefix='%@', realPrefix='%@';",inPeerIDStr,ipAddress,realPrefix,code]];
             
             if ([[ipAddressInsert objectAtIndex:0] intValue] == 0){ 
                 
-                [self deleteWithQuery:[NSString stringWithFormat:@"delete from InIPAddresses where ip='%@' and prefix='%@';",ipAddress,code]];
-                 ipAddressInsert = [self insertWithQuery:[NSString stringWithFormat:@"insert into InIPAddresses set uid='%@', ip='%@', prefix='%@', realPrefix='%@';",inPeerIDStr,ipAddress,code,realPrefix]];
-                if ([[ipAddressInsert objectAtIndex:0] intValue] == 0) NSLog(@"MYSQL:cant insert into InIPAddresses set uid='%@', ip='%@', prefix='%@', realPrefix='%@';",inPeerIDStr,ipAddress,code,realPrefix);
+                [self deleteWithQuery:[NSString stringWithFormat:@"delete from InIPAddresses where ip='%@' and realPrefix='%@';",ipAddress,code]];
+                 ipAddressInsert = [self insertWithQuery:[NSString stringWithFormat:@"insert into InIPAddresses set uid='%@', ip='%@', prefix='%@', realPrefix='%@';",inPeerIDStr,ipAddress,realPrefix,code]];
+                if ([[ipAddressInsert objectAtIndex:0] intValue] == 0) NSLog(@"MYSQL:cant insert into InIPAddresses set uid='%@', ip='%@', prefix='%@', realPrefix='%@';",inPeerIDStr,ipAddress,realPrefix,code);
 
             }
             [formatter setDateFormat:@"yyyy-MM-dd"];

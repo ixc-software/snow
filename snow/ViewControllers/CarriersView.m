@@ -516,7 +516,7 @@
                        context:(void *)context
 {
     
-    //if ([delegate.loggingLevel intValue] == 1) NSLog( @">>>> CARRIER VIEW:Detected Change in keyPath: %@, change:%@", keyPath,change );
+    NSLog( @">>>> CARRIER VIEW:Detected Change in keyPath: %@, change:%@", keyPath,change );
     id new = [change valueForKey:@"new"];
     id old = [change valueForKey:@"old"];
     if ([new isEqualTo:old]) { 
@@ -529,8 +529,8 @@
     
     if (!changedObject) NSLog(@"CARRIER VIEW:warning, object not found");
     else {
-        if ([[changedObject class] isSubclassOfClass:[Carrier class]]) {
-            [changedObject removeObserver:self forKeyPath:@"name"];
+        if ([[object class] isSubclassOfClass:[Carrier class]]) {
+            //[changedObject removeObserver:self forKeyPath:@"name"];
             Carrier *necessaryCarrier = (Carrier *)[self.moc objectWithID:changedObject.objectID];
             [necessaryCarrier setValue:new forKey:keyPath];
             
@@ -547,25 +547,9 @@
 
         } else {
             [allUpdatedObjectIDs addObject:changedObject.objectID];
-            [changedObject setValue:[object valueForKey:@"data"] forKeyPath:[object valueForKey:@"attribute"]];
+            [changedObject setValue:[object valueForKey:@"data"] forKey:[object valueForKey:@"attribute"]];
         }
     }
-        
-    //[self finalSaveForMoc:self.moc];
-    
-//#if defined(SNOW_CLIENT_APPSTORE) || defined(SNOW_CLIENT_ENTERPRISE)
-//    
-//    
-//    AppDelegate *appDelegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
-//    [appDelegate safeSave];
-//    
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-//        
-//        ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[[delegate managedObjectContext] persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
-//        [clientController putObjectWithTimeoutWithIDs:[NSArray arrayWithObject:[changedObject objectID]] mustBeApproved:NO];
-//        [clientController release];
-//    });
-//#endif
     
 }
 

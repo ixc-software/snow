@@ -632,6 +632,7 @@
 		FAD0656F1505675300847AA9 /* LinkedinUpdateDataController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAD0656C1505675300847AA9 /* LinkedinUpdateDataController.m */; };
 		FAD065701505675300847AA9 /* LinkedinUpdateDataController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAD0656C1505675300847AA9 /* LinkedinUpdateDataController.m */; };
 		FADDC0BC1523154300E8FBA5 /* snow.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = FAC4AB7C1520722A0087C82F /* snow.xcdatamodeld */; };
+		FADF479A1524AE3800295DCE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FADF47991524AE3800295DCE /* AVFoundation.framework */; };
 		FAE8221C1514643E0091AE41 /* snowLogoMain.tiff in Resources */ = {isa = PBXBuildFile; fileRef = FAE8221B1514643E0091AE41 /* snowLogoMain.tiff */; };
 		FAF4FCE3151C802F00F7125E /* testingClear.png in Resources */ = {isa = PBXBuildFile; fileRef = FAF4FCE2151C802F00F7125E /* testingClear.png */; };
 		FAF4FCE8151C857B00F7125E /* TestsResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAF4FCE6151C857B00F7125E /* TestsResultsController.m */; };
@@ -1174,6 +1175,7 @@
 		FACE80C514F8D96500AD9981 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		FAD0656B1505675300847AA9 /* LinkedinUpdateDataController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkedinUpdateDataController.h; sourceTree = "<group>"; };
 		FAD0656C1505675300847AA9 /* LinkedinUpdateDataController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LinkedinUpdateDataController.m; sourceTree = "<group>"; };
+		FADF47991524AE3800295DCE /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		FAE8221B1514643E0091AE41 /* snowLogoMain.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = snowLogoMain.tiff; sourceTree = "<group>"; };
 		FAF4FCE2151C802F00F7125E /* testingClear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testingClear.png; sourceTree = "<group>"; };
 		FAF4FCE5151C857B00F7125E /* TestsResultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestsResultsController.h; sourceTree = "<group>"; };
@@ -1282,6 +1284,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FADF479A1524AE3800295DCE /* AVFoundation.framework in Frameworks */,
 				FA01830B150F28E0002EBAFE /* IOKit.framework in Frameworks */,
 				FA4A0EB414F8A439001A2139 /* WebKit.framework in Frameworks */,
 				FA10FC5314F8468D0014C545 /* CalendarStore.framework in Frameworks */,
@@ -1506,6 +1509,7 @@
 		FA3CE30614F7DE3800E3AF17 = {
 			isa = PBXGroup;
 			children = (
+				FADF47991524AE3800295DCE /* AVFoundation.framework */,
 				FA66759F15222BBB000C2E04 /* AVFoundation.framework */,
 				FAAAA3A515111F8400040C9B /* snowLogoServer.icns */,
 				FAAAA3A315111F6500040C9B /* snowLogoEnterprise.icns */,
@@ -3242,7 +3246,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
@@ -3270,7 +3274,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",

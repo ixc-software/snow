@@ -659,7 +659,7 @@
         NSString *groupName = [group valueForKey:@"name"];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(country == %@) and (specific == %@)",country,specific];
         NSMutableDictionary *countrySpecific = [[[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList filteredArrayUsingPredicate:predicate] lastObject];
-        NSMutableArray *currentGroups = [countrySpecific valueForKey:@"outGroups"];
+        NSMutableArray *currentGroups = [NSMutableArray arrayWithArray:[countrySpecific valueForKey:@"outGroups"]];
         
         predicate = [NSPredicate predicateWithFormat:@"(name == %@)",groupName];
         if ([[currentGroups filteredArrayUsingPredicate:predicate] count] == 0) [currentGroups addObject:group];
@@ -670,7 +670,7 @@
         NSArray *enabledPeers = [outPeersInGroup filteredArrayUsingPredicate:predicate];
         predicate = [NSPredicate predicateWithFormat:@"selected == %@", [NSNumber numberWithBool:NO]];
 
-        NSArray *disabledPeers = [outPeersInGroup filteredArrayUsingPredicate:predicate];
+        //NSArray *disabledPeers = [outPeersInGroup filteredArrayUsingPredicate:predicate];
         
         if (![group valueForKey:@"id"]) {
             // create new group
@@ -695,7 +695,7 @@
             [currentGroups addObject:updatedGroupMutable];
             [countrySpecific setValue:currentGroups forKey:@"outGroups"];
             
-        } else [database updateOutGroupsListWithOutPeersListInsideForOutGroup:[group valueForKey:@"id"] forEnabledOutPeers:enabledPeers forDisabledOutPeers:disabledPeers];
+        } else [database updateOutGroupsListWithOutPeersListInsideForOutGroup:[group valueForKey:@"id"] forEnabledOutPeers:enabledPeers forDisabledOutPeers:nil];
          
     }
     //NSLog(@"countrySpecificNew:%@",countrySpecificNew);
@@ -842,13 +842,17 @@
                                                              forPercent:percent 
                                                   forLinesForActivation:lines];
                         }
+                        NSDictionary *selectedRateSheetAndPrefixes = rateSheetsAndPrefixesSelected.lastObject;
+                        NSString *rateSheetName = [selectedRateSheetAndPrefixes valueForKey:@"rateSheetName"];
                         
                         NSDictionary *destinationForAdd = [NSDictionary dictionaryWithObjectsAndKeys:
                                                            countryForAdd,@"country",
                                                            specificForAdd,@"specific", 
                                                            prefix,@"prefix",
                                                            rateSheetID,@"rateSheetID",
-                                                           rateForAdd,@"rate",groupsForAdd,@"groups",
+                                                           rateSheetName,@"rateSheetName",
+                                                           rateForAdd,@"rate",
+                                                           groupsForAdd,@"groups",
                                                            inPeerId, @"inPeerId",
                                                            nil];
                         
@@ -1391,7 +1395,10 @@
 //        NSMutableArray *testingView = [NSMutableArray arrayWithObject:@"Testing..."];
 //        destination.testingResult = testingView;
         destinationReceived.testingRestultInfo = @"Testing...";
-        [self finalSave];
+        //[self finalSave];
+        
+        //newTest = (DestinationsListWeBuyTesting *)[self.moc objectWithID:newTest.objectID];
+                   
 //        AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
         [delegate.destinationsView localMocMustUpdate];
 
@@ -1594,13 +1601,21 @@
     NSData *media = result.media_ogg;
     NSData *mediaRing = result.media_ogg_ring;
     NSMutableDictionary *paths = [NSMutableDictionary dictionaryWithCapacity:0];
+    NSError *error = nil;
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyyMMddHHmmssSSS"];
+                              
+    NSString *fileName = [NSString stringWithFormat:@"%@VoiceFiles/%@_voice_%@.ogg",[delegate applicationFilesDirectory],result.dstnum,[formatter stringFromDate:[NSDate date]]];
+    NSURL *fileURL = [NSURL URLWithString:fileName];
 
-    NSString *fileName = [NSString stringWithFormat:@"%@/VoiceFiles/%@_voice_%@.ogg",[delegate applicationFilesDirectory],result.dstnum,[NSDate date]];
-    if (![media writeToFile:fileName atomically:YES]) NSLog(@"TEST: write to file media is wrong");
+    if (![media writeToURL:fileURL options:NSDataWritingAtomic error:&error]) NSLog(@"TEST: write to file media is wrong:%@",[error localizedDescription]);
     [paths setValue:fileName forKey:@"media_ogg"];
-    fileName = [NSString stringWithFormat:@"%@/VoiceFiles/%@_ring_%@.ogg",[delegate applicationFilesDirectory],result.dstnum,[NSDate date]];
-    if (![mediaRing writeToFile:fileName atomically:YES]) NSLog(@"TEST: write to file media ring is wrong");
+    fileName = [NSString stringWithFormat:@"%@VoiceFiles/%@_ring_%@.ogg",[delegate applicationFilesDirectory],result.dstnum,[formatter stringFromDate:[NSDate date]]];
+    fileURL = [NSURL URLWithString:fileName];
+    
+    if (![mediaRing writeToURL:fileURL options:NSDataWritingAtomic error:&error]) NSLog(@"TEST: write to file media ring is wrong:%@",[error localizedDescription]);
     [paths setValue:fileName forKey:@"media_ogg_ring"];
+    [formatter release];
     return [NSDictionary dictionaryWithDictionary:paths];
 }
 
@@ -2035,37 +2050,43 @@ forIsUpdateCarriesListOnExternalServer:YES];
             for (NSString *rateSheetID in rateSheetIDsMutable) {
                 for (NSString *prefix in prefixesMutable) {
                     NSPredicate *rateSheetLook = [NSPredicate predicateWithFormat:@"(rateSheetID == %@) AND (prefix == %@)",rateSheetID,prefix];
-                    NSManagedObject *lastDestinationObject = [destinations lastObject] ;
+                    NSArray *finteredDestinations = [destinations filteredArrayUsingPredicate:rateSheetLook];
                     
-                    NSSet *allCodes = [lastDestinationObject valueForKey:@"codesvsDestinationsList"];
-                    NSSet *codes = [allCodes filteredSetUsingPredicate:rateSheetLook];
+                    NSManagedObject *lastDestinationObject = finteredDestinations.lastObject ;
+                    
+                    //NSSet *allCodes = [lastDestinationObject valueForKey:@"codesvsDestinationsList"];
+                    //NSSet *codes = [allCodes filteredSetUsingPredicate:rateSheetLook];
                     //NSLog(@"Code:%@\n",code);                    
-                    if ([codes count] != 0) {
-                        CodesvsDestinationsList *codeObject = [codes anyObject];
+                    if (lastDestinationObject) {
+                        NSSet *allCodes = [lastDestinationObject valueForKey:@"codesvsDestinationsList"];
+                        CodesvsDestinationsList *codeObject = [allCodes anyObject];
                         NSString *rateSheetName = codeObject.rateSheetName;
                         NSDictionary *mix = [NSDictionary dictionaryWithObjectsAndKeys:prefix,@"prefix",rateSheetID,@"rateSheetID", rateSheetName,@"rateSheetName",nil];
                         //NSLog(@"object%@",mix);
                         [rateSheetsAndPrefixes addObject:mix];
                         // NSLog(@"Add object%@",rateSheetsAndPrefixes);
-                    }
+                    } else NSLog(@"UPDATE DATA: not found one destinations warning, for rateSheetID:%@ and prefix:%@",rateSheetID,prefix);
                 }
             }   
         } else {
             for (NSString *prefix in prefixesMutable) {
                 NSPredicate *rateSheetLook = [NSPredicate predicateWithFormat:@"(prefix == %@)",prefix];
-                NSManagedObject *lastDestinationObject = [destinations lastObject] ;
+                NSArray *finteredDestinations = [destinations filteredArrayUsingPredicate:rateSheetLook];
+                
+                NSManagedObject *lastDestinationObject = finteredDestinations.lastObject ;
 
-                NSSet *allCodes = [lastDestinationObject valueForKey:@"codesvsDestinationsList"];
-                NSSet *codes = [allCodes filteredSetUsingPredicate:rateSheetLook];
+                //NSSet *allCodes = [lastDestinationObject valueForKey:@"codesvsDestinationsList"];
+                //NSSet *codes = [allCodes filteredSetUsingPredicate:rateSheetLook];
                 //NSLog(@"Code:%@\n",code);
-                if ([codes count] != 0) {
-                    CodesvsDestinationsList *codeObject = [codes anyObject];
+                if (lastDestinationObject) {
+                    NSSet *allCodes = [lastDestinationObject valueForKey:@"codesvsDestinationsList"];
+                    CodesvsDestinationsList *codeObject = [allCodes anyObject];
                     NSString *rateSheetName = codeObject.rateSheetName;
                     NSDictionary *mix = [NSDictionary dictionaryWithObjectsAndKeys:prefix,@"prefix", rateSheetName,@"rateSheetName",nil];
                     //NSLog(@"object%@",mix);
                     [rateSheetsAndPrefixes addObject:mix];
                     // NSLog(@"Add object%@",rateSheetsAndPrefixes);
-                }
+                } else NSLog(@"UPDATE DATA: not found one destinations warning, for prefix:%@",prefix);
             }
         }
         
@@ -2124,51 +2145,20 @@ forIsUpdateCarriesListOnExternalServer:YES];
                            withRelationShipName:(NSString *)relationShipName 
                               forCurrentContent:(NSArray *)currentContent;
 {
-//    AppDelegate *delegate = (AppDelegate *)[[NSApplication sharedApplication] delegate];
-//    NSArray *currentContent = [delegate.carriersForAddNewDestinationsController arrangedObjects];
-    
-//    NSString *pathFileToSave = [[delegate applicationSupportDirectory] stringByAppendingString:@"/carrierListForAddDestination.ary"];
-//    if ([currentContent count] == 0) {
-//        currentContent = [NSArray arrayWithContentsOfFile:pathFileToSave];
-//        NSLog(@"UPDATE DATA CONTROLLER:carriers list was restored from file.");
-//    } else NSLog(@"UPDATE DATA CONTROLLER:carriers list was created from egg.");
 
     __block NSMutableArray *carriersForAddNewDestinations = [NSMutableArray array];
     NSMutableArray *carriersForSelectGUIDs = [NSMutableArray arrayWithCapacity:0];
     
     for (Carrier *carrier in carriers)
     {
-        [carriersForSelectGUIDs addObject:carrier.GUID];
+        //[carriersForSelectGUIDs addObject:carrier.GUID];
+        [self addCarrierWithGUID:carrier.objectID withName:[carrier valueForKey:@"name"] toArray:carriersForAddNewDestinations withRelationShipName:relationShipName isSelected:YES];
+
     }
     ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
     CompanyStuff *admin = [clientController authorization];
-//    CurrentCompany *mainCompany = admin.currentCompany;
 
     [clientController release];
-
-    
-//    NSError *error = nil;
-//    NSFetchRequest *request = [[[NSFetchRequest alloc] init] autorelease];
-//    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Carrier" inManagedObjectContext:self.moc];
-//    [request setEntity:entity];
-////    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"companyStuff.currentCompany.GUID == %@",mainCompany.GUID];
-////    [request setPredicate:predicate];
-//    NSArray *allCarriers = [self.moc executeFetchRequest:request error:&error];
-    
-//    NSMutableArray *allCarriersMutable = [NSMutableArray arrayWithArray:allCarriers];
-//    
-//    [currentContent enumerateObjectsUsingBlock:^(NSDictionary *currentCarrierFromList, NSUInteger idx, BOOL *stop) {
-//        NSString *carrierFromListGUID = [currentCarrierFromList valueForKey:@"GUID"];
-//        NSPredicate *predicateReverce = [NSPredicate predicateWithFormat:@"GUID != %@",carrierFromListGUID];
-//        [allCarriersMutable filterUsingPredicate:predicateReverce];
-//        
-//        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",carrierFromListGUID];
-//        NSArray *filteredCarriersForSelect = [carriersForSelectGUIDs filteredArrayUsingPredicate:predicate];
-//        if ([filteredCarriersForSelect count] == 0) [currentCarrierFromList setValue:[NSNumber numberWithBool:NO] forKey:@"selected"];
-//        else [currentCarrierFromList setValue:[NSNumber numberWithBool:YES] forKey:@"selected"];
-//    }];
-    
-//    CompanyStuff *admin = (CompanyStuff *)[moc objectWithID:autorizedUserID];
     NSSet *allCompanyStuff = admin.currentCompany.companyStuff;
     
     [allCompanyStuff enumerateObjectsUsingBlock:^(CompanyStuff *obj, BOOL *stop) {
@@ -2187,6 +2177,8 @@ forIsUpdateCarriesListOnExternalServer:YES];
                 BOOL isSelected = NO;
                 if ([[carriersForSelectGUIDs filteredArrayUsingPredicate:predicate] count] > 0) isSelected = YES;
                 [self addCarrierWithGUID:carrier.objectID withName:[carrier valueForKey:@"name"] toArray:carriersForAddNewDestinations withRelationShipName:relationShipName isSelected:isSelected];
+                NSLog(@"UDPATE DATA CONTROLLER:carrier name: %@",[carrier valueForKey:@"name"]);
+
 #if defined(SNOW_CLIENT_APPSTORE)
                 
             }
@@ -2194,44 +2186,8 @@ forIsUpdateCarriesListOnExternalServer:YES];
         }];
         //NSLog(@"carrier name: %@ guid:%@",obj.name,obj.GUID);
     }];
-    
-//    [allCarriers enumerateObjectsUsingBlock:^(Carrier *carrier, NSUInteger idx, BOOL *stop) {
-//#if defined(SNOW_CLIENT_APPSTORE)
-//        CompanyStuff *adminCarrier = carrier.companyStuff;
-//
-//        NSString *carrierAdminGUID = adminCarrier.GUID;
-//        NSString *adminGUID = admin.GUID;
-//        NSLog(@"2 carrier name: %@ guid:%@",carrier.name,carrier.GUID);
-//
-//        if ([carrierAdminGUID isEqualToString:adminGUID]) {
-//#endif
-//            NSString *carrierFromListGUID = [carrier valueForKey:@"GUID"];
-//            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %@",carrierFromListGUID];
-//            BOOL isSelected = NO;
-//            if ([[carriersForSelectGUIDs filteredArrayUsingPredicate:predicate] count] > 0) isSelected = YES;
-//            [self addCarrierWithGUID:carrierFromListGUID withName:[carrier valueForKey:@"name"] toArray:carriersForAddNewDestinations withRelationShipName:relationShipName isSelected:isSelected];
-//#if defined(SNOW_CLIENT_APPSTORE)
-//
-//        }
-//#endif
-//    }];
-//    [carriersForAddNewDestinations addObjectsFromArray:currentContent];
-
-//    NSSet *allAdminCarriers = admin.carrier;
-//    
-//    [allAdminCarriers enumerateObjectsUsingBlock:^(Carrier *carrier, BOOL *stop) {
-//        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"GUID == %@",carrier.GUID];
-//        if ([[carriersForAddNewDestinations filteredArrayUsingPredicate:predicate] count] == 0) [self addCarrierWithGUID:carrier.GUID withName:[carrier valueForKey:@"name"] toArray:carriersForAddNewDestinations withRelationShipName:relationShipName isSelected:NO];
-//
-//    }];
-    
-//    [carriersForAddNewDestinations writeToFile:pathFileToSave atomically:YES];
-    
-    //NSLog(@"Write to file:%@",success ? @"YES" : @"NO");
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"selected" ascending:NO];
     
-
-//    [delegate.carriersForAddNewDestinationsController setContent:[carriersForAddNewDestinations sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]]];
     NSArray *finalResult = [carriersForAddNewDestinations sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
     [sortDescriptor release];
     
@@ -2519,10 +2475,14 @@ forIsUpdateCarriesListOnExternalServer:YES];
     NSFetchRequest *request = [[[NSFetchRequest alloc] init] autorelease];
     [request setEntity:[NSEntityDescription entityForName:@"DatabaseConnections"
                                           inManagedObjectContext:self.moc]];
-    NSUInteger countConnections = [self.moc countForFetchRequest:request error:&error];
+    NSArray *countConnections = [self.moc executeFetchRequest:request error:&error];
     if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd));
-  
-    if (countConnections == 0)
+//    [countConnections enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+//        [self.moc deleteObject:obj];
+//    }];
+//    [self finalSave];
+    
+    if (countConnections.count == 0)
     {
         ClientController *clientController = [[ClientController alloc] initWithPersistentStoreCoordinator:[delegate persistentStoreCoordinator] withSender:self withMainMoc:[delegate managedObjectContext]];
         CompanyStuff *authorizedUser = [clientController authorization];
@@ -2632,7 +2592,7 @@ forIsUpdateCarriesListOnExternalServer:YES];
         DatabaseConnections *ctp = (DatabaseConnections *)[NSEntityDescription insertNewObjectForEntityForName:@"DatabaseConnections" inManagedObjectContext:self.moc]; 
         ctp.enable = [NSNumber numberWithBool:NO];
         //NSMutableString *test = [[NSMutableString alloc] initWithString:@"208.71.117.242"];
-        ctp.ip = @"77.91.169.130";
+        ctp.ip = @"109.251.149.70";
         ctp.login = @"alex";
         ctp.password = @"XDas2d3vsl4872yuuj";
         ctp.database = @"ctp";
@@ -2647,7 +2607,7 @@ forIsUpdateCarriesListOnExternalServer:YES];
         DatabaseConnections *ctpPut = (DatabaseConnections *)[NSEntityDescription insertNewObjectForEntityForName:@"DatabaseConnections" inManagedObjectContext:self.moc]; 
          ctpPut.enable = [NSNumber numberWithBool:NO];
          //NSMutableString *test = [[NSMutableString alloc] initWithString:@"208.71.117.242"];
-         ctpPut.ip = @"77.91.169.130";
+         ctpPut.ip = @"109.251.149.70";
          ctpPut.login = @"alex";
          ctpPut.password = @"XDas2d3vsl4872yuuj";
          ctpPut.database = @"ctp";

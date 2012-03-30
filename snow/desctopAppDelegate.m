@@ -1047,7 +1047,8 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
     //NSLog(@"APP DELEGATE:main thread controllers created");
     if (!databaseForMainThread) databaseForMainThread = [[MySQLIXC alloc] initWithDelegate:self withProgress:nil];
     if (!updateForMainThread) updateForMainThread = [[UpdateDataController alloc] initWithDatabase:databaseForMainThread];
-    
+    //[self.updateForMainThread setupDefaultDatabaseConnections];
+
     NSArray *connectionsSQL = [self.updateForMainThread databaseConnections];
     if ([connectionsSQL count] == 0) { 
 #if defined (SNOW_CLIENT_ENTERPRISE) || defined(SNOW_SERVER)

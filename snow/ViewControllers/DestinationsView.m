@@ -5,7 +5,7 @@
 //  Created by Oleksii Vynogradov on 04.01.12.
 //  Copyright (c) 2012 IXC-USA Corp. All rights reserved.
 //
-//#import <AVFoundation/AVFoundation.h>
+#import <AVFoundation/AVFoundation.h>
 
 #import "DestinationsView.h"
 #import "AVResizedTableHeaderView.h"
@@ -172,6 +172,7 @@
 @synthesize callPathWebView;
 @synthesize destinationsForSaleCodesStatisticRoutingBlock;
 @synthesize addDestinationsButton;
+@synthesize callHIstoryWebView;
 @synthesize addDestinationsPanel;
 @synthesize addRoutesViewController;
 @synthesize isAddDestinationsPanelShort;
@@ -1548,7 +1549,7 @@
         [NSApp endSheet:addDestinationsMainPanel];
 
     }
-#if defined (SNOW_CLIENT_ENTERPRISE)
+#if defined (SNOW_CLIENT_ENTERPRISE) || defined (SNOW_SERVER)
 
     [addDestinationsButton setEnabled:YES];
     [addDestinationsWeBuyButton setEnabled:YES];
@@ -1578,7 +1579,7 @@
                 [NSApp endSheet:addDestinationsMainPanel];
                 
             }
-#if defined (SNOW_CLIENT_ENTERPRISE)
+#if defined (SNOW_CLIENT_ENTERPRISE) || defined (SNOW_SERVER)
             [addDestinationsButton setEnabled:YES];
             [addDestinationsWeBuyButton setEnabled:YES];
             [addDestinationsTargetsBlock setEnabled:YES];
@@ -1604,16 +1605,17 @@
         });
         NSArray *addedIDs = nil;
         MySQLIXC *database = [[MySQLIXC alloc] initWithDelegate:delegate withProgress:nil];
-        database.connections = [delegate.updateForMainThread databaseConnections];
+        //database.connections = [delegate.updateForMainThread databaseConnections];
 
         UpdateDataController *update = [[UpdateDataController alloc] initWithDatabase:database];
-        [database release];
+        database.connections = [update databaseConnections];
         
         if ([sender tag] == 0)  [update inserDestinationsForCarriers:carrierListForAdd andDestinations:destinationsListForAdd forEntity:@"DestinationsListForSale" withPercent:nil withLinesForActivation:nil]; 
         if ([sender tag] == 1) [update inserDestinationsForCarriers:carrierListForAdd andDestinations:destinationsListForAdd forEntity:@"DestinationsListTargets" withPercent:[NSNumber numberWithDouble:0.07] withLinesForActivation:[NSNumber numberWithInt:4]];
         if ([sender tag] == 2) { addedIDs = [update inserDestinationsForCarriers:carrierListForAdd andDestinations:destinationsListForAdd forEntity:@"DestinationsListPushList" withPercent:[NSNumber numberWithDouble:0.07] withLinesForActivation:[NSNumber numberWithInt:4]];
         }
-        
+        [database release];
+
         
         //[delegate.progressForMainThread stopAddDestinations];
 
@@ -2216,7 +2218,7 @@
         }
         
     }
-#if defined(SNOW_CLIENT_APPSTORE)
+//#if defined(SNOW_CLIENT_APPSTORE)
     NSArray *selected = [destinationsListPushList selectedObjects];
     NSMutableString *stringForCopy = [NSMutableString stringWithCapacity:0];
     NSNumberFormatter *formatterRate = [[NSNumberFormatter alloc] init];
@@ -2243,7 +2245,7 @@
     }
 
     
-#endif
+//#endif
 
     
 }
@@ -2324,70 +2326,15 @@
     [destinationsForSaleProgress startAnimation:self];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
-//        ProgressUpdateController *progress = [[ProgressUpdateController alloc] initWithDelegate:self];
-//        [progress startProgressIndicatorCountSeeWebRouting];
-//        
-        
         NSArray *selectedDestinationForSale = [NSArray arrayWithArray:[destinationsListForSale selectedObjects]];
-        //[destinationsListForSale setSelectedObjects:nil];
-//        if ([selectedDestinationForSale count] != 1) {
-//            NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-//            [dict setValue:@"U can see routing only for one destination" forKey:NSLocalizedDescriptionKey];
-//            [dict setValue:@"There was an error when u try to sync while other sync processes coming." forKey:NSLocalizedFailureReasonErrorKey];
-//            NSError *error = [NSError errorWithDomain:@"YOUR_ERROR_DOMAIN" code:9999 userInfo:dict];
-//            [[NSApplication sharedApplication] presentError:error];
-//            [progress stopProgressIndicatorCountSeeWebRouting];
-//            [progress release];
-//            return;
-//        }
         if ([selectedDestinationForSale count] != 1) [self showErrorBoxWithText:@"U can see routing only for one destination"];
-        
-        NSString *carrierName = [[[selectedDestinationForSale lastObject] valueForKey:@"carrier"] valueForKey:@"name"];
-        
         NSManagedObject *destinationForSale = [selectedDestinationForSale lastObject];
         NSSet *codes = [destinationForSale valueForKey:@"codesvsDestinationsList"];
-        NSManagedObject *code = [codes anyObject];
+        CodesvsDestinationsList *code = [codes anyObject];
         if (!code) [self showErrorBoxWithText:@"We don't have any codes for choice"];
         
         NSString *codeStr = [NSString stringWithString:[[code valueForKey:@"code"] stringValue]];
-        NSString *countryStr = [NSString stringWithString:[destinationForSale valueForKey:@"country"]];
-        NSString *specificStr = [NSString stringWithString:[destinationForSale valueForKey:@"specific"]];
-        NSString *prefixStr = [NSString stringWithString:[destinationForSale valueForKey:@"prefix"]];
-        
-//        AppDelegate *delegate = [[NSApplication sharedApplication] delegate];
-
-        MySQLIXC *database = [[MySQLIXC alloc] initWithDelegate:nil withProgress:nil];
-        database.connections = [delegate.updateForMainThread databaseConnections];
-        
-        NSArray *routingTable = [database receiveRoutingTableForCode:codeStr 
-                                                              prefix:prefixStr 
-                                                             carrier:carrierName];
-        [database release];
-        
-        NSLog (@"Routing for Code: %@ for Destination:%@/%@ for Carrier: %@ with prefix:%@ is:%@",
-               codeStr,
-               countryStr,
-               specificStr,
-               carrierName,
-               prefixStr,
-               routingTable
-               );
-        NSString *uid = [[routingTable lastObject] valueForKey:@"uid"];
-        
-        //NSString *url = [[database.connections objectAtIndex:0] valueForKey:@"urlForRouting"];
-        
-        NSString *callPathUrl = [NSString stringWithFormat:@"http://alexv:Manual@avoice447.interexc.com/callpath.php?gw=all&peer=1%%3A%@&dest=%@&anumber=&rprice=&m_date=2012-01-05+15%%3A19%%3A13&proto=5060&xml=0&submit=GO",uid,codeStr];
-        
-        //[callPathUrlField setStringValue:[NSString stringWithFormat:@"http://alexv:Manual12@a.avoiceweb.interexc.com/callpath.php?gw=2&peer=1%%3A%@&dest=%@&rprice=&m_date=2011-02-03+15%%3A19%%3A13&proto=5060&xml=0&submit=GO",uid,codeStr]];
-        NSLog (@"Routing for Code: %@ for Destination:%@/%@ for Carrier: %@ with prefix:%@ is:%@, final url is:%@",
-               codeStr,
-               countryStr,
-               specificStr,
-               carrierName,
-               prefixStr,
-               routingTable,
-               callPathUrl
-               );
+        NSString *callPathUrl = [NSString stringWithFormat:@"http://alexv:Manual@avoice447.interexc.com/callpath.php?gw=all&peer=1%%3A%@&dest=%@&anumber=&rprice=&m_date=2012-01-05+15%%3A19%%3A13&proto=5060&xml=0&submit=GO",code.peerID,codeStr];
         
         [[callPathWebView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:callPathUrl]]];
         //NSLog (@"URL: %@",[callPathUrlField stringValue]);
@@ -2398,6 +2345,41 @@
             [destinationsForSaleCodesStatisticRoutingBlock selectTabViewItemAtIndex:2];
         });
 
+    });
+
+}
+- (IBAction)getCallHistory:(id)sender {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+        NSArray *selectedDestinationForSale = [NSArray arrayWithArray:[destinationsListForSale selectedObjects]];
+        if ([selectedDestinationForSale count] != 1) [self showErrorBoxWithText:@"U can see routing only for one destination"];
+        NSManagedObject *destinationForSale = [selectedDestinationForSale lastObject];
+        NSSet *codes = [destinationForSale valueForKey:@"codesvsDestinationsList"];
+        CodesvsDestinationsList *code = [codes anyObject];
+        if (!code) [self showErrorBoxWithText:@"We don't have any codes for choice"];
+        
+        //NSString *codeStr = [NSString stringWithString:[[code valueForKey:@"code"] stringValue]];
+        //avoice447.interexc.com/in.php?from_menu_day=29&from_menu_month=03&from_menu_year=2012&from_menu_hour=00&from_menu_minute=00&bufvaldate_from=--&to_menu_day=29&to_menu_month=03&to_menu_year=2012&to_menu_hour=23&to_menu_minute=59&bufvaldate_to=--&type=5&gprefix=&carrier=15401&subdest=&code=&trunk=255&m_ip=&operator=1&shorLong=shorter&sec=0&fanum=*&submit=GO*/
+        
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        NSDateComponents *dateComponents = [calendar components:( NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit ) fromDate:[NSDate date]];
+        NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+        formatter.minimumIntegerDigits = 2;
+        NSLog(@"%@",[formatter stringFromNumber:[NSNumber numberWithInteger:dateComponents.month]]);
+        
+        NSString *callPathUrl = [NSString stringWithFormat:@"http://alexv:Manual@avoice447.interexc.com/in.php?from_menu_day=%@&from_menu_month=%@&from_menu_year=%@&from_menu_hour=00&from_menu_minute=00&bufvaldate_from=--&to_menu_day=%@&to_menu_month=%@&to_menu_year=%@&to_menu_hour=23&to_menu_minute=59&bufvaldate_to=--&type=5&gprefix=&carrier=%@&subdest=&code=&trunk=255&m_ip=&operator=1&shorLong=shorter&sec=0&fanum=*&submit=GO",[formatter stringFromNumber:[NSNumber numberWithInteger:dateComponents.day]],[formatter stringFromNumber:[NSNumber numberWithInteger:dateComponents.month]],[NSNumber numberWithInteger:dateComponents.year],[formatter stringFromNumber:[NSNumber numberWithInteger:dateComponents.day]],[formatter stringFromNumber:[NSNumber numberWithInteger:dateComponents.month]],[NSNumber numberWithInteger:dateComponents.year],code.peerID.description];
+        
+        
+        //NSString *callPathUrl = [NSString stringWithFormat:@"http://alexv:Manual@avoice447.interexc.com/callpath.php?gw=all&peer=1%%3A%@&dest=%@&anumber=&rprice=&m_date=2012-01-05+15%%3A19%%3A13&proto=5060&xml=0&submit=GO",code.peerID,codeStr];
+        
+        [[callHIstoryWebView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:callPathUrl]]];
+        NSLog (@"URL: %@",callPathUrl);
+        dispatch_async(dispatch_get_main_queue(), ^(void) { 
+            
+            [destinationsForSaleProgress setHidden:YES];
+            [destinationsForSaleProgress stopAnimation:self];
+            [destinationsForSaleCodesStatisticRoutingBlock selectTabViewItemAtIndex:4];
+        });
+        
     });
 
 }
@@ -2440,7 +2422,6 @@
         MySQLIXC *databaseForTestDestinations = [[MySQLIXC alloc] initWithDelegate:nil withProgress:nil];
         UpdateDataController *updateForTestDestinations = [[UpdateDataController alloc] initWithDatabase:databaseForTestDestinations];
         databaseForTestDestinations.connections = [updateForTestDestinations databaseConnectionCTP];
-        [databaseForTestDestinations release];
 
         __block NSMutableArray *allDestinationsIDs = [NSMutableArray array];
         [selectedDestinations enumerateObjectsUsingBlock:^(NSManagedObject *destination, NSUInteger idx, BOOL *stop) {
@@ -2448,6 +2429,7 @@
         }];
         
         [updateForTestDestinations testDestinations:[NSArray arrayWithArray:allDestinationsIDs]];
+        [databaseForTestDestinations release];
         
         sleep(3);
         [self localMocMustUpdate];
@@ -2627,25 +2609,34 @@
     NSSet *filteredResults = [results filteredSetUsingPredicate:predicate];
     DestinationsListWeBuyResults *necessaryResult = filteredResults.anyObject;
     
-//    NSError *error = nil;
-//    AVAudioPlayer *player = [[AVAudioPlayer alloc] initWithData:necessaryResult.media_ogg error:&error];
-//    if (error) NSLog(@"error%@",[error localizedDescription]);
-//    [player play];
 //    NSData *mediaData = necessaryResult.media_ogg;
     
     NSDictionary *result = [delegate.updateForMainThread testResultWriteMediaToFile:necessaryResult];
-    s = [[[NSSound alloc] initWithContentsOfFile:[result valueForKey:@"media_ogg"] byReference:NO] autorelease];
-    s.name = [NSNumber numberWithInteger:tag].stringValue;
-    s.delegate = self;
+
+//    NSError *error = nil;
+//    AVAudioPlayer *player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL URLWithString:[result valueForKey:@"media_ogg"]] error:&error];
+//    if (error) NSLog(@"error%@",[error localizedDescription]);
+//    [player play];
+    NSURL *newURL = [NSURL URLWithString:[result valueForKey:@"media_ogg"]];
+    if (!newURL) newURL = [NSURL URLWithString:[result valueForKey:@"media_ogg_ring"]];
     
-    if (s) {
+    NSSound *sound = [[[NSSound alloc] initWithContentsOfURL:newURL byReference:NO] autorelease];
+    sound.name = [NSNumber numberWithInteger:tag].stringValue;
+    sound.delegate = self;
+
+//    s = [[[NSSound alloc] initWithContentsOfFile:[result valueForKey:@"media_ogg"] byReference:NO] autorelease];
+//    //s = [[[NSSound alloc] initWithData:necessaryResult.media_ogg] autorelease];
+//    s.name = [NSNumber numberWithInteger:tag].stringValue;
+//    s.delegate = self;
+    
+    if (sound) {
         [testingResultIPlay1 setEnabled:NO];
         [testingResultIPlay2 setEnabled:NO];
         [testingResultIPlay3 setEnabled:NO];
         [testingResultIPlay4 setEnabled:NO];
         [testingResultIPlay5 setEnabled:NO];
         
-        [s play];
+        [sound play];
 //        [sender setTag:0];
 
         NSButton *button = sender;
@@ -2742,8 +2733,9 @@
             [prefix setTitle:selected.prefix];
             [rateSheetList setTitle:selected.rateSheet];
             [puslist setTitle:selected.postInSalesChat ? @"SalesChat" : @""];
+            NSSet *codesvsDestinationsListList = selected.codesvsDestinationsList;
             
-            CodesvsDestinationsList *anyCode = selected.codesvsDestinationsList.anyObject;
+            CodesvsDestinationsList *anyCode = codesvsDestinationsListList.anyObject;
             
             [codesPeerID setTitle:[NSString stringWithFormat:@"PeerID:%@",anyCode.peerID]];
             [codesRateSheetID setTitle:[NSString stringWithFormat:@"RatesheetID:%@",anyCode.rateSheetID]];
@@ -2755,11 +2747,13 @@
             
             NSMutableString *currentLinesAndPercent = [carrierDestinationsList valueForKey:destinationCountryAndSpecific];
             [ivr setTitle:currentLinesAndPercent];
-            [destinationsListForSale setSelectionIndex:rowIndex];
-            
-            codesvsDestinationsList.content = [destinationsListForSale.selection valueForKey:@"codesvsDestinationsList"];
-            destinationPerHourStat.content = [destinationsListForSale.selection valueForKey:@"destinationPerHourStat"];
-            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+                
+                [destinationsListForSale setSelectionIndex:rowIndex];
+                
+                codesvsDestinationsList.content = [destinationsListForSale.selection valueForKey:@"codesvsDestinationsList"];
+                destinationPerHourStat.content = [destinationsListForSale.selection valueForKey:@"destinationPerHourStat"];
+            });
         }
 
         if ([aTableView tag] == 1) { 
@@ -2793,10 +2787,11 @@
             else [weBuyPushlist setTitle:@""];
             //NSLog(@"%@, %@",[destinationsListWeBuySalesChat title],selected.postInSalesChat);
             [destinationsListWeBuy setSelectionIndex:rowIndex];
-            
-            codesvsDestinationsList.content = [destinationsListWeBuy.selection valueForKey:@"codesvsDestinationsList"];
-            destinationPerHourStat.content = [destinationsListWeBuy.selection valueForKey:@"destinationPerHourStat"];
-            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+                
+                codesvsDestinationsList.content = [destinationsListWeBuy.selection valueForKey:@"codesvsDestinationsList"];
+                destinationPerHourStat.content = [destinationsListWeBuy.selection valueForKey:@"destinationPerHourStat"];
+            });
         }
         if ([aTableView tag] == 11) {    
             [codesvsDestinationsList setSelectionIndex:rowIndex];
@@ -2922,50 +2917,52 @@
 // add destinations list
 
     if ([aTableView tag] == 100) {
-#if defined (SNOW_CLIENT_ENTERPRISE)
+//#if defined (SNOW_CLIENT_ENTERPRISE)
 
         [addDestinationsProgress setHidden:NO];
         [addDestinationsProgress startAnimation:self];
-#endif
+//#endif
         [addDestinationsList setSelectionIndex:rowIndex];
         [self updateGroupListStartImmediately:NO];
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^(void) {
+            NSMutableDictionary *selectedDestination = [[addDestinationsList selectedObjects] lastObject];
+            NSArray *outGroups = [selectedDestination valueForKey:@"outGroups"];
             
-//            MySQLIXC *databaseForGetGroupsList = [[MySQLIXC alloc] initWithDelegate:delegate withProgress:nil];
-//            UpdateDataController *updateForGetGroupsList = [[UpdateDataController alloc] initWithDatabase:databaseForGetGroupsList];
-//
-//            NSArray *connections = [[NSArray alloc] initWithArray:[updateForGetGroupsList databaseConnections]];
-//            databaseForGetGroupsList.connections = connections;
-////            [addDestinationsList setSelectionIndex:rowIndex];
-//            NSString *country = [[[addDestinationsList selectedObjects] lastObject] valueForKey:@"country"];
-//            NSString *specific = [[[addDestinationsList selectedObjects] lastObject] valueForKey:@"specific"];
-//            NSDate *groupDateUpdates = [[[addDestinationsList selectedObjects] lastObject] valueForKey:@"outGroupsUpdateTime"];
-//            NSDate *groupDateUpdatesPlus24H = [groupDateUpdates dateByAddingTimeInterval:86400];
-//            if (!groupDateUpdates || [groupDateUpdatesPlus24H timeIntervalSinceDate:[NSDate date]] < 0) {
-//                NSArray *outGroups = [databaseForGetGroupsList getOutGroupsListWithOutPeersListInsideForCountry:country forSpecific:specific];
-//                
-//                dispatch_async(dispatch_get_main_queue(), ^(void) {
-//                    [addDestinationsProgress setHidden:YES];
-//                    [addDestinationsProgress stopAnimation:self];
-//                    
-//                    NSMutableDictionary *selectedDestination = [[addDestinationsList selectedObjects] lastObject];
-//                    [selectedDestination setValue:outGroups forKey:@"outGroups"];
-//                    [selectedDestination setValue:[NSDate date] forKey:@"outGroupsUpdateTime"];
-//                    
-//                    NSLog(@"DESTINATIONS VIEW:new groups is:%@",outGroups);
-//                    NSString *pathForSaveArray = [[delegate applicationSupportDirectory] stringByAppendingString:@"/myCountrySpecificCodeList.ary"];
-//                    NSArray *allContent = [addDestinationsList arrangedObjects];
-//                    BOOL error = [allContent writeToFile:pathForSaveArray atomically:YES];
-//                    if (!error) NSLog(@"DESTINATIONS VIEW:write to file error");
-//
-//                });
-//            } else { 
-//                [addDestinationsProgress setHidden:YES];
-//                [addDestinationsProgress stopAnimation:self];
-//                
-//                NSLog(@"DESTINATIONS VIEW: update was not, waiting 24 hours");
-//            }
-//        });
+            NSDate *groupDateUpdates = [[[addDestinationsList selectedObjects] lastObject] valueForKey:@"outGroupsUpdateTime"];
+            NSDate *groupDateUpdatesPlus24H = [groupDateUpdates dateByAddingTimeInterval:86400];
+            if (!outGroups || !groupDateUpdates || [groupDateUpdatesPlus24H timeIntervalSinceDate:[NSDate date]] < 0) {
+                
+                MySQLIXC *databaseForGetGroupsList = [[MySQLIXC alloc] initWithDelegate:delegate withProgress:nil];
+                UpdateDataController *updateForGetGroupsList = [[UpdateDataController alloc] initWithDatabase:databaseForGetGroupsList];
+                
+                NSArray *connections = [[NSArray alloc] initWithArray:[updateForGetGroupsList databaseConnections]];
+                databaseForGetGroupsList.connections = connections;
+                //            [addDestinationsList setSelectionIndex:rowIndex];
+                NSString *country = [[[addDestinationsList selectedObjects] lastObject] valueForKey:@"country"];
+                NSString *specific = [[[addDestinationsList selectedObjects] lastObject] valueForKey:@"specific"];
+                NSArray *outGroups = [databaseForGetGroupsList getOutGroupsListWithOutPeersListInsideForCountry:country forSpecific:specific];
+                
+                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                    [addDestinationsProgress setHidden:YES];
+                    [addDestinationsProgress stopAnimation:self];
+                    
+                    [selectedDestination setValue:outGroups forKey:@"outGroups"];                    
+                    [selectedDestination setValue:[NSDate date] forKey:@"outGroupsUpdateTime"];
+                    
+                    NSLog(@"DESTINATIONS VIEW:new groups is:%@",outGroups);
+                    //NSString *pathForSaveArray = [[delegate applicationSupportDirectory] stringByAppendingString:@"/myCountrySpecificCodeList.ary"];
+                    //NSArray *allContent = [addDestinationsList arrangedObjects];
+                    //BOOL error = [allContent writeToFile:pathForSaveArray atomically:YES];
+                    //if (!error) NSLog(@"DESTINATIONS VIEW:write to file error");
+                    
+                });
+            }// else { 
+            [addDestinationsProgress setHidden:YES];
+            [addDestinationsProgress stopAnimation:self];
+            
+            NSLog(@"DESTINATIONS VIEW: update was not, waiting 24 hours");
+            //}
+        });
     }
 
 // group list selected
@@ -3321,7 +3318,7 @@ return YES;
         }
 #endif
         
-#ifdef SNOW_CLIENT_ENTERPRISE
+#if defined(SNOW_CLIENT_ENTERPRISE) || defined (SNOW_SERVER)
         if ([[aTableColumn identifier] isEqualToString:@"Testing result"]) {
             
             NSManagedObject *selected = nil;

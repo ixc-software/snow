@@ -34,6 +34,7 @@
     IBOutlet WebView *callPathWebView;
     NSTabView *destinationsForSaleCodesStatisticRoutingBlock;
     NSButton *addDestinationsButton;
+    WebView *callHIstoryWebView;
     BOOL isAddDestinationsPanelShort;
     BOOL isAddDestinationsAddNewOutPeerToGroupList;
     NSButton *ivr;
@@ -211,6 +212,7 @@
 @property (assign) IBOutlet WebView *callPathWebView;
 @property (assign) IBOutlet NSTabView *destinationsForSaleCodesStatisticRoutingBlock;
 @property (assign) IBOutlet NSButton *addDestinationsButton;
+@property (assign) IBOutlet WebView *callHIstoryWebView;
 
 // destinations we buy block:
 

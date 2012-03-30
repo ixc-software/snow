@@ -1749,7 +1749,7 @@
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(carrier.GUID == %@)",carrierGUID];
         
         NSString *ips = nil;
-        NSString *rateSheetName = nil;
+//        NSString *rateSheetName = nil;
 //        Carrier *carrierObjectForGet = nil;
         
         NSFetchRequest *requestDestinations = [[[NSFetchRequest alloc] init] autorelease];
@@ -1762,8 +1762,14 @@
         if (error) NSLog(@"Failed to executeFetchRequest to data store: %@ in function:%@", [error localizedDescription],NSStringFromSelector(_cmd)); 
         if ([destinationsOfCarrier count] != 0) { 
 //            carrierObjectForGet = [[destinationsOfCarrier lastObject] valueForKey:@"carrier"];
-            if (destinationsListForSale)  ips = [[destinationsOfCarrier lastObject] valueForKey:@"ipAddressesList"];
-            if (destinationsListForSale) rateSheetName = [[destinationsOfCarrier lastObject] valueForKey:@"rateSheet"];
+            
+            if (destinationsListForSale)  { 
+                NSManagedObject *oneDestination = [destinationsOfCarrier lastObject];
+                NSString *ipAddresses = [oneDestination valueForKey:@"ipAddressesList"];
+                ips = ipAddresses;
+                NSLog(@"DESTINATIONS CONTROLLER: ips:%@",ipAddresses);
+            }
+            //if (destinationsListForSale) rateSheetName = [[destinationsOfCarrier lastObject] valueForKey:@"rateSheet"];
         } 
 //        else
 //        {
@@ -1791,6 +1797,8 @@
             NSString *specificName = [destination valueForKey:@"specific"];
             NSString *prefix = [destination valueForKey:@"prefix"];
             NSString *rateSheetID = [destination valueForKey:@"rateSheetID"];
+            NSString *rateSheetName = [destination valueForKey:@"rateSheetName"];;
+
             NSNumber *rate = nil;
             id rateToCheck = [destination valueForKey:@"rate"];
             if ([[rateToCheck class] isSubclassOfClass:[NSNumber class]]) {
@@ -1827,10 +1835,12 @@
                 NSManagedObject *destination = [[result lastObject] valueForKey:relationShip];
                 [moc deleteObject:destination];
                 [self safeSave];
+                carrierObject = (Carrier *)[self.moc objectWithID:carrierID];
+
             }
             
             if (destinationsListForSale) {
-                DestinationsListForSale *object = (DestinationsListForSale *)[NSEntityDescription insertNewObjectForEntityForName:@"DestinationsListForSale" inManagedObjectContext:moc];
+                DestinationsListForSale *object = (DestinationsListForSale *)[NSEntityDescription insertNewObjectForEntityForName:@"DestinationsListForSale" inManagedObjectContext:self.moc];
                 object.changeDate = [NSDate date];
                 object.country = countryName;
                 object.specific = specificName;
@@ -1839,7 +1849,13 @@
                 object.ipAddressesList = ips;
                 object.enabled = [NSNumber numberWithBool:YES];
                 object.rate = rate;
+                NSLog(@"DESTINATIONS CLASS: code created with rateSheetID:%@ rateSheetName:%@ rateSheetID:%@",rateSheetID,rateSheetName,rateSheetID);
+
+                //NSLog(@"DESTINATIONS CLASS: moc carrierObject:%@",carrierObject.managedObjectContext);
+                //NSLog(@"DESTINATIONS CLASS: moc object:%@",object.managedObjectContext);
+                
                 object.carrier = carrierObject;
+                
                 NSArray *codesList = [[ProjectArrays sharedProjectArrays].myCountrySpecificCodeList filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(country == %@) AND (specific == %@)",countryName,specificName]];
                 NSArray *codesListWithOutSpecific = [[codesList lastObject] valueForKey:@"code"];
                 [codesListWithOutSpecific enumerateObjectsWithOptions:NSSortStable usingBlock:^(NSString *codeStr, NSUInteger idx, BOOL *stop) {
@@ -1857,7 +1873,8 @@
                     newCode.peerID = [numberTransfer numberFromString:inPeerId];
                     newCode.country = countryName;
                     newCode.enabled = [NSNumber numberWithBool:YES];
-                
+                    NSLog(@"DESTINATIONS CLASS: code created with rateSheetID:%@ rateSheetName:%@ inPeerId:%@ inPeerIdNumber:%@",rateSheetID,rateSheetName,inPeerId,[numberTransfer numberFromString:inPeerId]);
+
                 }];
             }
             if (destinationsListTargets) {
